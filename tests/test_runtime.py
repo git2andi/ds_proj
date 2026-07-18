@@ -119,6 +119,26 @@ def test_empty_opening_uses_last_resort_fallback():
     assert result.state.stats.fallback_turns >= 1
 
 
+
+
+def test_numeric_short_name_cannot_break_opening_fallback():
+    scenario = make_scenario()
+    option = scenario.option("A")
+    option.name = "Quiet Hours Starting at 11 PM"
+    option.short_name = "11 PM Quiet Hours"
+    option.aliases = ("11 PM Quiet Hours",)
+    llm = ActionRendererLLM(scripted=["", ""])
+    runner = DialogueRunner(
+        "", scenario=scenario, personas=make_personas(("A",)),
+        llm=llm, logger=NullLogger(), rng=random.Random(1), seed=1,
+    )
+    runner.state.phase = Phase.OPENING
+    action = runner._simulators["p1"].opening_action(runner.state)
+    record = runner._realize_and_commit(action, mandatory=True, voluntary=False)
+    assert record is not None
+    assert record.text == "Hi, I prefer Option A; it fits my priorities best."
+
+
 def test_only_one_formal_vote_round_is_visible():
     result = make_runner(("A", "B", "C"), seed=31).run()
     vote_turns = [
@@ -146,9 +166,10 @@ def test_formal_votes_are_deterministic_and_use_no_llm_calls_for_voting():
     )
 
 
-def test_compromise_prompt_waits_without_follow_up_moderator_commentary():
+def test_compromise_prompt_names_holdouts_and_waits_without_commentary(monkeypatch):
+    monkeypatch.setattr("simulator.bid_probability", lambda _level: 0.0)
     result = make_runner(
-        ("A", "B", "C"),
+        ("A", "A", "B", "C"),
         seed=42,
         alternatives_acceptable=False,
     ).run()
@@ -163,7 +184,103 @@ def test_compromise_prompt_waits_without_follow_up_moderator_commentary():
         if turn.phase is Phase.NARROWING
     ]
     assert len(narrowing_moderator) == 1
-    assert "?" in narrowing_moderator[0].text
+    assert "Mira" in narrowing_moderator[0].text and "Omar" in narrowing_moderator[0].text
+    assert "majority" in narrowing_moderator[0].text
     assert not narrowing_participants
     index = result.state.turns.index(narrowing_moderator[0])
     assert result.state.turns[index + 1].action.act is ActionType.VOTE
+
+
+def test_positive_narrowing_answers_switch_only_to_public_leader(monkeypatch):
+    monkeypatch.setattr("simulator.movement_probability", lambda _level: 1.0)
+    result = make_runner(("A", "A", "B", "C"), seed=43).run()
+    narrowing_turns = [
+        turn
+        for turn in result.state.participant_turns
+        if turn.phase is Phase.NARROWING
+    ]
+    assert narrowing_turns
+    assert all(turn.action.option_focus == ("A",) for turn in narrowing_turns)
+    assert all(
+        turn.action.stance_update is None
+        or turn.action.stance_update.option_id == "A"
+        for turn in narrowing_turns
+    )
+    accepting = [
+        turn.speaker_id
+        for turn in narrowing_turns
+        if turn.action.stance_update is not None
+    ]
+    assert accepting
+    assert all(result.state.votes[pid] == "A" for pid in accepting)
+
+
+def test_prior_public_acceptance_carries_into_final_vote_without_new_response(monkeypatch):
+    runner = make_runner(("A", "A", "B", "C"), seed=44)
+    for runtime in runner.state.runtimes.values():
+        runtime.public_preference = runtime.preferred_option
+    runtime = runner.state.runtimes["p3"]
+    runtime.public_acceptances.add("A")
+    runtime.acceptance_reasons["A"] = "the quiet setting already fits my needs"
+    monkeypatch.setattr(cfg.conversation, "compromise_window_max_turns", 0)
+
+    runner._run_narrowing()
+    assert runtime.narrowing_acceptance == "A"
+
+    runner._run_voting()
+    assert runner.state.votes["p3"] == "A"
+
+
+def test_reciprocal_majority_support_tie_selects_one_target_and_breaks_vote_tie(
+    monkeypatch,
+):
+    runner = make_runner(("A", "A", "C", "C"), seed=45)
+    for runtime in runner.state.runtimes.values():
+        runtime.public_preference = runtime.preferred_option
+
+    runner.state.runtimes["p2"].public_acceptances.add("C")
+    runner.state.runtimes["p2"].acceptance_reasons["C"] = "the equipment works"
+    runner.state.runtimes["p3"].public_acceptances.add("A")
+    runner.state.runtimes["p3"].acceptance_reasons["A"] = "the quiet setting works"
+    monkeypatch.setattr(cfg.conversation, "compromise_window_max_turns", 0)
+
+    runner._run_narrowing()
+    assert runner.state.narrowing_options in {("A",), ("C",)}
+    selected = runner.state.narrowing_options[0]
+    moderator_turn = next(
+        turn
+        for turn in runner.state.turns
+        if turn.moderator and turn.phase is Phase.NARROWING
+    )
+    assert "tied" in moderator_turn.text.lower()
+
+    outcome = runner._run_voting()
+    assert outcome.status == "majority"
+    assert outcome.final_option == selected
+
+
+@pytest.mark.parametrize(
+    "preferences",
+    [("A", "B", "C"), ("A", "B", "C", "D")],
+)
+def test_complete_preference_split_still_gets_one_random_narrowing_target(
+    monkeypatch,
+    preferences,
+):
+    runner = make_runner(preferences, seed=46)
+    for runtime in runner.state.runtimes.values():
+        runtime.public_preference = runtime.preferred_option
+    monkeypatch.setattr(cfg.conversation, "compromise_window_max_turns", 0)
+
+    runner._run_narrowing()
+
+    assert runner.state.narrowing_options in {
+        (option_id,) for option_id in set(preferences)
+    }
+    narrowing_moderator = [
+        turn
+        for turn in runner.state.turns
+        if turn.moderator and turn.phase is Phase.NARROWING
+    ]
+    assert len(narrowing_moderator) == 1
+    assert "tied" in narrowing_moderator[0].text.lower()

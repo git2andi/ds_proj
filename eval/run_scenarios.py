@@ -8,18 +8,21 @@ Examples:
     py eval/run_scenarios.py --list
     py eval/run_scenarios.py --limit 3
     py eval/run_scenarios.py --counts 3,4 --seed 500
+    py eval/run_scenarios.py --workers 1  # disable parallel execution
 """
 
 from __future__ import annotations
 
 import argparse
 import copy
+import io
 import random
 import shutil
 import statistics
 import sys
 from collections import Counter
-from contextlib import contextmanager
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterator
@@ -120,6 +123,8 @@ def run_dialogue(
         overrides[("simulation", "num_participants")] = int(participants)
     if log_dir is not None:
         overrides[("output", "log_dir")] = log_dir
+    # Evaluation metrics such as question/answer counts require structured actions.
+    overrides[("output", "write_action_trace")] = True
     actual_seed = int(seed) if seed is not None else random.SystemRandom().randint(0, 2**31 - 1)
     row: dict[str, Any] = {
         "topic": topic,
@@ -147,6 +152,29 @@ def run_dialogue(
     return row
 
 
+def run_case_worker(
+    case: ScenarioCase,
+    *,
+    seed: int,
+    output_root: str,
+) -> tuple[dict[str, Any], str]:
+    """Run one case in a worker process and capture its console transcript.
+
+    Separate processes are required because ``run_dialogue`` temporarily mutates
+    the module-level configuration object. Threads would race on those overrides.
+    """
+
+    captured = io.StringIO()
+    with redirect_stdout(captured), redirect_stderr(captured):
+        row = run_dialogue(
+            case.topic,
+            participants=case.participants,
+            seed=seed,
+            log_dir=output_root,
+        )
+    return {"case_index": case.index, **row}, captured.getvalue()
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--file", type=Path, default=None, help="alternative scenarios file")
@@ -157,6 +185,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--seed", type=int, default=None, help="base seed; case i uses base+i")
     parser.add_argument("--output", type=Path, default=OUTPUT_ROOT, help="batch output directory")
     parser.add_argument("--clean", action="store_true", help="delete a non-empty output directory before running")
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=2,
+        help="number of simultaneous scenario processes (default: 2; use 1 for sequential execution)",
+    )
     return parser.parse_args()
 
 
@@ -224,6 +258,9 @@ def main() -> int:
     if not selected:
         print("No matching cases.", file=sys.stderr)
         return 2
+    if args.workers < 1:
+        print("--workers must be at least 1.", file=sys.stderr)
+        return 2
 
     try:
         output_root = prepare_output_root(args.output, clean=bool(args.clean))
@@ -232,22 +269,56 @@ def main() -> int:
         return 2
     csv_path = output_root / "scenario_runs.csv"
     summary_path = output_root / "scenario_summary.md"
+
     rows: list[dict[str, Any]] = []
     base_seed = int(args.seed) if args.seed is not None else random.SystemRandom().randint(0, 2**31 - 1)
+    worker_count = min(int(args.workers), len(selected))
     print(f"Base seed: {base_seed}")
-    for position, case in enumerate(selected, start=1):
-        seed = base_seed + case.index
-        print(f"\n=== [{position}/{len(selected)}] case {case.index}: n={case.participants} | {case.topic}")
-        row = run_dialogue(
-            case.topic, participants=case.participants, seed=seed,
-            log_dir=str(output_root),
-        )
-        row = {"case_index": case.index, **row}
-        rows.append(row)
-        write_csv(csv_path, rows)
-        write_summary(rows, summary_path)
-        if row.get("outcome") == "error":
-            print(f"ERROR: {row['error']}", file=sys.stderr)
+    print(f"Parallel workers: {worker_count}")
+
+    jobs = [
+        (position, case, base_seed + case.index)
+        for position, case in enumerate(selected, start=1)
+    ]
+    with ProcessPoolExecutor(max_workers=worker_count) as executor:
+        future_jobs = {
+            executor.submit(
+                run_case_worker,
+                case,
+                seed=seed,
+                output_root=str(output_root),
+            ): (position, case)
+            for position, case, seed in jobs
+        }
+        for future in as_completed(future_jobs):
+            position, case = future_jobs[future]
+            try:
+                row, console_output = future.result()
+            except Exception as exc:
+                row = {
+                    "case_index": case.index,
+                    "topic": case.topic,
+                    "participants": case.participants,
+                    "seed": base_seed + case.index,
+                    "outcome": "error",
+                    "log_dir": "",
+                    "error": f"worker failure: {type(exc).__name__}: {exc}",
+                }
+                console_output = ""
+
+            print(
+                f"\n=== [{position}/{len(selected)}] case {case.index}: "
+                f"n={case.participants} | {case.topic}"
+            )
+            if console_output.strip():
+                print(console_output.rstrip())
+
+            rows.append(row)
+            rows.sort(key=lambda item: int(item["case_index"]))
+            write_csv(csv_path, rows)
+            write_summary(rows, summary_path)
+            if row.get("outcome") == "error":
+                print(f"ERROR: {row['error']}", file=sys.stderr)
 
     print(f"\nCompleted {len(rows)} run(s).")
     print(f"CSV: {csv_path}")

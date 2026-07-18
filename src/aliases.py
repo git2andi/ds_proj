@@ -152,5 +152,18 @@ def resolve_visible_vote(text: str, scenario: "Scenario") -> str | None:
         for marker in ("vote", "voting", "choose", "pick", "going with", "final choice")
     ):
         return None
+    explicit = {
+        option_id
+        for option_id in scenario.option_ids
+        if re.search(
+            rf"(?<!\w)option[\W_]+{re.escape(option_id)}(?!\w)",
+            text,
+            flags=re.IGNORECASE,
+        )
+    }
+    if len(explicit) == 1:
+        return next(iter(explicit))
+    if len(explicit) > 1:
+        return None
     mentions = resolve_option_mentions(text, scenario)
     return next(iter(mentions)) if len(mentions) == 1 else None

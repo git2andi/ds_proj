@@ -9,7 +9,13 @@ from typing import Any
 import prompts
 from builders import SetupBuilder
 from config_loader import cfg
-from consensus import derive_narrowing_options, majority_threshold, outcome_from_votes, public_preference_counts
+from consensus import (
+    derive_narrowing_options,
+    majority_threshold,
+    outcome_from_votes,
+    public_preference_counts,
+    public_support_counts,
+)
 from llm_client import get_llm_client
 from logger import DialogueLogger
 from models import (
@@ -239,34 +245,75 @@ class DialogueRunner:
 
     def _run_narrowing(self) -> int:
         self._transition(Phase.NARROWING)
-        counts = public_preference_counts(self.state)
+        preference_counts = public_preference_counts(self.state)
         participant_count = len(self.state.personas)
         threshold = majority_threshold(participant_count)
         movement_before = self.state.movement_events
 
-        self.state.narrowing_options = derive_narrowing_options(self.state)
-
-        if counts:
-            _, support = counts.most_common(1)[0]
-            if support == participant_count:
-                return 0
-            if support >= threshold and not self._should_repair_narrow_majority(
-                support, participant_count
-            ):
-                return 0
-
-        candidates = self.state.narrowing_options
-        if not candidates:
-            candidates = tuple(option_id for option_id, _ in counts.most_common(2))
-        if not candidates:
+        if not preference_counts:
+            self.state.narrowing_options = ()
             return 0
+        _, leading_preferences = preference_counts.most_common(1)[0]
+        if leading_preferences >= threshold:
+            self.state.narrowing_options = ()
+            return 0
+
+        self.state.narrowing_options = derive_narrowing_options(
+            self.state,
+            rng=self.rng,
+        )
+        if len(self.state.narrowing_options) != 1:
+            return 0
+        leader = self.state.narrowing_options[0]
+        support_counts = public_support_counts(self.state)
+        highest_support = max(support_counts.values(), default=0)
+        support_leaders = [
+            option_id
+            for option_id, count in support_counts.items()
+            if count == highest_support
+        ]
+        preference_highest = max(
+            (preference_counts[option_id] for option_id in support_leaders),
+            default=0,
+        )
+        preference_leaders = [
+            option_id
+            for option_id in support_leaders
+            if preference_counts[option_id] == preference_highest
+        ]
+        selected_from_tie = len(preference_leaders) > 1
+        holdout_ids = [
+            persona.id
+            for persona in self.state.personas
+            if self.state.runtimes[persona.id].public_preference != leader
+        ]
+        if not holdout_ids:
+            return 0
+
+        # A prior visible acceptance remains the participant's latest public
+        # position. It therefore carries into the final vote even if the
+        # participant is not selected to speak again during the bounded
+        # narrowing exchange.
+        for participant_id in holdout_ids:
+            runtime = self.state.runtimes[participant_id]
+            if (
+                leader in runtime.public_acceptances
+                and not self.state.persona(participant_id).hard_blocker
+            ):
+                runtime.narrowing_acceptance = leader
 
         if self._moderator_enabled and not (
             self.state.turns and self.state.turns[-1].moderator
         ):
             self._append_moderator(
                 prompts.moderator_compromise_prompt(
-                    self.state.scenario, candidates, variant=self._variant()
+                    self.state.scenario,
+                    leader,
+                    tuple(self.state.persona(pid).name for pid in holdout_ids),
+                    preference_count=preference_counts[leader],
+                    participant_count=participant_count,
+                    selected_from_tie=selected_from_tie,
+                    variant=self._variant(),
                 )
             )
         self.state.stats.compromise_attempts += 1
@@ -275,11 +322,13 @@ class DialogueRunner:
         used_speakers: set[str] = set()
         for _ in range(rounds):
             bids: list[UserAction] = []
-            for participant_id, simulator in self._simulators.items():
+            for participant_id in holdout_ids:
                 if participant_id in used_speakers:
                     continue
-                action = simulator.compromise_action(self.state, candidates)
-                if action.wants_to_speak and action.stance_update is not None:
+                action = self._simulators[participant_id].compromise_action(
+                    self.state, (leader,)
+                )
+                if action.wants_to_speak:
                     bids.append(action)
             selection = self._floor.select(self.state, bids)
             if selection.action is None:
@@ -291,10 +340,6 @@ class DialogueRunner:
                 used_speakers.add(selection.action.speaker_id)
 
         return self.state.movement_events - movement_before
-
-    @staticmethod
-    def _should_repair_narrow_majority(support: int, total: int) -> bool:
-        return (total, support) in {(3, 2), (5, 3)}
 
     def _run_voting(self) -> RunOutcome:
         self._transition(Phase.VOTING)
@@ -452,16 +497,24 @@ class DialogueRunner:
         runtime = self.state.runtimes[action.speaker_id]
         if action.stance_update is not None:
             target = action.stance_update.option_id
+            already_accepted = target in runtime.public_acceptances
             runtime.public_acceptances.add(target)
             runtime.acceptance_reasons[target] = action.stance_update.movement_reason
-            if action.stance_update.kind is StanceUpdateKind.SWITCH_PREFERRED:
+            if (
+                self.state.phase is Phase.NARROWING
+                and action.stance_update.kind is StanceUpdateKind.MAKE_ACCEPTABLE
+            ):
+                runtime.narrowing_acceptance = target
+            switched = action.stance_update.kind is StanceUpdateKind.SWITCH_PREFERRED
+            if switched:
                 runtime.preferred_option = target
                 runtime.public_preference = target
                 runtime.visible_switches += 1
-            self.state.movement_events += 1
-            self.state.stats.visible_movements += 1
-            if self.state.phase is Phase.NARROWING:
-                self.state.stats.compromise_acceptances += 1
+            if switched or not already_accepted:
+                self.state.movement_events += 1
+                self.state.stats.visible_movements += 1
+                if self.state.phase is Phase.NARROWING:
+                    self.state.stats.compromise_acceptances += 1
 
         if action.act is ActionType.OPENING:
             runtime.public_preference = runtime.preferred_option
@@ -571,7 +624,10 @@ class DialogueRunner:
 
     def _opening_fallback_text(self, action: UserAction) -> str:
         option = self.state.scenario.option(action.option_focus[0])
-        return f"Hi, I prefer {option.short_name}; it fits my priorities best."
+        reference = option.short_name or option.name
+        if re.search(r"\d", reference):
+            reference = f"Option {option.id}"
+        return f"Hi, I prefer {reference}; it fits my priorities best."
 
     def _call_llm(self, prompt: str, *, profile: str) -> str:
         text = self._llm.generate(prompt, profile=profile)

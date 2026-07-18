@@ -34,6 +34,23 @@ def test_relevant_answer_is_accepted():
     assert validate_realization(state, state.persona("p2"), action, "No, Cafe still works because the background noise is manageable.") == []
 
 
+
+
+def test_number_inside_focused_option_name_is_not_treated_as_a_claim():
+    state = make_state()
+    option = state.scenario.option("A")
+    option.name = "Quiet Hours Starting at 11 PM"
+    option.short_name = "11 PM Quiet Hours"
+    option.aliases = ("11 PM Quiet Hours",)
+    action = UserAction(
+        "p1", True, BidPriority.REQUIRED, ActionType.OPENING, ("A",), reason="quieter nights"
+    )
+    errors = validate_realization(
+        state, state.persona("p1"), action, "I prefer 11 PM Quiet Hours because nights stay calmer."
+    )
+    assert not any("unsupported numeric claim" in error for error in errors)
+
+
 def test_unsupported_number_is_rejected():
     state = make_state()
     action = UserAction("p1", True, BidPriority.NORMAL, ActionType.SUPPORT, ("A",), reason="quiet")

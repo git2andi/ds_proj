@@ -24,12 +24,12 @@ The report-facing summary keeps only metrics that support concise claims:
 - visible preference changes;
 - repair, drop, fallback, and response-failure rates;
 - LLM calls and token use;
-- engagement versus voluntary participation;
-- verbosity versus words per turn;
-- optional directness hedge-rate proxy.
+- engagement versus voluntary participation relative to the equal-share baseline within each group;
+- verbosity versus words in generated participant turns, excluding deterministic vote lines;
+- optional directness hedge-rate proxy, also excluding deterministic vote lines.
 
 Detailed thread, point-reuse, alias, and generation evidence remains in `run.json` rather than expanding the report tables.
 
 ## LLM transcript judging
 
-`judge_transcripts.py` is a separate post-hoc evaluator. Independent referee roles receive the same visible transcript, option board, persona cards, votes, and outcome. No referee sees another referee’s result. The judge is never called during dialogue generation.
+`judge_transcripts.py` is a separate post-hoc evaluator. Independent referee roles receive the same visible transcript, option board, persona cards, votes, and outcome. No referee sees another referee’s result. Moderator turns are included when scoring naturalness, coherence, groundedness, and deliberation quality because they affect the visible exchange. The moderator is explicitly excluded from persona consistency, which applies only to simulated participants. The judge is never called during dialogue generation.

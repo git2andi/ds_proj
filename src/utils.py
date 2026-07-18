@@ -3,19 +3,8 @@
 from __future__ import annotations
 
 import json
-import random
 import re
-from collections.abc import Sequence
 from typing import Any
-
-
-def sample_int_range(
-    values: Sequence[int],
-    *,
-    rng: random.Random | None = None,
-) -> int:
-    lo, hi = int(values[0]), int(values[1])
-    return (rng or random).randint(lo, hi)
 
 
 def extract_json_object(text: str) -> dict[str, Any]:

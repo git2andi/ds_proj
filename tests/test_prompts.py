@@ -1,5 +1,6 @@
 from models import ActionType, BidPriority, Phase, TurnRecord, UserAction
-from prompts import moderator_compromise_prompt, realization_prompt
+from aliases import resolve_visible_vote
+from prompts import deterministic_vote_text, moderator_compromise_prompt, realization_prompt
 from tests.fixtures import make_state
 
 
@@ -104,10 +105,28 @@ def test_support_instruction_does_not_lead_with_option_name():
     assert "Explain naturally why Library" not in prompt
 
 
-def test_moderator_compromise_prompt_handles_singular_and_plural():
+def test_moderator_compromise_prompt_names_leader_and_holdouts():
     state = make_state()
-    singular = moderator_compromise_prompt(state.scenario, ("A",), variant=2)
-    plural = moderator_compromise_prompt(state.scenario, ("A", "B"), variant=0)
-    assert "Library is the leading option" in singular
-    assert "Library and Cafe are the main options" in plural
-    assert "Would either" in plural
+    text = moderator_compromise_prompt(
+        state.scenario,
+        "A",
+        ("Ben", "Mira"),
+        preference_count=2,
+        participant_count=4,
+        variant=0,
+    )
+    assert "Library" in text
+    assert "2 of 4" in text
+    assert "Ben and Mira" in text
+    assert "requirements" in text
+
+
+def test_deterministic_vote_falls_back_when_short_name_overlaps_an_alias():
+    state = make_state()
+    state.scenario.option("A").short_name = "Garden View"
+    state.scenario.option("B").short_name = "View"
+
+    text = deterministic_vote_text(state.scenario, "A", variant=3)
+
+    assert text == "I choose Option A."
+    assert resolve_visible_vote(text, state.scenario) == "A"

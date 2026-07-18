@@ -127,11 +127,16 @@ No LLM validator or judge is called during dialogue generation.
 
 ## Narrowing and outcomes
 
-Public preferences determine narrowing before voting:
+Public preferences and visible acceptances determine narrowing before voting:
 
-- unanimity or a decisive majority proceeds directly to voting;
-- only narrow 2–1 and 3–2 majorities receive one bounded outlier opportunity;
-- a split without a majority receives one short compromise prompt followed by up to two autonomous movement-bid rounds.
+- unanimity or any strict majority proceeds directly to voting;
+- without a majority, one uniquely strongest public option becomes the narrowing target;
+- the moderator names the participants who still prefer another option and asks whether the leader fits their requirements;
+- up to two holdouts may answer yes with a grounded reason, no with a remaining concern, or remain silent;
+- an option already accepted publicly remains accepted during narrowing and carries into the final vote without another random decision;
+- otherwise, rank-4 holdouts with low or medium stubbornness normally accept, rank-4 holdouts with high stubbornness remain probabilistic, rank-5 holdouts accept, and ranks 1–3 or hard blockers do not move;
+- a positive narrowing acceptance becomes a switch to that single leader in the participant's final vote;
+- if several strongest options remain tied, the seeded runtime randomly selects one tied option as the compromise target, including complete preference splits.
 
 During ordinary discussion, a non-hard-blocking simulator may also make another visible option acceptable. It may switch preference before narrowing when that option has been discussed recently, has more public support than its current choice, and the participant's stubbornness draw permits movement. This keeps the change grounded in the public exchange rather than forcing convergence.
 
@@ -165,6 +170,7 @@ Run a small scenario batch:
 
 ```powershell
 py .\eval\run_scenarios.py --limit 10 --seed 500 --clean
+# Two scenario processes run concurrently by default; add --workers 1 for sequential execution.
 py .\eval\summarize_runs.py --logs .\eval\logs_scenarios
 ```
 
@@ -173,6 +179,8 @@ Run the independent post-hoc transcript judges separately:
 ```powershell
 py .\eval\judge_transcripts.py --logs .\eval\logs_scenarios --judges 3 --provider uni
 ```
+
+The moderator remains visible to the judges because it affects interactional naturalness, coherence, grounding, and deliberation. It is explicitly excluded from `persona_consistency`, which evaluates only the simulated participants.
 
 ## Repository layout
 
@@ -198,4 +206,4 @@ Each run stores a transcript and `run.json`. The structured artifact includes:
 - public point counts, recent point keys, preferences, votes, and outcome;
 - repairs, drops, fallbacks, review flags, and token usage.
 
-The report-facing evaluator intentionally exposes only a compact set of reliability, process, cost, and trait metrics. Detailed runtime evidence remains in `run.json` for debugging.
+The report-facing evaluator intentionally exposes only a compact set of reliability, process, cost, and trait metrics. Evaluation runs force structured action traces on so question, answer, and trait metrics remain available. Detailed runtime evidence remains in `run.json` for debugging.

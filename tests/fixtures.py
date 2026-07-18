@@ -85,9 +85,6 @@ def make_state(preferences: tuple[str, ...] = ("A", "B", "C")):
 
 
 class NullLogger:
-    def write_prompt(self, prompt: str, kind: str) -> str:
-        return ""
-
     def write_run(self, *_args, **_kwargs) -> dict[str, str]:
         return {"dir": "", "transcript": "", "json": "", "metrics": ""}
 
@@ -172,6 +169,14 @@ class ActionRendererLLM:
             reason = instruction.split(":", 1)[1].split(". Connect", 1)[0]
             prefix = "Everyone" if target == "the group" else target
             return f"{prefix}, does {reason} change whether {option} works for you?"
+        if lower.startswith("answer the moderator's question about whether"):
+            option = instruction.split("whether ", 1)[1].split(" fits", 1)[0]
+            reason = instruction.split("grounded in:", 1)[1].rstrip(".")
+            return f"No, {option} does not fit my requirements because {reason}."
+        if lower.startswith("answer the moderator directly"):
+            option = instruction.split("that ", 1)[1].split(" could fit", 1)[0]
+            reason = instruction.split("this grounded point:", 1)[1].split(". Do not", 1)[0]
+            return f"Yes, I could accept {option} because {reason}."
         if lower.startswith("reply naturally and directly to this question"):
             block = prompt.split("Selected action:\n", 1)[1].split("\n\nRelevant public", 1)[0]
             option_line = next(line for line in block.splitlines() if line.startswith("Use this grounded point"))

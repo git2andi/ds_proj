@@ -5,9 +5,9 @@ from __future__ import annotations
 import json
 import re
 
-from aliases import option_aliases
+from aliases import option_aliases, resolve_visible_vote
 from config_loader import cfg
-from models import ActionType, DialogueState, RunOutcome, Scenario, UserAction
+from models import ActionType, DialogueState, Phase, RunOutcome, Scenario, UserAction
 
 
 def _schema(value: object) -> str:
@@ -267,6 +267,11 @@ def _action_instruction(state: DialogueState, action: UserAction) -> str:
         target = state.persona(action.addressee_id).name if action.addressee_id else "the group"
         return f"Ask {target} one natural question that connects the grounded point to the current exchange: {reason}."
     if action.act is ActionType.ANSWER:
+        if state.phase is Phase.NARROWING:
+            return (
+                f"Answer the moderator's question about whether {focus} fits your requirements. "
+                f"Say no naturally or explain the remaining concern, grounded in: {reason}."
+            )
         question = state.active_thread.source_text if state.active_thread else "the current question"
         return (
             f"Reply naturally and directly to this question: {question}\n"
@@ -283,6 +288,12 @@ def _action_instruction(state: DialogueState, action: UserAction) -> str:
             and action.stance_update.kind.value == "switch_preferred"
         )
         movement = "now prefer" if switching else "could now accept"
+        if state.phase is Phase.NARROWING and not switching:
+            return (
+                f"Answer the moderator directly: say naturally that {focus} could fit your requirements. "
+                f"Explain why using the discussion and this grounded point: {reason}. "
+                "Do not claim that everyone agrees."
+            )
         return (
             f"Show naturally that you {movement} {focus} rather than simply repeating {previous}. "
             f"Ground the reconsideration in the discussion and this point: {reason}. "
@@ -404,31 +415,40 @@ def moderator_stall_prompt(*, variant: int = 0) -> str:
 
 def moderator_compromise_prompt(
     scenario: Scenario,
-    options: tuple[str, ...],
+    leader: str,
+    holdout_names: tuple[str, ...],
     *,
+    preference_count: int,
+    participant_count: int,
+    selected_from_tie: bool = False,
     variant: int = 0,
 ) -> str:
-    names = " and ".join(scenario.option(option_id).short_name for option_id in options)
-    if len(options) == 1:
+    option_name = scenario.option(leader).short_name
+    if len(holdout_names) == 1:
+        people = holdout_names[0]
+    elif len(holdout_names) == 2:
+        people = f"{holdout_names[0]} and {holdout_names[1]}"
+    else:
+        people = f"{', '.join(holdout_names[:-1])}, and {holdout_names[-1]}"
+    if selected_from_tie:
         return _pick_variant(
             variant,
             (
-                f"{names} looks like the clearest common-ground option. Would anyone reconsider their current choice?",
-                f"Before we vote, would anyone be willing to move toward {names}?",
-                f"{names} is the leading option now. Does anyone want to reconsider?",
-                f"Could {names} work as the group choice for anyone who preferred something else?",
+                f"The strongest common-ground options are tied, so I’ll use {option_name} as the compromise target. {people}, would it fit your requirements?",
+                f"Public support is tied at the top, so let’s test {option_name} as the option to narrow around. {people}, could you accept it for the group?",
+                f"There is no unique leader, so I’m selecting {option_name} from the tied options for this compromise check. {people}, would that choice work for you?",
+                f"The leading options remain tied. Let’s use {option_name} as the bounded tie-break target. {people}, could it meet your main requirements?",
             ),
         )
     return _pick_variant(
         variant,
         (
-            f"{names} are the main options now. Would either work for anyone who preferred something else?",
-            f"Before we vote, would anyone be willing to move toward {names}?",
-            f"The choice now seems to be between {names}. Does anyone want to reconsider?",
-            f"Could {names.replace(' and ', ' or ')} work as the group choice?",
+            f"{option_name} currently has {preference_count} of {participant_count} public preferences and the broadest overall support, but not a majority. {people}, would it fit your requirements?",
+            f"{option_name} is currently the leading option, though it is still short of a majority. {people}, could you accept it for the group?",
+            f"The discussion currently leans most toward {option_name}, without a majority yet. {people}, would that choice work for you?",
+            f"{option_name} has the strongest public support so far, but the group is still divided. {people}, could it meet your main requirements?",
         ),
     )
-
 
 def moderator_vote_request(*, scenario: Scenario, variant: int = 0) -> str:
     del scenario
@@ -450,6 +470,20 @@ def deterministic_vote_text(
     variant: int = 0,
 ) -> str:
     name = scenario.option(option_id).short_name
+    choices = (
+        f"My final vote is {name}.",
+        f"I’m voting for {name}.",
+        f"{name} is my final choice.",
+        f"I choose {name}.",
+    )
+    text = _pick_variant(variant, choices)
+    if resolve_visible_vote(text, scenario) == option_id:
+        return text
+
+    # A valid short name can still overlap another option's alias, making the
+    # generic visible-vote resolver intentionally ambiguous. The explicit
+    # option identifier is guaranteed and keeps deterministic voting safe.
+    name = f"Option {option_id}"
     return _pick_variant(
         variant,
         (

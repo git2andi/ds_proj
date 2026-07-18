@@ -87,7 +87,8 @@ def extract_run_metrics(payload: dict[str, Any], run_dir: Path) -> dict[str, Any
     answers = sum((turn.get("action") or {}).get("act") == "answer" for turn in participant_turns)
     votes = payload.get("votes") or {}
     participant_count = len(payload.get("personas") or [])
-    valid_votes = sum(option is not None for option in votes.values())
+    valid_option_ids = {str(option.get("id")) for option in (payload.get("scenario") or {}).get("options", [])}
+    valid_votes = sum(option in valid_option_ids for option in votes.values())
     protocol_errors = len(payload.get("protocol_errors") or [])
     response_failures = int(metrics.get("response_failures", 0))
     consistent = _vote_outcome_consistent(payload)
@@ -137,7 +138,10 @@ def participant_trait_rows(payload: dict[str, Any], run_dir: Path) -> list[dict[
         if turn.get("moderator"):
             continue
         pid = str(turn.get("speaker_id"))
-        texts[pid].append(str(turn.get("text") or ""))
+        action = turn.get("action") or {}
+        # Deterministic vote wording is not a realization of verbosity or directness.
+        if action.get("act") != "vote":
+            texts[pid].append(str(turn.get("text") or ""))
         if turn.get("voluntary"):
             voluntary_counts[pid] += 1
     total_voluntary = sum(voluntary_counts.values())
@@ -156,7 +160,11 @@ def participant_trait_rows(payload: dict[str, Any], run_dir: Path) -> list[dict[
                 "directness": int(traits.get("directness", 0)),
                 "stubbornness": int(traits.get("stubbornness", 0)),
                 "voluntary_turns": voluntary_counts[pid],
-                "normalized_voluntary_share": voluntary_counts[pid] / max(1, total_voluntary),
+                # Relative to equal participation (1.0 = the equal-share baseline),
+                # so participants from different group sizes remain comparable.
+                "normalized_voluntary_share": (
+                    voluntary_counts[pid] * max(1, len(personas)) / max(1, total_voluntary)
+                ),
                 "avg_words": statistics.mean(words) if words else 0.0,
                 "hedge_rate_per_100_words": hedge_rate_per_100_words(texts.get(pid, [])),
                 "inverse_hedge_rate": -hedge_rate_per_100_words(texts.get(pid, [])),

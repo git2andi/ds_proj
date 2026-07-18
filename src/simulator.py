@@ -23,6 +23,7 @@ from models import (
     STANCE_ACCEPTABLE,
     STANCE_DISLIKED,
     STANCE_NEUTRAL,
+    STANCE_PREFERRED,
     STANCE_REJECTED,
     StanceUpdate,
     StanceUpdateKind,
@@ -198,41 +199,88 @@ class UserSimulator:
         self, state: DialogueState, candidates: tuple[str, ...]
     ) -> UserAction:
         runtime = state.runtimes[self.id]
-        if self.persona.hard_blocker:
+        if len(candidates) != 1:
             return self._silence()
-        alternatives = [
-            option_id
-            for option_id in candidates
-            if option_id != runtime.preferred_option
-            and runtime.rank(option_id) >= STANCE_NEUTRAL
-            and option_id not in runtime.hard_rejected_options
-        ]
-        if not alternatives:
+        target = candidates[0]
+        if target == runtime.preferred_option:
             return self._silence()
-        alternatives.sort(key=lambda option_id: runtime.rank(option_id), reverse=True)
-        target = alternatives[0]
-        if self.rng.random() >= movement_probability(self.persona.sim_params.stubbornness):
+
+        rank = runtime.rank(target)
+        already_accepted = target in runtime.public_acceptances
+        can_accept = (
+            not self.persona.hard_blocker
+            and rank >= STANCE_ACCEPTABLE
+            and target not in runtime.hard_rejected_options
+        )
+        should_accept = False
+        if can_accept:
+            if already_accepted or rank >= STANCE_PREFERRED:
+                should_accept = True
+            elif rank == STANCE_ACCEPTABLE:
+                stubbornness = self.persona.sim_params.stubbornness
+                should_accept = (
+                    stubbornness <= 3
+                    or (
+                        stubbornness == 4
+                        and self.rng.random() < movement_probability(stubbornness)
+                    )
+                )
+
+        if should_accept:
+            source, default_reason = self._positive_point(
+                state, target, allow_used=True
+            )
+            reason = runtime.acceptance_reasons.get(target) or default_reason
+            return UserAction(
+                speaker_id=self.id,
+                wants_to_speak=True,
+                priority=BidPriority.THREAD,
+                act=ActionType.ACCEPT,
+                option_focus=(target,),
+                reason=reason,
+                reason_source=source,
+                personal_context=self.persona.private_goal,
+                stance_update=StanceUpdate(
+                    kind=StanceUpdateKind.MAKE_ACCEPTABLE,
+                    option_id=target,
+                    previous_option_id=runtime.preferred_option,
+                    movement_reason=reason,
+                ),
+            )
+
+        if self.rng.random() >= bid_probability(self.persona.sim_params.engagement):
             return self._silence()
-        source, reason = self._positive_point(state, target, allow_used=True)
+        source, reason = self._negative_point(state, target, allow_used=True)
+        if source is None:
+            return self._silence()
         return UserAction(
             speaker_id=self.id,
             wants_to_speak=True,
             priority=BidPriority.NORMAL,
-            act=ActionType.ACCEPT,
+            act=ActionType.ANSWER,
             option_focus=(target,),
             reason=reason,
             reason_source=source,
             personal_context=self.persona.private_goal,
-            stance_update=StanceUpdate(
-                kind=StanceUpdateKind.SWITCH_PREFERRED,
-                option_id=target,
-                previous_option_id=runtime.preferred_option,
-                movement_reason=reason,
-            ),
         )
 
     def decide_vote(self, state: DialogueState) -> UserAction:
-        option_id = state.runtimes[self.id].preferred_option
+        runtime = state.runtimes[self.id]
+        option_id = runtime.preferred_option
+        stance_update = None
+        if (
+            len(state.narrowing_options) == 1
+            and runtime.narrowing_acceptance == state.narrowing_options[0]
+            and not self.persona.hard_blocker
+        ):
+            option_id = state.narrowing_options[0]
+            if option_id != runtime.preferred_option:
+                stance_update = StanceUpdate(
+                    kind=StanceUpdateKind.SWITCH_PREFERRED,
+                    option_id=option_id,
+                    previous_option_id=runtime.preferred_option,
+                    movement_reason=runtime.acceptance_reasons.get(option_id, ""),
+                )
         source, reason = self._positive_point(state, option_id, allow_used=True)
         return UserAction(
             speaker_id=self.id,
@@ -243,6 +291,7 @@ class UserSimulator:
             vote_option=option_id,
             reason=reason,
             reason_source=source,
+            stance_update=stance_update,
         )
 
     def _ordinary_candidates(

@@ -121,13 +121,57 @@ def test_support_and_objection_use_polarity_specific_sources():
     assert neutral is not None and neutral.attribute_name in state.scenario.option("A").attrs
 
 
-def test_unwilling_compromise_returns_silence(monkeypatch):
+def test_highly_stubborn_holdout_can_remain_silent(monkeypatch):
     state = make_state(("A", "B", "C"))
-    simulator = UserSimulator(state.persona("p1"), random.Random(13))
+    persona = make_persona("p1", "Nora", "A", stubbornness=4)
+    state.personas[0] = persona
+    simulator = UserSimulator(persona, random.Random(13))
     monkeypatch.setattr("simulator.movement_probability", lambda _level: 0.0)
+    monkeypatch.setattr("simulator.bid_probability", lambda _level: 0.0)
     action = simulator.compromise_action(state, ("B",))
     assert action.wants_to_speak is False
     assert action.stance_update is None
+
+
+def test_narrowing_rejection_is_grounded_and_does_not_move(monkeypatch):
+    state = make_state(("A", "B", "C"))
+    persona = make_persona("p1", "Nora", "A", stubbornness=4)
+    state.personas[0] = persona
+    simulator = UserSimulator(persona, random.Random(14))
+    monkeypatch.setattr("simulator.movement_probability", lambda _level: 0.0)
+    monkeypatch.setattr("simulator.bid_probability", lambda _level: 1.0)
+    action = simulator.compromise_action(state, ("B",))
+    assert action.act is ActionType.ANSWER
+    assert action.option_focus == ("B",)
+    assert action.reason_source is not None
+    assert action.stance_update is None
+
+
+def test_rank_four_low_stubbornness_accepts_leader_without_random_draw(monkeypatch):
+    state = make_state(("A", "B", "C"))
+    simulator = UserSimulator(state.persona("p1"), random.Random(15))
+    monkeypatch.setattr("simulator.movement_probability", lambda _level: 0.0)
+    action = simulator.compromise_action(state, ("B",))
+    assert action.act is ActionType.ACCEPT
+    assert action.stance_update is not None
+    assert action.stance_update.option_id == "B"
+
+
+def test_prior_public_acceptance_is_reaffirmed_without_second_draw(monkeypatch):
+    state = make_state(("A", "B", "C"))
+    persona = make_persona("p1", "Nora", "A", stubbornness=4)
+    state.personas[0] = persona
+    runtime = state.runtimes["p1"]
+    runtime.public_acceptances.add("B")
+    runtime.acceptance_reasons["B"] = "the relaxed atmosphere already works for me"
+    simulator = UserSimulator(persona, random.Random(16))
+    monkeypatch.setattr("simulator.movement_probability", lambda _level: 0.0)
+    monkeypatch.setattr("simulator.bid_probability", lambda _level: 0.0)
+    action = simulator.compromise_action(state, ("B",))
+    assert action.act is ActionType.ACCEPT
+    assert action.reason == "the relaxed atmosphere already works for me"
+    assert action.stance_update is not None
+    assert action.stance_update.option_id == "B"
 
 
 def test_compare_action_carries_one_grounded_source_per_option():

@@ -3,9 +3,7 @@
 from __future__ import annotations
 
 import csv
-import hashlib
 import json
-import platform
 import subprocess
 from collections import Counter
 from dataclasses import asdict, is_dataclass
@@ -26,12 +24,6 @@ class DialogueLogger:
         slug = "_".join("".join(ch.lower() if ch.isalnum() else " " for ch in topic).split())[:45] or "run"
         self.directory = root / f"{stamp}_{slug}"
         self.directory.mkdir(parents=True, exist_ok=False)
-
-    def write_prompt(self, prompt: str, kind: str) -> str:
-        path = self.directory / str(cfg.output.prompt_file)
-        with path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps({"kind": kind, "prompt": prompt}, ensure_ascii=False) + "\n")
-        return str(path)
 
     def write_run(
         self,
@@ -190,35 +182,24 @@ def _turn_payload(turn: Any) -> dict[str, Any]:
 
 
 def _provenance(*, seed: int, llm: Any | None) -> dict[str, Any]:
-    config_bytes = cfg.path.read_bytes()
-    sampling = _jsonable(cfg.llm.sampling._raw)
     return {
         "seed": int(seed),
-        "dialogue_provider": getattr(llm, "provider", str(cfg.llm.dialogue)),
-        "dialogue_model": getattr(llm, "model_id", str(cfg.llm.models.get(cfg.llm.dialogue))),
-        "sampling": sampling,
-        "config_sha256": hashlib.sha256(config_bytes).hexdigest(),
-        "git_commit": _git_commit(),
-        "python_version": platform.python_version(),
+        "dialogue_provider": getattr(
+            llm,
+            "provider",
+            str(cfg.llm.dialogue),
+        ),
+        "dialogue_model": getattr(
+            llm,
+            "model_id",
+            str(cfg.llm.models.get(cfg.llm.dialogue)),
+        ),
         "scenario_mode": str(cfg.environment.mode),
         "participant_mode": str(cfg.participants.mode),
-        "action_trace_enabled": bool(cfg.output.get("write_action_trace", True)),
+        "action_trace_enabled": bool(
+            cfg.output.get("write_action_trace", True)
+        ),
     }
-
-
-def _git_commit() -> str:
-    try:
-        result = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=cfg.root,
-            capture_output=True,
-            text=True,
-            timeout=2,
-            check=False,
-        )
-        return result.stdout.strip() if result.returncode == 0 else ""
-    except Exception:
-        return ""
 
 
 def _quality_flags(state: DialogueState) -> list[str]:

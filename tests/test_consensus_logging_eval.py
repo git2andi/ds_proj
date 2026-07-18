@@ -1,3 +1,5 @@
+import random
+
 from consensus import derive_narrowing_options, majority_threshold, outcome_from_votes
 from eval import flat_metrics_for
 from logger import metrics_for
@@ -9,12 +11,38 @@ def test_majority_threshold_is_strict():
     assert majority_threshold(4) == 3
 
 
-def test_complete_tie_does_not_invent_leader():
+def test_complete_tie_requires_rng_and_then_selects_one_seeded_target():
     state = make_state(("A", "B", "C"))
     for runtime in state.runtimes.values():
         runtime.public_preference = runtime.preferred_option
     assert derive_narrowing_options(state) == ()
+    assert derive_narrowing_options(state, rng=random.Random(7)) in {
+        ("A",),
+        ("B",),
+        ("C",),
+    }
 
+
+
+
+def test_visible_acceptance_can_break_a_public_preference_tie():
+    state = make_state(("A", "B", "C"))
+    for runtime in state.runtimes.values():
+        runtime.public_preference = runtime.preferred_option
+    state.runtimes["p2"].public_acceptances.add("A")
+    assert derive_narrowing_options(state) == ("A",)
+
+
+def test_majority_supported_tie_can_use_seeded_random_target():
+    state = make_state(("A", "A", "C", "C"))
+    for runtime in state.runtimes.values():
+        runtime.public_preference = runtime.preferred_option
+    state.runtimes["p2"].public_acceptances.add("C")
+    state.runtimes["p3"].public_acceptances.add("A")
+
+    assert derive_narrowing_options(state) == ()
+    selected = derive_narrowing_options(state, rng=random.Random(7))
+    assert selected in {("A",), ("C",)}
 
 def test_vote_outcomes_are_deterministic():
     state = make_state(("A", "A", "B"))

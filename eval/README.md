@@ -22,6 +22,8 @@ eval/logs_eval_suite/
 py .\eval\run_scenarios.py --seed 500 --clean
 ```
 
+`run_scenarios.py` starts two independent scenario processes by default. Use `--workers 1` for sequential execution or another positive value when the configured endpoint can safely handle more concurrency. The parent process alone updates the CSV and summary, so completed rows remain consistent.
+
 `scenarios.txt` uses:
 
 ```text
@@ -35,6 +37,7 @@ py .\eval\run_scenarios.py --list
 py .\eval\run_scenarios.py --limit 10 --seed 500 --clean
 py .\eval\run_scenarios.py --counts 3,4 --seed 500 --clean
 py .\eval\run_scenarios.py --output .\eval\logs_custom --clean
+py .\eval\run_scenarios.py --workers 1 --limit 10 --seed 500 --clean
 ```
 
 The runner refuses to use a nonempty output directory unless `--clean` is given. It writes its manifest incrementally so completed cases remain visible after interruption.
@@ -52,7 +55,7 @@ Outputs:
 - `trait_levels.csv`: trait-level aggregates;
 - `evaluation_summary.md`: concise outcomes, reliability, cost, and trait summary.
 
-The main metrics are setup completion, outcomes, turns, moderator ratio, vote consistency, visible preference changes, generation failures, token use, engagement realization, and verbosity realization. Formal vote wording is deterministic, so vote lines do not add dialogue-generation or repair calls. Directness is included only as an optional lexical hedge-rate proxy.
+The main metrics are setup completion, outcomes, turns, moderator ratio, vote consistency, visible preference changes, generation failures, token use, engagement realization relative to equal participation, and verbosity realization on generated non-vote turns. Formal vote wording is deterministic, so vote lines do not add dialogue-generation or repair calls. Directness is included only as an optional lexical hedge-rate proxy.
 
 ## Independent transcript judges
 
@@ -60,7 +63,7 @@ The main metrics are setup completion, outcomes, turns, moderator ratio, vote co
 py .\eval\judge_transcripts.py --logs .\eval\logs_scenarios --judges 3 --provider uni
 ```
 
-Independent referee roles receive the same scenario, persona cards, visible transcript, votes, and outcome. They score naturalness, coherence, groundedness, persona consistency, and deliberation quality. No referee receives another referee’s assessment.
+Independent referee roles receive the same scenario, persona cards, visible transcript, votes, and outcome. They score naturalness, coherence, groundedness, persona consistency, and deliberation quality. Moderator turns count toward the interaction-level dimensions because they affect the visible exchange, but the moderator is explicitly excluded from persona consistency. No referee receives another referee’s assessment.
 
 Outputs:
 

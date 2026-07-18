@@ -18,11 +18,11 @@ Read `README.md`, `SIMPLIFICATION_ACTION_PLAN.md`, and `info/00_overview.md` bef
 12. Repair is allowed only for openings. Required answers are not semantically rescored or replaced by fallbacks. Formal votes are deterministic; invalid voluntary turns are dropped and logged.
 13. A deterministic opening is a last-resort protocol fallback, not a substitute for accepting valid generated aliases.
 14. Never add an LLM validator or judge to the live dialogue path.
-15. Scenario setup is structurally validated and receives at most one full feedback-guided regeneration. Do not reintroduce generic superlative inference, missing-attribute inference, or selective semantic repair.
+15. Scenario setup is structurally validated and receives three total complete-generation attempts (the initial attempt plus up to two feedback-guided regenerations). Do not reintroduce generic superlative inference, missing-attribute inference, or selective semantic repair.
 16. Alias and participant-name generation share one lightweight setup call after the option board is valid. Request one or two aliases per option and one unique first name per participant. Invalid names use local fallbacks and are propagated consistently through the persona card. Automatic aliases must derive from the full name, contain at least two words and no numbers, remain unique after normalization, and not end in an incomplete connector.
 17. Option coverage is observational only and must not drive mandatory discussion.
-18. A decisive majority proceeds to voting. Only 2–1 and 3–2 majorities and no-majority splits receive one narrowing prompt followed by up to two autonomous movement-bid rounds. No response is forced. During ordinary discussion, an acceptable recently discussed option may become preferred when it already has more public support and the simulator independently chooses movement.
-19. Compromise happens before one authoritative final vote. Do not add routine re-voting.
+18. Any strict public-preference majority proceeds to voting. Without a majority, derive at most one leader from public preferences and visible acceptances. When several strongest options remain tied, use the run's seeded RNG to select one tied option as the bounded compromise target, including complete preference splits. The moderator names current holdouts and asks whether that target fits their requirements. Up to two holdouts may accept it with a grounded reason, reject it with a remaining concern, or remain silent.
+19. Preserve the participant's latest public stance during formal narrowing: a prior visible acceptance of the leader carries forward without another random draw. Otherwise rank-4 holdouts with stubbornness 1–3 accept, rank-4 with stubbornness 4 remains probabilistic, rank-5 accepts, and ranks 1–3 or hard blockers do not move. A positive formal-narrowing acceptance may switch only to the selected public leader in the participant's final vote. Compromise happens before one authoritative final vote; do not allow reciprocal narrowing targets or routine re-voting.
 20. The moderator remains deterministic and sparse: opening, one optional liveness intervention, at most one narrowing question, an optional vote request, and closure. It never narrates whether movement did or did not occur.
 21. Keep realization prompts compact but retain previous-turn connection, varied openings, recent-own-wording avoidance, and natural pronoun/reference guidance.
 22. Keep the runtime explainable for an eight-page project report. Do not add emotions, coalitions, deception, unrestricted memory, or research-scale infrastructure.
@@ -53,4 +53,4 @@ Tests should verify ownership, structural setup, alias isolation, bidding/willin
 - `eval/summarize_runs.py`: deterministic report-facing summary;
 - `eval/judge_transcripts.py`: independent post-hoc LLM judges.
 
-Generated log folders are artifacts, not source. Judges must never be invoked by the runtime.
+Generated log folders are artifacts, not source. Judges must never be invoked by the runtime. Moderator turns contribute to interaction-level judge dimensions, but the moderator is never evaluated as a persona.

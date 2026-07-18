@@ -277,6 +277,7 @@ class ParticipantRuntime:
     public_preference: str | None = None
     public_acceptances: set[str] = field(default_factory=set)
     acceptance_reasons: dict[str, str] = field(default_factory=dict)
+    narrowing_acceptance: str | None = None
     used_point_keys: set[tuple[str, str]] = field(default_factory=set)
     opened_thread_keys: set[tuple[str, str]] = field(default_factory=set)
     voluntary_turns: int = 0

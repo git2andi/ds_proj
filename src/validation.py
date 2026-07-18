@@ -210,6 +210,20 @@ def _allowed_numeric_text(state: DialogueState, action: UserAction) -> str:
     return " ".join(pieces).lower().replace(",", ".")
 
 
+def _numeric_phrase_is_in_focused_option_reference(
+    state: DialogueState, action: UserAction, phrase: str
+) -> bool:
+    normalized = " ".join(phrase.lower().replace(",", ".").split())
+    for option_id in action.option_focus:
+        option = state.scenario.option(option_id)
+        references = (option.name, option.short_name, *option.aliases)
+        for reference in references:
+            candidate = " ".join(str(reference).lower().replace(",", ".").split())
+            if normalized and normalized in candidate:
+                return True
+    return False
+
+
 def _numeric_grounding_errors(
     state: DialogueState, action: UserAction, text: str
 ) -> list[str]:
@@ -217,6 +231,8 @@ def _numeric_grounding_errors(
     errors: list[str] = []
     for match in _NUMBER_RE.findall(text):
         normalized = " ".join(match.lower().replace(",", ".").split())
+        if _numeric_phrase_is_in_focused_option_reference(state, action, normalized):
+            continue
         number = re.search(r"\d+(?:\.\d+)?", normalized)
         if number and number.group(0) not in allowed:
             errors.append(f"unsupported numeric claim: {match.strip()}")

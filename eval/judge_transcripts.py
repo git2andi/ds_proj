@@ -12,6 +12,10 @@ Default paths are ready for the scenario batch:
 Input:  ``eval/logs_scenarios``
 Output: ``eval/logs_judge_scenarios``
 
+The output is resumable. Existing complete judge panels are preserved and
+skipped; incomplete, failed, or newly discovered runs are processed on the next
+invocation. Results are persisted after every run.
+
 The five dimensions use the same 1-5 range as the simulator traits:
 ``naturalness``, ``coherence``, ``groundedness``, ``persona_consistency``, and
 ``deliberation_quality``.
@@ -20,6 +24,7 @@ The five dimensions use the same 1-5 range as the simulator traits:
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
 import json
 import statistics
@@ -80,6 +85,78 @@ def default_output_for(log_root: Path) -> Path:
     return EVAL_DIR / f"logs_judge_{suffix}"
 
 
+def _parse_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value).strip().casefold() in {"1", "true", "yes"}
+
+
+def _parse_number(value: Any) -> Any:
+    text = str(value).strip()
+    if not text:
+        return value
+    try:
+        number = float(text)
+    except ValueError:
+        return value
+    return int(number) if number.is_integer() else number
+
+
+def read_csv_rows(path: Path) -> list[dict[str, Any]]:
+    """Read existing judge output so interrupted runs can resume safely."""
+
+    if not path.exists():
+        return []
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        rows = [dict(row) for row in csv.DictReader(handle)]
+    numeric_fields = {
+        "judges_requested",
+        "judges_completed",
+        "participants",
+        "seed",
+        "judge_order",
+        "retries",
+        "overall",
+        *(DIMENSIONS),
+        *(f"{dimension}_sd" for dimension in DIMENSIONS),
+        *(f"{dimension}_range" for dimension in DIMENSIONS),
+    }
+    for row in rows:
+        if "panel_complete" in row:
+            row["panel_complete"] = _parse_bool(row["panel_complete"])
+        for field in numeric_fields:
+            if field in row:
+                row[field] = _parse_number(row[field])
+    return rows
+
+
+def write_csv_atomic(path: Path, rows: list[dict[str, Any]]) -> None:
+    """Replace one CSV atomically while preserving all accumulated rows."""
+
+    if not rows:
+        path.unlink(missing_ok=True)
+        return
+    temporary = path.with_name(f".{path.name}.tmp")
+    write_csv(temporary, rows)
+    temporary.replace(path)
+
+
+def panel_is_complete_for(
+    row: dict[str, Any] | None,
+    *,
+    judges: int,
+    provider: str,
+    model: str,
+) -> bool:
+    if not row or not _parse_bool(row.get("panel_complete", False)):
+        return False
+    return (
+        int(row.get("judges_requested", 0) or 0) == judges
+        and str(row.get("judge_provider", "")) == provider
+        and str(row.get("judge_model", "")) == model
+    )
+
+
 def run_context(payload: dict[str, Any]) -> str:
     scenario = payload.get("scenario", {})
     raw_context = scenario.get("shared_context", "")
@@ -136,6 +213,8 @@ def judge_prompt(
 {role_description}
 
 You must still score all five dimensions independently. Do not reward consensus merely because it occurred; an unresolved or majority result can be appropriate when the visible preferences justify it. Your assessment must be independent; you receive no other referee scores.
+
+The moderator is not a simulated participant and has no persona. Include moderator turns when judging naturalness, coherence, groundedness, and deliberation quality because they affect the visible interaction, but never include the moderator in persona_consistency. Private persona fields are reference information; do not expect every private detail to be stated aloud.
 
 {context}
 
@@ -363,24 +442,73 @@ def main() -> int:
     log_root = args.logs.resolve()
     output = args.output.resolve() if args.output else default_output_for(log_root)
     run_dirs = [path.resolve() for path in args.runs] if args.runs else find_run_dirs(log_root)
-    if args.limit > 0:
-        run_dirs = run_dirs[: args.limit]
     if not run_dirs:
         print(f"No run.json files found under {log_root}.", file=sys.stderr)
         return 2
 
     llm = LLMClient(provider=args.provider, model=args.model)
     output.mkdir(parents=True, exist_ok=True)
+
+    aggregate_path = output / "judge_scores.csv"
+    detailed_path = output / "judge_scores_detailed.csv"
+    error_path = output / "judge_errors.csv"
+    summary_path = output / "judge_summary.md"
+
+    aggregate_rows = read_csv_rows(aggregate_path)
+    detailed_rows = read_csv_rows(detailed_path)
+    error_rows = read_csv_rows(error_path)
+    aggregate_by_run = {str(row.get("run_id", "")): row for row in aggregate_rows}
+
+    pending: list[tuple[Path, str]] = []
+    skipped = 0
+    for run_dir in run_dirs:
+        try:
+            payload = load_run(run_dir)
+            run_id = str(payload.get("run_id", run_dir.name))
+        except Exception:
+            run_id = run_dir.name
+        if panel_is_complete_for(
+            aggregate_by_run.get(run_id),
+            judges=args.judges,
+            provider=str(llm.provider),
+            model=str(llm.model_id),
+        ):
+            skipped += 1
+            continue
+        pending.append((run_dir, run_id))
+
+    if args.limit > 0:
+        pending = pending[: args.limit]
+
     print(
-        f"Judging {len(run_dirs)} run(s) with {args.judges} referees via "
-        f"{llm.provider}/{llm.model_id}"
+        f"Found {len(run_dirs)} completed run(s); skipping {skipped} already judged "
+        f"panel(s). Judging {len(pending)} pending run(s) with {args.judges} "
+        f"referees via {llm.provider}/{llm.model_id}."
     )
 
-    aggregate_rows: list[dict[str, Any]] = []
-    detailed_rows: list[dict[str, Any]] = []
-    error_rows: list[dict[str, Any]] = []
-    for index, run_dir in enumerate(run_dirs, start=1):
-        print(f"[{index}/{len(run_dirs)}] {run_dir.name}")
+    if not pending:
+        write_summary(aggregate_rows, error_rows, summary_path)
+        print("No new or incomplete runs require judging.")
+        print(f"Aggregate scores: {aggregate_path}")
+        print(f"Detailed scores: {detailed_path}")
+        print(f"Summary: {summary_path}")
+        return 0
+
+    for index, (run_dir, known_run_id) in enumerate(pending, start=1):
+        print(f"[{index}/{len(pending)}] {run_dir.name}")
+
+        # Remove only stale rows for this run. Results from every other finished
+        # run remain untouched, including across interrupted invocations.
+        aggregate_rows = [
+            row for row in aggregate_rows if str(row.get("run_id", "")) != known_run_id
+        ]
+        detailed_rows = [
+            row for row in detailed_rows if str(row.get("run_id", "")) != known_run_id
+        ]
+        error_rows = [
+            row for row in error_rows if str(row.get("run_id", "")) != known_run_id
+        ]
+
         try:
             aggregate, detailed, errors = judge_run(
                 run_dir,
@@ -394,7 +522,7 @@ def main() -> int:
         except Exception as exc:
             error_rows.append(
                 {
-                    "run_id": run_dir.name,
+                    "run_id": known_run_id,
                     "judge": "run_loader",
                     "error": f"{type(exc).__name__}: {exc}",
                     "log_dir": str(run_dir),
@@ -402,25 +530,28 @@ def main() -> int:
             )
             aggregate_rows.append(
                 {
-                    "run_id": run_dir.name,
+                    "run_id": known_run_id,
+                    "judge_provider": str(llm.provider),
+                    "judge_model": str(llm.model_id),
                     "panel_complete": False,
                     "judges_requested": args.judges,
                     "judges_completed": 0,
                     "log_dir": str(run_dir),
                 }
             )
-        write_csv(output / "judge_scores.csv", aggregate_rows)
-        if detailed_rows:
-            write_csv(output / "judge_scores_detailed.csv", detailed_rows)
-        if error_rows:
-            write_csv(output / "judge_errors.csv", error_rows)
-        write_summary(aggregate_rows, error_rows, output / "judge_summary.md")
 
-    print(f"\nAggregate scores: {output / 'judge_scores.csv'}")
-    print(f"Detailed scores: {output / 'judge_scores_detailed.csv'}")
-    print(f"Summary: {output / 'judge_summary.md'}")
+        write_csv_atomic(aggregate_path, aggregate_rows)
+        write_csv_atomic(detailed_path, detailed_rows)
+        write_csv_atomic(error_path, error_rows)
+        temporary_summary = summary_path.with_name(f".{summary_path.name}.tmp")
+        write_summary(aggregate_rows, error_rows, temporary_summary)
+        temporary_summary.replace(summary_path)
+
+    print(f"\nAggregate scores: {aggregate_path}")
+    print(f"Detailed scores: {detailed_path}")
+    print(f"Summary: {summary_path}")
     if error_rows:
-        print(f"Errors: {output / 'judge_errors.csv'}")
+        print(f"Errors: {error_path}")
     return 0
 
 

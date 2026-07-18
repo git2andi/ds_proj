@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+import random
 from collections import Counter
 
 from config_loader import cfg
@@ -17,39 +18,51 @@ def public_preference_counts(state: DialogueState) -> Counter[str]:
     )
 
 
-def public_acceptance_counts(state: DialogueState) -> Counter[str]:
+def public_support_counts(state: DialogueState) -> Counter[str]:
+    """Count each participant once per publicly supported option."""
+
     counts: Counter[str] = Counter()
     for runtime in state.runtimes.values():
-        for option_id in runtime.public_acceptances:
+        supported = set(runtime.public_acceptances)
+        if runtime.public_preference in state.scenario.option_ids:
+            supported.add(runtime.public_preference)
+        for option_id in supported:
             if option_id in state.scenario.option_ids:
                 counts[option_id] += 1
     return counts
 
 
-def derive_narrowing_options(state: DialogueState) -> tuple[str, ...]:
-    """Derive a leader/top pair only from latest visible public positions.
+def derive_narrowing_options(
+    state: DialogueState,
+    *,
+    rng: random.Random | None = None,
+) -> tuple[str, ...]:
+    """Return one public leader from visible preferences and acceptances.
 
-    A complete tie does not fabricate finalists. Public acceptability is used
-    only as a common-ground fallback when one option is acceptable to a
-    majority of the group.
+    The leader is chosen from current public preferences and visible
+    acceptances. Current preference counts first break a support tie. If
+    several top options remain tied, a supplied seeded RNG selects one as the
+    bounded compromise target. The moderator therefore always gets one target
+    for a no-majority tie without forcing any participant to accept it.
     """
 
-    preferences = public_preference_counts(state)
-    if preferences:
-        highest = max(preferences.values())
-        leaders = sorted(option_id for option_id, count in preferences.items() if count == highest)
-        if len(leaders) == 1:
-            return (leaders[0],)
-        if len(leaders) == 2:
-            return tuple(leaders)
+    support = public_support_counts(state)
+    if not support:
+        return ()
+    highest = max(support.values())
+    leaders = [option_id for option_id, count in support.items() if count == highest]
+    if len(leaders) == 1:
+        return (leaders[0],)
 
-    threshold = majority_threshold(len(state.personas))
-    acceptances = public_acceptance_counts(state)
-    common = sorted(option_id for option_id, count in acceptances.items() if count >= threshold)
-    if len(common) == 1:
-        return (common[0],)
-    if len(common) == 2:
-        return tuple(common)
+    preferences = public_preference_counts(state)
+    preference_highest = max((preferences[option_id] for option_id in leaders), default=0)
+    preference_leaders = sorted(
+        option_id for option_id in leaders if preferences[option_id] == preference_highest
+    )
+    if len(preference_leaders) == 1:
+        return (preference_leaders[0],)
+    if rng is not None and preference_leaders:
+        return (rng.choice(preference_leaders),)
     return ()
 
 
