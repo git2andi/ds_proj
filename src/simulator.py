@@ -7,6 +7,7 @@ it wants the floor. The floor manager only arbitrates between intact bids.
 from __future__ import annotations
 
 import random
+from collections import Counter
 from dataclasses import dataclass
 from typing import Iterable
 
@@ -198,7 +199,7 @@ class UserSimulator:
     ) -> UserAction:
         runtime = state.runtimes[self.id]
         if self.persona.hard_blocker:
-            return self._maintain_action(state, candidates)
+            return self._silence()
         alternatives = [
             option_id
             for option_id in candidates
@@ -207,11 +208,11 @@ class UserSimulator:
             and option_id not in runtime.hard_rejected_options
         ]
         if not alternatives:
-            return self._maintain_action(state, candidates)
+            return self._silence()
         alternatives.sort(key=lambda option_id: runtime.rank(option_id), reverse=True)
         target = alternatives[0]
         if self.rng.random() >= movement_probability(self.persona.sim_params.stubbornness):
-            return self._maintain_action(state, candidates)
+            return self._silence()
         source, reason = self._positive_point(state, target, allow_used=True)
         return UserAction(
             speaker_id=self.id,
@@ -264,7 +265,7 @@ class UserSimulator:
 
         comparison = self._compare_action(state)
         if comparison:
-            candidates.append((comparison, 0.80))
+            candidates.append((comparison, 0.20))
 
         question = self._question_action(state)
         if question:
@@ -308,7 +309,7 @@ class UserSimulator:
                 candidates.append((self._action(ActionType.OBJECT, (target,), reason, source), 1.1))
         compare = self._compare_action(state, forced_target=target)
         if compare:
-            candidates.append((compare, 0.8))
+            candidates.append((compare, 0.25))
         return self._deduplicate(candidates)
 
     def _support_action(self, state: DialogueState) -> UserAction | None:
@@ -335,6 +336,8 @@ class UserSimulator:
             source, reason = self._positive_point(state, target)
         else:
             source, reason = self._negative_point(state, target)
+        if source is None:
+            source, reason = self._neutral_point(state, target)
         if source is None:
             return None
         return self._action(
@@ -370,31 +373,70 @@ class UserSimulator:
         self, state: DialogueState, *, forced_target: str | None = None
     ) -> UserAction | None:
         runtime = state.runtimes[self.id]
+        recent_acts = [
+            turn.action.act
+            for turn in state.participant_turns[-2:]
+            if turn.action is not None
+        ]
+        if ActionType.COMPARE in recent_acts:
+            return None
+        if forced_target is None and runtime.voluntary_turns == 0:
+            return None
+
         targets = [forced_target] if forced_target else [
             other.public_preference
             for pid, other in state.runtimes.items()
             if pid != self.id and other.public_preference != runtime.preferred_option
         ]
-        targets = [target for target in targets if target in state.scenario.option_ids]
-        if not targets:
-            return None
-        target = self.rng.choice(targets)
-        own_source, own_reason = self._positive_point(
-            state, runtime.preferred_option
-        )
-        if runtime.rank(target) >= STANCE_ACCEPTABLE:
-            other_source, other_reason = self._positive_point(state, target)
-        else:
-            other_source, other_reason = self._negative_point(state, target)
-        if own_source is None or other_source is None:
-            return None
-        reason = f"{own_reason}; compared with {other_reason}"
-        return self._action(
-            ActionType.COMPARE,
-            (runtime.preferred_option, target),
-            reason,
-            own_source,
-        )
+        targets = [
+            target
+            for target in targets
+            if target in state.scenario.option_ids
+            and target != runtime.preferred_option
+        ]
+        self.rng.shuffle(targets)
+
+        own_option = state.scenario.option(runtime.preferred_option)
+        for target in targets:
+            other_option = state.scenario.option(target)
+            shared = [
+                key
+                for key in own_option.attrs
+                if key in other_option.attrs
+                and str(own_option.attrs[key]).strip()
+                and str(other_option.attrs[key]).strip()
+            ]
+            fresh = [
+                key
+                for key in shared
+                if (runtime.preferred_option, key.strip().lower()) not in state.recent_point_keys
+                and (target, key.strip().lower()) not in state.recent_point_keys
+            ]
+            choices = fresh or shared
+            if not choices:
+                continue
+            attribute = self.rng.choice(choices)
+            own_source = ReasonSource(
+                runtime.preferred_option, attribute, str(own_option.attrs[attribute])
+            )
+            other_source = ReasonSource(
+                target, attribute, str(other_option.attrs[attribute])
+            )
+            reason = (
+                f"compare {re_sub_words(attribute)}: "
+                f"{own_source.public_value} and {other_source.public_value}"
+            )
+            return UserAction(
+                speaker_id=self.id,
+                wants_to_speak=True,
+                priority=BidPriority.NORMAL,
+                act=ActionType.COMPARE,
+                option_focus=(runtime.preferred_option, target),
+                reason=reason,
+                comparison_sources=(own_source, other_source),
+                personal_context=self.persona.private_goal,
+            )
+        return None
 
     def _question_action(self, state: DialogueState) -> UserAction | None:
         if any(
@@ -494,6 +536,7 @@ class UserSimulator:
         if self.rng.random() >= movement_probability(self.persona.sim_params.stubbornness):
             return None
         source, reason = self._positive_point(state, target, allow_used=True)
+        switch = self._should_switch_during_discussion(state, target)
         return UserAction(
             speaker_id=self.id,
             wants_to_speak=True,
@@ -504,33 +547,54 @@ class UserSimulator:
             reason_source=source,
             personal_context=self.persona.private_goal,
             stance_update=StanceUpdate(
-                kind=StanceUpdateKind.MAKE_ACCEPTABLE,
+                kind=(
+                    StanceUpdateKind.SWITCH_PREFERRED
+                    if switch
+                    else StanceUpdateKind.MAKE_ACCEPTABLE
+                ),
                 option_id=target,
                 previous_option_id=runtime.preferred_option,
                 movement_reason=reason,
             ),
         )
 
-    def _maintain_action(
-        self, state: DialogueState, candidates: tuple[str, ...]
-    ) -> UserAction:
+    def _should_switch_during_discussion(
+        self, state: DialogueState, target: str
+    ) -> bool:
+        """Allow an occasional grounded switch when it can help convergence.
+
+        The target must already be visible in the recent exchange and have at
+        least as much public support as the participant's current preference.
+        The ordinary stubbornness movement draw has already succeeded before
+        this helper is called.
+        """
         runtime = state.runtimes[self.id]
-        source, reason = self._positive_point(
-            state, runtime.preferred_option, allow_used=True
+        recent_focus = {
+            option_id
+            for turn in state.participant_turns[-3:]
+            if turn.action is not None
+            for option_id in turn.action.option_focus
+        }
+        if target not in recent_focus:
+            return False
+        counts = Counter(
+            other.public_preference
+            for other in state.runtimes.values()
+            if other.public_preference in state.scenario.option_ids
         )
-        focus = (runtime.preferred_option,) if runtime.preferred_option in state.scenario.option_ids else candidates[:1]
-        return self._action(ActionType.SUPPORT, focus, reason, source)
+        return counts[target] > counts[runtime.preferred_option]
 
     def _positive_point(
         self, state: DialogueState, option_id: str, *, allow_used: bool = False
     ) -> tuple[ReasonSource | None, str]:
         option = state.scenario.option(option_id)
         stance = self.persona.option_stances.get(option_id)
-        points: list[tuple[ReasonSource, str]] = []
-        if option.upside:
-            points.append((ReasonSource(option_id, "upside", option.upside), stance.reason_for if stance and stance.reason_for else option.upside))
-        for key, value in option.attrs.items():
-            points.append((ReasonSource(option_id, key, value), self._fact_reason(key, value)))
+        points = [
+            (
+                ReasonSource(option_id, "upside", option.upside),
+                stance.reason_for if stance and stance.reason_for else option.upside,
+            )
+        ] if option.upside else []
         return self._choose_point(state, points, allow_used=allow_used)
 
     def _negative_point(
@@ -543,17 +607,32 @@ class UserSimulator:
     ) -> tuple[ReasonSource | None, str]:
         option = state.scenario.option(option_id)
         stance = self.persona.option_stances.get(option_id)
-        points: list[tuple[ReasonSource, str]] = []
-        if option.concern:
-            points.append((ReasonSource(option_id, "concern", option.concern), stance.reason_against if stance and stance.reason_against else option.concern))
-        for key, value in option.attrs.items():
-            points.append((ReasonSource(option_id, key, value), self._fact_reason(key, value)))
+        points = [
+            (
+                ReasonSource(option_id, "concern", option.concern),
+                stance.reason_against if stance and stance.reason_against else option.concern,
+            )
+        ] if option.concern else []
         if require_publicly_unseen:
             points = [
                 point
                 for point in points
                 if state.public_point_counts.get(point[0].point_key, 0) == 0
             ]
+        return self._choose_point(state, points, allow_used=allow_used)
+
+    def _neutral_point(
+        self,
+        state: DialogueState,
+        option_id: str,
+        *,
+        allow_used: bool = False,
+    ) -> tuple[ReasonSource | None, str]:
+        option = state.scenario.option(option_id)
+        points = [
+            (ReasonSource(option_id, key, value), self._fact_reason(key, value))
+            for key, value in option.attrs.items()
+        ]
         return self._choose_point(state, points, allow_used=allow_used)
 
     def _choose_point(
@@ -626,7 +705,7 @@ class UserSimulator:
         seen: set[tuple[object, ...]] = set()
         result: list[tuple[UserAction, float]] = []
         for action, weight in candidates:
-            identity = (action.act, action.option_focus, action.point_key, action.addressee_id)
+            identity = (action.act, action.option_focus, action.point_keys, action.addressee_id)
             if identity in seen:
                 continue
             seen.add(identity)

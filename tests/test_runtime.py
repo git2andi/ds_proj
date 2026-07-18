@@ -4,7 +4,7 @@ import pytest
 
 from config_loader import cfg
 from dialogue import DialogueRunner
-from models import ActionType, Phase
+from models import ActionType, BidPriority, DiscussionThread, Phase, ReasonSource, ThreadKind, UserAction
 from tests.fixtures import ActionRendererLLM, NullLogger, make_persona, make_personas, make_runner, make_scenario
 
 
@@ -76,13 +76,32 @@ def test_hard_blocker_votes_for_own_option():
     assert result.state.votes["p1"] == "C"
 
 
-def test_failed_required_answer_uses_fallback():
-    # Openings consume three valid scripted outputs. The first discussion output
-    # is a direct question from the renderer; force subsequent answer attempts
-    # empty through a renderer subclass would be brittle, so exercise the helper.
-    runner = make_runner(seed=12)
-    action = runner._simulators["p2"].opening_action(runner.state)
-    assert "final vote" not in runner._answer_fallback_text(action).lower()
+def test_required_answer_keeps_original_text_without_repair_or_fallback():
+    llm = ActionRendererLLM(scripted=["Cafe has a relaxed atmosphere."])
+    runner = make_runner(llm=llm, seed=12)
+    runner.state.active_thread = DiscussionThread(
+        "t1",
+        ThreadKind.QUESTION,
+        "p1",
+        ("B",),
+        ("B", "noise"),
+        "Does background noise make Cafe unsuitable?",
+        required_answer_pending=True,
+    )
+    action = UserAction(
+        "p2",
+        True,
+        BidPriority.REQUIRED,
+        ActionType.ANSWER,
+        ("B",),
+        reason="background noise",
+        reason_source=ReasonSource("B", "noise", "moderate"),
+    )
+    record = runner._realize_and_commit(action, mandatory=True, voluntary=False)
+    assert record is not None
+    assert record.text == "Cafe has a relaxed atmosphere."
+    assert runner.state.stats.repair_calls == 0
+    assert runner.state.stats.fallback_turns == 0
 
 
 def test_empty_opening_uses_last_resort_fallback():
@@ -109,3 +128,42 @@ def test_only_one_formal_vote_round_is_visible():
     assert len(vote_turns) == len(result.state.personas)
     assert result.state.vote_round == 1
     assert set(result.state.vote_records) == {1}
+
+
+def test_formal_votes_are_deterministic_and_use_no_llm_calls_for_voting():
+    llm = ActionRendererLLM()
+    result = make_runner(("A", "B", "C"), llm=llm, seed=41).run()
+    vote_attempts = [
+        attempt
+        for attempt in result.state.generation_attempts
+        if attempt.phase is Phase.VOTING
+    ]
+    assert len(vote_attempts) == len(result.state.personas)
+    assert all(attempt.final_status == "deterministic" for attempt in vote_attempts)
+    assert all(attempt.repair_text is None for attempt in vote_attempts)
+    assert result.state.stats.repair_calls == sum(
+        attempt.repair_text is not None for attempt in result.state.generation_attempts
+    )
+
+
+def test_compromise_prompt_waits_without_follow_up_moderator_commentary():
+    result = make_runner(
+        ("A", "B", "C"),
+        seed=42,
+        alternatives_acceptable=False,
+    ).run()
+    narrowing_moderator = [
+        turn
+        for turn in result.state.turns
+        if turn.moderator and turn.phase is Phase.NARROWING
+    ]
+    narrowing_participants = [
+        turn
+        for turn in result.state.participant_turns
+        if turn.phase is Phase.NARROWING
+    ]
+    assert len(narrowing_moderator) == 1
+    assert "?" in narrowing_moderator[0].text
+    assert not narrowing_participants
+    index = result.state.turns.index(narrowing_moderator[0])
+    assert result.state.turns[index + 1].action.act is ActionType.VOTE

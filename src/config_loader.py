@@ -257,8 +257,8 @@ class Config(Section):
         if any(not value.strip() for value in directness.values()):
             raise ValueError("directness instructions must be non-empty")
         caps = language.get("action_max_words")
-        if not isinstance(caps, dict) or set(caps) != {"ask", "answer", "vote"}:
-            raise ValueError("language.action_max_words must contain ask, answer, and vote")
+        if not isinstance(caps, dict) or set(caps) != {"ask", "answer"}:
+            raise ValueError("language.action_max_words must contain ask and answer")
 
     def level_value(self, section_name: str, mapping_name: str, level: int, *, cast=float):
         values = self._level_mapping(self._raw.get(section_name) or {}, mapping_name, cast=cast)

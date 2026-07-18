@@ -210,6 +210,37 @@ def _fallback_person_name(participant_id: str, used_names: set[str]) -> str:
     raise ValueError("no unique fallback participant name is available")
 
 
+def _derived_alias_candidates(option_name: str) -> list[str]:
+    words = re.findall(r"[A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’-]+", option_name)
+    if words and words[0].casefold() in {"the", "a", "an"}:
+        words = words[1:]
+    if len(words) < 2:
+        return []
+    candidates = [" ".join(words[:2])]
+    if len(words) >= 3:
+        candidates.append(" ".join(words[-2:]))
+    return candidates[:2]
+
+
+def _retarget_person_text(text: object, raw_name: object, new_name: str) -> str:
+    value = " ".join(str(text or "").split())
+    original = " ".join(str(raw_name or "").split())
+    if not value or not original:
+        return value
+    candidates = [original]
+    first = original.split()[0]
+    if first != original:
+        candidates.append(first)
+    for candidate in candidates:
+        value = re.sub(
+            rf"(?<!\w){re.escape(candidate)}(?!\w)",
+            new_name,
+            value,
+            flags=re.I,
+        )
+    return value
+
+
 class SetupBuilder:
     def __init__(
         self,
@@ -232,6 +263,7 @@ class SetupBuilder:
             self.topic = str(self._manual_env["topic"]).strip()
         self._llm = llm or get_llm_client()
         self._hard_blocker_id: str | None = None
+        self._generated_names: dict[str, str] = {}
 
     def build(self, n: int) -> tuple[Scenario, list[Persona]]:
         if self._profiles and len(self._profiles) != n:
@@ -247,6 +279,7 @@ class SetupBuilder:
         else:
             scenario = self._generate_scenario(n)
 
+        self._apply_setup_names(traits, scenario)
         preferences = self._preference_assignments(n, scenario.option_ids, shape)
         if self._profiles_complete():
             personas = self._personas_from_profiles(traits, preferences, scenario)
@@ -271,7 +304,8 @@ class SetupBuilder:
         return scenario
 
     def _generate_scenario(self, n: int) -> Scenario:
-        attempts = min(2, max(1, int(cfg.simulation.setup_generation_attempts)))
+        self._generated_names = {}
+        attempts = max(1, int(cfg.simulation.setup_generation_attempts))
         feedback = ""
         errors: list[str] = []
         for attempt in range(attempts):
@@ -282,7 +316,7 @@ class SetupBuilder:
                 self._validate_scenario(scenario, automatic=True, aliases_ready=False)
                 if attempt:
                     scenario.setup_notes.append("scenario_regenerated_after_validation_error")
-                self._assign_generated_aliases(scenario)
+                self._assign_generated_metadata(scenario, n)
                 self._validate_scenario(scenario, automatic=True, aliases_ready=True)
                 return scenario
             except Exception as exc:
@@ -373,13 +407,18 @@ class SetupBuilder:
         if automatic:
             self._validate_participant_references(scenario.context_text)
 
-    def _assign_generated_aliases(self, scenario: Scenario) -> None:
-        """Add natural references without risking regeneration of a valid board."""
+    def _assign_generated_metadata(self, scenario: Scenario, n: int) -> None:
+        """Add aliases and fixed participant names without risking the valid board."""
 
         rows = [{"id": option.id, "name": option.name} for option in scenario.options]
-        proposed: dict[str, list[str]] = {}
+        participant_ids = [f"p{index + 1}" for index in range(n)]
+        proposed: dict[str, list[str]] = {
+            option.id: [] for option in scenario.options
+        }
         try:
-            raw = self._llm.generate_json(setup_aliases(rows), profile="setup")
+            raw = self._llm.generate_json(
+                setup_aliases(rows, participant_ids), profile="setup"
+            )
             alias_rows = raw.get("aliases", raw) if isinstance(raw, dict) else raw
             if not isinstance(alias_rows, list):
                 raise ValueError("alias response must contain a list")
@@ -389,9 +428,32 @@ class SetupBuilder:
                 option_id = str(row.get("id") or "").strip().upper()
                 values = row.get("aliases") or []
                 if option_id in scenario.option_ids and isinstance(values, list):
-                    proposed[option_id] = [str(value) for value in values]
+                    proposed[option_id].extend(str(value) for value in values)
+
+            name_rows = (raw.get("participant_names") or []) if isinstance(raw, dict) else []
+            if isinstance(name_rows, list):
+                used: set[str] = set()
+                for row in name_rows:
+                    if not isinstance(row, dict):
+                        continue
+                    participant_id = str(row.get("id") or "").strip()
+                    if participant_id not in participant_ids:
+                        continue
+                    try:
+                        name = _validated_person_name(
+                            row.get("name"), participant_id=participant_id
+                        )
+                    except ValueError:
+                        continue
+                    if name.casefold() in used:
+                        continue
+                    used.add(name.casefold())
+                    self._generated_names[participant_id] = name
         except Exception:
-            scenario.setup_notes.append("alias_generation_fell_back_to_full_names")
+            scenario.setup_notes.append("alias_generation_used_derived_fallbacks")
+
+        for option in scenario.options:
+            proposed[option.id].extend(_derived_alias_candidates(option.name))
 
         accepted = unique_generated_aliases(
             {option.id: option.name for option in scenario.options},
@@ -406,8 +468,35 @@ class SetupBuilder:
             generated_count += len(aliases)
         if generated_count:
             scenario.setup_notes.append("generated_option_aliases")
-        elif "alias_generation_fell_back_to_full_names" not in scenario.setup_notes:
+        elif "alias_generation_used_derived_fallbacks" not in scenario.setup_notes:
             scenario.setup_notes.append("alias_generation_returned_no_usable_aliases")
+        if self._generated_names:
+            scenario.setup_notes.append("generated_participant_names")
+
+    def _apply_setup_names(
+        self, trait_rows: list[dict[str, Any]], scenario: Scenario
+    ) -> None:
+        """Pin one valid unique name per automatic participant before persona generation."""
+
+        used = {
+            str(row.get("name")).casefold()
+            for row in trait_rows
+            if row.get("name")
+        }
+        for row in trait_rows:
+            if row.get("name"):
+                continue
+            participant_id = str(row["id"])
+            proposed = self._generated_names.get(participant_id)
+            try:
+                name = _validated_person_name(proposed, participant_id=participant_id)
+                if name.casefold() in used:
+                    raise ValueError(f"duplicate generated name {name!r}")
+            except ValueError:
+                name = _fallback_person_name(participant_id, used)
+                scenario.setup_notes.append(f"fallback_name_assigned:{participant_id}")
+            row["name"] = name
+            used.add(name.casefold())
 
     @staticmethod
     def _validate_participant_references(context: str) -> None:
@@ -585,18 +674,26 @@ class SetupBuilder:
         for pid, trait in traits_by_id.items():
             row = dict(raw_by_id[pid])
             profile = self._profile_for(pid)
-            explicit_name = profile.get("name")
-            if explicit_name:
-                row["name"] = explicit_name
-            try:
-                name = _validated_person_name(row.get("name"), participant_id=pid)
+            response_name = row.get("name")
+            fixed_name = profile.get("name") or trait.get("name")
+            used_fallback = False
+            if fixed_name:
+                name = _validated_person_name(fixed_name, participant_id=pid)
                 if name.casefold() in used_names:
-                    raise ValueError(f"duplicate generated name {name!r}")
-            except ValueError:
-                if explicit_name:
-                    raise
-                name = _fallback_person_name(pid, used_names)
-                scenario.setup_notes.append(f"fallback_name_assigned:{pid}")
+                    if profile.get("name"):
+                        raise ValueError(f"duplicate configured name {name!r}")
+                    name = _fallback_person_name(pid, used_names)
+                    used_fallback = True
+                    scenario.setup_notes.append(f"fallback_name_assigned:{pid}")
+            else:
+                try:
+                    name = _validated_person_name(response_name, participant_id=pid)
+                    if name.casefold() in used_names:
+                        raise ValueError(f"duplicate generated name {name!r}")
+                except ValueError:
+                    name = _fallback_person_name(pid, used_names)
+                    used_fallback = True
+                    scenario.setup_notes.append(f"fallback_name_assigned:{pid}")
             used_names.add(name.casefold())
             hard = bool(trait.get("hard_blocker"))
             params = SimulatorParameters(**trait["traits"]).validated(hard_blocker=hard)
@@ -613,19 +710,32 @@ class SetupBuilder:
             )
             age = _sample_age(self.rng, {**row, **profile})
             speech_style = str(profile.get("speech_style") or _speech_style_for_age(age))
+            background = profile.get("description") or row.get("background")
+            private_goal = profile.get("private_goal") or row.get("private_goal")
+            name_changed = bool(
+                response_name
+                and str(response_name).strip().casefold() != name.casefold()
+            )
+            if used_fallback or name_changed:
+                background = _retarget_person_text(background, response_name, name)
+                private_goal = _retarget_person_text(private_goal, response_name, name)
+                rejection_reason = _retarget_person_text(
+                    rejection_reason, response_name, name
+                )
+                for stance in stances.values():
+                    stance.reason_for = _retarget_person_text(
+                        stance.reason_for, response_name, name
+                    )
+                    stance.reason_against = _retarget_person_text(
+                        stance.reason_against, response_name, name
+                    )
             personas.append(
                 Persona(
                     id=pid,
                     name=name,
                     sim_params=params,
-                    background=_require(
-                        profile.get("description") or row.get("background"),
-                        f"participant {pid} background",
-                    ),
-                    private_goal=_require(
-                        profile.get("private_goal") or row.get("private_goal"),
-                        f"participant {pid} private_goal",
-                    ),
+                    background=_require(background, f"participant {pid} background"),
+                    private_goal=_require(private_goal, f"participant {pid} private_goal"),
                     preferred_options=[preferred],
                     age=age,
                     speech_style=speech_style,

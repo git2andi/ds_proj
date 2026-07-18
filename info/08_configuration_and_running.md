@@ -15,7 +15,7 @@ Main sections:
 - `language`: word budgets and directness instructions;
 - `moderator`, `consensus`, `limits`, and `output`.
 
-The separate alias call uses the setup sampling profile. It does not consume an additional scenario-generation attempt and cannot invalidate a structurally valid board.
+The separate alias-and-name metadata call uses the setup sampling profile. It does not consume an additional scenario-generation attempt and cannot invalidate a structurally valid board. Dialogue sampling applies to realized turns. The repair profile is used only for a failed opening; required answers are not repaired or replaced. Formal votes are deterministic.
 
 Install and run:
 

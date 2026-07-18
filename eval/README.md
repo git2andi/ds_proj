@@ -52,7 +52,7 @@ Outputs:
 - `trait_levels.csv`: trait-level aggregates;
 - `evaluation_summary.md`: concise outcomes, reliability, cost, and trait summary.
 
-The main metrics are setup completion, outcomes, turns, moderator ratio, vote consistency, visible preference changes, generation failures, token use, engagement realization, and verbosity realization. Directness is included only as an optional lexical hedge-rate proxy.
+The main metrics are setup completion, outcomes, turns, moderator ratio, vote consistency, visible preference changes, generation failures, token use, engagement realization, and verbosity realization. Formal vote wording is deterministic, so vote lines do not add dialogue-generation or repair calls. Directness is included only as an optional lexical hedge-rate proxy.
 
 ## Independent transcript judges
 

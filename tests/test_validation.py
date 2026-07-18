@@ -13,7 +13,7 @@ def test_workable_is_visible_acceptance():
     assert validate_realization(state, state.persona("p1"), action, "Cafe is workable for me now.") == []
 
 
-def test_unrelated_answer_is_rejected():
+def test_answer_is_not_semantically_reinterpreted_by_validator():
     state = make_state()
     state.active_thread = DiscussionThread(
         "t1", ThreadKind.QUESTION, "p1", ("B",), ("B", "noise"),
@@ -21,7 +21,7 @@ def test_unrelated_answer_is_rejected():
     )
     action = UserAction("p2", True, BidPriority.REQUIRED, ActionType.ANSWER, ("B",), reason="background noise")
     errors = validate_realization(state, state.persona("p2"), action, "Cafe has a relaxed atmosphere.")
-    assert "answer does not address the active question" in errors
+    assert errors == []
 
 
 def test_relevant_answer_is_accepted():
@@ -77,3 +77,129 @@ def test_movement_still_requires_explicit_option_reference():
     )
     errors = validate_realization(state, state.persona("p1"), action, "That is workable for me now.")
     assert "focused option is not visible" in errors
+
+
+def test_movement_accepts_natural_positive_shift_phrasing():
+    state = make_state()
+    action = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.ACCEPT, ("B",),
+        reason="relaxed atmosphere",
+        stance_update=StanceUpdate(
+            StanceUpdateKind.SWITCH_PREFERRED,
+            "B",
+            "A",
+            "relaxed atmosphere",
+        ),
+    )
+    assert validate_realization(
+        state,
+        state.persona("p1"),
+        action,
+        "Cafe works better for me now because the atmosphere is more relaxed.",
+    ) == []
+
+
+def test_relevant_evaluative_answer_does_not_require_yes_or_no():
+    state = make_state()
+    state.active_thread = DiscussionThread(
+        "t1",
+        ThreadKind.QUESTION,
+        "p1",
+        ("B",),
+        ("B", "noise"),
+        "How does the background noise affect whether Cafe works?",
+        required_answer_pending=True,
+    )
+    action = UserAction(
+        "p2",
+        True,
+        BidPriority.REQUIRED,
+        ActionType.ANSWER,
+        ("B",),
+        reason="background noise",
+    )
+    assert validate_realization(
+        state,
+        state.persona("p2"),
+        action,
+        "The background noise makes focused work harder for me.",
+    ) == []
+
+
+def test_ensures_is_not_a_hard_grounding_failure():
+    state = make_state()
+    action = UserAction(
+        "p1",
+        True,
+        BidPriority.NORMAL,
+        ActionType.SUPPORT,
+        ("A",),
+        reason="quiet and predictable",
+    )
+    errors = validate_realization(
+        state,
+        state.persona("p1"),
+        action,
+        "Library ensures a calmer session for me.",
+    )
+    assert not any("strengthened claim" in error for error in errors)
+
+
+def test_comparison_requires_two_matching_grounded_sources():
+    from models import ReasonSource
+
+    state = make_state()
+    action = UserAction(
+        "p1",
+        True,
+        BidPriority.NORMAL,
+        ActionType.COMPARE,
+        ("A", "B"),
+        comparison_sources=(ReasonSource("A", "cost", "free"),),
+    )
+    assert "comparison requires two grounded sources" in validate_action(
+        state, state.persona("p1"), action
+    )
+
+
+def test_comparison_missing_exact_alias_is_not_a_hard_failure():
+    from models import ReasonSource
+
+    state = make_state()
+    action = UserAction(
+        "p1",
+        True,
+        BidPriority.NORMAL,
+        ActionType.COMPARE,
+        ("A", "B"),
+        comparison_sources=(
+            ReasonSource("A", "cost", "free"),
+            ReasonSource("B", "cost", "8 euros"),
+        ),
+    )
+    errors = validate_realization(
+        state,
+        state.persona("p1"),
+        action,
+        "Library is free, which matters more to me.",
+    )
+    assert "focused option is not visible" not in errors
+    assert validate_realization(
+        state,
+        state.persona("p1"),
+        action,
+        "Library is free, whereas Cafe costs 8 euros; the difference matters to me.",
+    ) == []
+
+
+def test_guarantees_is_not_a_hard_grounding_failure():
+    state = make_state()
+    action = UserAction(
+        "p1", True, BidPriority.NORMAL, ActionType.SUPPORT, ("A",),
+        reason="quiet and predictable",
+    )
+    errors = validate_realization(
+        state, state.persona("p1"), action,
+        "That setup guarantees a calmer session for me.",
+    )
+    assert not any("strengthened claim" in error for error in errors)

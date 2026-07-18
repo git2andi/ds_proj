@@ -198,6 +198,7 @@ class UserAction:
     addressee_id: str | None = None
     reason: str = ""
     reason_source: ReasonSource | None = None
+    comparison_sources: tuple[ReasonSource, ...] = ()
     personal_context: str | None = None
     stance_update: StanceUpdate | None = None
     vote_option: str | None = None
@@ -205,6 +206,12 @@ class UserAction:
     @property
     def point_key(self) -> tuple[str, str] | None:
         return self.reason_source.point_key if self.reason_source else None
+
+    @property
+    def point_keys(self) -> tuple[tuple[str, str], ...]:
+        if self.comparison_sources:
+            return tuple(source.point_key for source in self.comparison_sources)
+        return (self.reason_source.point_key,) if self.reason_source else ()
 
     def copy(self) -> "UserAction":
         return UserAction(
@@ -216,6 +223,7 @@ class UserAction:
             addressee_id=self.addressee_id,
             reason=self.reason,
             reason_source=self.reason_source,
+            comparison_sources=tuple(self.comparison_sources),
             personal_context=self.personal_context,
             stance_update=self.stance_update,
             vote_option=self.vote_option,

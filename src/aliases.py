@@ -12,6 +12,7 @@ import unicodedata
 from collections import Counter
 from typing import TYPE_CHECKING, Iterable
 
+_INCOMPLETE_ALIAS_ENDINGS = {"a", "an", "and", "at", "for", "from", "in", "of", "on", "or", "the", "to", "with"}
 if TYPE_CHECKING:
     from models import Scenario
 
@@ -41,9 +42,16 @@ def validated_alias(option_name: str, proposed: str, *, max_words: int = 4) -> s
     if not alias:
         raise ValueError(f"Option {option_name!r} requires a non-empty alias")
     parts = _tokens(alias)
+    option_parts = _tokens(option_name)
     if len(parts) > max_words:
         raise ValueError(f"Alias {alias!r} is too long")
-    if not _is_subsequence(parts, _tokens(option_name)):
+    if not parts or any(any(ch.isdigit() for ch in part) for part in parts):
+        raise ValueError(f"Alias {alias!r} cannot contain numbers")
+    if parts[-1] in _INCOMPLETE_ALIAS_ENDINGS:
+        raise ValueError(f"Alias {alias!r} ends with an incomplete connector")
+    if len(parts) == 1 and len(option_parts) > 1:
+        raise ValueError(f"Alias {alias!r} must contain at least two words")
+    if not _is_subsequence(parts, option_parts):
         raise ValueError(f"Alias {alias!r} is not derived from {option_name!r}")
     return alias
 
@@ -83,7 +91,7 @@ def unique_generated_aliases(
             alias
             for alias in values
             if owners[normalize_option_text(alias)] == 1
-        )
+        )[:2]
         for option_id, values in candidates.items()
     }
 
@@ -141,7 +149,7 @@ def resolve_visible_vote(text: str, scenario: "Scenario") -> str | None:
     lowered = text.lower()
     if not any(
         marker in lowered
-        for marker in ("vote", "choose", "pick", "going with", "final choice")
+        for marker in ("vote", "voting", "choose", "pick", "going with", "final choice")
     ):
         return None
     mentions = resolve_option_mentions(text, scenario)

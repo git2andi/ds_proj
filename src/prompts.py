@@ -60,20 +60,25 @@ Rules:
 """
 
 
-def setup_aliases(options: list[dict[str, str]]) -> str:
-    return f"""Create natural short references for four fixed option names.
-Return JSON only as {{"aliases": [{{"id": "A", "aliases": ["short reference", "alternative reference"]}}]}}.
+def setup_aliases(options: list[dict[str, str]], participant_ids: list[str]) -> str:
+    return f"""Create concise setup metadata for fixed option names and participants.
+Return JSON only as {{"aliases": [{{"id": "A", "aliases": ["short reference"]}}], "participant_names": [{{"id": "p1", "name": "Maya"}}]}}.
 
 Fixed option names:
 {_schema(options)}
+Participant IDs:
+{_schema(participant_ids)}
 
 Rules:
-- Return every supplied option ID exactly once.
-- Give each option 1..3 natural aliases of at most {int(cfg.scenario.short_alias_max_words)} words.
+- Return every supplied option ID and participant ID exactly once.
+- Give each option 1 or 2 natural aliases of at most {int(cfg.scenario.short_alias_max_words)} words.
 - Each alias must use words from that option's exact full name, in the same order.
-- Prefer distinctive references people would naturally use in chat, such as "Chicago" for "Chicago City Stay".
-- Do not use generic category words such as "the hotel", "the restaurant", or "the option" when they could describe another option.
-- Aliases must be unique across options after case, punctuation, article, and accent normalization.
+- Prefer distinctive references people would naturally use in chat.
+- Do not use generic category words when they could describe another option.
+- Every alias must contain at least two words and no numbers.
+- Do not return incomplete phrases ending in words such as "to", "with", "and", or "the".
+- Aliases must be unique across options after normalization.
+- Give each participant one unique short first name containing letters only.
 """
 
 
@@ -119,17 +124,18 @@ Rules:
 
 
 def word_budget(action: ActionType, verbosity: int) -> tuple[int, int]:
+    if action is ActionType.VOTE:
+        return (2, 10)
     maximum = int(
         cfg.level_value("language", "max_words_by_verbosity", verbosity, cast=int)
     )
     cap_name = {
         ActionType.ASK: "ask",
         ActionType.ANSWER: "answer",
-        ActionType.VOTE: "vote",
     }.get(action)
     if cap_name:
         maximum = min(maximum, cfg.action_word_cap(cap_name))
-    return (2 if action is ActionType.VOTE else 4, maximum)
+    return (4, maximum)
 
 
 def directness_instruction(level: int) -> str:
@@ -167,8 +173,24 @@ def _recent_own_openings(state: DialogueState, speaker_id: str) -> str:
 
 
 def _focused_facts(state: DialogueState, action: UserAction) -> str:
-    ids = action.option_focus or tuple(state.scenario.option_ids[:1])
-    return "\n".join(state.scenario.option(option_id).public_line() for option_id in ids)
+    lines = [
+        f"- {option_id}: {state.scenario.option(option_id).name}"
+        for option_id in action.option_focus
+    ]
+    if action.comparison_sources:
+        for source in action.comparison_sources:
+            name = state.scenario.option(source.option_id).short_name
+            lines.append(
+                f"- Fact for {name} only: {source.attribute_name}: {source.public_value}"
+            )
+    elif action.reason_source:
+        lines.append(
+            f"- Grounded source: {action.reason_source.attribute_name}: "
+            f"{action.reason_source.public_value}"
+        )
+    if action.reason:
+        lines.append(f"- Intended point: {action.reason}")
+    return "\n".join(lines) or "- use only the selected action point"
 
 
 def _allowed_references(state: DialogueState, action: UserAction) -> str:
@@ -200,7 +222,11 @@ def _connection_block(state: DialogueState, action: UserAction) -> str:
     }:
         return ""
     previous = _last_other_turn(state, action.speaker_id)
-    if previous is None:
+    if (
+        previous is None
+        or previous.action is None
+        or not set(previous.action.option_focus) & set(action.option_focus)
+    ):
         return ""
     return (
         "\nConversation connection:\n"
@@ -215,24 +241,36 @@ def _action_instruction(state: DialogueState, action: UserAction) -> str:
     focus = " and ".join(names) or "the current point"
     reason = action.reason or "the supplied public trade-off"
     if action.act is ActionType.OPENING:
-        return f"Join the opening briefly. Your current choice is {focus}; explain it using: {reason}."
+        return f"Give a short, natural first contribution. Your choice is {focus}; explain it with: {reason}. A greeting is optional."
     if action.act is ActionType.SUPPORT:
-        return f"Continue the discussion with a distinct supporting point about {focus}: {reason}."
+        return (
+            f"Continue the exchange with why the focused choice suits you, grounded in: {reason}. "
+            "Do not mechanically lead with the option name."
+        )
     if action.act is ActionType.OBJECT:
-        return f"Respond with a concrete concern about {focus}: {reason}. Do not turn it into a question."
+        return (
+            f"Continue the exchange with a concern about the focused choice, grounded in: {reason}. "
+            "Do not turn it into a question or lead mechanically with the option name."
+        )
     if action.act is ActionType.REACT:
-        target = state.persona(action.addressee_id).name if action.addressee_id else "the previous speaker"
-        return f"React to {target}'s visible point about {focus}, connecting it to your priority with: {reason}."
+        return (
+            f"Respond to the previous point using: {reason}. Agree, qualify, disagree, or add a personal consequence "
+            "without restating the option card."
+        )
     if action.act is ActionType.COMPARE:
-        return f"Compare the trade-off between {focus} and explain which consideration matters to you: {reason}."
+        return (
+            "Contrast the two focused options using the supplied values for the same public attribute. "
+            "State both values accurately and say which fits your priority better. "
+            "Keep the wording conversational; do not infer another fact or use one fixed contrast template."
+        )
     if action.act is ActionType.ASK:
         target = state.persona(action.addressee_id).name if action.addressee_id else "the group"
-        return f"Ask {target} one natural question about how this concrete point affects {focus}: {reason}."
+        return f"Ask {target} one natural question that connects the grounded point to the current exchange: {reason}."
     if action.act is ActionType.ANSWER:
         question = state.active_thread.source_text if state.active_thread else "the current question"
         return (
-            f"Answer this exact question directly in the first sentence: {question}\n"
-            f"State how {focus} works or does not work for you, then explain with: {reason}."
+            f"Reply naturally and directly to this question: {question}\n"
+            f"Use this grounded point in your answer: {reason}. A forced yes/no opening is not required."
         )
     if action.act is ActionType.ACCEPT:
         previous = (
@@ -240,43 +278,50 @@ def _action_instruction(state: DialogueState, action: UserAction) -> str:
             if action.stance_update and action.stance_update.previous_option_id
             else "your earlier choice"
         )
-        return (
-            f"Make the movement explicit: say that {focus} is now acceptable or preferred over {previous}. "
-            f"Explain it using: {reason}."
+        switching = bool(
+            action.stance_update
+            and action.stance_update.kind.value == "switch_preferred"
         )
-    if action.act is ActionType.VOTE:
-        return f"State one short, unambiguous final vote for {focus}; do not repeat the full argument."
+        movement = "now prefer" if switching else "could now accept"
+        return (
+            f"Show naturally that you {movement} {focus} rather than simply repeating {previous}. "
+            f"Ground the reconsideration in the discussion and this point: {reason}. "
+            "It may help the group move forward, but it must still sound personally plausible."
+        )
     raise ValueError(f"unsupported action: {action.act}")
 
 
 def _explicit_reference_required(action: UserAction) -> bool:
-    return action.act in {
-        ActionType.OPENING,
-        ActionType.ASK,
-        ActionType.COMPARE,
-        ActionType.ACCEPT,
-        ActionType.VOTE,
-    }
+    # Only turns that establish or change a public preference must repeat an
+    # explicit option reference. Ordinary questions and comparisons may rely on
+    # the live exchange instead of sounding like option-card narration.
+    return action.act in {ActionType.OPENING, ActionType.ACCEPT}
+
 
 
 def realization_prompt(state: DialogueState, action: UserAction) -> str:
     persona = state.persona(action.speaker_id)
     minimum, maximum = word_budget(action.act, persona.sim_params.verbosity)
     style = "; ".join(persona.style_tendencies) or persona.speech_style
-    addressee_rule = (
-        f"Name {state.persona(action.addressee_id).name} when directly addressing them."
-        if action.addressee_id
-        else "Do not invent a specific addressee."
-    )
+    if action.act is ActionType.ASK and action.addressee_id:
+        addressee_rule = (
+            f"Include {state.persona(action.addressee_id).name} naturally somewhere in the question."
+        )
+    elif action.addressee_id:
+        addressee_rule = (
+            "Respond to the previous speaker without automatically starting with their name."
+        )
+    else:
+        addressee_rule = "Do not invent a specific addressee."
     thread = (
         f"Active sub-discussion: {state.active_thread.source_text}"
         if state.active_thread
         else "No active sub-discussion."
     )
     reference_rule = (
-        "Use one allowed option reference somewhere in the message. It does not need to begin the sentence."
+        "Use one allowed option reference somewhere in the message; it does not need to begin the sentence."
         if _explicit_reference_required(action)
-        else "A pronoun or local reference is allowed when the previous message or active sub-discussion clearly identifies the option; otherwise use an allowed reference."
+        else "Do not repeat an option name only for formality; use it when clarity needs it, otherwise continue contextually."
     )
     return f"""Write exactly one natural group-chat message for {persona.name}.
 Output only the message.
@@ -303,15 +348,12 @@ Recent openings by {persona.name} to avoid repeating:
 {_recent_own_openings(state, persona.id)}
 
 Rules:
-- Use {minimum}..{maximum} words when natural and finish the thought.
-- {reference_rule}
-- Continue from the local exchange rather than restating the action instruction.
-- Vary the sentence opening; do not mechanically start with “I”, a participant name, or the option name.
-- Do not copy the wording or sentence structure of your recent turns.
-- Short acknowledgments, contractions, and “we”/“us” are valid when natural.
-- Use only supplied public facts; frame implications and judgments as personal.
-- Do not invent numbers, dishes, services, facilities, guarantees, missing information, comparisons, or outside facts.
-- Do not add a speaker label or summarize the discussion.
+- Use {minimum}..{maximum} words and finish the thought. {reference_rule}
+- Write like this persona continuing a live group chat. When relevant, begin with a short reaction or continuation instead of restarting from the option card.
+- Vary sentence structure with the persona style. Do not routinely begin with the option name, another participant's name, or “I”; names and option references can appear later.
+- Short acknowledgements, direct additions, “still”, “though”, or a separate sentence are useful. “But” is fine occasionally, not as the default structure.
+- Avoid repeatedly writing “Option + fact + helps/limits/makes ...” or “X makes sense, but Y”. State the fact naturally and keep the conclusion personal.
+- Use only supplied public facts. Do not invent details, copy recent wording, add a speaker label, or narrate the act of speaking.
 """
 
 
@@ -367,49 +409,23 @@ def moderator_compromise_prompt(
     variant: int = 0,
 ) -> str:
     names = " and ".join(scenario.option(option_id).short_name for option_id in options)
-    verb = "offers" if len(options) == 1 else "offer"
+    if len(options) == 1:
+        return _pick_variant(
+            variant,
+            (
+                f"{names} looks like the clearest common-ground option. Would anyone reconsider their current choice?",
+                f"Before we vote, would anyone be willing to move toward {names}?",
+                f"{names} is the leading option now. Does anyone want to reconsider?",
+                f"Could {names} work as the group choice for anyone who preferred something else?",
+            ),
+        )
     return _pick_variant(
         variant,
         (
-            f"The group is still split. Could anyone accept {names} as a workable group choice?",
-            f"Before the final vote, is anyone willing to move toward {names}?",
-            f"Let’s test whether {names} {verb} a workable compromise.",
-            f"Does anyone see enough common ground around {names} to move?",
-        ),
-    )
-
-
-def moderator_narrowing(
-    scenario: Scenario, options: tuple[str, ...], *, variant: int = 0
-) -> str:
-    names = " and ".join(scenario.option(option_id).short_name for option_id in options)
-    return _pick_variant(
-        variant,
-        (
-            f"The discussion has narrowed to {names}.",
-            f"The clearest remaining choice is {names}.",
-            f"We now have a clearer direction around {names}.",
-            f"The group has moved toward {names}.",
-        ),
-    )
-
-
-def moderator_decisive_lead(
-    scenario: Scenario,
-    option_id: str,
-    support: int,
-    total: int,
-    *,
-    variant: int = 0,
-) -> str:
-    name = scenario.option(option_id).short_name
-    return _pick_variant(
-        variant,
-        (
-            f"{name} has a clear {support}–{total - support} lead.",
-            f"The group has a clear majority for {name}.",
-            f"{support} of {total} participants currently support {name}.",
-            f"There is a decisive lead for {name}.",
+            f"{names} are the main options now. Would either work for anyone who preferred something else?",
+            f"Before we vote, would anyone be willing to move toward {names}?",
+            f"The choice now seems to be between {names}. Does anyone want to reconsider?",
+            f"Could {names.replace(' and ', ' or ')} work as the group choice?",
         ),
     )
 
@@ -423,6 +439,24 @@ def moderator_vote_request(*, scenario: Scenario, variant: int = 0) -> str:
             "Please state your final choice.",
             "We’ll move to the final vote now.",
             "Let’s confirm the final choices.",
+        ),
+    )
+
+
+def deterministic_vote_text(
+    scenario: Scenario,
+    option_id: str,
+    *,
+    variant: int = 0,
+) -> str:
+    name = scenario.option(option_id).short_name
+    return _pick_variant(
+        variant,
+        (
+            f"My final vote is {name}.",
+            f"I’m voting for {name}.",
+            f"{name} is my final choice.",
+            f"I choose {name}.",
         ),
     )
 

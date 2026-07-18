@@ -17,7 +17,7 @@ topic
 → pre-vote narrowing, one final vote, outcome
 ```
 
-The core contribution is the ownership split. Each simulator decides whether to speak and selects a complete action. The floor only schedules intact bids. The LLM supplies language, while deterministic code controls phases, visible movement commitment, voting, and outcomes.
+The core contribution is the ownership split. Each simulator decides whether to speak and selects a complete action. The floor only schedules intact bids. The LLM supplies opening and discussion language, while deterministic code controls phases, visible movement commitment, formal vote wording, and outcomes.
 
 ## Runtime state
 

@@ -26,7 +26,7 @@ simulation:
   min_participants: 2
   max_participants: 7
   random_seed: null
-  setup_generation_attempts: 2        # initial generation + one feedback-guided regeneration
+  setup_generation_attempts: 3        # initial generation + up to two feedback-guided regenerations
 
 participants:
   mode: auto                          # auto | manual
@@ -66,7 +66,7 @@ conversation:
   thread_turn_cap: 4                  # opener plus at most three related contributions
   stagnation_no_bid_rounds: 2
   compromise_window_max_turns: 2
-  recent_turns_in_prompt: 5
+  recent_turns_in_prompt: 4
   max_consecutive_turns: 2
 
 simulator:
@@ -93,7 +93,6 @@ language:
   action_max_words:
     ask: 18
     answer: 18
-    vote: 10
   directness_instructions:
     1: "Express disagreement tentatively and as a personal preference; use uncertainty where natural."
     2: "Soften disagreement slightly and avoid categorical judgments."

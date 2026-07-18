@@ -7,9 +7,9 @@ Narrowing uses public participant preferences rather than hidden ranks and occur
 - A narrow 2–1 or 3–2 majority receives one bounded opportunity for outliers to accept the leader.
 - A split without a majority receives one short compromise window.
 
-During compromise, simulators independently decide whether a visible alternative is acceptable. The controller does not force movement. Hard blockers never move.
+During compromise, the moderator asks one grammatically appropriate narrowing question and then the floor runs up to two movement-bid rounds. Simulators independently decide whether a visible alternative is acceptable; unwilling participants remain silent and no response is forced. The moderator does not narrate the absence or success of movement. Hard blockers never move. Smaller grounded preference switches may already occur during discussion when they follow recent public support and can help the group converge.
 
-Every participant then produces one explicit structured final vote, realized as visible text. The deterministic outcome calculation returns:
+Every participant then produces one explicit structured final vote. Its short visible wording is deterministic, so voting adds no LLM generation or repair calls. The deterministic outcome calculation returns:
 
 - `successful` for unanimity;
 - `majority` when an option exceeds the configured majority fraction;

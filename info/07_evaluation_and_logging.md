@@ -7,7 +7,7 @@ Each run writes a human-readable transcript and structured `run.json`. The JSON 
 - scenario, generated aliases, and complete persona cards;
 - actual seed, provider/model, sampling profiles, configuration hash, Python version, and Git revision when available;
 - visible turns and optional structured action traces;
-- raw, repaired, dropped, and fallback generation attempts;
+- raw, repaired, dropped, fallback, and deterministic vote records;
 - public preferences, point counts, recent point keys, final votes, outcome, and review flags;
 - compact process and token counters.
 

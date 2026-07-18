@@ -42,7 +42,7 @@ Ordinary actions are `REACT`, `SUPPORT`, `OBJECT`, `COMPARE`, `ASK`, and `ACCEPT
 
 The `FloorManager` selects one intact bid using categorical priority and light turn balancing. It never rewrites the selected action. Required direct answers and votes bypass voluntary willingness.
 
-The LLM receives the selected action, relevant option facts, persona voice, active thread, and recent turns. It realizes wording only; it does not choose the speaker, action, movement, or vote.
+The LLM receives the selected action, grounded source, persona voice, active thread, and recent turns. It realizes discussion wording only; it does not choose the speaker, action, movement, or vote. Formal vote wording is deterministic.
 
 ## Discussion and threads
 
@@ -76,24 +76,24 @@ A rare hard blocker rejects every nonpreferred option and never moves.
 Automatic setup has three small LLM stages:
 
 1. generate shared context and four option cards;
-2. generate one to three natural aliases for each fixed option name;
-3. generate persona cards and private option stances.
+2. generate one or two natural aliases per option and one fixed first name per participant;
+3. generate persona cards and private option stances using those fixed names.
 
 Scenario validation is intentionally structural. It checks exact option IDs, unique full names, required public attributes, upsides, concerns, and compact shared context. It does not infer generic world semantics, superlatives, or missing attributes.
 
-If the first scenario is invalid, the validation error is included in one complete regeneration request. If that result is still invalid, setup fails. Alias generation never regenerates an already valid scenario: malformed or colliding aliases are discarded, and the full option name remains valid. Invalid generated persona names receive a unique local fallback instead of invalidating the complete setup.
+A scenario receives up to three complete generation attempts, with validation feedback supplied after each failure. If all three fail, setup is recorded as an error. The lightweight metadata call never regenerates an already valid scenario: malformed aliases are discarded, and invalid or missing participant names receive unique local fallbacks. Fixed names are propagated through backgrounds, private goals, rejection text, and stance reasons.
 
 An option may be referenced by:
 
 - its full name;
-- a validated generated alias, such as `Chicago` for `Chicago City Stay`;
+- a validated generated alias, such as `Chicago City` for `Chicago City Stay`;
 - `Option A`, `Option B`, and so on.
 
-Aliases must be formed from words in the full name and remain unique after normalization. Manual scenarios and manual persona profiles remain supported through `config.yaml`.
+Aliases must be formed from words in the full name and remain unique after normalization. Generated aliases contain two or more words, contain no numbers, and cannot end in incomplete connectors such as `to` or `with`. Manual scenarios and manual persona profiles remain supported through `config.yaml`.
 
 ## Visible evidence and language realization
 
-Openings, new questions, comparisons, movements, and votes must explicitly identify their option through a validated reference. Reactions and answers may use a local contextual reference when the immediately preceding turn or active thread identifies exactly one option. This allows natural wording such as “That distance would bother me too” without allowing arbitrary fuzzy option matching.
+Openings, visible preference movements, and votes must explicitly identify their option through a validated reference. Missing an exact alias is treated as a minor realization issue for ordinary discussion turns, including questions, reactions, objections, answers, and comparisons; those turns are not dropped solely for that reason. This allows natural contextual wording such as “That distance would bother me too” without making broad fuzzy matching part of the runtime.
 
 The realization prompt encourages speakers to:
 
@@ -103,20 +103,25 @@ The realization prompt encourages speakers to:
 - place the option reference naturally rather than always first;
 - use short acknowledgments, pronouns, contractions, and `we`/`us` when appropriate.
 
+The compact prompt encourages contextual continuation and asks for an option reference when clarity needs one, without forcing every ordinary turn to repeat a full name. It also discourages routinely starting with an option name, participant name, or `I`.
+
+Supporting actions use the persona's grounded `reason_for` or the option upside. Objections and concern questions use `reason_against` or the option concern. Neutral attributes are reserved for reactions and comparisons, preventing arbitrary facts such as capacity or duration from being reframed as unsupported objections. Every comparison uses the same named public attribute from both options. The two values are labeled by option, while wording remains conversational and free-form. Comparisons have a low policy weight and cannot be selected in close succession.
+
 ## Validation and fallbacks
 
 Runtime validation rejects only hard correctness failures, including:
 
 - empty or malformed output;
-- wrong or nonexistent option references;
+- invalid structured option targets;
 - unsupported numeric values;
 - an absent direct addressee;
-- an answer unrelated to the active question or point;
-- an unclear or mismatched formal vote;
-- movement toward the wrong option;
+- an unclear or mismatched formal vote representation;
+- a movement that does not visibly identify its target option;
 - a hard-blocker contradiction.
 
-Openings, required answers, and votes receive one repair attempt. A deterministic opening is only a last-resort protocol fallback after both generation and repair fail; natural shorthand such as `Chicago` should normally pass through a generated alias. Required-answer and vote fallbacks use natural text and never expose raw schema keys. Invalid voluntary contributions are dropped and flagged rather than inserted into public history.
+Only openings receive one repair attempt and a deterministic last-resort fallback. Required answers keep the generated wording and are not semantically rescored, repaired, or replaced by generic fallbacks; they are subject only to the same hard surface checks as other turns. Invalid voluntary contributions are dropped and flagged rather than inserted into public history.
+
+Formal vote text is deterministic from the start, using short variants such as `My final vote is X`. Voting therefore uses no dialogue-generation or repair calls.
 
 No LLM validator or judge is called during dialogue generation.
 
@@ -126,7 +131,9 @@ Public preferences determine narrowing before voting:
 
 - unanimity or a decisive majority proceeds directly to voting;
 - only narrow 2–1 and 3–2 majorities receive one bounded outlier opportunity;
-- a split without a majority receives one short compromise window.
+- a split without a majority receives one short compromise prompt followed by up to two autonomous movement-bid rounds.
+
+During ordinary discussion, a non-hard-blocking simulator may also make another visible option acceptable. It may switch preference before narrowing when that option has been discussed recently, has more public support than its current choice, and the participant's stubbornness draw permits movement. This keeps the change grounded in the public exchange rather than forcing convergence.
 
 Every participant then casts one explicit final vote. Outcomes are deterministic:
 

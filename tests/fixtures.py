@@ -135,44 +135,58 @@ class ActionRendererLLM:
     def _render(self, prompt: str) -> str:
         instruction = self._instruction(prompt)
         lower = instruction.lower()
-        if lower.startswith("join the opening briefly"):
+        if lower.startswith("give a short, natural first contribution"):
             option = instruction.split("choice is ", 1)[1].split("; explain", 1)[0]
-            reason = instruction.split("using:", 1)[1].rstrip(".")
+            reason = instruction.split("with:", 1)[1].split(". A greeting", 1)[0]
             return f"Hi everyone, I prefer {option} because {reason}."
-        if lower.startswith("continue the discussion with a distinct supporting point"):
-            option = instruction.split("about ", 1)[1].split(":", 1)[0]
-            reason = instruction.split(":", 1)[1].strip().rstrip(".")
-            return f"For me, {reason}, so {option} still works well."
-        if lower.startswith("respond with a concrete concern"):
-            option = instruction.split("about ", 1)[1].split(":", 1)[0]
-            reason = instruction.split(":", 1)[1].split(". Do not", 1)[0]
-            return f"That makes {option} difficult for me because {reason}."
-        if lower.startswith("react to "):
-            option = instruction.split(" about ", 1)[1].split(", connecting", 1)[0]
-            reason = instruction.split("with:", 1)[1].rstrip(".")
+        focused_options = [
+            line.split(": ", 1)[1]
+            for line in prompt.splitlines()
+            if line.startswith("- ")
+            and ": " in line
+            and "Fact for" not in line
+            and "Grounded source" not in line
+            and "Intended point" not in line
+        ]
+        option = focused_options[0] if focused_options else "that option"
+        if lower.startswith("continue the exchange with why the focused choice suits you"):
+            reason = instruction.split("grounded in:", 1)[1].split(". Continue", 1)[0]
+            return f"That suits me because {reason}; {option} still works well."
+        if lower.startswith("continue the exchange with a concern about the focused choice"):
+            reason = instruction.split("grounded in:", 1)[1].split(". Do not", 1)[0]
+            return f"That is difficult for me because {reason}, especially with {option}."
+        if lower.startswith("respond to the previous point"):
+            reason = instruction.split("using:", 1)[1].split(". Agree", 1)[0]
             return f"That point matters; {option} works for me because {reason}."
-        if lower.startswith("compare the trade-off between"):
-            options = instruction.split("between ", 1)[1].split(" and explain", 1)[0]
-            return f"Looking at {options}, the first trade-off matters more to me."
+        if lower.startswith("contrast the two focused options"):
+            facts = [
+                line.split(": ", 1)[1]
+                for line in prompt.splitlines()
+                if line.startswith("- Fact for ")
+            ]
+            first, second = (facts + ["a different value", "another value"])[:2]
+            names = " and ".join(focused_options[:2]) or "the two options"
+            return f"Looking at {names}, I prefer the difference between {first} and {second}."
         if lower.startswith("ask "):
             target = instruction.split("Ask ", 1)[1].split(" one natural", 1)[0]
-            option = instruction.split("affects ", 1)[1].split(":", 1)[0]
-            reason = instruction.split(":", 1)[1].rstrip(".")
+            reason = instruction.split(":", 1)[1].split(". Connect", 1)[0]
             prefix = "Everyone" if target == "the group" else target
             return f"{prefix}, does {reason} change whether {option} works for you?"
-        if lower.startswith("answer this exact question"):
+        if lower.startswith("reply naturally and directly to this question"):
             block = prompt.split("Selected action:\n", 1)[1].split("\n\nRelevant public", 1)[0]
-            second = next(line for line in block.splitlines() if line.startswith("State how "))
-            option = second.split("State how ", 1)[1].split(" works", 1)[0]
-            reason = second.split("with:", 1)[1].rstrip(".")
-            return f"Yes, {option} still works for me because {reason}."
-        if lower.startswith("make the movement explicit"):
-            option = instruction.split("say that ", 1)[1].split(" is now", 1)[0]
-            reason = instruction.split("using:", 1)[1].rstrip(".")
-            return f"I can accept {option} now because {reason}."
-        if lower.startswith("state one short, unambiguous final vote"):
-            option = instruction.split("for ", 1)[1].split(";", 1)[0]
-            return f"My final vote is {option}."
+            option_line = next(line for line in block.splitlines() if line.startswith("Use this grounded point"))
+            reason = option_line.split(":", 1)[1].split(". A forced", 1)[0]
+            option = next(
+                line.split(": ", 1)[1].split(",", 1)[0]
+                for line in prompt.splitlines()
+                if line.startswith("- ") and ": " in line and "Fact for" not in line
+            )
+            return f"{option} still works for me because {reason}."
+        if lower.startswith("show naturally that you now prefer") or lower.startswith("show naturally that you could now accept"):
+            marker = "now prefer " if "now prefer " in instruction else "could now accept "
+            option = instruction.split(marker, 1)[1].split(" rather than", 1)[0]
+            reason = instruction.split("this point:", 1)[1].split(". It may", 1)[0]
+            return f"That changes my view; I can go with {option} because {reason}."
         return "That point matters for my decision."
 
 

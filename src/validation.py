@@ -14,24 +14,31 @@ from models import (
 )
 
 
-_WORD_RE = re.compile(r"[a-z0-9]+")
 _NUMBER_RE = re.compile(r"(?<!\w)(?:[$€£]\s*)?\d+(?:[.,]\d+)?(?:\s*%|\s*[a-zA-Z]+)?")
-_ACCEPTANCE_PATTERNS = (
-    "acceptable",
+_PERSONAL_ACCEPTANCE_PATTERNS = (
     "works for me",
-    "workable",
-    "viable",
+    "works better for me",
+    "better fit for me",
     "i can go with",
     "i could go with",
+    "i'd go with",
+    "i’d go with",
+    "i would go with",
     "i am willing to",
     "i'm willing to",
+    "i’m willing to",
     "i can accept",
     "i could accept",
-    "fine with",
-    "okay with",
+    "i'm fine with",
+    "i’m fine with",
+    "i'm okay with",
+    "i’m okay with",
     "now prefer",
+    "prefer this now",
     "switch to",
     "move to",
+    "lean toward",
+    "leaning toward",
 )
 
 
@@ -78,6 +85,15 @@ def validate_action(
             errors.append("preference switch must target a different option")
     if action.act in {ActionType.OPENING, ActionType.SUPPORT, ActionType.OBJECT, ActionType.ASK, ActionType.ANSWER, ActionType.ACCEPT, ActionType.VOTE} and not action.option_focus:
         errors.append(f"{action.act.value} requires an option focus")
+    if action.act is ActionType.COMPARE:
+        if len(action.option_focus) != 2 or len(set(action.option_focus)) != 2:
+            errors.append("comparison requires two different option focuses")
+        if len(action.comparison_sources) != 2:
+            errors.append("comparison requires two grounded sources")
+        elif {source.option_id for source in action.comparison_sources} != set(action.option_focus):
+            errors.append("comparison sources must match the two focused options")
+    elif action.comparison_sources:
+        errors.append("comparison sources are only valid for comparison actions")
     return errors
 
 
@@ -96,7 +112,14 @@ def validate_realization(
     if re.match(r"^(moderator|assistant|system|user)\s*:", clean, flags=re.I):
         errors.append("utterance contains an invalid speaker label")
 
-    if action.option_focus and not _focus_is_visible_or_contextual(state, action, clean):
+    # Missing an exact alias is a minor realization issue for ordinary discussion
+    # turns. Keep explicit references hard only where public state changes or the
+    # protocol depends on an unambiguous option.
+    if (
+        action.option_focus
+        and action.act in {ActionType.OPENING, ActionType.ACCEPT, ActionType.VOTE}
+        and not _focus_is_visible_or_contextual(state, action, clean)
+    ):
         errors.append("focused option is not visible")
 
     if action.act is ActionType.ASK:
@@ -106,9 +129,6 @@ def validate_realization(
             name = state.persona(action.addressee_id).name
             if not re.search(rf"\b{re.escape(name)}\b", clean, flags=re.I):
                 errors.append("direct question does not name the addressee")
-
-    if action.act is ActionType.ANSWER and not _answer_is_relevant(state, action, clean):
-        errors.append("answer does not address the active question")
 
     if action.act is ActionType.VOTE:
         visible_vote = resolve_visible_vote(clean, state.scenario)
@@ -122,7 +142,6 @@ def validate_realization(
         errors.append("hard blocker visibly accepts a rejected option")
 
     errors.extend(_numeric_grounding_errors(state, action, clean))
-    errors.extend(_strengthening_errors(action, clean))
     return errors
 
 
@@ -133,7 +152,10 @@ def _focus_is_visible_or_contextual(
     required = set(action.option_focus)
     if not required:
         return True
-    if required & mentioned_options(text, state):
+    visible = mentioned_options(text, state)
+    if action.act is ActionType.COMPARE:
+        return required <= visible
+    if required & visible:
         return True
     if action.act not in {
         ActionType.REACT,
@@ -143,61 +165,34 @@ def _focus_is_visible_or_contextual(
     }:
         return False
     thread = state.active_thread
-    if thread is not None and required <= set(thread.option_focus):
+    if (
+        thread is not None
+        and len(thread.option_focus) == 1
+        and required == set(thread.option_focus)
+    ):
         return True
     previous = next(
         (turn for turn in reversed(state.participant_turns) if turn.action is not None),
         None,
     )
-    return bool(previous and required <= set(previous.action.option_focus))
-
-def _terms(text: str) -> set[str]:
-    stop = {
-        "the", "a", "an", "and", "or", "to", "of", "for", "with", "that",
-        "this", "it", "is", "are", "was", "were", "be", "me", "my", "our",
-        "option", "works", "work", "choice", "because", "still", "would", "could",
-    }
-    return {word for word in _WORD_RE.findall(text.lower()) if len(word) >= 3 and word not in stop}
-
-
-def _answer_is_relevant(
-    state: DialogueState, action: UserAction, text: str
-) -> bool:
-    thread = state.active_thread
-    if thread is None or not thread.option_focus:
-        return False
-    if not _focus_is_visible_or_contextual(state, action, text):
-        return False
-    answer_terms = _terms(text)
-    target_terms = _terms(thread.source_text)
-    if action.reason_source:
-        target_terms |= _terms(action.reason_source.public_value)
-        target_terms |= _terms(action.reason_source.attribute_name)
-    direct = any(
-        marker in text.lower()
-        for marker in (
-            "yes", "no", "works", "doesn't", "does not", "acceptable", "not acceptable",
-            "fine", "not enough", "enough", "matters", "concern", "prefer",
-        )
+    return bool(
+        previous
+        and len(previous.action.option_focus) == 1
+        and required == set(previous.action.option_focus)
     )
-    return direct and bool(answer_terms & target_terms)
-
 
 def _stance_update_visible(
     state: DialogueState, action: UserAction, text: str
 ) -> bool:
     update = action.stance_update
-    if update is None or not option_mentioned(text, state, update.option_id):
-        return False
-    lowered = text.lower()
-    return any(pattern in lowered for pattern in _ACCEPTANCE_PATTERNS)
+    return bool(update and option_mentioned(text, state, update.option_id))
 
 
 def _contradicts_hard_blocker(
     state: DialogueState, persona: Persona, text: str
 ) -> bool:
     lowered = text.lower()
-    acceptance = any(pattern in lowered for pattern in _ACCEPTANCE_PATTERNS)
+    acceptance = any(pattern in lowered for pattern in _PERSONAL_ACCEPTANCE_PATTERNS)
     if not acceptance:
         return False
     mentioned = mentioned_options(text, state)
@@ -211,6 +206,7 @@ def _allowed_numeric_text(state: DialogueState, action: UserAction) -> str:
         pieces.extend(option.public_values())
     if action.reason_source:
         pieces.append(action.reason_source.public_value)
+    pieces.extend(source.public_value for source in action.comparison_sources)
     return " ".join(pieces).lower().replace(",", ".")
 
 
@@ -225,21 +221,3 @@ def _numeric_grounding_errors(
         if number and number.group(0) not in allowed:
             errors.append(f"unsupported numeric claim: {match.strip()}")
     return errors
-
-
-def _strengthening_errors(action: UserAction, text: str) -> list[str]:
-    lowered = text.lower()
-    source = " ".join(
-        part
-        for part in (
-            action.reason,
-            action.reason_source.public_value if action.reason_source else "",
-        )
-        if part
-    ).lower()
-    markers = ("guarantees", "guaranteed", "ensures", "no risk", "everyone will", "always")
-    return [
-        f"unsupported strengthened claim: {marker}"
-        for marker in markers
-        if marker in lowered and marker not in source
-    ]

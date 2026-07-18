@@ -247,26 +247,12 @@ class DialogueRunner:
         self.state.narrowing_options = derive_narrowing_options(self.state)
 
         if counts:
-            option_id, support = counts.most_common(1)[0]
+            _, support = counts.most_common(1)[0]
             if support == participant_count:
-                if self._moderator_enabled:
-                    self._append_moderator(
-                        prompts.moderator_narrowing(
-                            self.state.scenario, (option_id,), variant=self._variant()
-                        )
-                    )
                 return 0
-            if support >= threshold and not self._should_repair_narrow_majority(support, participant_count):
-                if self._moderator_enabled:
-                    self._append_moderator(
-                        prompts.moderator_decisive_lead(
-                            self.state.scenario,
-                            option_id,
-                            support,
-                            participant_count,
-                            variant=self._variant(),
-                        )
-                    )
+            if support >= threshold and not self._should_repair_narrow_majority(
+                support, participant_count
+            ):
                 return 0
 
         candidates = self.state.narrowing_options
@@ -275,40 +261,36 @@ class DialogueRunner:
         if not candidates:
             return 0
 
-        if self._moderator_enabled:
+        if self._moderator_enabled and not (
+            self.state.turns and self.state.turns[-1].moderator
+        ):
             self._append_moderator(
                 prompts.moderator_compromise_prompt(
-                    self.state.scenario,
-                    candidates,
-                    variant=self._variant(),
+                    self.state.scenario, candidates, variant=self._variant()
                 )
             )
-
         self.state.stats.compromise_attempts += 1
-        cap = int(cfg.conversation.compromise_window_max_turns)
-        eligible_ids = [persona.id for persona in self.state.personas]
-        if len(candidates) == 1:
-            leader = candidates[0]
-            eligible_ids = [
-                pid
-                for pid in eligible_ids
-                if self.state.runtimes[pid].public_preference != leader
-            ]
-        self.rng.shuffle(eligible_ids)
-        for participant_id in eligible_ids[:cap]:
-            action = self._simulators[participant_id].compromise_action(self.state, candidates)
-            self._realize_and_commit(action, mandatory=False, voluntary=False)
 
-        movement = self.state.movement_events - movement_before
-        if movement and self._moderator_enabled:
-            self._append_moderator(
-                prompts.moderator_narrowing(
-                    self.state.scenario,
-                    derive_narrowing_options(self.state) or candidates,
-                    variant=self._variant(),
-                )
+        rounds = int(cfg.conversation.compromise_window_max_turns)
+        used_speakers: set[str] = set()
+        for _ in range(rounds):
+            bids: list[UserAction] = []
+            for participant_id, simulator in self._simulators.items():
+                if participant_id in used_speakers:
+                    continue
+                action = simulator.compromise_action(self.state, candidates)
+                if action.wants_to_speak and action.stance_update is not None:
+                    bids.append(action)
+            selection = self._floor.select(self.state, bids)
+            if selection.action is None:
+                continue
+            record = self._realize_and_commit(
+                selection.action, mandatory=False, voluntary=True
             )
-        return movement
+            if record is not None:
+                used_speakers.add(selection.action.speaker_id)
+
+        return self.state.movement_events - movement_before
 
     @staticmethod
     def _should_repair_narrow_majority(support: int, total: int) -> bool:
@@ -319,7 +301,9 @@ class DialogueRunner:
         self.state.vote_round = 1
         self.state.votes = {}
         self.state.vote_records[self.state.vote_round] = {}
-        if self._moderator_enabled:
+        if self._moderator_enabled and not (
+            self.state.turns and self.state.turns[-1].moderator
+        ):
             self._append_moderator(
                 prompts.moderator_vote_request(
                     scenario=self.state.scenario,
@@ -329,28 +313,14 @@ class DialogueRunner:
 
         for persona in self.state.personas:
             action = self._simulators[persona.id].decide_vote(self.state)
-            record = self._realize_and_commit(action, mandatory=True, voluntary=False)
-            if record is None:
-                raise RuntimeError(
-                    f"formal vote realization failed for {persona.id}: {self._last_failure_errors}"
-                )
-            attempt = next(
-                (
-                    item
-                    for item in reversed(self.state.generation_attempts)
-                    if item.speaker_id == persona.id and item.phase is Phase.VOTING
-                ),
-                None,
-            )
-            errors = [] if attempt is None else [*attempt.validation_errors, *attempt.repair_errors]
-            attempts = 1 + int(attempt is not None and attempt.repair_text is not None)
+            self._commit_deterministic_vote(action)
             self.state.vote_records[self.state.vote_round][persona.id] = VoteRecord(
                 participant_id=persona.id,
                 round=self.state.vote_round,
                 status=VoteStatus.VALID,
                 option_id=action.vote_option,
-                attempts=attempts,
-                errors=errors,
+                attempts=0,
+                errors=[],
             )
         outcome = outcome_from_votes(self.state, self.state.votes, allow_unresolved=True)
         assert outcome is not None
@@ -385,11 +355,7 @@ class DialogueRunner:
 
         text = raw
         repair_count = 0
-        should_repair = mandatory and action.act in {
-            ActionType.OPENING,
-            ActionType.ANSWER,
-            ActionType.VOTE,
-        }
+        should_repair = mandatory and action.act is ActionType.OPENING
         if errors and should_repair:
             repair_count = 1
             self.state.stats.repair_calls += 1
@@ -410,10 +376,6 @@ class DialogueRunner:
             fallback = None
             if action.act is ActionType.OPENING:
                 fallback = self._opening_fallback_text(action)
-            elif action.act is ActionType.ANSWER:
-                fallback = self._answer_fallback_text(action)
-            elif action.act is ActionType.VOTE:
-                fallback = self._vote_fallback_text(action)
             if fallback:
                 fallback_errors = validate_realization(self.state, persona, action, fallback)
                 if not fallback_errors:
@@ -439,6 +401,42 @@ class DialogueRunner:
             voluntary=voluntary,
             liveness_forced=liveness_forced,
             repair_count=repair_count,
+        )
+
+    def _commit_deterministic_vote(self, action: UserAction) -> TurnRecord:
+        persona = self.state.persona(action.speaker_id)
+        structured_errors = validate_action(self.state, persona, action)
+        if structured_errors:
+            raise RuntimeError(
+                f"invalid authoritative vote for {action.speaker_id}: {structured_errors}"
+            )
+        text = prompts.deterministic_vote_text(
+            self.state.scenario,
+            action.vote_option or action.option_focus[0],
+            variant=self._variant(),
+        )
+        errors = validate_realization(self.state, persona, action, text)
+        if errors:
+            raise RuntimeError(
+                f"invalid deterministic vote for {action.speaker_id}: {errors}"
+            )
+        self.state.generation_attempts.append(
+            GenerationAttempt(
+                speaker_id=action.speaker_id,
+                phase=self.state.phase,
+                action=action.copy(),
+                raw_text=text,
+                validation_errors=[],
+                final_status="deterministic",
+            )
+        )
+        return self._commit_action(
+            action,
+            text,
+            mandatory=True,
+            voluntary=False,
+            liveness_forced=False,
+            repair_count=0,
         )
 
     def _commit_action(
@@ -471,12 +469,13 @@ class DialogueRunner:
         elif action.act is ActionType.VOTE:
             self.state.votes[action.speaker_id] = action.vote_option
 
-        if action.point_key and action.act is not ActionType.VOTE:
-            runtime.used_point_keys.add(action.point_key)
-            self.state.public_point_counts[action.point_key] = (
-                self.state.public_point_counts.get(action.point_key, 0) + 1
-            )
-            self.state.recent_point_keys.append(action.point_key)
+        if action.act is not ActionType.VOTE:
+            for point_key in action.point_keys:
+                runtime.used_point_keys.add(point_key)
+                self.state.public_point_counts[point_key] = (
+                    self.state.public_point_counts.get(point_key, 0) + 1
+                )
+                self.state.recent_point_keys.append(point_key)
             self.state.recent_point_keys[:] = self.state.recent_point_keys[-2:]
 
         thread_event = self._update_thread_before_append(action, text)
@@ -573,36 +572,6 @@ class DialogueRunner:
     def _opening_fallback_text(self, action: UserAction) -> str:
         option = self.state.scenario.option(action.option_focus[0])
         return f"Hi, I prefer {option.short_name}; it fits my priorities best."
-
-    @staticmethod
-    def _human_attribute(value: str) -> str:
-        words = value.replace("_", " ").split()
-        replacements = {"avg": "average", "hrs": "hours", "mins": "minutes"}
-        cleaned = [replacements.get(word.lower(), word) for word in words]
-        while cleaned and cleaned[-1].lower() in {"usd", "eur", "gbp"}:
-            cleaned.pop()
-        return " ".join(cleaned)
-
-    def _answer_fallback_text(self, action: UserAction) -> str:
-        option_name = self.state.scenario.option(action.option_focus[0]).short_name
-        runtime = self.state.runtimes[action.speaker_id]
-        positive = runtime.rank(action.option_focus[0]) >= 4
-        prefix = "Yes" if positive else "No"
-        conclusion = "still works for me" if positive else "does not work for me"
-        source = action.reason_source
-        if source is None:
-            detail = "that trade-off is acceptable" if positive else "that concern still matters"
-        elif source.attribute_name in {"upside", "concern"}:
-            detail = source.public_value.strip().rstrip(".")
-        else:
-            label = self._human_attribute(source.attribute_name) or "trade-off"
-            value = source.public_value.strip().rstrip(".")
-            detail = f"the {label} ({value}) is {'acceptable' if positive else 'still a concern'}"
-        return f"{prefix}, {option_name} {conclusion}; {detail}."
-
-    def _vote_fallback_text(self, action: UserAction) -> str:
-        option = self.state.scenario.option(action.vote_option or action.option_focus[0])
-        return f"My final vote is {option.short_name}."
 
     def _call_llm(self, prompt: str, *, profile: str) -> str:
         text = self._llm.generate(prompt, profile=profile)

@@ -18,7 +18,7 @@ The loop has minimum, soft-target, and hard-maximum voluntary-turn budgets. It m
 
 ## Public state
 
-The structured action determines intended behavior, but preference and acceptance changes are committed only when accepted text visibly realizes them. Explicit aliases are required for context-setting actions. Local reactions and answers may inherit a unique visible focus from the immediately preceding turn or active thread. The runtime does not attempt general semantic parsing.
+The structured action determines intended behavior. Preference changes are committed only when the accepted text visibly identifies the target option. For ordinary discussion acts, omission of an exact alias is treated as a minor wording issue rather than a reason to discard the turn. The runtime does not attempt general semantic parsing.
 
 ## Repetition control
 
@@ -33,8 +33,10 @@ Grounded reasons carry a point key based on option ID and attribute name. The ru
 
 ## Language realization
 
-The prompt includes the selected action, grounded source, relevant board facts, active thread, recent dialogue, and the speaker’s recent sentence openings. It asks the speaker to connect to the previous message, vary the sentence opening, avoid copying recent structure, and place option references naturally.
+The compact prompt includes the selected action, exact grounded source, active thread, four recent turns, and the speaker’s recent sentence openings. It asks the speaker to continue a live group chat, connect to the previous message, vary syntax with the persona style, and avoid routinely beginning with an option name, participant name, or `I`. It asks for an option reference when clarity needs one, while allowing contextual continuation for ordinary discussion. Comparisons receive the same named public attribute from both options. The values are separately labeled, but the utterance may express the difference naturally rather than through one fixed template.
 
 ## Generation failure
 
-Voluntary invalid utterances are dropped and flagged. Openings, required answers, and votes receive one repair attempt. A deterministic opening is used only after generation and repair both fail. Required-answer and vote fallbacks use natural text because the protocol cannot safely continue without them.
+Voluntary invalid utterances are dropped and flagged. Only openings receive one repair attempt and a deterministic fallback. Required answers keep the original generated wording and are not subjected to a semantic-relevance score, repair call, or generic fallback. They still pass the ordinary hard checks for usable output, supported numbers, and hard-blocker consistency. Missing an exact option alias is not by itself a hard failure for an answer.
+
+For a structured movement, visibility requires the target option to be explicitly named. The simulator has already made the acceptance or switching decision, so the validator does not require a fixed acceptance phrase.
