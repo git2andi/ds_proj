@@ -2,34 +2,30 @@
 
 ## Run artifacts
 
-Each run writes a human-readable transcript and structured `run.json`. The JSON contains:
+Each run writes a human-readable transcript and a structured `run.json`. The JSON contains:
 
-- scenario, generated aliases, and complete persona cards;
-- actual seed, provider/model, sampling profiles, configuration hash, Python version, and Git revision when available;
+- scenario, aliases, and complete persona cards;
+- provider/model provenance, seed, configuration hash, Python version, and Git revision when available;
 - visible turns and optional structured action traces;
-- raw, repaired, dropped, fallback, and deterministic vote records;
-- public preferences, point counts, recent point keys, final votes, outcome, and review flags;
-- compact process and token counters.
+- generation attempts, repairs, dropped turns, fallbacks, and deterministic vote records;
+- public preferences, acceptances, movements, point-use state, votes, outcome, and review flags;
+- process and token counters.
 
-Invalid voluntary text is not inserted into the transcript, but its attempts remain available for debugging.
+Invalid text is not inserted into the visible transcript, but failed attempts remain available for debugging.
 
 ## Deterministic evaluation
 
-The report-facing summary keeps only metrics that support concise claims:
+`eval/summarize_runs.py` reads existing `run.json` files without calling an LLM. It produces:
 
-- setup completion and failures;
-- outcome distribution;
-- participant and moderator turns;
-- protocol pass and vote/outcome consistency;
-- visible preference changes;
-- repair, drop, fallback, and response-failure rates;
-- LLM calls and token use;
-- engagement versus voluntary participation relative to the equal-share baseline within each group;
-- verbosity versus words in generated participant turns, excluding deterministic vote lines;
-- optional directness hedge-rate proxy, also excluding deterministic vote lines.
+- `deterministic_runs.csv`;
+- `trait_participants.csv`;
+- `trait_levels.csv`;
+- `evaluation_summary.md`.
 
-Detailed thread, point-reuse, alias, and generation evidence remains in `run.json` rather than expanding the report tables.
+The summary covers completion, outcome distribution, protocol and vote consistency, participant and moderator turns, voluntary participation, visible movement, realization failures, LLM calls, token use, and trait realization. Engagement is compared with voluntary floor share relative to equal participation; verbosity is compared with words in generated non-vote turns; stubbornness is compared with visible flexibility; directness uses an optional lexical hedge-rate proxy.
 
 ## LLM transcript judging
 
-`judge_transcripts.py` is a separate post-hoc evaluator. Independent referee roles receive the same visible transcript, option board, persona cards, votes, and outcome. No referee sees another referee’s result. Moderator turns are included when scoring naturalness, coherence, groundedness, and deliberation quality because they affect the visible exchange. The moderator is explicitly excluded from persona consistency, which applies only to simulated participants. The judge is never called during dialogue generation.
+`eval/judge_transcripts.py` is a separate post-hoc evaluator. Three role-conditioned referees receive the same scenario, option board, complete persona cards, visible transcript, votes, and outcome. They score naturalness, coherence, groundedness, persona consistency, and deliberation quality on a five-point scale. Moderator turns affect the interaction-level dimensions but are excluded from persona consistency.
+
+The judge never runs during dialogue generation. Its CSV files are written incrementally. Complete panels matching the requested provider, model, judge count, and prompt version are skipped, so an interrupted judge run can safely resume without deleting previous results.

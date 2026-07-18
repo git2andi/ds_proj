@@ -1,27 +1,27 @@
 # System overview
 
-The project simulates small option-grounded group discussions. It is intentionally narrower than a general multi-agent dialogue system.
+This project simulates bounded, option-grounded group discussions between two and seven user simulators. It is intentionally narrower than a general multi-agent dialogue system.
 
 ## Data flow
 
 ```text
-topic
-→ public scenario and four option cards
-→ validated natural aliases
+topic and YAML configuration
+→ shared context and four public option cards
+→ validated option aliases and participant names
 → persona cards and private stances
-→ autonomous simulator bids
+→ simulator-owned structured bids
 → floor selection
-→ LLM realization
-→ hard validation
+→ LLM utterance realization
+→ deterministic validation
 → public state update
-→ pre-vote narrowing, one final vote, outcome
+→ optional narrowing, one final vote, outcome
 ```
 
-The core contribution is the ownership split. Each simulator decides whether to speak and selects a complete action. The floor only schedules intact bids. The LLM supplies opening and discussion language, while deterministic code controls phases, visible movement commitment, formal vote wording, and outcomes.
+The central design choice is the separation of responsibilities. Each `UserSimulator` constructs a complete `UserAction` from its private state and the visible dialogue. The floor manager selects among intact bids but does not rewrite them. The LLM supplies wording for openings and discussion turns, while deterministic code controls phases, state commitment, final vote wording, and outcome calculation.
 
 ## Runtime state
 
-The shared state contains visible turns, public preferences and acceptances, one optional bounded thread, compact public point history, response obligations, final votes, and runtime counters. It does not maintain a general issue graph or infer hidden dialogue semantics from arbitrary text.
+Private participant state contains the persona, traits, option ranks, reasons, current preference, and acceptable or rejected alternatives. Shared state contains only public evidence: visible turns, stated preferences and acceptances, one optional bounded thread, response obligations, point-use records, narrowing state, votes, and runtime counters.
 
 ## Phases
 
@@ -29,8 +29,8 @@ The shared state contains visible turns, public preferences and acceptances, one
 OPENING → DISCUSSION → NARROWING → VOTING → CLOSED
 ```
 
-Discussion supports direct questions, group questions, concerns, third-party reactions, comparisons, and acceptance. Any compromise occurs before one final formal vote.
+Discussion supports reactions, support, objections, comparisons, direct and group questions, answers, and visible acceptance or switching. Narrowing occurs only before the single final voting round.
 
-## Intended claims
+## Scope
 
-The implementation supports claims about simulator authority, configurable behavioral parameters, bounded discussion control, visible preference movement, and deterministic voting. It does not establish human realism, psychological validity, or complete semantic grounding.
+The implementation supports claims about simulator authority, configurable behavioral controls, bounded turn taking, visible stance movement, and deterministic outcomes. It does not claim human realism, psychological validity, unrestricted conversation, or complete semantic grounding.

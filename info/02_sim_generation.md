@@ -1,21 +1,18 @@
 # Simulator and persona generation
 
-After the scenario is valid, the builder samples participant parameters and asks the LLM for persona cards consistent with the assigned preferences and the first names fixed by the lightweight metadata call.
+After the scenario is valid, the runtime fixes the experimental group before requesting persona text. Python-side seeded sampling determines:
 
-A persona contains:
+- engagement, verbosity, directness, and ordinary stubbornness;
+- whether one participant is a hard blocker;
+- the group-size-specific preference-distribution shape;
+- the preferred option assigned to each participant.
 
-- ID and unique first name;
-- age and lexical speech style;
-- background and private goal;
-- engagement, verbosity, directness, and stubbornness;
-- preferred option;
-- stance and grounded reason for each option;
-- optional hard-blocker status.
+The persona LLM receives these assignments together with the validated option board and fixed participant names. It supplies a background, private goal, age, and option-specific stances. A stance contains a rank from 1 to 5 and grounded reasons for and against the option.
 
-The Python runtime owns trait sampling, preference-shape sampling, ages, and hard-blocker selection through the run-local random generator. The persona LLM fills the descriptive card and reasons while respecting those assignments.
+The runtime validates and normalizes the result. The assigned preferred option receives rank 5. For ordinary participants, an alternative rank of 5 is reduced to 4 and a rank of 1 is raised to 2; a hard blocker instead receives rank 1 for every nonpreferred option. Missing positive or negative reasons are replaced with the corresponding public upside or concern. Ages must fall within the supported range; a missing age receives a seeded fallback. Speech style and style tendencies are derived from age, verbosity, and directness unless manually configured.
 
-Stances use ranks from rejected to preferred. Normal participants may accept or switch when a public trigger and their stubbornness permit it. A hard blocker rejects every nonpreferred option and never moves.
+A hard blocker receives stubbornness level 5, rejects every nonpreferred option, cannot accept or switch, and always votes for the preferred option. At most one hard blocker is present in a generated group.
 
-An already validated scenario is preserved when persona generation retries. A missing, invalid, or duplicate metadata name receives a unique local fallback. The fixed name overrides any conflicting persona response, and occurrences of the discarded name are replaced in the background, private goal, rejection text, and stance reasons. Manual persona profiles can supply some or all fields through `participants.mode: manual`.
+The resulting private participant state contains the persona, traits, current preference, option ranks, acceptable and hard-rejected alternatives, grounded reasons, and used-point records. None of this private state becomes public unless an accepted utterance visibly expresses the corresponding preference, acceptance, or switch.
 
-Action polarity is explicit: openings, support, and acceptance use `reason_for` or the option upside; objections and concern questions use `reason_against` or the option concern. Neutral card attributes are available for reactions and comparisons rather than being arbitrarily treated as positive or negative evidence.
+Persona generation may retry up to the configured setup-attempt limit without regenerating the already validated scenario. Manual participant profiles remain available through `participants.mode: manual`.

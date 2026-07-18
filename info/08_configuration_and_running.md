@@ -1,23 +1,35 @@
 # Configuration and running
 
-`config.yaml` controls only the implemented compact runtime.
+## LLM credentials
 
-Main sections:
+The runtime loads credentials from a `.env` file in the repository root through `python-dotenv`. Add only the key required by the provider selected in `config.yaml`:
 
-- `llm`: provider, model, endpoint, timeout, and setup/dialogue/repair sampling profiles;
+```dotenv
+OPENAI_API_KEY=your_openai_key
+GROQ_API_KEY=your_groq_key
+GOOGLE_API_KEY=your_google_key
+```
+
+Provider `uni` uses the configured HTTP endpoint and does not require one of these API keys. Never commit `.env`; it is listed in `.gitignore`. An `.env.example` file may be committed because it contains placeholders only.
+
+## Configuration
+
+`config.yaml` controls the implemented runtime. Its main sections are:
+
+- `llm`: active dialogue provider, per-provider model IDs, endpoint, timeout, and Gemini request delay;
 - `environment`: automatic or manual scenario;
-- `simulation`: participant count, bounds, seed, and scenario generation attempts;
+- `simulation`: participant count, supported bounds, seed, and setup-attempt limit;
 - `participants`: automatic or manual profiles;
-- `scenario`: labels, attribute bounds, context bounds, and maximum alias length;
-- `personas`: trait ranges, hard-blocker probability, and preference shapes;
-- `conversation`: voluntary-turn budgets, thread cap, stagnation threshold, compromise cap, prompt context, and consecutive-turn bound;
-- `simulator`: willingness and movement probabilities;
-- `language`: word budgets and directness instructions;
+- `scenario`: option labels, public-attribute bounds, context bounds, and alias length;
+- `personas`: trait ranges, hard-blocker probability, and preference-shape weights;
+- `conversation`: turn budgets, thread cap, stagnation threshold, narrowing window, prompt context, and consecutive-turn bound;
+- `simulator`: engagement and movement probabilities;
+- `language`: verbosity limits, action-specific caps, and directness instructions;
 - `moderator`, `consensus`, `limits`, and `output`.
 
-Scenario and persona generation each use the configured three-attempt limit. The separate alias-and-name metadata call uses the setup sampling profile. It does not consume an additional scenario-generation attempt and cannot invalidate a structurally valid board. Dialogue sampling applies to realized turns. The repair profile is used only for a failed opening; required answers are not repaired or replaced. Formal votes are deterministic.
+Scenario and persona generation each use `simulation.setup_generation_attempts`. The separate alias-and-name metadata call does not consume another scenario attempt and cannot invalidate an already accepted board. Only openings use LLM repair. Final vote wording is deterministic.
 
-Install and run:
+## Install and run
 
 ```powershell
 py -m pip install -r requirements.txt
@@ -30,12 +42,19 @@ Deterministic tests:
 py -m pytest -q
 ```
 
-Clean scenario batch:
+Small scenario batch and deterministic summary:
 
 ```powershell
 py .\eval\run_scenarios.py --limit 10 --seed 500 --clean
-# Uses two isolated worker processes by default; pass --workers 1 to run sequentially.
 py .\eval\summarize_runs.py --logs .\eval\logs_scenarios
 ```
 
-The batch runner refuses to mix new results into a nonempty output directory unless `--clean` is explicitly supplied. It uses process-based concurrency because each dialogue temporarily overrides the module-level configuration. The parent process serializes updates to `scenario_runs.csv` and `scenario_summary.md`; individual run directories are written independently by the workers.
+The scenario runner uses two isolated worker processes by default. Use `--workers 1` for sequential execution. It refuses to write into a nonempty output directory unless `--clean` is supplied.
+
+Post-hoc transcript judging:
+
+```powershell
+py .\eval\judge_transcripts.py --logs .\eval\logs_scenarios --judges 3 --provider uni
+```
+
+The judge uses two workers by default and resumes from existing complete panels.

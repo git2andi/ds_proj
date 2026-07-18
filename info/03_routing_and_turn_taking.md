@@ -1,30 +1,31 @@
 # Routing and turn taking
 
-## Autonomous bidding
+## Simulator-owned actions
 
-On an open floor, every simulator constructs currently valid candidate actions:
+Each participant is represented by an independent `UserSimulator`. It constructs a complete `UserAction` rather than generating text directly. Actions may include:
 
-- `SUPPORT`: add a grounded reason for the current option;
-- `REACT`: respond to another visible position;
-- `OBJECT`: raise a grounded concern;
-- `COMPARE`: contrast relevant options;
-- `ASK`: ask about another participant’s visible option or trade-off;
-- `ACCEPT`: make another option acceptable or switch when allowed.
+- `OPENING`;
+- `SUPPORT`, `REACT`, `OBJECT`, or `COMPARE`;
+- `ASK` or `ANSWER`;
+- `ACCEPT`;
+- `VOTE`.
 
-The simulator selects one candidate using simple contextual weights, then engagement determines whether it submits that action or remains silent. The selected bid is complete: speaker, act, option focus, grounded source, optional addressee, and optional movement. A comparison contains the same named public attribute from both focused options. Comparisons use a lower weight, are not available as a participant’s first voluntary contribution, and are suppressed when another comparison occurred in the preceding two participant turns.
+A bid records the speaker, priority, act, option focus, optional addressee, grounded reason source, and any stance update or vote. Later components may select or reject the bid but do not replace these decisions.
 
-## Floor selection
+During ordinary discussion, the simulator derives currently valid candidates from its private stance and the visible state. Candidate construction uses public preferences, recent turns, the active thread, and point-use records. Comparisons use the same named public attribute from both options and receive a low selection weight.
 
-The floor receives intact bids and applies required-answer priority, thread priority, a consecutive-turn bound, and light anti-monopoly/anti-ping-pong weighting. It never rewrites a bid.
+After selecting one candidate, engagement determines whether the simulator submits it. Openings, directly required answers, and votes bypass voluntary willingness. An active thread increases voluntary willingness by `0.15`, capped at `1.0`.
 
-## Threads
+## Floor allocation
 
-A direct question schedules the named participant’s answer. A group question allows an eligible participant to answer. After the first response, simulators may voluntarily agree, disagree, add a new grounded point, compare, or accept. The thread closes after no related bid or its configured turn cap.
+Bids use `NORMAL`, `THREAD`, or `REQUIRED` priority. The floor keeps only the highest available priority and selects probabilistically among the remaining intact actions. Participants with fewer voluntary turns receive additional weight, while the previous speaker and simple alternating-speaker patterns are penalized. A participant cannot exceed the configured consecutive-turn limit when another bidder is available.
 
-Questions are not generated merely to enumerate attributes. A question point must not already be public or belong to a closed thread. Later thread turns may not repeatedly paraphrase the opening point; after the first answer they must add another point, compare, or visibly move.
+## Threads and response obligations
 
-## Local references
+A direct question creates a response obligation for its named addressee. A group question allows eligible participants to self-select; when all decline, the runtime may force one related simulator-owned response for liveness. Objections may open concern threads. Only one thread is active at a time, and a participant normally contributes to it once. A thread closes at its configured cap, when no related action remains, or when discussion ends.
 
-Openings, preference movements, and votes explicitly identify the option. Ordinary discussion turns are encouraged to name an option when clarity needs it, but a missing exact alias is not a hard failure. This permits natural continuation without requiring a general fuzzy-matching subsystem.
+Structured point keys suppress repeated questions and repeated use of the same grounded reason. After an initial answer, later thread contributions must add another point, compare options, or visibly move.
 
-`ACCEPT` can either make another option acceptable or switch the current preference. A mid-discussion switch is allowed only after the option has appeared in the recent public exchange, already has more public support than the participant's current choice, and the participant's stubbornness-based movement draw succeeds.
+## Movement
+
+`ACCEPT` may either mark another option as publicly acceptable or switch the current preference. A switch during ordinary discussion requires the target to be recent in the public exchange, to have more public preference support than the participant's current option, and to pass the participant's stubbornness-based movement draw. Hard blockers never move.

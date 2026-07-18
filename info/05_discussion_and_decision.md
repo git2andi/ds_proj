@@ -9,34 +9,35 @@ required direct answer, if any
 otherwise collect simulator bids
 → select one intact bid
 → realize one utterance
-→ hard validation
-→ commit visible state and public point history
+→ deterministic validation
+→ commit visible state and point history
 → maintain or close the active thread
 ```
 
-The loop has minimum, soft-target, and hard-maximum voluntary-turn budgets. It may stop after the target when no novel bid remains, or after minimum participation when public preferences have converged. One neutral liveness intervention is available before the target.
+For `n` participants, the default voluntary-turn budgets are:
 
-## Public state
+```text
+minimum = 2n
+target  = min(4n, 20)
+maximum = min(6n, 28)
+```
 
-The structured action determines intended behavior. Preference changes are committed only when the accepted text visibly identifies the target option. For ordinary discussion acts, omission of an exact alias is treated as a minor wording issue rather than a reason to discard the turn. The runtime does not attempt general semantic parsing.
+Discussion may stop after the minimum when public preferences have converged, after the target when no novel candidate remains, or at the hard maximum after any outstanding required answer. After the configured number of empty bidding rounds, one moderator prompt and one forced simulator-owned bid may be used for liveness.
 
-## Repetition control
+## Public state and repetition control
 
-Grounded reasons carry a point key based on option ID and attribute name. The runtime records group-level point counts and the two most recent points.
+The structured action determines the intended behavior, but its effects are committed only after the visible text passes validation. Failed turns do not enter the transcript, consume a reason, change a preference, register an acceptance, advance a thread, or create a vote.
 
-- a participant avoids reusing its completed point;
-- a recently used point is suppressed for ordinary contributions;
-- an already public point cannot open another question;
-- a completed thread is not reopened on the same key;
-- after the first thread answer, later contributions must add another point, compare, or move;
-- narrowing may reuse a point when it directly explains a final movement decision.
+Grounded reasons carry point keys based on option ID and public source. The runtime tracks per-participant use, group-level counts, recent points, and closed thread points. This prevents exact reuse where alternatives exist, but it is not a general semantic duplicate detector.
 
 ## Language realization
 
-The compact prompt includes the selected action, exact grounded source, active thread, four recent turns, and the speaker’s recent sentence openings. It asks the speaker to continue a live group chat, connect to the previous message, vary syntax with the persona style, and avoid routinely beginning with an option name, participant name, or `I`. It asks for an option reference when clarity needs one, while allowing contextual continuation for ordinary discussion. Comparisons receive the same named public attribute from both options. The values are separately labeled, but the utterance may express the difference naturally rather than through one fixed template.
+The LLM receives the selected action, grounded source, persona voice, active thread, relevant option facts, and the configured recent-turn window. The prompt also includes recent sentence openings to discourage repetitive syntax. The LLM controls wording only; it does not choose the speaker, action, option, movement, or vote.
 
-## Generation failure
+Openings, explicit movements, and votes must identify their option. Ordinary reactions and answers may use local contextual references when the active exchange is unambiguous. Comparisons receive one grounded source for each focused option.
 
-Voluntary invalid utterances are dropped and flagged. Only openings receive one repair attempt and a deterministic fallback. Required answers keep the original generated wording and are not subjected to a semantic-relevance score, repair call, or generic fallback. They still pass the ordinary hard checks for usable output, supported numbers, and hard-blocker consistency. Missing an exact option alias is not by itself a hard failure for an answer.
+## Validation and failure handling
 
-For a structured movement, visibility requires the target option to be explicitly named. The simulator has already made the acceptance or switching decision, so the validator does not require a fixed acceptance phrase.
+Before realization, structured actions are checked for valid speakers, addressees, options, comparison sources, movement, and vote constraints. After realization, deterministic checks reject unusable output, invalid speaker labels, unsupported numeric claims, malformed direct questions, invisible movement, hard-blocker contradictions, and vote mismatches.
+
+Only an invalid opening receives one focused LLM repair attempt and may then use a deterministic fallback. Invalid ordinary discussion turns, including answers, are dropped and logged. A failed required answer is recorded as a protocol error. Final vote wording is deterministic and uses no dialogue-generation or repair call.

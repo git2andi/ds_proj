@@ -1,6 +1,6 @@
 # Topic examples
 
-The automatic setup accepts a plain decision topic and creates four topic-specific options. Suitable topics have a clear choice and a small set of public trade-offs.
+Automatic setup accepts a plain decision topic and creates four topic-specific options. Suitable topics describe one bounded group choice with a small number of understandable trade-offs.
 
 Examples:
 
@@ -14,8 +14,6 @@ Choose accommodation for a short group trip
 Choose a board game for six participants
 ```
 
-The system is not limited to fixed domains. Topic generality comes from structured option cards, not from hard-coded restaurant, travel, or product rules.
+The runtime is not tied to a fixed domain. Topic generality comes from the generated public option cards rather than domain-specific policy code.
 
-For reliable setup, topics should avoid requesting live prices, current schedules, or external facts that the configured LLM cannot verify. The generated option board is treated as the shared world for the discussion.
-
-Manual mode is preferable when exact factual values or a specific experimental setup must be preserved.
+For reliable setup, avoid requests that depend on live prices, current schedules, or external facts that the selected model cannot verify. The generated option board becomes the shared factual world of the discussion. Use manual mode when exact values or a fixed experimental setup must be preserved.

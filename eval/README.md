@@ -1,6 +1,6 @@
 # Evaluation tools
 
-The evaluation folder contains four entry points. The focused suite and scenario runner call the configured dialogue provider; the summarizer is deterministic; the transcript judge is a separate post-hoc LLM evaluation.
+The evaluation folder contains four entry points. The focused suite and scenario runner call the configured dialogue provider, the summarizer is deterministic, and the transcript judge is a separate post-hoc LLM evaluation. Configure the required provider key in the repository-root `.env` file before running LLM-backed tools.
 
 ## Focused development suite
 
@@ -8,7 +8,7 @@ The evaluation folder contains four entry points. The focused suite and scenario
 py .\eval\run_eval_suite.py
 ```
 
-Runs a small set of pinned cases covering direct and group threads, hard blockers, movement, decisive majorities, splits, moderator-free operation, and voting. These cases are regression aids, not the main report dataset.
+Runs pinned regression cases for direct and group threads, hard blockers, movement, majority and split outcomes, moderator-free operation, and voting. These cases are development checks rather than the main report dataset.
 
 Default output:
 
@@ -21,8 +21,6 @@ eval/logs_eval_suite/
 ```powershell
 py .\eval\run_scenarios.py --seed 500 --clean
 ```
-
-`run_scenarios.py` starts two independent scenario processes by default. Use `--workers 1` for sequential execution or another positive value when the configured endpoint can safely handle more concurrency. The parent process alone updates the CSV and summary, so completed rows remain consistent.
 
 `scenarios.txt` uses:
 
@@ -40,7 +38,7 @@ py .\eval\run_scenarios.py --output .\eval\logs_custom --clean
 py .\eval\run_scenarios.py --workers 1 --limit 10 --seed 500 --clean
 ```
 
-The runner refuses to use a nonempty output directory unless `--clean` is given. It writes its manifest incrementally so completed cases remain visible after interruption.
+The runner uses two isolated scenario processes by default. The parent process writes `scenario_runs.csv` and `scenario_summary.md` incrementally, so completed rows remain available after interruption. A nonempty output directory is rejected unless `--clean` is supplied.
 
 ## Deterministic summary
 
@@ -50,12 +48,12 @@ py .\eval\summarize_runs.py --logs .\eval\logs_scenarios
 
 Outputs:
 
-- `deterministic_runs.csv`: compact reliability/process row per run;
+- `deterministic_runs.csv`: one compact reliability and process row per run;
 - `trait_participants.csv`: one row per simulator;
-- `trait_levels.csv`: trait-level aggregates;
-- `evaluation_summary.md`: concise outcomes, reliability, cost, and trait summary.
+- `trait_levels.csv`: aggregates by trait level;
+- `evaluation_summary.md`: outcomes, protocol reliability, cost, and trait summary.
 
-The main metrics are setup completion, outcomes, turns, moderator ratio, vote consistency, visible preference changes, generation failures, token use, engagement realization relative to equal participation, and verbosity realization on generated non-vote turns. Formal vote wording is deterministic, so vote lines do not add dialogue-generation or repair calls. Directness is included only as an optional lexical hedge-rate proxy.
+The main metrics are completion, outcomes, participant and moderator turns, voluntary participation, vote/outcome consistency, required-response failures, visible preference movement, repairs, dropped turns, fallbacks, LLM calls, token use, and trait realization. Deterministic vote lines are excluded from generated-language measurements.
 
 ## Independent transcript judges
 
@@ -63,13 +61,21 @@ The main metrics are setup completion, outcomes, turns, moderator ratio, vote co
 py .\eval\judge_transcripts.py --logs .\eval\logs_scenarios --judges 3 --provider uni
 ```
 
-Independent referee roles receive the same scenario, persona cards, visible transcript, votes, and outcome. They score naturalness, coherence, groundedness, persona consistency, and deliberation quality. Moderator turns count toward the interaction-level dimensions because they affect the visible exchange, but the moderator is explicitly excluded from persona consistency. No referee receives another referee’s assessment.
+The three referee roles receive the same scenario, option board, complete persona cards, visible transcript, votes, and outcome. They score naturalness, coherence, groundedness, persona consistency, and deliberation quality. Moderator turns count toward the interaction-level dimensions but are excluded from persona consistency.
 
-Outputs:
+Useful options:
+
+```powershell
+py .\eval\judge_transcripts.py --logs .\eval\logs_scenarios --judges 3 --provider uni --workers 2
+py .\eval\judge_transcripts.py --logs .\eval\logs_scenarios --limit 10
+py .\eval\judge_transcripts.py --runs .\eval\logs_scenarios\RUN_DIR
+```
+
+Outputs are written incrementally to a judge directory inferred from the log-folder name unless `--output` is supplied:
 
 - `judge_scores.csv`;
 - `judge_scores_detailed.csv`;
 - `judge_summary.md`;
-- `judge_errors.csv` when needed.
+- `judge_errors.csv`.
 
-The judges are never part of the runtime path.
+Existing complete panels with the same provider, model, judge count, and prompt version are skipped. Re-running the command therefore resumes incomplete work without deleting earlier scores. The judges are never part of the dialogue runtime.
