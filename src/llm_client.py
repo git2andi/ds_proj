@@ -70,17 +70,10 @@ class LLMClient:
         self.session_tokens_out += self.last_tokens_out
         self.session_calls += 1
 
-    def _sampling(self, profile: str) -> dict[str, Any]:
-        section = getattr(cfg.llm.sampling, profile)
-        return {
-            "temperature": float(section.temperature),
-            "top_k": int(section.top_k),
-            "top_p": float(section.top_p),
-            "max_output_tokens": int(section.get("max_output_tokens", 0)),
-        }
-
     def generate(self, prompt: str, *, profile: str = "dialogue") -> str:
-        sampling = self._sampling(profile)
+        # ``profile`` remains part of the public interface, but provider/model
+        # defaults now control sampling and output length.
+        _ = profile
         self.last_tokens_in = self.last_tokens_out = 0
         if self.provider == "gemini":
             time.sleep(float(cfg.llm.gemini_rpm_delay_seconds))
@@ -97,11 +90,7 @@ class LLMClient:
             request: dict[str, Any] = {
                 "model": self.model_id,
                 "messages": [{"role": "user", "content": prompt}],
-                "temperature": sampling["temperature"],
-                "top_p": sampling["top_p"],
             }
-            if sampling["max_output_tokens"]:
-                request["max_tokens"] = sampling["max_output_tokens"]
             response = self._client.chat.completions.create(**request)
             text = (response.choices[0].message.content or "").strip()
             usage = getattr(response, "usage", None)
@@ -115,12 +104,6 @@ class LLMClient:
             "model": self.model_id,
             "prompt": prompt,
             "stream": False,
-            "options": {
-                "temperature": sampling["temperature"],
-                "top_k": sampling["top_k"],
-                "top_p": sampling["top_p"],
-                **({"num_predict": sampling["max_output_tokens"]} if sampling["max_output_tokens"] else {}),
-            },
         }
         response = requests.post(
             str(cfg.llm.endpoints.uni),
@@ -135,16 +118,11 @@ class LLMClient:
 
     def generate_json(self, prompt: str, *, profile: str = "setup") -> dict[str, Any]:
         if self.provider in {"gpt", "groq"}:
-            sampling = self._sampling(profile)
             request: dict[str, Any] = {
                 "model": self.model_id,
                 "messages": [{"role": "user", "content": prompt}],
-                "temperature": sampling["temperature"],
-                "top_p": sampling["top_p"],
                 "response_format": {"type": "json_object"},
             }
-            if sampling["max_output_tokens"]:
-                request["max_tokens"] = sampling["max_output_tokens"]
             response = self._client.chat.completions.create(**request)
             text = (response.choices[0].message.content or "").strip()
             usage = getattr(response, "usage", None)

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import csv
 import json
-import subprocess
 from collections import Counter
 from dataclasses import asdict, is_dataclass
 from datetime import datetime

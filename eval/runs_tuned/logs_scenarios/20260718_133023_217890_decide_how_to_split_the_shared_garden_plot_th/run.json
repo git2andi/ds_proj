@@ -1,0 +1,3734 @@
+{
+  "provenance": {
+    "seed": 242118764,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide how to split the shared garden plot this season",
+    "options": [
+      {
+        "id": "A",
+        "name": "Equal Six-Way Split",
+        "attrs": {
+          "total_area_sqft": "600",
+          "plots": "6",
+          "plot_size_sqft": "100",
+          "division_method": "equal_area"
+        },
+        "upside": "Each participant receives an equal area of 100 square feet.",
+        "concern": "No consideration for individual crop preferences or effort levels.",
+        "short_name": "Equal Split",
+        "aliases": [
+          "Equal Split",
+          "Six-Way Split"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Preference-Based Allocation",
+        "attrs": {
+          "total_area_sqft": "600",
+          "plots": "6",
+          "division_method": "based_on_individual_preferences",
+          "max_plot_size_sqft": "150",
+          "min_plot_size_sqft": "50"
+        },
+        "upside": "Participants receive plot sizes aligned with their crop preferences.",
+        "concern": "Plot sizes vary, which may cause disagreements about fairness.",
+        "short_name": "Preference Allocation",
+        "aliases": [
+          "Preference Allocation",
+          "Preference-Based"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Crop-Type Grouping",
+        "attrs": {
+          "total_area_sqft": "600",
+          "division_method": "grouped_by_crop_type",
+          "crop_groups": "3",
+          "plots_per_group": "2"
+        },
+        "upside": "Plots are organized by crop type, facilitating shared care and resources.",
+        "concern": "Participants growing different crops must share plots, reducing individual control.",
+        "short_name": "Crop Grouping",
+        "aliases": [
+          "Crop Grouping"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Effort-Based Distribution",
+        "attrs": {
+          "total_area_sqft": "600",
+          "division_method": "based_on_effort_contributed",
+          "effort_scale": "hours_worked",
+          "min_plot_size_sqft": "75",
+          "max_plot_size_sqft": "150"
+        },
+        "upside": "Plot sizes reflect each participant’s contribution in hours worked.",
+        "concern": "Requires tracking effort accurately and may cause disputes over recorded hours.",
+        "short_name": "Effort Distribution",
+        "aliases": [
+          "Effort Distribution",
+          "Effort-Based"
+        ]
+      }
+    ],
+    "shared_context": [
+      "Six participants need to decide how to divide a shared garden plot of 600 square feet for this growing season. The plot can be split evenly, by preference, by crop type, or by effort contributed."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Maya is a community gardener who values collaboration and shared knowledge.",
+      "private_goal": "To grow a variety of crops with others who share similar interests.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Equal split is fair and simple, ensuring everyone gets the same space.",
+          "reason_against": "Does not consider crop type grouping which helps shared care."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Allows some flexibility in plot size based on preferences.",
+          "reason_against": "Unequal plot sizes may cause fairness concerns and reduce collaboration."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Grouping by crop type promotes shared care and resource efficiency, which aligns with my collaborative values.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Effort-based distribution seems fair to reward contribution.",
+          "reason_against": "Tracking effort accurately can be difficult and cause disputes."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 3,
+        "stubbornness": 1
+      },
+      "background": "Liam is a practical gardener who prefers straightforward and fair solutions.",
+      "private_goal": "To have a guaranteed equal share of the garden without complications.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Equal split is clear and ensures fairness with no disputes over size.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Preference-based allocation offers some customization.",
+          "reason_against": "Unequal sizes may lead to disagreements."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Grouping by crop type could be efficient but complicates individual control.",
+          "reason_against": "I prefer clear, equal shares rather than shared plots."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Effort-based distribution rewards contribution fairly.",
+          "reason_against": "Requires effort tracking which may be cumbersome."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Noah",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 4,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Noah enjoys gardening as a relaxing hobby and values simplicity.",
+      "private_goal": "To have a straightforward and equal garden plot without conflict.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Equal split is simple and avoids conflict.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Preference-based allocation allows customization.",
+          "reason_against": "Unequal sizes could cause disagreements."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Crop grouping could simplify care and resource sharing.",
+          "reason_against": "Sharing plots reduces individual control."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Effort-based seems fair but requires tracking.",
+          "reason_against": "Tracking effort may cause disputes."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Zoe is a focused gardener who values fairness based on effort and preferences.",
+      "private_goal": "To have a plot size that reflects my preferences and the effort I put in.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Equal split is simple but ignores effort and preferences.",
+          "reason_against": "I want my plot size to reflect my input and preferences."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Preference-based allocation respects individual crop needs and personal desires.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Crop grouping helps with shared resources but limits personal control.",
+          "reason_against": "I prefer more control over my own plot."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Effort-based distribution rewards contribution fairly.",
+          "reason_against": "Requires accurate tracking which may be difficult."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Eli is an experienced gardener who values collaboration and efficiency.",
+      "private_goal": "To grow crops efficiently with others who share my crop type.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Equal split is fair but ignores crop type grouping benefits.",
+          "reason_against": "I prefer grouping by crop type for shared care."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Preference-based allocation allows flexibility.",
+          "reason_against": "Unequal sizes may cause fairness issues."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Grouping by crop type helps share resources and care efficiently.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Effort-based distribution rewards contribution.",
+          "reason_against": "Effort tracking may be complicated."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Ava",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 1
+      },
+      "background": "Ava is a passionate gardener who values personal preferences and fairness.",
+      "private_goal": "To have a plot size that matches my crop preferences and effort.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Equal split is fair but does not consider preferences or effort.",
+          "reason_against": "I want my plot size to reflect my preferences."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Preference-based allocation respects individual crop needs and personal desires.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Crop grouping helps with shared resources but limits personal control.",
+          "reason_against": "I prefer more control over my own plot."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Effort-based distribution rewards contribution fairly.",
+          "reason_against": "Requires accurate tracking which may be difficult."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 0,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "plot_size_sqft"
+        ],
+        [
+          "A",
+          "plots"
+        ],
+        [
+          "B",
+          "min_plot_size_sqft"
+        ],
+        [
+          "A",
+          "division_method"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "total_area_sqft"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "plots"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "total_area_sqft"
+        ],
+        [
+          "B",
+          "division_method"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Crop grouping could simplify care and resource sharing."
+      },
+      "narrowing_acceptance": "C",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "plot_size_sqft"
+        ],
+        [
+          "A",
+          "total_area_sqft"
+        ],
+        [
+          "A",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "plots"
+        ],
+        [
+          "B",
+          "max_plot_size_sqft"
+        ],
+        [
+          "A",
+          "division_method"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "total_area_sqft"
+        ],
+        [
+          "C",
+          "total_area_sqft"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 2,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "plots"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "division_method"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "max_plot_size_sqft"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "min_plot_size_sqft"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "total_area_sqft"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "total_area_sqft"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Decide how to split the shared garden plot this season.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Grouping crops by type helps us share care and resources better. Option C fits my values.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Grouping by crop type promotes shared care and resource efficiency, which aligns with my collaborative values.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow a variety of crops with others who share similar interests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "Preference-based allocation respects our crop needs and desires.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Preference-based allocation respects individual crop needs and personal desires.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Participants receive plot sizes aligned with their crop preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Ava",
+      "text": "Preference-based allocation makes sense because it matches plot sizes to what each of us wants to grow and how much effort we plan to put in.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Preference-based allocation respects individual crop needs and personal desires.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Participants receive plot sizes aligned with their crop preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Grouping by crop type ensures shared care and resource efficiency—Option C is best.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Grouping by crop type helps share resources and care efficiently.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Equal Split is simple and fair. No disputes over size.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Equal split is clear and ensures fairness with no disputes over size.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Each participant receives an equal area of 100 square feet."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Equal Split feels best to me since it’s simple and avoids any conflicts over plot sizes.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Equal split is simple and avoids conflict.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Each participant receives an equal area of 100 square feet."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a straightforward and equal garden plot without conflict.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Ava",
+      "text": "Equal shares ignore how much work or space I need for my crops, so it wouldn’t be fair for me.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "I want my plot size to reflect my preferences.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No consideration for individual crop preferences or effort levels."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "600 sqft split six ways means about 100 each, which feels manageable and simple to me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the total area sqft is 600",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "total_area_sqft",
+          "public_value": "600"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a straightforward and equal garden plot without conflict.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Ava",
+      "text": "Maya, do you think crop grouping limits how much control we have over our own plots?",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "I prefer more control over my own plot.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Participants growing different crops must share plots, reducing individual control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Sharing plots means less control over what you grow individually.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Participants growing different crops must share plots, reducing individual control.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Participants growing different crops must share plots, reducing individual control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow a variety of crops with others who share similar interests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "Both give 600 sqft, but preference allocation fits effort better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare total_area_sqft: 600 and 600",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "total_area_sqft",
+            "public_value": "600"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "total_area_sqft",
+            "public_value": "600"
+          }
+        ],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Unequal plot sizes risk creating fairness issues and conflict.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unequal sizes may cause fairness issues.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Plot sizes vary, which may cause disagreements about fairness."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Ava",
+      "text": "Fairness matters, but since the max plot size is 150 sqft, I need mine sized to match my crop effort or I won’t be motivated.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the max plot size sqft is 150",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_plot_size_sqft",
+          "public_value": "150"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Minimum plot size is 50 sqft, so splits can’t be too small.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the min plot size sqft is 50",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "min_plot_size_sqft",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Six plots limit flexibility; grouping by crop type is still crucial.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the plots is 6",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "plots",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Ava",
+      "text": "With 600 sqft total, I need my plot to reflect my crop choices and effort, or I won’t be as invested.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the total area sqft is 600",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "total_area_sqft",
+          "public_value": "600"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Unequal sizes invite tension. I want clear equal shares.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "Unequal sizes may lead to disagreements.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Plot sizes vary, which may cause disagreements about fairness."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Individual preferences complicate fairness; I need guaranteed equal shares.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the division method is based_on_individual_preferences",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "division_method",
+          "public_value": "based_on_individual_preferences"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Ava",
+      "text": "Minimum plots of 50 sqft make sense; anything smaller wouldn’t suit the crops I want or the effort I put in.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the min plot size sqft is 50",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "min_plot_size_sqft",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "150 sqft max means I can’t exceed that.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the max plot size sqft is 150",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_plot_size_sqft",
+          "public_value": "150"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Preference-based division suits varied needs but may complicate efficient crop grouping.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the division method is based_on_individual_preferences",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "division_method",
+          "public_value": "based_on_individual_preferences"
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Both give 6 plots, but equal split guarantees my fair share.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare plots: 6 and 6",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "plots",
+            "public_value": "6"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "plots",
+            "public_value": "6"
+          }
+        ],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Grouping by crop type simplifies shared care and increases efficiency.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "I prefer grouping by crop type for shared care.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No consideration for individual crop preferences or effort levels."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Ava",
+      "text": "With 600 sqft total, an equal split gives me just 100 sqft, which might be tight for my preferred crops and effort.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the total area sqft is 600",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "total_area_sqft",
+          "public_value": "600"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "100 sqft might be small for some, but I find a simple, equal share helps keep things peaceful and clear.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the plot size sqft is 100",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "plot_size_sqft",
+          "public_value": "100"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a straightforward and equal garden plot without conflict.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Peace and clarity are worth the 100 sqft limit for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the division method is equal_area",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "division_method",
+          "public_value": "equal_area"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "The plots is 6, but I need more space for effort.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the plots is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "plots",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "100 sqft per plot is fair and keeps things simple.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the plot size sqft is 100",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "plot_size_sqft",
+          "public_value": "100"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "Equal area works, but effort needs extra space.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the division method is equal_area",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "division_method",
+          "public_value": "equal_area"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Both give 600 sqft total, but equal split guarantees my fair share.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare total_area_sqft: 600 and 600",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "total_area_sqft",
+            "public_value": "600"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "total_area_sqft",
+            "public_value": "600"
+          }
+        ],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 31,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The strongest common-ground options are tied, so I’ll use Crop Grouping as the compromise target. Liam, Noah, Zoe, and Ava, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 32,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Crop Grouping could work for me since organizing by crop type might make sharing care and resources easier.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Crop grouping could simplify care and resource sharing.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a straightforward and equal garden plot without conflict.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Crop grouping could simplify care and resource sharing."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Crop grouping could simplify care and resource sharing."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 33,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Sharing plots with different crops still reduces my clear, equal share.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "I prefer clear, equal shares rather than shared plots.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Participants growing different crops must share plots, reducing individual control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 34,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Crop Grouping.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Grouping by crop type promotes shared care and resource efficiency, which aligns with my collaborative values.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Equal Split is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Equal split is clear and ensures fairness with no disputes over size.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Each participant receives an equal area of 100 square feet."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Crop Grouping is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Crop grouping could simplify care and resource sharing.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Crop grouping could simplify care and resource sharing."
+        },
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Crop grouping could simplify care and resource sharing."
+      },
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "Preference Allocation is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Preference-based allocation respects individual crop needs and personal desires.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Participants receive plot sizes aligned with their crop preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "I choose Crop Grouping.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Grouping by crop type helps share resources and care efficiently.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Ava",
+      "text": "My final vote is Preference Allocation.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Preference-based allocation respects individual crop needs and personal desires.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Participants receive plot sizes aligned with their crop preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "No option reached a majority, so the result remains unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:division_method": 2,
+    "A:plot_size_sqft": 2,
+    "A:plots": 2,
+    "A:total_area_sqft": 3,
+    "A:upside": 2,
+    "B:concern": 2,
+    "B:division_method": 2,
+    "B:max_plot_size_sqft": 2,
+    "B:min_plot_size_sqft": 2,
+    "B:plots": 2,
+    "B:total_area_sqft": 3,
+    "B:upside": 2,
+    "C:concern": 3,
+    "C:total_area_sqft": 1,
+    "C:upside": 3
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "upside"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "A",
+    "p3": "C",
+    "p4": "B",
+    "p5": "C",
+    "p6": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "C",
+      "p2": "A",
+      "p3": "C",
+      "p4": "B",
+      "p5": "C",
+      "p6": "B"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 32,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 19652,
+    "output_tokens": 2876,
+    "moderator_turns": 4,
+    "voluntary_turns": 25,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 38,
+    "voluntary_turns": 25,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0952,
+    "avg_words_per_participant_turn": 12.45,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 19652,
+    "output_tokens": 2876,
+    "llm_calls": 35,
+    "voluntary_turns_by_persona": {
+      "p6": 6,
+      "p3": 3,
+      "p4": 4,
+      "p5": 4,
+      "p2": 8
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Grouping by crop type promotes shared care and resource efficiency, which aligns with my collaborative values.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow a variety of crops with others who share similar interests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Grouping crops by type helps us share care and resources better. Option C fits my values.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Preference-based allocation respects individual crop needs and personal desires.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Participants receive plot sizes aligned with their crop preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Preference-based allocation respects our crop needs and desires.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Preference-based allocation respects individual crop needs and personal desires.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Participants receive plot sizes aligned with their crop preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Preference-based allocation makes sense because it matches plot sizes to what each of us wants to grow and how much effort we plan to put in.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Grouping by crop type helps share resources and care efficiently.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Grouping by crop type ensures shared care and resource efficiency—Option C is best.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Equal split is clear and ensures fairness with no disputes over size.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Each participant receives an equal area of 100 square feet."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Equal Split is simple and fair. No disputes over size.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Equal split is simple and avoids conflict.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Each participant receives an equal area of 100 square feet."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a straightforward and equal garden plot without conflict.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Equal Split feels best to me since it’s simple and avoids any conflicts over plot sizes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "I want my plot size to reflect my preferences.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No consideration for individual crop preferences or effort levels."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Equal shares ignore how much work or space I need for my crops, so it wouldn’t be fair for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the total area sqft is 600",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "total_area_sqft",
+          "public_value": "600"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a straightforward and equal garden plot without conflict.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "600 sqft split six ways means about 100 each, which feels manageable and simple to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "I prefer more control over my own plot.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Participants growing different crops must share plots, reducing individual control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, do you think crop grouping limits how much control we have over our own plots?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Participants growing different crops must share plots, reducing individual control.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Participants growing different crops must share plots, reducing individual control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow a variety of crops with others who share similar interests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sharing plots means less control over what you grow individually.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare total_area_sqft: 600 and 600",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "total_area_sqft",
+            "public_value": "600"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "total_area_sqft",
+            "public_value": "600"
+          }
+        ],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both give 600 sqft, but preference allocation fits effort better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unequal sizes may cause fairness issues.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Plot sizes vary, which may cause disagreements about fairness."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unequal plot sizes risk creating fairness issues and conflict.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the max plot size sqft is 150",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_plot_size_sqft",
+          "public_value": "150"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fairness matters, but since the max plot size is 150 sqft, I need mine sized to match my crop effort or I won’t be motivated.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the min plot size sqft is 50",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "min_plot_size_sqft",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Minimum plot size is 50 sqft, so splits can’t be too small.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the plots is 6",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "plots",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Six plots limit flexibility; grouping by crop type is still crucial.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the total area sqft is 600",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "total_area_sqft",
+          "public_value": "600"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "With 600 sqft total, I need my plot to reflect my crop choices and effort, or I won’t be as invested.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "Unequal sizes may lead to disagreements.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Plot sizes vary, which may cause disagreements about fairness."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unequal sizes invite tension. I want clear equal shares.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the division method is based_on_individual_preferences",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "division_method",
+          "public_value": "based_on_individual_preferences"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Individual preferences complicate fairness; I need guaranteed equal shares.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the min plot size sqft is 50",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "min_plot_size_sqft",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Minimum plots of 50 sqft make sense; anything smaller wouldn’t suit the crops I want or the effort I put in.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the max plot size sqft is 150",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_plot_size_sqft",
+          "public_value": "150"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "150 sqft max means I can’t exceed that.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the division method is based_on_individual_preferences",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "division_method",
+          "public_value": "based_on_individual_preferences"
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Preference-based division suits varied needs but may complicate efficient crop grouping.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare plots: 6 and 6",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "plots",
+            "public_value": "6"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "plots",
+            "public_value": "6"
+          }
+        ],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both give 6 plots, but equal split guarantees my fair share.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "I prefer grouping by crop type for shared care.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No consideration for individual crop preferences or effort levels."
+        },
+        "comparison_sources": [],
+        "personal_context": "To grow crops efficiently with others who share my crop type.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Grouping by crop type simplifies shared care and increases efficiency.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the total area sqft is 600",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "total_area_sqft",
+          "public_value": "600"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that matches my crop preferences and effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "With 600 sqft total, an equal split gives me just 100 sqft, which might be tight for my preferred crops and effort.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the plot size sqft is 100",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "plot_size_sqft",
+          "public_value": "100"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a straightforward and equal garden plot without conflict.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "100 sqft might be small for some, but I find a simple, equal share helps keep things peaceful and clear.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the division method is equal_area",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "division_method",
+          "public_value": "equal_area"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Peace and clarity are worth the 100 sqft limit for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the plots is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "plots",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The plots is 6, but I need more space for effort.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the plot size sqft is 100",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "plot_size_sqft",
+          "public_value": "100"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "100 sqft per plot is fair and keeps things simple.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the division method is equal_area",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "division_method",
+          "public_value": "equal_area"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a plot size that reflects my preferences and the effort I put in.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Equal area works, but effort needs extra space.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare total_area_sqft: 600 and 600",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "total_area_sqft",
+            "public_value": "600"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "total_area_sqft",
+            "public_value": "600"
+          }
+        ],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both give 600 sqft total, but equal split guarantees my fair share.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Crop grouping could simplify care and resource sharing.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a straightforward and equal garden plot without conflict.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Crop grouping could simplify care and resource sharing."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Crop Grouping could work for me since organizing by crop type might make sharing care and resources easier.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "I prefer clear, equal shares rather than shared plots.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Participants growing different crops must share plots, reducing individual control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a guaranteed equal share of the garden without complications.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sharing plots with different crops still reduces my clear, equal share.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Grouping by crop type promotes shared care and resource efficiency, which aligns with my collaborative values.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Crop Grouping.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Equal split is clear and ensures fairness with no disputes over size.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Each participant receives an equal area of 100 square feet."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Equal Split is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Crop grouping could simplify care and resource sharing.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Crop grouping could simplify care and resource sharing."
+        },
+        "vote_option": "C"
+      },
+      "raw_text": "Crop Grouping is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Preference-based allocation respects individual crop needs and personal desires.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Participants receive plot sizes aligned with their crop preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Preference Allocation is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Grouping by crop type helps share resources and care efficiently.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Plots are organized by crop type, facilitating shared care and resources."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Crop Grouping.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Preference-based allocation respects individual crop needs and personal desires.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Participants receive plot sizes aligned with their crop preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Preference Allocation.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

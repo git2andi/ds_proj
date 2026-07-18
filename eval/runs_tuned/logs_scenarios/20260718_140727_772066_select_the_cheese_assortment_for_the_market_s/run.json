@@ -1,0 +1,3427 @@
+{
+  "provenance": {
+    "seed": 242118848,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Select the cheese assortment for the market stand's festival box",
+    "options": [
+      {
+        "id": "A",
+        "name": "Classic Cow, Goat, Sheep, and Buffalo Cheese Mix",
+        "attrs": {
+          "cheese_count": "4",
+          "milk_sources": "['cow', 'goat', 'sheep', 'buffalo']",
+          "price_per_box_usd": "25",
+          "average_age_months": "6"
+        },
+        "upside": "Offers a traditional variety appealing to diverse tastes.",
+        "concern": "Higher price may limit budget-conscious buyers.",
+        "short_name": "Classic Cow Cheese",
+        "aliases": [
+          "Classic Cow Cheese",
+          "Goat Sheep Buffalo"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Local Artisan Mixed Milk Cheese Collection",
+        "attrs": {
+          "cheese_count": "4",
+          "milk_sources": "['cow', 'goat', 'sheep', 'buffalo']",
+          "origin": "local farms",
+          "price_per_box_usd": "28",
+          "average_age_months": "4"
+        },
+        "upside": "Supports local producers and offers fresh flavors.",
+        "concern": "Limited aging may result in milder taste profiles.",
+        "short_name": "Local Artisan Cheese",
+        "aliases": [
+          "Local Artisan Cheese",
+          "Mixed Milk Collection"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Aged European Milk Variety Box",
+        "attrs": {
+          "cheese_count": "4",
+          "milk_sources": "['cow', 'goat', 'sheep', 'buffalo']",
+          "origin": "Europe",
+          "price_per_box_usd": "30",
+          "average_age_months": "12"
+        },
+        "upside": "Includes well-aged cheeses with complex flavors.",
+        "concern": "Longer aging increases cost and reduces freshness perception.",
+        "short_name": "Aged European Variety",
+        "aliases": [
+          "Aged European Variety",
+          "Milk Variety Box"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Mixed Milk Soft and Semi-Soft Cheese Set",
+        "attrs": {
+          "cheese_count": "4",
+          "milk_sources": "['cow', 'goat', 'sheep', 'buffalo']",
+          "texture_types": "['soft', 'semi-soft']",
+          "price_per_box_usd": "22",
+          "average_age_months": "3"
+        },
+        "upside": "Appeals to customers preferring milder, creamier cheeses.",
+        "concern": "Less variety in texture may not satisfy all preferences.",
+        "short_name": "Mixed Milk Soft",
+        "aliases": [
+          "Mixed Milk Soft",
+          "Semi-Soft Cheese Set"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The market stand is preparing a festival box featuring a cheese assortment. The box must include exactly four types of cheese, each from different milk sources, and appeal to a broad customer base."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Maya manages the market stand and values tradition and broad appeal.",
+      "private_goal": "Ensure the cheese box attracts a wide customer base without exceeding budget.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Offers a traditional variety appealing to diverse tastes, fitting broad appeal.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Supports local producers and offers fresh flavors.",
+          "reason_against": "Limited aging may result in milder taste profiles, less traditional."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Includes well-aged cheeses with complex flavors.",
+          "reason_against": "Longer aging increases cost and reduces freshness perception, may alienate some customers."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Appeals to customers preferring milder, creamier cheeses and is more affordable.",
+          "reason_against": "Less variety in texture may not satisfy all preferences."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Liam is a budget-conscious cheese enthusiast who values tradition.",
+      "private_goal": "Keep costs low while maintaining a classic cheese selection.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 28,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Traditional mix appeals broadly and is less expensive than other premium options.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Local artisan support is good but price is higher than preferred.",
+          "reason_against": "Limited aging means less complex flavors."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Aged cheeses offer complexity.",
+          "reason_against": "Too expensive and perceived as less fresh."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Lower price and milder cheeses are appealing.",
+          "reason_against": "Texture variety is limited."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Zoe is a cheese connoisseur who prefers soft textures and milder flavors.",
+      "private_goal": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Traditional variety is good but may be firmer than preferred.",
+          "reason_against": "Price is higher and cheeses are aged longer than desired."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Fresh local cheeses might be softer.",
+          "reason_against": "Milder taste may lack depth."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Complex aged flavors are interesting.",
+          "reason_against": "Too firm and aged for soft cheese preference."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Soft and semi-soft textures match personal and customer preferences perfectly.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Eli is a direct and decisive buyer who values complex, aged cheeses.",
+      "private_goal": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 52,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Traditional and diverse but less aged than preferred.",
+          "reason_against": "Not as complex or premium as desired."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Local artisan cheeses offer freshness with some complexity.",
+          "reason_against": "Limited aging reduces depth."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Well-aged cheeses with complex flavors fit the premium goal.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Milder and softer cheeses are less appealing for a sophisticated box.",
+          "reason_against": "Lacks complexity and texture variety."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Nina is a passionate supporter of traditional cheese varieties and affordability.",
+      "private_goal": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 39,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Classic mix is familiar and appeals to many customers at a reasonable price.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Local support is good but price is higher and flavors milder.",
+          "reason_against": "Less traditional taste profile."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Complex aged cheeses are interesting but expensive.",
+          "reason_against": "May not appeal to all due to price and flavor intensity."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Lower price and softer cheeses are attractive to some customers.",
+          "reason_against": "Less texture variety."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Omar is a practical and straightforward vendor focused on premium quality.",
+      "private_goal": "Provide a high-quality, distinctive cheese box that justifies a higher price.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 47,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Traditional and diverse but less premium than preferred.",
+          "reason_against": "Price is moderate but flavor complexity is lower."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Local artisan cheeses offer freshness and support local farms.",
+          "reason_against": "Less aged, so flavors are milder."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Aged European cheeses provide complex flavors and premium appeal.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Soft cheeses are easier but less distinctive.",
+          "reason_against": "Lacks the premium feel Omar wants."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "average_age_months"
+        ],
+        [
+          "A",
+          "milk_sources"
+        ],
+        [
+          "C",
+          "average_age_months"
+        ],
+        [
+          "A",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "cheese_count"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Traditional variety is good but may be firmer than preferred."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "average_age_months"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "average_age_months"
+        ],
+        [
+          "A",
+          "cheese_count"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "average_age_months"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "cheese_count"
+        ],
+        [
+          "C",
+          "origin"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "cheese_count"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "average_age_months"
+        ],
+        [
+          "A",
+          "price_per_box_usd"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "milk_sources"
+        ],
+        [
+          "C",
+          "price_per_box_usd"
+        ],
+        [
+          "A",
+          "average_age_months"
+        ],
+        [
+          "C",
+          "milk_sources"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "price_per_box_usd"
+        ],
+        [
+          "C",
+          "origin"
+        ],
+        [
+          "A",
+          "milk_sources"
+        ],
+        [
+          "C",
+          "price_per_box_usd"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "milk_sources"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Select the cheese assortment for the market stand's festival box.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Soft and semi-soft textures suit casual customers well with Mixed Milk Soft.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Soft and semi-soft textures match personal and customer preferences perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Appeals to customers preferring milder, creamier cheeses."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Aged European Variety offers complex flavors that justify a higher price and attract premium buyers.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Aged European cheeses provide complex flavors and premium appeal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes well-aged cheeses with complex flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": "Provide a high-quality, distinctive cheese box that justifies a higher price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Classic Cow Cheese keeps things traditional and appeals to most tastes, plus it’s cheaper than the premium mixes like Option A.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional mix appeals broadly and is less expensive than other premium options.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep costs low while maintaining a classic cheese selection.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The Classic Cow Cheese mix feels familiar and suits most budgets.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Classic mix is familiar and appeals to many customers at a reasonable price.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Well-aged cheeses with complex flavors in Aged European Variety fit our premium goal best.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Well-aged cheeses with complex flavors fit the premium goal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes well-aged cheeses with complex flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m leaning toward Classic Cow Cheese since it offers a traditional variety that should appeal to most tastes without pushing our budget too much.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers a traditional variety appealing to diverse tastes, fitting broad appeal.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the cheese box attracts a wide customer base without exceeding budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Still feels too firm and aged for softer preferences.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Too firm and aged for soft cheese preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer aging increases cost and reduces freshness perception."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Both options use cow, goat, sheep, and buffalo milk, but the classic mix feels more affordable and familiar for everyone.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare milk_sources: ['cow', 'goat', 'sheep', 'buffalo'] and ['cow', 'goat', 'sheep', 'buffalo']",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "milk_sources",
+            "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "milk_sources",
+            "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+          }
+        ],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "That mix sounds good, but the aged box feels pricey and less fresh, which doesn’t fit our budget or vibe.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Too expensive and perceived as less fresh.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer aging increases cost and reduces freshness perception."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep costs low while maintaining a classic cheese selection.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Classic Cow Cheese feels creamier, less firm though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional variety is good but may be firmer than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Traditional variety is good but may be firmer than preferred."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Traditional variety is good but may be firmer than preferred."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The mix of cow, goat, sheep, and buffalo milk usually appeals to more people, though I wonder if sticking with just cow might keep things simpler and cost-effective.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the milk sources is ['cow', 'goat', 'sheep', 'buffalo']",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "milk_sources",
+          "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the cheese box attracts a wide customer base without exceeding budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Six months is a good middle ground—keeps it classic but not too pricey.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average age months is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_age_months",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "This mix lacks the depth and refinement a premium box requires—are we settled on this?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Not as complex or premium as desired.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher price may limit budget-conscious buyers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Higher price might limit some buyers, though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Higher price may limit budget-conscious buyers.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher price may limit budget-conscious buyers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Both use cow, goat, sheep, and buffalo milk, but the aged option brings refinement that fits a premium price better.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare milk_sources: ['cow', 'goat', 'sheep', 'buffalo'] and ['cow', 'goat', 'sheep', 'buffalo']",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "milk_sources",
+            "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "milk_sources",
+            "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+          }
+        ],
+        "personal_context": "Provide a high-quality, distinctive cheese box that justifies a higher price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Four cheeses is sufficient if each offers distinct, well-aged complexity.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cheese count is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cheese_count",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Twelve months is nice, though keeping it classic helps more people enjoy it.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the average age months is 12",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "average_age_months",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The aged variety costs $30 per box, $5 more than the classic mix, which justifies its premium quality better.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare price_per_box_usd: 30 and 25",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "price_per_box_usd",
+            "public_value": "30"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "price_per_box_usd",
+            "public_value": "25"
+          }
+        ],
+        "personal_context": "Provide a high-quality, distinctive cheese box that justifies a higher price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The European origin is key, but the box must highlight unique aging to justify premium.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the origin is Europe",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "origin",
+          "public_value": "Europe"
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Thirty dollars feels a bit steep for most festival goers.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the price per box is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_per_box_usd",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Twelve months is a solid baseline, but stronger emphasis on distinct aging profiles will justify the price.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the average age months is 12",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "average_age_months",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The European origin guarantees quality, but the distinct aging profiles must be clear to justify the higher price.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the origin is Europe",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "origin",
+          "public_value": "Europe"
+        },
+        "comparison_sources": [],
+        "personal_context": "Provide a high-quality, distinctive cheese box that justifies a higher price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Four cheeses keep it simple and focused, which helps keep costs down without losing the classic feel.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cheese count is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cheese_count",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep costs low while maintaining a classic cheese selection.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Six months average age feels more approachable and might appeal to a wider crowd than twelve months, which seems a bit niche for our budget.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_age_months: 6 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "average_age_months",
+            "public_value": "6"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "average_age_months",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "Ensure the cheese box attracts a wide customer base without exceeding budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Four cheeses sound manageable, though softer options would help.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cheese count is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cheese_count",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Twenty-five seems fair, though softer cheeses might stretch the appeal.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price per box is 25",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price_per_box_usd",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Twelve months is quite aged; six feels milder and creamier.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_age_months: 6 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "average_age_months",
+            "public_value": "6"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "average_age_months",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Four cheeses provide the right complexity without diluting the premium experience.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the cheese count is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cheese_count",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 29,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Please state your final choice.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 30,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Classic Cow Cheese.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers a traditional variety appealing to diverse tastes, fitting broad appeal.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 31,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for Classic Cow Cheese.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional mix appeals broadly and is less expensive than other premium options.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I choose Classic Cow Cheese.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional variety is good but may be firmer than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I’m voting for Aged European Variety.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Well-aged cheeses with complex flavors fit the premium goal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes well-aged cheeses with complex flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 34,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Classic Cow Cheese is my final choice.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Classic mix is familiar and appeals to many customers at a reasonable price.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Aged European Variety is my final choice.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Aged European cheeses provide complex flavors and premium appeal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes well-aged cheeses with complex flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 36,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Classic Cow Cheese received the final majority.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:average_age_months": 3,
+    "A:cheese_count": 2,
+    "A:concern": 2,
+    "A:milk_sources": 3,
+    "A:price_per_box_usd": 2,
+    "A:upside": 4,
+    "C:average_age_months": 4,
+    "C:cheese_count": 2,
+    "C:concern": 2,
+    "C:milk_sources": 2,
+    "C:origin": 2,
+    "C:price_per_box_usd": 2,
+    "C:upside": 2,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "average_age_months"
+    ],
+    [
+      "A",
+      "cheese_count"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "A",
+    "p3": "A",
+    "p4": "C",
+    "p5": "A",
+    "p6": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "A",
+      "p3": "A",
+      "p4": "C",
+      "p5": "A",
+      "p6": "C"
+    },
+    "reason": "4 of 6 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 28,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 18211,
+    "output_tokens": 2908,
+    "moderator_turns": 3,
+    "voluntary_turns": 22,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 34,
+    "voluntary_turns": 22,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0811,
+    "avg_words_per_participant_turn": 13.47,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 18211,
+    "output_tokens": 2908,
+    "llm_calls": 31,
+    "voluntary_turns_by_persona": {
+      "p3": 5,
+      "p5": 5,
+      "p2": 2,
+      "p1": 2,
+      "p4": 5,
+      "p6": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Soft and semi-soft textures match personal and customer preferences perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Appeals to customers preferring milder, creamier cheeses."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Soft and semi-soft textures suit casual customers well with Mixed Milk Soft.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Aged European cheeses provide complex flavors and premium appeal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes well-aged cheeses with complex flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": "Provide a high-quality, distinctive cheese box that justifies a higher price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Aged European Variety offers complex flavors that justify a higher price and attract premium buyers.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional mix appeals broadly and is less expensive than other premium options.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep costs low while maintaining a classic cheese selection.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Classic Cow Cheese keeps things traditional and appeals to most tastes, plus it’s cheaper than the premium mixes like Option A.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Classic mix is familiar and appeals to many customers at a reasonable price.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Classic Cow Cheese mix feels familiar and suits most budgets.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Well-aged cheeses with complex flavors fit the premium goal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes well-aged cheeses with complex flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Well-aged cheeses with complex flavors in Aged European Variety fit our premium goal best.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers a traditional variety appealing to diverse tastes, fitting broad appeal.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the cheese box attracts a wide customer base without exceeding budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I’m leaning toward Classic Cow Cheese since it offers a traditional variety that should appeal to most tastes without pushing our budget too much.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Too firm and aged for soft cheese preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer aging increases cost and reduces freshness perception."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still feels too firm and aged for softer preferences.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare milk_sources: ['cow', 'goat', 'sheep', 'buffalo'] and ['cow', 'goat', 'sheep', 'buffalo']",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "milk_sources",
+            "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "milk_sources",
+            "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+          }
+        ],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both options use cow, goat, sheep, and buffalo milk, but the classic mix feels more affordable and familiar for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Too expensive and perceived as less fresh.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer aging increases cost and reduces freshness perception."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep costs low while maintaining a classic cheese selection.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That mix sounds good, but the aged box feels pricey and less fresh, which doesn’t fit our budget or vibe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional variety is good but may be firmer than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Traditional variety is good but may be firmer than preferred."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Classic Cow Cheese feels creamier, less firm though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the milk sources is ['cow', 'goat', 'sheep', 'buffalo']",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "milk_sources",
+          "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the cheese box attracts a wide customer base without exceeding budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The mix of cow, goat, sheep, and buffalo milk usually appeals to more people, though I wonder if sticking with just cow might keep things simpler and cost-effective.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average age months is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_age_months",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Six months is a good middle ground—keeps it classic but not too pricey.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Not as complex or premium as desired.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher price may limit budget-conscious buyers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "This mix lacks the depth and refinement a premium box requires—are we settled on this?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Higher price may limit budget-conscious buyers.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher price may limit budget-conscious buyers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Higher price might limit some buyers, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare milk_sources: ['cow', 'goat', 'sheep', 'buffalo'] and ['cow', 'goat', 'sheep', 'buffalo']",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "milk_sources",
+            "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "milk_sources",
+            "public_value": "['cow', 'goat', 'sheep', 'buffalo']"
+          }
+        ],
+        "personal_context": "Provide a high-quality, distinctive cheese box that justifies a higher price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both use cow, goat, sheep, and buffalo milk, but the aged option brings refinement that fits a premium price better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cheese count is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cheese_count",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four cheeses is sufficient if each offers distinct, well-aged complexity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the average age months is 12",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "average_age_months",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Twelve months is nice, though keeping it classic helps more people enjoy it.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare price_per_box_usd: 30 and 25",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "price_per_box_usd",
+            "public_value": "30"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "price_per_box_usd",
+            "public_value": "25"
+          }
+        ],
+        "personal_context": "Provide a high-quality, distinctive cheese box that justifies a higher price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The aged variety costs $30 per box, $5 more than the classic mix, which justifies its premium quality better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the origin is Europe",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "origin",
+          "public_value": "Europe"
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The European origin is key, but the box must highlight unique aging to justify premium.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the price per box is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_per_box_usd",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Thirty dollars feels a bit steep for most festival goers.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the average age months is 12",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "average_age_months",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Twelve months is a solid baseline, but stronger emphasis on distinct aging profiles will justify the price.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the origin is Europe",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "origin",
+          "public_value": "Europe"
+        },
+        "comparison_sources": [],
+        "personal_context": "Provide a high-quality, distinctive cheese box that justifies a higher price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The European origin guarantees quality, but the distinct aging profiles must be clear to justify the higher price.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cheese count is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cheese_count",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep costs low while maintaining a classic cheese selection.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four cheeses keep it simple and focused, which helps keep costs down without losing the classic feel.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_age_months: 6 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "average_age_months",
+            "public_value": "6"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "average_age_months",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "Ensure the cheese box attracts a wide customer base without exceeding budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Six months average age feels more approachable and might appeal to a wider crowd than twelve months, which seems a bit niche for our budget.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cheese count is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cheese_count",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four cheeses sound manageable, though softer options would help.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price per box is 25",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price_per_box_usd",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the box is classic, affordable, and widely liked by festival attendees.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Twenty-five seems fair, though softer cheeses might stretch the appeal.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_age_months: 6 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "average_age_months",
+            "public_value": "6"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "average_age_months",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "Select cheeses that are creamy and easy to enjoy for casual customers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Twelve months is quite aged; six feels milder and creamier.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the cheese count is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cheese_count",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Offer a premium, sophisticated cheese box that stands out at the festival.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four cheeses provide the right complexity without diluting the premium experience.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers a traditional variety appealing to diverse tastes, fitting broad appeal.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Classic Cow Cheese.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional mix appeals broadly and is less expensive than other premium options.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Classic Cow Cheese.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional variety is good but may be firmer than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Classic Cow Cheese.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Well-aged cheeses with complex flavors fit the premium goal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes well-aged cheeses with complex flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for Aged European Variety.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Classic mix is familiar and appeals to many customers at a reasonable price.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a traditional variety appealing to diverse tastes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Classic Cow Cheese is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Aged European cheeses provide complex flavors and premium appeal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes well-aged cheeses with complex flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Aged European Variety is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

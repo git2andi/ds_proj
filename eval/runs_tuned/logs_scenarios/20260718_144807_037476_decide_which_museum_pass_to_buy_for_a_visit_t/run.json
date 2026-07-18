@@ -1,0 +1,1693 @@
+{
+  "provenance": {
+    "seed": 242118940,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide which museum pass to buy for a visit to Paris",
+    "options": [
+      {
+        "id": "A",
+        "name": "Paris Museum Pass 2-Day",
+        "attrs": {
+          "validity_days": "2",
+          "museums_included": "50",
+          "price_eur": "55",
+          "usage_window_days": "3"
+        },
+        "upside": "Allows entry to 50 museums with consecutive 2-day use within a 3-day window.",
+        "concern": "Short validity may limit the number of museums visited during a 3-day trip.",
+        "short_name": "Paris Museum Pass 2-Day",
+        "aliases": []
+      },
+      {
+        "id": "B",
+        "name": "Paris Museum Pass 4-Day",
+        "attrs": {
+          "validity_days": "4",
+          "museums_included": "50",
+          "price_eur": "75",
+          "usage_window_days": "6"
+        },
+        "upside": "Covers 50 museums with 4 consecutive days of access within a 6-day period.",
+        "concern": "Higher cost and longer validity than the trip length might reduce cost efficiency.",
+        "short_name": "Paris Museum Pass 4-Day",
+        "aliases": []
+      },
+      {
+        "id": "C",
+        "name": "Paris Museum Pass 3-Day",
+        "attrs": {
+          "validity_days": "3",
+          "museums_included": "50",
+          "price_eur": "62",
+          "usage_window_days": "5"
+        },
+        "upside": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely.",
+        "concern": "Slightly more expensive than 2-day pass with only one extra day of validity.",
+        "short_name": "Paris Museum Pass 3-Day",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "Paris Museum Pass 1-Day",
+        "attrs": {
+          "validity_days": "1",
+          "museums_included": "50",
+          "price_eur": "30",
+          "usage_window_days": "1"
+        },
+        "upside": "Lower price for a single day of access to 50 museums, suitable for focused visits.",
+        "concern": "Limited to one day, restricting the number of museums that can be visited during the trip.",
+        "short_name": "Paris Museum Pass 1-Day",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "Two visitors plan a 3-day trip to Paris and want to buy a museum pass that grants entry to multiple sites. They prefer options covering major museums and some flexibility in usage days within the visit period."
+    ],
+    "setup_notes": [
+      "alias_generation_returned_no_usable_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Maya is a cultural enthusiast who enjoys thorough exploration of museums during her travels.",
+      "private_goal": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Affordable and covers many museums with a 3-day usage window.",
+          "reason_against": "Only 2 days of validity may limit museum visits during a 3-day trip."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Longest validity and usage window provide maximum flexibility and coverage.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+          "reason_against": "Slightly more expensive than the 2-day pass for only one extra day."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Lowest price for a day of access to many museums.",
+          "reason_against": "Only one day of validity severely limits the number of museums visited."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Liam prefers a balanced approach to sightseeing, valuing cost-effectiveness and sufficient time at each museum.",
+      "private_goal": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Affordable and allows entry to many museums within a 3-day window.",
+          "reason_against": "Only 2 days of validity might feel rushed for a 3-day trip."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Offers the most flexibility and longest validity period.",
+          "reason_against": "Higher cost and longer validity than the trip length reduce cost efficiency."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Best matches the 3-day trip length with good coverage and moderate price.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Cheapest option for a single day of museum access.",
+          "reason_against": "Too limited for a 3-day trip, restricting the number of museums visited."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Matches trip length well with 3 consecutive days access and good museum coverage."
+      },
+      "narrowing_acceptance": "C",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "price_eur"
+        ],
+        [
+          "B",
+          "price_eur"
+        ],
+        [
+          "C",
+          "validity_days"
+        ],
+        [
+          "C",
+          "usage_window_days"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "price_eur"
+        ],
+        [
+          "C",
+          "usage_window_days"
+        ],
+        [
+          "C",
+          "museums_included"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Decide which museum pass to buy for a visit to Paris.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The Paris Museum Pass 4-Day seems good since it covers 50 museums with a flexible 6-day usage window, which feels most useful to me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Longest validity and usage window provide maximum flexibility and coverage.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Covers 50 museums with 4 consecutive days of access within a 6-day period."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Paris Museum Pass 3-Day fits our trip length well and isn’t too expensive.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Best matches the 3-day trip length with good coverage and moderate price.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "62 sounds reasonable, but I’d prefer more flexibility.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price is 62",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_eur",
+          "public_value": "62"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The 5-day window is helpful, but I want to avoid paying for unused days.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the usage window days is 5",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "usage_window_days",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That’s fair, though I might feel rushed with only three days.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Maya, do you think paying more for extra days actually gives us better value?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Higher cost and longer validity than the trip length reduce cost efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and longer validity than the trip length might reduce cost efficiency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It might not be worth it if we don’t use all the days.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Higher cost and longer validity than the trip length might reduce cost efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and longer validity than the trip length might reduce cost efficiency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "75 seems okay, though I’d prefer more flexibility for extra visits.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price is 75",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_eur",
+          "public_value": "75"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Actually, the Paris Museum Pass 3-Day might work better since it matches our trip length well.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Matches trip length well with 3 consecutive days access and good museum coverage."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Matches trip length well with 3 consecutive days access and good museum coverage."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "50 museums is a solid number to cover in three days without rushing or overspending.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the museums included is 50",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "museums_included",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That 5-day window might be a bit long for me personally.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the usage window days is 5",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "usage_window_days",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The price is 62, which fits well if we use all three days fully.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the price is 62",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_eur",
+          "public_value": "62"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Three days might feel tight if we want to explore slowly.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the validity days is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "validity_days",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The discussion currently leans most toward Paris Museum Pass 3-Day, without a majority yet. Maya, would that choice work for you?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 15,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Paris Museum Pass 3-Day.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Matches trip length well with 3 consecutive days access and good museum coverage."
+        },
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Matches trip length well with 3 consecutive days access and good museum coverage."
+      },
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 16,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Paris Museum Pass 3-Day.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Best matches the 3-day trip length with good coverage and moderate price.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 17,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final decision is unanimously Paris Museum Pass 3-Day.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "B:concern": 2,
+    "B:price_eur": 1,
+    "B:upside": 1,
+    "C:museums_included": 1,
+    "C:price_eur": 2,
+    "C:upside": 3,
+    "C:usage_window_days": 2,
+    "C:validity_days": 1
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "price_eur"
+    ],
+    [
+      "C",
+      "validity_days"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "successful",
+    "final_option": "C",
+    "votes": {
+      "p1": "C",
+      "p2": "C"
+    },
+    "reason": "All participants voted for the same option"
+  },
+  "stats": {
+    "llm_calls": 16,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 3,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 10695,
+    "output_tokens": 1588,
+    "moderator_turns": 3,
+    "voluntary_turns": 10,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 2,
+    "participant_turns": 15,
+    "voluntary_turns": 10,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.1667,
+    "avg_words_per_participant_turn": 12.8,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 3,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 10695,
+    "output_tokens": 1588,
+    "llm_calls": 19,
+    "voluntary_turns_by_persona": {
+      "p1": 6,
+      "p2": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Longest validity and usage window provide maximum flexibility and coverage.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Covers 50 museums with 4 consecutive days of access within a 6-day period."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Paris Museum Pass 4-Day seems good since it covers 50 museums with a flexible 6-day usage window, which feels most useful to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Best matches the 3-day trip length with good coverage and moderate price.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Paris Museum Pass 3-Day fits our trip length well and isn’t too expensive.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price is 62",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_eur",
+          "public_value": "62"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "62 sounds reasonable, but I’d prefer more flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the usage window days is 5",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "usage_window_days",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 5-day window is helpful, but I want to avoid paying for unused days.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s fair, though I might feel rushed with only three days.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Matches trip length well with 3 consecutive days access and good museum coverage."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Still, the 3-Day pass covers plenty and fits the trip length well.",
+      "validation_errors": [
+        "focused option is not visible",
+        "stance movement is not visible"
+      ],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "dropped",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Higher cost and longer validity than the trip length reduce cost efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and longer validity than the trip length might reduce cost efficiency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, do you think paying more for extra days actually gives us better value?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Higher cost and longer validity than the trip length might reduce cost efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and longer validity than the trip length might reduce cost efficiency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It might not be worth it if we don’t use all the days.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price is 75",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_eur",
+          "public_value": "75"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "75 seems okay, though I’d prefer more flexibility for extra visits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Matches trip length well with 3 consecutive days access and good museum coverage."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Actually, the Paris Museum Pass 3-Day might work better since it matches our trip length well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the museums included is 50",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "museums_included",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "50 museums is a solid number to cover in three days without rushing or overspending.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the usage window days is 5",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "usage_window_days",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That 5-day window might be a bit long for me personally.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the price is 62",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_eur",
+          "public_value": "62"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a pass that fits the 3-day trip well without overspending on unused days.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The price is 62, which fits well if we use all three days fully.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the validity days is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "validity_days",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three days might feel tight if we want to explore slowly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Matches trip length well with 3 consecutive days access and good museum coverage."
+        },
+        "vote_option": null
+      },
+      "raw_text": "That 3-day pass could work since it fits our trip length well with good museum coverage.",
+      "validation_errors": [
+        "focused option is not visible",
+        "stance movement is not visible"
+      ],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "dropped",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize museum visits with a pass that offers flexibility and coverage beyond the trip length.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Matches trip length well with 3 consecutive days access and good museum coverage."
+        },
+        "vote_option": null
+      },
+      "raw_text": "That 3-day pass seems okay since it fits the trip length and covers many museums.",
+      "validation_errors": [
+        "focused option is not visible",
+        "stance movement is not visible"
+      ],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "dropped",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Matches trip length well with 3 consecutive days access and good museum coverage.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Matches trip length well with 3 consecutive days access and good museum coverage."
+        },
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Paris Museum Pass 3-Day.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Best matches the 3-day trip length with good coverage and moderate price.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers 3 consecutive days access to 50 museums within a 5-day window, matching trip length closely."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Paris Museum Pass 3-Day.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {
+    "focused option is not visible": 3,
+    "stance movement is not visible": 3
+  },
+  "protocol_errors": [],
+  "quality_flags": [
+    "dropped_turns:3"
+  ],
+  "needs_review": true
+}

@@ -1,0 +1,1021 @@
+{
+  "provenance": {
+    "seed": 242118838,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Plan the honeymoon destination within a modest budget",
+    "options": [
+      {
+        "id": "A",
+        "name": "Beach Resort in Cancun, Mexico",
+        "attrs": {
+          "average_flight_cost_usd": "350",
+          "average_nightly_hotel_usd": "80",
+          "travel_time_hours": "4",
+          "local_language": "Spanish"
+        },
+        "upside": "Offers beautiful beaches and vibrant nightlife with many affordable resorts.",
+        "concern": "Can be crowded during peak seasons, which may affect privacy.",
+        "short_name": "Beach Resort Cancun",
+        "aliases": [
+          "Beach Resort Cancun",
+          "Cancun Mexico"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Historic City Tour in Lisbon, Portugal",
+        "attrs": {
+          "average_flight_cost_usd": "600",
+          "average_nightly_hotel_usd": "70",
+          "travel_time_hours": "8",
+          "local_language": "Portuguese"
+        },
+        "upside": "Rich cultural heritage and scenic city views with budget-friendly dining options.",
+        "concern": "Longer travel time may reduce overall vacation duration.",
+        "short_name": "Historic City Tour",
+        "aliases": [
+          "Historic City Tour",
+          "City Tour Lisbon"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Mountain Retreat in Asheville, North Carolina",
+        "attrs": {
+          "average_flight_cost_usd": "200",
+          "average_nightly_hotel_usd": "90",
+          "travel_time_hours": "3",
+          "local_language": "English"
+        },
+        "upside": "Offers peaceful nature, hiking trails, and cozy lodges within a short flight.",
+        "concern": "Less variety in nightlife and cultural activities compared to urban destinations.",
+        "short_name": "Mountain Retreat Asheville",
+        "aliases": [
+          "Mountain Retreat Asheville",
+          "Asheville North Carolina"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Island Getaway in Bali, Indonesia",
+        "attrs": {
+          "average_flight_cost_usd": "750",
+          "average_nightly_hotel_usd": "50",
+          "travel_time_hours": "16",
+          "local_language": "Indonesian"
+        },
+        "upside": "Affordable accommodations and unique cultural experiences with tropical scenery.",
+        "concern": "Long travel time and potential jet lag could impact relaxation.",
+        "short_name": "Island Getaway Bali",
+        "aliases": [
+          "Island Getaway Bali",
+          "Getaway Bali Indonesia"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A couple is choosing a honeymoon destination with a modest budget. They want a place offering a balance of relaxation, cultural experiences, and affordable accommodations within a reasonable travel distance."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 1,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Maya is a travel enthusiast who values unique cultural experiences and tropical scenery.",
+      "private_goal": "To find a honeymoon spot that offers relaxation and rich cultural immersion despite the long travel.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Offers beautiful beaches and vibrant nightlife with many affordable resorts.",
+          "reason_against": "Can be crowded during peak seasons, which may affect privacy."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Rich cultural heritage and scenic city views with budget-friendly dining options.",
+          "reason_against": "Longer travel time may reduce overall vacation duration."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Offers peaceful nature, hiking trails, and cozy lodges within a short flight.",
+          "reason_against": "Less variety in nightlife and cultural activities compared to urban destinations."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Affordable accommodations and unique cultural experiences with tropical scenery.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Liam enjoys immersive cultural trips and values a balance of affordability and unique experiences.",
+      "private_goal": "To select a honeymoon destination that maximizes cultural richness while staying within budget.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Affordable resorts with beautiful beaches and lively nightlife.",
+          "reason_against": "Crowds during peak seasons may reduce the sense of intimacy."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Rich cultural heritage and budget-friendly dining options.",
+          "reason_against": "Longer travel time could shorten the vacation experience."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Short travel time and peaceful nature.",
+          "reason_against": "Limited nightlife and cultural activities compared to urban destinations."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Unique cultural experiences and affordable accommodations in a tropical setting.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "local_language"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "travel_time_hours"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 4,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "average_flight_cost_usd"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "travel_time_hours"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Plan the honeymoon destination within a modest budget.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Affordable stays and tropical vibes in Island Getaway Bali.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable accommodations and unique cultural experiences with tropical scenery.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Affordable accommodations and unique cultural experiences with tropical scenery."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a honeymoon spot that offers relaxation and rich cultural immersion despite the long travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Island Getaway Bali offers a great balance of unique culture and affordable places to stay, which fits our budget well.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Unique cultural experiences and affordable accommodations in a tropical setting.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Affordable accommodations and unique cultural experiences with tropical scenery."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a honeymoon destination that maximizes cultural richness while staying within budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "16 hours is a long trip; it might eat into our time to really explore and enjoy the culture fully.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the travel time hours is 16",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "travel_time_hours",
+          "public_value": "16"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a honeymoon destination that maximizes cultural richness while staying within budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "True, but Indonesian is simple enough to learn basics.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the local language is Indonesian",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "local_language",
+          "public_value": "Indonesian"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a honeymoon spot that offers relaxation and rich cultural immersion despite the long travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "750 for flights is reasonable, but with that cost, I’d want to be sure the cultural experiences really justify the price.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average flight cost is 750",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "average_flight_cost_usd",
+          "public_value": "750"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a honeymoon destination that maximizes cultural richness while staying within budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "16 hours is long, but worth it for real culture.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the travel time hours is 16",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "travel_time_hours",
+          "public_value": "16"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a honeymoon spot that offers relaxation and rich cultural immersion despite the long travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 8,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Island Getaway Bali is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable accommodations and unique cultural experiences with tropical scenery.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Affordable accommodations and unique cultural experiences with tropical scenery."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 9,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Island Getaway Bali.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Unique cultural experiences and affordable accommodations in a tropical setting.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Affordable accommodations and unique cultural experiences with tropical scenery."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 10,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final decision is unanimously Island Getaway Bali.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [],
+  "public_point_counts": {
+    "D:average_flight_cost_usd": 1,
+    "D:local_language": 1,
+    "D:travel_time_hours": 2,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "average_flight_cost_usd"
+    ],
+    [
+      "D",
+      "travel_time_hours"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "D"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "successful",
+    "final_option": "D",
+    "votes": {
+      "p1": "D",
+      "p2": "D"
+    },
+    "reason": "All participants voted for the same option"
+  },
+  "stats": {
+    "llm_calls": 6,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 4792,
+    "output_tokens": 1348,
+    "moderator_turns": 3,
+    "voluntary_turns": 4,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 2,
+    "participant_turns": 8,
+    "voluntary_turns": 4,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.2727,
+    "avg_words_per_participant_turn": 12.75,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 4792,
+    "output_tokens": 1348,
+    "llm_calls": 9,
+    "voluntary_turns_by_persona": {
+      "p2": 2,
+      "p1": 2
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable accommodations and unique cultural experiences with tropical scenery.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Affordable accommodations and unique cultural experiences with tropical scenery."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a honeymoon spot that offers relaxation and rich cultural immersion despite the long travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Affordable stays and tropical vibes in Island Getaway Bali.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Unique cultural experiences and affordable accommodations in a tropical setting.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Affordable accommodations and unique cultural experiences with tropical scenery."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a honeymoon destination that maximizes cultural richness while staying within budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Island Getaway Bali offers a great balance of unique culture and affordable places to stay, which fits our budget well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the travel time hours is 16",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "travel_time_hours",
+          "public_value": "16"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a honeymoon destination that maximizes cultural richness while staying within budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "16 hours is a long trip; it might eat into our time to really explore and enjoy the culture fully.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the local language is Indonesian",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "local_language",
+          "public_value": "Indonesian"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a honeymoon spot that offers relaxation and rich cultural immersion despite the long travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, but Indonesian is simple enough to learn basics.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average flight cost is 750",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "average_flight_cost_usd",
+          "public_value": "750"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a honeymoon destination that maximizes cultural richness while staying within budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "750 for flights is reasonable, but with that cost, I’d want to be sure the cultural experiences really justify the price.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the travel time hours is 16",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "travel_time_hours",
+          "public_value": "16"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a honeymoon spot that offers relaxation and rich cultural immersion despite the long travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "16 hours is long, but worth it for real culture.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable accommodations and unique cultural experiences with tropical scenery.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Affordable accommodations and unique cultural experiences with tropical scenery."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Island Getaway Bali is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Unique cultural experiences and affordable accommodations in a tropical setting.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Affordable accommodations and unique cultural experiences with tropical scenery."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose Island Getaway Bali.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

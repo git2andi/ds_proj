@@ -1,0 +1,2484 @@
+{
+  "provenance": {
+    "seed": 242118929,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick an exercise schedule for preparing for a hiking holiday",
+    "options": [
+      {
+        "id": "A",
+        "name": "Interval Hiking and Strength Training",
+        "attrs": {
+          "duration_per_session_minutes": "90",
+          "session_type": "outdoor hiking and gym strength",
+          "frequency_per_week": "3",
+          "focus_areas": "endurance, leg strength, core stability"
+        },
+        "upside": "Combines real hiking practice with muscle strengthening exercises.",
+        "concern": "Requires access to gym equipment and outdoor trails.",
+        "short_name": "Interval Hiking",
+        "aliases": [
+          "Interval Hiking",
+          "Strength Training"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Indoor Cardio and Flexibility Routine",
+        "attrs": {
+          "duration_per_session_minutes": "60",
+          "session_type": "treadmill walking, cycling, yoga",
+          "frequency_per_week": "3",
+          "focus_areas": "cardiovascular fitness, flexibility, joint mobility"
+        },
+        "upside": "Can be done regardless of weather and improves flexibility.",
+        "concern": "Less specific hiking endurance training and outdoor exposure.",
+        "short_name": "Indoor Cardio",
+        "aliases": [
+          "Indoor Cardio",
+          "Flexibility Routine"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Long Distance Walking with Weighted Backpack",
+        "attrs": {
+          "duration_per_session_minutes": "120",
+          "session_type": "outdoor walking with backpack",
+          "frequency_per_week": "3",
+          "focus_areas": "endurance, load carrying, leg muscle conditioning"
+        },
+        "upside": "Simulates actual hiking conditions and load carrying.",
+        "concern": "Long sessions may be tiring and require suitable terrain.",
+        "short_name": "Long Distance Walking",
+        "aliases": [
+          "Long Distance Walking",
+          "Weighted Backpack"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Mixed Cross-Training and Stretching",
+        "attrs": {
+          "duration_per_session_minutes": "75",
+          "session_type": "cycling, bodyweight exercises, stretching",
+          "frequency_per_week": "3",
+          "focus_areas": "overall fitness, strength, flexibility"
+        },
+        "upside": "Varied exercises reduce monotony and improve multiple fitness areas.",
+        "concern": "Less direct hiking practice and may not fully prepare for terrain.",
+        "short_name": "Mixed Cross-Training",
+        "aliases": [
+          "Mixed Cross-Training",
+          "Cross-Training Stretching"
+        ]
+      }
+    ],
+    "shared_context": [
+      "Three participants need to choose an exercise schedule to prepare for a 5-day hiking holiday in moderate mountain terrain. The schedule should build endurance, strength, and flexibility over 8 weeks with 3 sessions per week."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 1
+      },
+      "background": "Maya is a 29-year-old outdoor enthusiast who enjoys combining gym workouts with hiking.",
+      "private_goal": "To build both hiking endurance and muscle strength efficiently before the trip.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Combines real hiking practice with strength training, matching my goal to improve endurance and core stability.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Improves flexibility and cardiovascular fitness indoors, so weather is not a problem.",
+          "reason_against": "Less specific to hiking endurance and lacks outdoor exposure."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Simulates actual hiking conditions with load carrying, which is very relevant.",
+          "reason_against": "Sessions are long and might be tiring, requiring suitable terrain."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Varied exercises improve overall fitness and reduce monotony.",
+          "reason_against": "Less direct hiking practice and might not fully prepare for mountain terrain."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Liam is a 35-year-old office worker who prefers indoor workouts and values convenience.",
+      "private_goal": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 35,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Good combination of endurance and strength training.",
+          "reason_against": "Needs gym and outdoor access, which can be inconvenient for me."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Can be done indoors regardless of weather and improves flexibility and joint mobility.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Simulates hiking conditions well.",
+          "reason_against": "Long sessions are tiring and require suitable terrain I may not have easy access to."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Varied exercises improve overall fitness and flexibility indoors.",
+          "reason_against": "Less direct hiking practice."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Zoe is a 42-year-old fitness coach who enjoys a mix of activities to maintain overall health.",
+      "private_goal": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Combines outdoor hiking and strength training which is effective for preparation.",
+          "reason_against": "Requires gym access which might limit flexibility."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Improves cardiovascular fitness and flexibility indoors.",
+          "reason_against": "Less specific to hiking endurance and outdoor conditions."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Simulates actual hiking with weighted backpack.",
+          "reason_against": "Long sessions may be tiring and terrain dependent."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Varied cross-training reduces monotony and improves multiple fitness areas, aligning with my holistic approach.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "focus_areas"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "duration_per_session_minutes"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "frequency_per_week"
+        ],
+        [
+          "A",
+          "focus_areas"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "session_type"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "duration_per_session_minutes"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Combines outdoor hiking and strength training which is effective for preparation."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "B",
+          "duration_per_session_minutes"
+        ],
+        [
+          "A",
+          "frequency_per_week"
+        ],
+        [
+          "A",
+          "focus_areas"
+        ],
+        [
+          "A",
+          "session_type"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "frequency_per_week"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "duration_per_session_minutes"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 9,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Pick an exercise schedule for preparing for a hiking holiday.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Varied cross-training reduces monotony and improves multiple fitness areas, which fits my holistic approach—so I’m leaning toward Mixed Cross-Training from Option D.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Varied cross-training reduces monotony and improves multiple fitness areas, aligning with my holistic approach.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Varied exercises reduce monotony and improve multiple fitness areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Interval Hiking fits best since it combines real hiking with strength training, boosting endurance and core stability.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines real hiking practice with strength training, matching my goal to improve endurance and core stability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": "To build both hiking endurance and muscle strength efficiently before the trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Indoor Cardio is the best choice since it works regardless of weather and boosts flexibility and joint mobility.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Can be done indoors regardless of weather and improves flexibility and joint mobility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Can be done regardless of weather and improves flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Access to gym and outdoors adds hassle, which I want to avoid for consistency.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Needs gym and outdoor access, which can be inconvenient for me.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires access to gym equipment and outdoor trails."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Ninety minutes per session is too long for me indoors; shorter, focused workouts fit better.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the duration per session minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_per_session_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Liam, how do you balance flexibility gains with endurance needs without outdoor exposure?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Less specific to hiking endurance and outdoor conditions.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less specific hiking endurance training and outdoor exposure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Endurance here isn’t hiking-specific, but indoor cardio still builds solid stamina without outdoor hassles.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Less specific hiking endurance training and outdoor exposure.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less specific hiking endurance training and outdoor exposure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Sixty minutes per session is a good balance to build endurance without overdoing it, especially if flexibility work is included.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration per session minutes is 60",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "duration_per_session_minutes",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Three sessions weekly hits a good rhythm for consistency, though I prefer mixing strength to keep progress balanced.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frequency per week is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "frequency_per_week",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Cardio and flexibility work are key, but I need more joint mobility to avoid injury hiking.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the focus areas is cardiovascular fitness, flexibility, joint mobility",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "focus_areas",
+          "public_value": "cardiovascular fitness, flexibility, joint mobility"
+        },
+        "comparison_sources": [],
+        "personal_context": "To build both hiking endurance and muscle strength efficiently before the trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Sixty minutes is solid, but I’ll add focused strength moves after to boost hiking endurance.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the duration per session minutes is 60",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "duration_per_session_minutes",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "To build both hiking endurance and muscle strength efficiently before the trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Combining outdoor hiking with strength training in Interval Hiking seems effective for preparation, so I’m open to trying Option A now.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines outdoor hiking and strength training which is effective for preparation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Combines outdoor hiking and strength training which is effective for preparation."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Combines outdoor hiking and strength training which is effective for preparation."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Is there a remaining concern or useful comparison?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Endurance and core are priorities, but I need indoor moves for consistency.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the focus areas is endurance, leg strength, core stability",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "focus_areas",
+          "public_value": "endurance, leg strength, core stability"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Indoor moves add consistency, but outdoor hiking builds endurance differently, so balancing both is key for overall fitness.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the session type is outdoor hiking and gym strength",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "session_type",
+          "public_value": "outdoor hiking and gym strength"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Three sessions a week is manageable, but I need them to fit indoors for consistency.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the frequency per week is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frequency_per_week",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Ninety minutes is a solid length—it allows enough time to cover strength and flexibility without rushing, which matches my goal for balanced workouts.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration per session minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_per_session_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Endurance, leg strength, and core stability all need focus, so mixing exercises that hit each area prevents weak spots and keeps progress steady.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the focus areas is endurance, leg strength, core stability",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "focus_areas",
+          "public_value": "endurance, leg strength, core stability"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Three sessions per week strike a good balance, though I’d add varied intensity to keep building strength and endurance effectively.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frequency per week is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frequency_per_week",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Hiking outside won’t work for me; I need consistent indoor options for cardio and flexibility.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the session type is outdoor hiking and gym strength",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "session_type",
+          "public_value": "outdoor hiking and gym strength"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Does mixing cross-training and stretching really prepare us for uneven terrain without actual hiking?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Less direct hiking practice.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Less direct hiking practice and may not fully prepare for terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It helps with strength and flexibility but won’t fully replace actual uneven terrain practice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Less direct hiking practice and may not fully prepare for terrain.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Less direct hiking practice and may not fully prepare for terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To build both hiking endurance and muscle strength efficiently before the trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 23,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Interval Hiking is currently the leading option, though it is still short of a majority. Liam and Zoe, could you accept it for the group?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 24,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Interval Hiking could fit my requirements since it combines outdoor hiking and strength training, which is effective for preparation.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines outdoor hiking and strength training which is effective for preparation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Combines outdoor hiking and strength training which is effective for preparation."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Combines outdoor hiking and strength training which is effective for preparation."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 25,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 26,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Interval Hiking.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines real hiking practice with strength training, matching my goal to improve endurance and core stability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 27,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for Indoor Cardio.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Can be done indoors regardless of weather and improves flexibility and joint mobility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Can be done regardless of weather and improves flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I choose Interval Hiking.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines outdoor hiking and strength training which is effective for preparation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Combines outdoor hiking and strength training which is effective for preparation."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Combines outdoor hiking and strength training which is effective for preparation."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 29,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Interval Hiking.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 1,
+    "A:duration_per_session_minutes": 2,
+    "A:focus_areas": 2,
+    "A:frequency_per_week": 2,
+    "A:session_type": 2,
+    "A:upside": 3,
+    "B:concern": 2,
+    "B:duration_per_session_minutes": 2,
+    "B:focus_areas": 1,
+    "B:frequency_per_week": 1,
+    "B:upside": 1,
+    "D:concern": 2,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "concern"
+    ],
+    [
+      "A",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "B",
+    "p3": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "B",
+      "p3": "A"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 22,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 1,
+    "input_tokens": 14249,
+    "output_tokens": 2039,
+    "moderator_turns": 5,
+    "voluntary_turns": 17,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 25,
+    "voluntary_turns": 17,
+    "moderator_turns": 5,
+    "moderator_ratio": 0.1667,
+    "avg_words_per_participant_turn": 15.64,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 14249,
+    "output_tokens": 2039,
+    "llm_calls": 25,
+    "voluntary_turns_by_persona": {
+      "p2": 5,
+      "p3": 9,
+      "p1": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Varied cross-training reduces monotony and improves multiple fitness areas, aligning with my holistic approach.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Varied exercises reduce monotony and improve multiple fitness areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Varied cross-training reduces monotony and improves multiple fitness areas, which fits my holistic approach—so I’m leaning toward Mixed Cross-Training from Option D.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines real hiking practice with strength training, matching my goal to improve endurance and core stability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": "To build both hiking endurance and muscle strength efficiently before the trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Interval Hiking fits best since it combines real hiking with strength training, boosting endurance and core stability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Can be done indoors regardless of weather and improves flexibility and joint mobility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Can be done regardless of weather and improves flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Indoor Cardio is the best choice since it works regardless of weather and boosts flexibility and joint mobility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Needs gym and outdoor access, which can be inconvenient for me.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires access to gym equipment and outdoor trails."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Access to gym and outdoors adds hassle, which I want to avoid for consistency.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the duration per session minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_per_session_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ninety minutes per session is too long for me indoors; shorter, focused workouts fit better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Less specific to hiking endurance and outdoor conditions.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less specific hiking endurance training and outdoor exposure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liam, how do you balance flexibility gains with endurance needs without outdoor exposure?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Less specific hiking endurance training and outdoor exposure.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less specific hiking endurance training and outdoor exposure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Endurance here isn’t hiking-specific, but indoor cardio still builds solid stamina without outdoor hassles.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration per session minutes is 60",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "duration_per_session_minutes",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sixty minutes per session is a good balance to build endurance without overdoing it, especially if flexibility work is included.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frequency per week is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "frequency_per_week",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three sessions weekly hits a good rhythm for consistency, though I prefer mixing strength to keep progress balanced.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the focus areas is cardiovascular fitness, flexibility, joint mobility",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "focus_areas",
+          "public_value": "cardiovascular fitness, flexibility, joint mobility"
+        },
+        "comparison_sources": [],
+        "personal_context": "To build both hiking endurance and muscle strength efficiently before the trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cardio and flexibility work are key, but I need more joint mobility to avoid injury hiking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the duration per session minutes is 60",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "duration_per_session_minutes",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "To build both hiking endurance and muscle strength efficiently before the trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sixty minutes is solid, but I’ll add focused strength moves after to boost hiking endurance.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines outdoor hiking and strength training which is effective for preparation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Combines outdoor hiking and strength training which is effective for preparation."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Combining outdoor hiking with strength training in Interval Hiking seems effective for preparation, so I’m open to trying Option A now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the focus areas is endurance, leg strength, core stability",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "focus_areas",
+          "public_value": "endurance, leg strength, core stability"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Endurance and core are priorities, but I need indoor moves for consistency.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the session type is outdoor hiking and gym strength",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "session_type",
+          "public_value": "outdoor hiking and gym strength"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Indoor moves add consistency, but outdoor hiking builds endurance differently, so balancing both is key for overall fitness.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the frequency per week is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frequency_per_week",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three sessions a week is manageable, but I need them to fit indoors for consistency.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration per session minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_per_session_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ninety minutes is a solid length—it allows enough time to cover strength and flexibility without rushing, which matches my goal for balanced workouts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the focus areas is endurance, leg strength, core stability",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "focus_areas",
+          "public_value": "endurance, leg strength, core stability"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Endurance, leg strength, and core stability all need focus, so mixing exercises that hit each area prevents weak spots and keeps progress steady.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frequency per week is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frequency_per_week",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three sessions per week strike a good balance, though I’d add varied intensity to keep building strength and endurance effectively.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the session type is outdoor hiking and gym strength",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "session_type",
+          "public_value": "outdoor hiking and gym strength"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Hiking outside won’t work for me; I need consistent indoor options for cardio and flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Less direct hiking practice.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Less direct hiking practice and may not fully prepare for terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular fitness and flexibility without relying on outdoor conditions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does mixing cross-training and stretching really prepare us for uneven terrain without actual hiking?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Less direct hiking practice and may not fully prepare for terrain.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Less direct hiking practice and may not fully prepare for terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To build both hiking endurance and muscle strength efficiently before the trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It helps with strength and flexibility but won’t fully replace actual uneven terrain practice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines outdoor hiking and strength training which is effective for preparation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": "To prepare comprehensively with varied exercises that build strength, flexibility, and endurance.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Combines outdoor hiking and strength training which is effective for preparation."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Interval Hiking could fit my requirements since it combines outdoor hiking and strength training, which is effective for preparation.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines real hiking practice with strength training, matching my goal to improve endurance and core stability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Interval Hiking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Can be done indoors regardless of weather and improves flexibility and joint mobility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Can be done regardless of weather and improves flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Indoor Cardio.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines outdoor hiking and strength training which is effective for preparation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Combines real hiking practice with muscle strengthening exercises."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Combines outdoor hiking and strength training which is effective for preparation."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Interval Hiking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

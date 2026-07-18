@@ -1,0 +1,1732 @@
+{
+  "provenance": {
+    "seed": 242118880,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide which city to visit during a long weekend in Portugal",
+    "options": [
+      {
+        "id": "A",
+        "name": "Lisbon - Portugal's Capital City",
+        "attrs": {
+          "region": "Lisbon District",
+          "population_millions": "2.8",
+          "airport_access": "International Airport",
+          "main_attractions": "Historic neighborhoods, museums, riverfront"
+        },
+        "upside": "Wide range of cultural sites and vibrant nightlife.",
+        "concern": "Can be crowded on weekends, especially in tourist areas.",
+        "short_name": "Portugal's Capital",
+        "aliases": [
+          "Portugal's Capital",
+          "Capital City"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Porto - Northern Coastal City",
+        "attrs": {
+          "region": "Northern Portugal",
+          "population_millions": "1.7",
+          "airport_access": "International Airport",
+          "main_attractions": "Wine cellars, riverside district, historic center"
+        },
+        "upside": "Known for unique local wine and charming old town.",
+        "concern": "Hilly terrain may require more walking effort.",
+        "short_name": "Northern Coastal",
+        "aliases": [
+          "Northern Coastal"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Coimbra - University City",
+        "attrs": {
+          "region": "Central Portugal",
+          "population_thousands": "143",
+          "airport_access": "Nearest airport 1.5 hours away",
+          "main_attractions": "Historic university, botanical gardens, river views"
+        },
+        "upside": "Rich academic history and quieter atmosphere.",
+        "concern": "Less direct transportation options compared to larger cities.",
+        "short_name": "University City",
+        "aliases": [
+          "University City"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Faro - Algarve Coastal City",
+        "attrs": {
+          "region": "Southern Portugal",
+          "population_thousands": "65",
+          "airport_access": "International Airport",
+          "main_attractions": "Beaches, nature reserves, old town"
+        },
+        "upside": "Access to beaches and natural parks for outdoor activities.",
+        "concern": "Smaller city with fewer urban cultural sites.",
+        "short_name": "Algarve Coastal",
+        "aliases": [
+          "Algarve Coastal"
+        ]
+      }
+    ],
+    "shared_context": [
+      "Two participants are deciding which city to visit during a long weekend in Portugal. Each city offers cultural attractions, dining options, and transportation accessibility suitable for a short trip."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Maya enjoys outdoor activities and values relaxing environments during short trips.",
+      "private_goal": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Offers a wide range of cultural sites and vibrant nightlife for occasional urban exploration.",
+          "reason_against": "Can be crowded on weekends, which may reduce relaxation."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Charming old town and unique local wine provide a nice balance of culture and leisure.",
+          "reason_against": "Hilly terrain requires more walking effort, which may be tiring."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Quieter atmosphere aligns with relaxing goals.",
+          "reason_against": "Less direct transportation and fewer outdoor natural attractions."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Access to beaches and natural parks fits perfectly with desire for outdoor activities and relaxation.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 3
+      },
+      "background": "Liam is passionate about history and academic culture, enjoying immersive cultural experiences.",
+      "private_goal": "To explore rich academic history and cultural depth during the weekend trip.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Historic neighborhoods and museums provide cultural interest.",
+          "reason_against": "Crowds and tourist density reduce the authentic experience."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Historic center and local wine culture offer a charming cultural experience.",
+          "reason_against": "Hilly terrain could be physically demanding."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Rich academic history and quieter atmosphere align with personal interests.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Nice for outdoor activities but limited cultural depth.",
+          "reason_against": "Smaller city with fewer urban cultural sites does not meet cultural exploration goals."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "airport_access"
+        ],
+        [
+          "C",
+          "population_thousands"
+        ],
+        [
+          "D",
+          "population_thousands"
+        ],
+        [
+          "C",
+          "main_attractions"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "region"
+        ],
+        [
+          "D",
+          "region"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "airport_access"
+        ],
+        [
+          "D",
+          "main_attractions"
+        ],
+        [
+          "C",
+          "main_attractions"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Decide which city to visit during a long weekend in Portugal.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The rich academic history and quieter atmosphere of University City really suit what I want to get out of the trip.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich academic history and quieter atmosphere align with personal interests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich academic history and quieter atmosphere."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Access to beaches and parks in Algarve Coastal fits my outdoor and chill vibe.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Access to beaches and natural parks fits perfectly with desire for outdoor activities and relaxation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Access to beaches and natural parks for outdoor activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 3,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Smaller cities with fewer cultural sites limit the depth of historical and academic experiences I’m aiming for this trip.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller city with fewer urban cultural sites does not meet cultural exploration goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller city with fewer urban cultural sites."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Population’s small, so less crowded beaches for me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the population thousands is 65",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "population_thousands",
+          "public_value": "65"
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Less crowded beaches are nice, but the lack of substantial historical sites means the trip won’t satisfy my academic interests.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the main attractions is Beaches, nature reserves, old town",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "main_attractions",
+          "public_value": "Beaches, nature reserves, old town"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Southern Portugal’s charm is undeniable, but its focus on coastal leisure means fewer deep academic or historical sites to explore thoroughly.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the region is Southern Portugal",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "region",
+          "public_value": "Southern Portugal"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Does less direct transport make outdoor spots harder to reach?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less direct transportation and fewer outdoor natural attractions.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less direct transportation options compared to larger cities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Yes, fewer direct transport routes compared to bigger cities definitely make reaching outdoor spots more challenging.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Less direct transportation options compared to larger cities.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less direct transportation options compared to larger cities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Airport’s quite far, so it adds travel stress.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the airport access is Nearest airport 1.5 hours away",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "airport_access",
+          "public_value": "Nearest airport 1.5 hours away"
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Historic sites sound nice, but I prefer open natural views to relax.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the main attractions is Historic university, botanical gardens, river views",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "main_attractions",
+          "public_value": "Historic university, botanical gardens, river views"
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Central Portugal offers the perfect mix—Coimbra’s academic vibe satisfies my cultural interests, even if it’s less about open nature.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the region is Central Portugal",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "region",
+          "public_value": "Central Portugal"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "143 thousand is small, but still feels crowded for me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the population thousands is 143",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "population_thousands",
+          "public_value": "143"
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "A 1.5-hour airport trip means less time exploring, but the academic depth there justifies it for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the airport access is Nearest airport 1.5 hours away",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "airport_access",
+          "public_value": "Nearest airport 1.5 hours away"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The historic university and botanical gardens provide enough cultural depth to balance the river views, making the trip worthwhile for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the main attractions is Historic university, botanical gardens, river views",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "main_attractions",
+          "public_value": "Historic university, botanical gardens, river views"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 15,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The strongest common-ground options are tied, so I’ll use University City as the compromise target. Maya, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 16,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Less direct transport and not enough nature.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less direct transportation and fewer outdoor natural attractions.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less direct transportation options compared to larger cities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Please state your final choice.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 18,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Algarve Coastal is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Access to beaches and natural parks fits perfectly with desire for outdoor activities and relaxation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Access to beaches and natural parks for outdoor activities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 19,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "University City is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich academic history and quieter atmosphere align with personal interests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich academic history and quieter atmosphere."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 20,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The discussion closes without a majority decision.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "C:airport_access": 2,
+    "C:concern": 3,
+    "C:main_attractions": 2,
+    "C:population_thousands": 1,
+    "C:region": 1,
+    "C:upside": 1,
+    "D:concern": 1,
+    "D:main_attractions": 1,
+    "D:population_thousands": 1,
+    "D:region": 1,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "main_attractions"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "D",
+      "p2": "C"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 15,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 9759,
+    "output_tokens": 1487,
+    "moderator_turns": 4,
+    "voluntary_turns": 13,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 2,
+    "participant_turns": 17,
+    "voluntary_turns": 13,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1905,
+    "avg_words_per_participant_turn": 13.82,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 9759,
+    "output_tokens": 1487,
+    "llm_calls": 18,
+    "voluntary_turns_by_persona": {
+      "p2": 7,
+      "p1": 6
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich academic history and quieter atmosphere align with personal interests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich academic history and quieter atmosphere."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The rich academic history and quieter atmosphere of University City really suit what I want to get out of the trip.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Access to beaches and natural parks fits perfectly with desire for outdoor activities and relaxation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Access to beaches and natural parks for outdoor activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Access to beaches and parks in Algarve Coastal fits my outdoor and chill vibe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller city with fewer urban cultural sites does not meet cultural exploration goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller city with fewer urban cultural sites."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Smaller cities with fewer cultural sites limit the depth of historical and academic experiences I’m aiming for this trip.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the population thousands is 65",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "population_thousands",
+          "public_value": "65"
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Population’s small, so less crowded beaches for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the main attractions is Beaches, nature reserves, old town",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "main_attractions",
+          "public_value": "Beaches, nature reserves, old town"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Less crowded beaches are nice, but the lack of substantial historical sites means the trip won’t satisfy my academic interests.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the region is Southern Portugal",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "region",
+          "public_value": "Southern Portugal"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Southern Portugal’s charm is undeniable, but its focus on coastal leisure means fewer deep academic or historical sites to explore thoroughly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less direct transportation and fewer outdoor natural attractions.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less direct transportation options compared to larger cities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does less direct transport make outdoor spots harder to reach?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Less direct transportation options compared to larger cities.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less direct transportation options compared to larger cities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yes, fewer direct transport routes compared to bigger cities definitely make reaching outdoor spots more challenging.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the airport access is Nearest airport 1.5 hours away",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "airport_access",
+          "public_value": "Nearest airport 1.5 hours away"
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Airport’s quite far, so it adds travel stress.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the main attractions is Historic university, botanical gardens, river views",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "main_attractions",
+          "public_value": "Historic university, botanical gardens, river views"
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Historic sites sound nice, but I prefer open natural views to relax.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the region is Central Portugal",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "region",
+          "public_value": "Central Portugal"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Central Portugal offers the perfect mix—Coimbra’s academic vibe satisfies my cultural interests, even if it’s less about open nature.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the population thousands is 143",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "population_thousands",
+          "public_value": "143"
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "143 thousand is small, but still feels crowded for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the airport access is Nearest airport 1.5 hours away",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "airport_access",
+          "public_value": "Nearest airport 1.5 hours away"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A 1.5-hour airport trip means less time exploring, but the academic depth there justifies it for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the main attractions is Historic university, botanical gardens, river views",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "main_attractions",
+          "public_value": "Historic university, botanical gardens, river views"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore rich academic history and cultural depth during the weekend trip.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The historic university and botanical gardens provide enough cultural depth to balance the river views, making the trip worthwhile for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less direct transportation and fewer outdoor natural attractions.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less direct transportation options compared to larger cities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To unwind by the coast and enjoy natural scenery over urban cultural sites.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Less direct transport and not enough nature.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Access to beaches and natural parks fits perfectly with desire for outdoor activities and relaxation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Access to beaches and natural parks for outdoor activities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Algarve Coastal is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich academic history and quieter atmosphere align with personal interests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich academic history and quieter atmosphere."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "University City is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

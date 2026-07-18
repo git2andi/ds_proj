@@ -1,0 +1,2610 @@
+{
+  "provenance": {
+    "seed": 242118863,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide how to divide responsibilities for a student software project",
+    "options": [
+      {
+        "id": "A",
+        "name": "Divide by Expertise",
+        "attrs": {
+          "front_end_dev": "Student 1",
+          "back_end_dev": "Student 2",
+          "tester": "Student 3",
+          "estimated_hours_per_week": "10"
+        },
+        "upside": "Each member focuses on their strongest skill area.",
+        "concern": "May reduce cross-functional learning opportunities.",
+        "short_name": "Divide Expertise",
+        "aliases": [
+          "Divide Expertise",
+          "Divide by"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Rotate Responsibilities Weekly",
+        "attrs": {
+          "rotation_period": "1 week",
+          "tasks_covered": "front-end, back-end, testing",
+          "estimated_hours_per_week": "12"
+        },
+        "upside": "Everyone gains experience in all roles.",
+        "concern": "Frequent switching may reduce efficiency.",
+        "short_name": "Rotate Responsibilities",
+        "aliases": [
+          "Rotate Responsibilities",
+          "Rotate Weekly"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Equal Task Sharing",
+        "attrs": {
+          "tasks_assigned": "all members share all tasks",
+          "weekly_meetings": "3",
+          "estimated_hours_per_week": "15"
+        },
+        "upside": "Promotes teamwork and equal responsibility.",
+        "concern": "Coordination overhead may increase workload.",
+        "short_name": "Equal Sharing",
+        "aliases": [
+          "Equal Sharing",
+          "Equal Task"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Lead and Support Roles",
+        "attrs": {
+          "project_lead": "Student 1",
+          "support_roles": "Student 2 and Student 3",
+          "estimated_hours_per_week": "11"
+        },
+        "upside": "Clear leadership can improve decision-making.",
+        "concern": "Support roles may feel less engaged.",
+        "short_name": "Lead and Support",
+        "aliases": [
+          "Lead and Support",
+          "Lead Support Roles"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A group of three students must divide responsibilities for a software project. Each option outlines a distinct way to allocate tasks based on skills, workload, and collaboration style."
+    ],
+    "setup_notes": [
+      "scenario_regenerated_after_validation_error",
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 2,
+        "stubbornness": 5
+      },
+      "background": "Maya is a detail-oriented computer science student who values hands-on learning across all software roles.",
+      "private_goal": "To gain broad experience by rotating through all project tasks weekly.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 20,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Dividing by expertise limits cross-functional learning, which conflicts with Maya's goal to gain broad experience."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Everyone gains experience in all roles, perfectly matching Maya's goal for broad learning.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Coordination overhead and increased workload reduce efficiency and learning opportunities."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Support roles may feel less engaged, which conflicts with Maya's desire for active participation."
+        }
+      },
+      "hard_blocker": true
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 3,
+        "stubbornness": 1
+      },
+      "background": "Liam is a pragmatic and efficient student who prefers clear roles and leadership in group projects.",
+      "private_goal": "To ensure smooth project progress with clear decision-making and manageable workload.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Each member focuses on their strongest skill, which supports efficiency and clarity.",
+          "reason_against": "May reduce cross-functional learning, but Liam prioritizes efficiency over learning variety."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Everyone gains experience in all roles, which is good for learning.",
+          "reason_against": "Frequent switching may reduce efficiency, conflicting with Liam's preference for smooth progress."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Promotes teamwork and equal responsibility, supporting group cohesion.",
+          "reason_against": "Coordination overhead may increase workload, which could slow progress."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Clear leadership can improve decision-making and project flow, matching Liam's priorities.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 4,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Zoe is a collaborative and enthusiastic student who enjoys sharing responsibilities equally among teammates.",
+      "private_goal": "To foster teamwork and shared ownership of all project tasks.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 21,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Allows members to focus on strengths, which can improve quality.",
+          "reason_against": "Reduces teamwork and shared ownership, which Zoe values highly."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Everyone gains experience in all roles, encouraging learning and collaboration.",
+          "reason_against": "Frequent switching may reduce efficiency, but Zoe values experience over speed."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Promotes teamwork and equal responsibility, perfectly aligning with Zoe's goals.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Clear leadership can help decision-making while support roles still contribute.",
+          "reason_against": "Support roles may feel less engaged, which could reduce Zoe's ideal of equal participation."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 1,
+        "B": 5,
+        "C": 1,
+        "D": 1
+      },
+      "acceptable_options": [
+        "B"
+      ],
+      "hard_rejected_options": [
+        "A",
+        "C",
+        "D"
+      ],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "rotation_period"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "estimated_hours_per_week"
+        ],
+        [
+          "D",
+          "estimated_hours_per_week"
+        ],
+        [
+          "B",
+          "estimated_hours_per_week"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "tasks_assigned"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "D",
+          "project_lead"
+        ],
+        [
+          "B",
+          "tasks_covered"
+        ],
+        [
+          "D",
+          "support_roles"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 9,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "estimated_hours_per_week"
+        ],
+        [
+          "D",
+          "estimated_hours_per_week"
+        ],
+        [
+          "B",
+          "estimated_hours_per_week"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "tasks_assigned"
+        ],
+        [
+          "C",
+          "weekly_meetings"
+        ],
+        [
+          "D",
+          "support_roles"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Decide how to divide responsibilities for a student software project.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Splitting tasks equally sounds good since equal sharing promotes teamwork and shared responsibility, which I’d really like.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Promotes teamwork and equal responsibility, perfectly aligning with Zoe's goals.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Promotes teamwork and equal responsibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Hi, I prefer Rotate Responsibilities; it fits my priorities best.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Everyone gains experience in all roles, perfectly matching Maya's goal for broad learning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone gains experience in all roles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Clear leadership speeds decisions and flow—Option D fits.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Clear leadership can improve decision-making and project flow, matching Liam's priorities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Clear leadership can improve decision-making."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "That could speed things up, but I worry some might feel less connected if the roles aren’t balanced enough.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Support roles may feel less engaged, which could reduce Zoe's ideal of equal participation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Support roles may feel less engaged."
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Having Student 2 and Student 3 as support roles helps share the workload, though I hope it doesn’t make anyone feel sidelined.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the support roles is Student 2 and Student 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "support_roles",
+          "public_value": "Student 2 and Student 3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Maya, don’t you think weekly switches might slow us down?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Frequent switching may reduce efficiency, conflicting with Liam's preference for smooth progress.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Frequent switching may reduce efficiency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That’s a fair point—switching often might slow us down a bit, but it also helps us learn every role well.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Frequent switching may reduce efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Frequent switching may reduce efficiency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Switching weekly cuts the hours to 12, but I kinda prefer equal sharing since 15 hours feels fairer for teamwork.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare estimated_hours_per_week: 15 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "estimated_hours_per_week",
+            "public_value": "15"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "estimated_hours_per_week",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "It’s cool that we all get to try every role, even if it might feel a bit slower sometimes—it could really boost how we work together.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Everyone gains experience in all roles, encouraging learning and collaboration.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone gains experience in all roles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Trying every role’s good, but splitting front-end, back-end, and testing feels cleaner.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the tasks covered is front-end, back-end, testing",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "tasks_covered",
+          "public_value": "front-end, back-end, testing"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Switching weekly definitely keeps things fresh, though it means we might not get super deep in one area before moving on.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the rotation period is 1 week",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "rotation_period",
+          "public_value": "1 week"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Coordination overhead might slow us down though?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Coordination overhead may increase workload, which could slow progress.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Coordination overhead may increase workload."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "True, coordination overhead might add extra work, but sharing tasks equally could balance that out.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Coordination overhead may increase workload.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Coordination overhead may increase workload."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I get the coordination concern, but honestly, sharing all tasks might actually help us catch stuff others miss.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tasks assigned is all members share all tasks",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "tasks_assigned",
+          "public_value": "all members share all tasks"
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "11 hours feels more manageable than 12 weekly.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare estimated_hours_per_week: 11 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "estimated_hours_per_week",
+            "public_value": "11"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "estimated_hours_per_week",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Sharing all tasks sounds good, but risks overlap confusion.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the tasks assigned is all members share all tasks",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "tasks_assigned",
+          "public_value": "all members share all tasks"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "True, having three meetings a week feels manageable and could keep us synced without adding too much overhead.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the weekly meetings is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "weekly_meetings",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "15 hours is doable, but we need strict deadlines.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the estimated hours per week is 15",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "estimated_hours_per_week",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Support roles risk feeling less engaged, which might make it harder to stay fully involved week to week.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Support roles may feel less engaged, which conflicts with Maya's desire for active participation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Support roles may feel less engaged."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Support roles are Student 2 and 3, so they must stay active.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the support roles is Student 2 and Student 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "support_roles",
+          "public_value": "Student 2 and Student 3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Project lead is Student 1, so final calls rest there.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the project lead is Student 1",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "project_lead",
+          "public_value": "Student 1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Eleven hours a week sounds closer to what I can manage without feeling overwhelmed, though I’m open if others have different views.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the estimated hours per week is 11",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "estimated_hours_per_week",
+          "public_value": "11"
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Public support is tied at the top, so let’s test Equal Sharing as the option to narrow around. Maya and Liam, could you accept it for the group?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 24,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Coordination overhead could slow us down here.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Coordination overhead may increase workload, which could slow progress.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Coordination overhead may increase workload."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 25,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Still feels like the extra coordination might just add too much busy work and cut into actual learning.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Coordination overhead and increased workload reduce efficiency and learning opportunities.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Coordination overhead may increase workload."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 26,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 27,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Rotate Responsibilities.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Everyone gains experience in all roles, perfectly matching Maya's goal for broad learning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone gains experience in all roles."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Lead and Support.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Clear leadership can improve decision-making and project flow, matching Liam's priorities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Clear leadership can improve decision-making."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 29,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Equal Sharing is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Promotes teamwork and equal responsibility, perfectly aligning with Zoe's goals.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Promotes teamwork and equal responsibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 30,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final vote remained split, so the decision is unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "B:concern": 2,
+    "B:estimated_hours_per_week": 2,
+    "B:rotation_period": 1,
+    "B:tasks_covered": 1,
+    "B:upside": 2,
+    "C:concern": 4,
+    "C:estimated_hours_per_week": 2,
+    "C:tasks_assigned": 2,
+    "C:upside": 1,
+    "C:weekly_meetings": 1,
+    "D:concern": 2,
+    "D:estimated_hours_per_week": 2,
+    "D:project_lead": 1,
+    "D:support_roles": 2,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "D",
+    "p3": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "B",
+      "p2": "D",
+      "p3": "C"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 26,
+    "setup_llm_calls": 4,
+    "repair_calls": 2,
+    "dropped_turns": 0,
+    "fallback_turns": 1,
+    "liveness_forced_turns": 0,
+    "input_tokens": 16239,
+    "output_tokens": 2528,
+    "moderator_turns": 4,
+    "voluntary_turns": 20,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 27,
+    "voluntary_turns": 20,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.129,
+    "avg_words_per_participant_turn": 13.74,
+    "visible_preference_changes": 0,
+    "repair_turns": 2,
+    "dropped_turns": 0,
+    "fallback_turns": 1,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 16239,
+    "output_tokens": 2528,
+    "llm_calls": 30,
+    "voluntary_turns_by_persona": {
+      "p3": 7,
+      "p2": 9,
+      "p1": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Promotes teamwork and equal responsibility, perfectly aligning with Zoe's goals.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Promotes teamwork and equal responsibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maybe splitting tasks equally could work best since it promotes teamwork and equal responsibility, which I’d really like.",
+      "validation_errors": [
+        "focused option is not visible"
+      ],
+      "repair_text": "Splitting tasks equally sounds good since equal sharing promotes teamwork and shared responsibility, which I’d really like.",
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Everyone gains experience in all roles, perfectly matching Maya's goal for broad learning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone gains experience in all roles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Rotating responsibilities weekly seems cool—everyone gets to try all roles, which fits perfectly with my goal to learn broadly.",
+      "validation_errors": [
+        "focused option is not visible"
+      ],
+      "repair_text": "Rotating responsibilities weekly sounds great since everyone gets hands-on experience in all roles, which fits my goal to learn broadly.",
+      "repair_errors": [
+        "focused option is not visible"
+      ],
+      "final_status": "fallback",
+      "fallback_text": "Hi, I prefer Rotate Responsibilities; it fits my priorities best."
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Clear leadership can improve decision-making and project flow, matching Liam's priorities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Clear leadership can improve decision-making."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Clear leadership speeds decisions and flow—Option D fits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Support roles may feel less engaged, which could reduce Zoe's ideal of equal participation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Support roles may feel less engaged."
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That could speed things up, but I worry some might feel less connected if the roles aren’t balanced enough.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the support roles is Student 2 and Student 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "support_roles",
+          "public_value": "Student 2 and Student 3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Having Student 2 and Student 3 as support roles helps share the workload, though I hope it doesn’t make anyone feel sidelined.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Frequent switching may reduce efficiency, conflicting with Liam's preference for smooth progress.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Frequent switching may reduce efficiency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, don’t you think weekly switches might slow us down?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Frequent switching may reduce efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Frequent switching may reduce efficiency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s a fair point—switching often might slow us down a bit, but it also helps us learn every role well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare estimated_hours_per_week: 15 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "estimated_hours_per_week",
+            "public_value": "15"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "estimated_hours_per_week",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Switching weekly cuts the hours to 12, but I kinda prefer equal sharing since 15 hours feels fairer for teamwork.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Everyone gains experience in all roles, encouraging learning and collaboration.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone gains experience in all roles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s cool that we all get to try every role, even if it might feel a bit slower sometimes—it could really boost how we work together.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the tasks covered is front-end, back-end, testing",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "tasks_covered",
+          "public_value": "front-end, back-end, testing"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Trying every role’s good, but splitting front-end, back-end, and testing feels cleaner.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the rotation period is 1 week",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "rotation_period",
+          "public_value": "1 week"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Switching weekly definitely keeps things fresh, though it means we might not get super deep in one area before moving on.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Coordination overhead may increase workload, which could slow progress.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Coordination overhead may increase workload."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Coordination overhead might slow us down though?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Coordination overhead may increase workload.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Coordination overhead may increase workload."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, coordination overhead might add extra work, but sharing tasks equally could balance that out.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tasks assigned is all members share all tasks",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "tasks_assigned",
+          "public_value": "all members share all tasks"
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I get the coordination concern, but honestly, sharing all tasks might actually help us catch stuff others miss.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare estimated_hours_per_week: 11 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "estimated_hours_per_week",
+            "public_value": "11"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "estimated_hours_per_week",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "11 hours feels more manageable than 12 weekly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the tasks assigned is all members share all tasks",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "tasks_assigned",
+          "public_value": "all members share all tasks"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sharing all tasks sounds good, but risks overlap confusion.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the weekly meetings is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "weekly_meetings",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, having three meetings a week feels manageable and could keep us synced without adding too much overhead.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the estimated hours per week is 15",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "estimated_hours_per_week",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "15 hours is doable, but we need strict deadlines.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Support roles may feel less engaged, which conflicts with Maya's desire for active participation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Support roles may feel less engaged."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Support roles risk feeling less engaged, which might make it harder to stay fully involved week to week.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the support roles is Student 2 and Student 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "support_roles",
+          "public_value": "Student 2 and Student 3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Support roles are Student 2 and 3, so they must stay active.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the project lead is Student 1",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "project_lead",
+          "public_value": "Student 1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Project lead is Student 1, so final calls rest there.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the estimated hours per week is 11",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "estimated_hours_per_week",
+          "public_value": "11"
+        },
+        "comparison_sources": [],
+        "personal_context": "To foster teamwork and shared ownership of all project tasks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Eleven hours a week sounds closer to what I can manage without feeling overwhelmed, though I’m open if others have different views.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Coordination overhead may increase workload, which could slow progress.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Coordination overhead may increase workload."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure smooth project progress with clear decision-making and manageable workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Coordination overhead could slow us down here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Coordination overhead and increased workload reduce efficiency and learning opportunities.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Coordination overhead may increase workload."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gain broad experience by rotating through all project tasks weekly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still feels like the extra coordination might just add too much busy work and cut into actual learning.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Everyone gains experience in all roles, perfectly matching Maya's goal for broad learning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone gains experience in all roles."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Rotate Responsibilities.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Clear leadership can improve decision-making and project flow, matching Liam's priorities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Clear leadership can improve decision-making."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose Lead and Support.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Promotes teamwork and equal responsibility, perfectly aligning with Zoe's goals.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Promotes teamwork and equal responsibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Equal Sharing is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [
+    "fallback_turns:1"
+  ],
+  "needs_review": true
+}

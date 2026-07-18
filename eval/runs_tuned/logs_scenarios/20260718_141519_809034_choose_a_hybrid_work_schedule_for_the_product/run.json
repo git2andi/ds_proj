@@ -1,0 +1,3423 @@
+{
+  "provenance": {
+    "seed": 242118865,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose a hybrid-work schedule for the product team",
+    "options": [
+      {
+        "id": "A",
+        "name": "Fixed 3 Days In-Office, 2 Days Remote",
+        "attrs": {
+          "in_office_days_per_week": "3",
+          "remote_days_per_week": "2",
+          "core_hours": "10am-3pm",
+          "flexible_start_end": "False"
+        },
+        "upside": "Ensures regular face-to-face collaboration on set days.",
+        "concern": "Less daily flexibility for individual schedules.",
+        "short_name": "Fixed Days",
+        "aliases": [
+          "Fixed Days",
+          "Days Remote"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Flexible In-Office Days with Minimum 2 Days",
+        "attrs": {
+          "min_in_office_days_per_week": "2",
+          "max_in_office_days_per_week": "4",
+          "remote_days_per_week": "1-3",
+          "core_hours": "11am-4pm",
+          "flexible_start_end": "True"
+        },
+        "upside": "Allows team members to choose in-office days based on personal needs.",
+        "concern": "Potentially uneven in-office overlap among team members.",
+        "short_name": "Flexible In-Office",
+        "aliases": [
+          "Flexible In-Office",
+          "Minimum Days"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Alternating Weeks: One Week In-Office, One Week Remote",
+        "attrs": {
+          "in_office_weeks_per_month": "2",
+          "remote_weeks_per_month": "2",
+          "core_hours": "9am-12pm",
+          "flexible_start_end": "False"
+        },
+        "upside": "Maximizes extended remote work periods while maintaining regular office presence.",
+        "concern": "Less frequent in-person interaction within a given week.",
+        "short_name": "Alternating Weeks",
+        "aliases": [
+          "Alternating Weeks",
+          "One Week Remote"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Daily Split: Half-Day In-Office, Half-Day Remote",
+        "attrs": {
+          "in_office_hours_per_day": "4",
+          "remote_hours_per_day": "4",
+          "core_hours": "9am-5pm",
+          "flexible_start_end": "False"
+        },
+        "upside": "Balances daily in-person collaboration with remote work flexibility.",
+        "concern": "May increase commuting frequency and reduce deep focus time.",
+        "short_name": "Daily Split",
+        "aliases": [
+          "Daily Split",
+          "Half-Day Remote"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The product team of 5 members needs to select a hybrid-work schedule balancing in-office collaboration and remote flexibility. Each option specifies days in-office per week and core hours for synchronous work."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 1
+      },
+      "background": "Maya is a product designer who values daily collaboration and structured schedules.",
+      "private_goal": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Ensures regular face-to-face collaboration on set days, supporting teamwork.",
+          "reason_against": "Lacks daily flexibility which Maya prefers for her routine."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Allows some flexibility in choosing in-office days.",
+          "reason_against": "Potential uneven overlap may reduce consistent team presence."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Maximizes remote work periods.",
+          "reason_against": "Less frequent in-person interaction within a given week conflicts with her desire for daily collaboration."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Balances daily in-person collaboration with remote work flexibility, ideal for Maya’s structured yet flexible needs.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Liam is a backend engineer who prefers clear boundaries between work and personal time.",
+      "private_goal": "To minimize commuting and maximize focus time during work hours.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Fixed days help with planning but reduce flexibility.",
+          "reason_against": "Less daily flexibility and fixed core hours may interfere with his focus."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Flexible days allow choosing less commuting days.",
+          "reason_against": "Uneven overlap might disrupt team syncs."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Extended remote weeks maximize focus time and reduce commuting.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Daily in-person time is beneficial for collaboration.",
+          "reason_against": "Increases commuting frequency and disrupts focus blocks."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Noah",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Noah is a QA analyst who values predictability and minimal disruptions.",
+      "private_goal": "To maintain a consistent work environment with minimal commute stress.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 41,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Fixed days provide some structure.",
+          "reason_against": "Less flexibility and fixed core hours may cause stress."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Flexible days offer some choice and reduce commute unpredictability.",
+          "reason_against": "Uneven overlap could cause coordination issues."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Alternating weeks provide long remote stretches and predictable office presence.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Daily collaboration is good.",
+          "reason_against": "Half-day commuting is disruptive and tiring."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Zoe is a UX researcher who enjoys deep focus time and flexible schedules.",
+      "private_goal": "To have long uninterrupted remote work periods balanced with some office time.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Regular office days help with team bonding.",
+          "reason_against": "Fixed days reduce flexibility and deep focus time."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Flexible in-office days allow balancing focus and collaboration.",
+          "reason_against": "Uneven overlap could reduce team cohesion."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Alternating weeks maximize remote focus periods with regular in-office presence.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Daily office time supports collaboration.",
+          "reason_against": "Frequent commuting breaks focus and is tiring."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Eli is a product manager who values autonomy and efficient team communication.",
+      "private_goal": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Fixed days ensure predictable collaboration.",
+          "reason_against": "Less flexibility than preferred."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Flexible in-office days with core hours and flexible start/end times match his autonomy and communication needs.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Extended remote weeks offer flexibility.",
+          "reason_against": "Less frequent in-person interaction hinders team alignment."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Daily split balances collaboration and remote work.",
+          "reason_against": "Increased commuting may reduce productivity."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "flexible_start_end"
+        ],
+        [
+          "B",
+          "remote_days_per_week"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "core_hours"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "flexible_start_end"
+        ],
+        [
+          "D",
+          "remote_hours_per_day"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "core_hours"
+        ],
+        [
+          "B",
+          "core_hours"
+        ],
+        [
+          "C",
+          "remote_weeks_per_month"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "flexible_start_end"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Flexible days offer some choice and reduce commute unpredictability."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "flexible_start_end"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "flexible_start_end"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "D",
+          "core_hours"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "flexible_start_end"
+        ],
+        [
+          "C",
+          "flexible_start_end"
+        ],
+        [
+          "C",
+          "in_office_weeks_per_month"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "D",
+          "remote_hours_per_day"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "core_hours"
+        ],
+        [
+          "B",
+          "core_hours"
+        ],
+        [
+          "D",
+          "in_office_hours_per_day"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "remote_weeks_per_month"
+        ],
+        [
+          "C",
+          "in_office_weeks_per_month"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Choose a hybrid-work schedule for the product team.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Alternating weeks give long remote stretches and predictable office time.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Alternating weeks provide long remote stretches and predictable office presence.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The Daily Split seems best since it balances daily in-person collaboration with remote work flexibility, fitting my need for structure and teamwork.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Balances daily in-person collaboration with remote work flexibility, ideal for Maya’s structured yet flexible needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balances daily in-person collaboration with remote work flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Extended remote weeks maximize focus time and reduce commuting, so Option C works best.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Extended remote weeks maximize focus time and reduce commuting.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Flexible in-office days with core hours and flexible start/end times fit my need for autonomy and clear team communication—Option B works best.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible in-office days with core hours and flexible start/end times match his autonomy and communication needs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows team members to choose in-office days based on personal needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "Alternating weeks seem like a good way to get long remote focus periods while still having regular office time, which feels important to me.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Alternating weeks maximize remote focus periods with regular in-office presence.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Flexible start and end times aren’t available, so that limits some morning ease.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the flexible start end is False",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "flexible_start_end",
+          "public_value": "False"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Less frequent in-person interaction within a week disrupts the daily collaboration I rely on to keep projects moving smoothly.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less frequent in-person interaction within a given week conflicts with her desire for daily collaboration.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less frequent in-person interaction within a given week."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "The 11am-4pm core hours in Option B give more flexibility for focused work and meetings than the 9am-12pm block in Option C, which feels too tight for my productivity.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare core_hours: 11am-4pm and 9am-12pm",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "core_hours",
+            "public_value": "11am-4pm"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "core_hours",
+            "public_value": "9am-12pm"
+          }
+        ],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "That setup increases commuting frequency and breaks up deep focus time too much.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Increases commuting frequency and disrupts focus blocks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May increase commuting frequency and reduce deep focus time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Less frequent in-person time each week reduces our ability to stay aligned, which undermines smooth collaboration.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less frequent in-person interaction hinders team alignment.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less frequent in-person interaction within a given week."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "Two weeks in the office each month might work better for coordination, though it could still make it tricky to get long, uninterrupted remote work periods.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the in office weeks per month is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "in_office_weeks_per_month",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Eli, do you think the flexible days risk reducing consistent in-person overlap enough to impact teamwork?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "Potential uneven overlap may reduce consistent team presence.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Potentially uneven in-office overlap among team members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "There’s a real risk of uneven overlap, which could disrupt teamwork more than we want.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Potentially uneven in-office overlap among team members.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Potentially uneven in-office overlap among team members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "I see the value in flexible office days for mixing focus and teamwork, though I’m a bit unsure if the minimum two days is quite enough for steady collaboration.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible in-office days allow balancing focus and collaboration.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows team members to choose in-office days based on personal needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Core hours 9-12am give clearer focus blocks than 11am-4pm, which cuts into prime remote time.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare core_hours: 9am-12pm and 11am-4pm",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "core_hours",
+            "public_value": "9am-12pm"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "core_hours",
+            "public_value": "11am-4pm"
+          }
+        ],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Two remote weeks per month is workable, but it means we must be very intentional about scheduling in-person collaboration to avoid gaps.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the remote weeks per month is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "remote_weeks_per_month",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Flexible In-Office with minimum 2 days seems okay. It gives some choice and cuts commute unpredictability.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible days offer some choice and reduce commute unpredictability.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows team members to choose in-office days based on personal needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Flexible days offer some choice and reduce commute unpredictability."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Flexible days offer some choice and reduce commute unpredictability."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "1-3 remote days keep some routine but I’d want to lock in at least two in-office days for consistent team syncs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the remote days per week is 1-3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "remote_days_per_week",
+          "public_value": "1-3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "Having a flexible start and end time feels more important to me than just having set remote weeks, since that flexibility helps keep long focus periods intact.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare flexible_start_end: False and True",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "flexible_start_end",
+            "public_value": "True"
+          }
+        ],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Two in-office weeks per month is the baseline, but we need to pair that with flexible hours to actually protect focused work time.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the in office weeks per month is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "in_office_weeks_per_month",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Half-day commuting feels tiring and breaks focus too much.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Half-day commuting is disruptive and tiring.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May increase commuting frequency and reduce deep focus time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Neither option offers flexible start and end times, which limits adapting my daily routine; still, a full in-office week better supports steady team collaboration than splitting days.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare flexible_start_end: False and False",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          }
+        ],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Four in-office hours daily feels like a reasonable minimum; I need that time for team syncs but want flexibility around it.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the in office hours per day is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "in_office_hours_per_day",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "Four remote hours might feel short for deep focus, so I’d probably need quieter stretches beyond that to really settle in.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the remote hours per day is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "remote_hours_per_day",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The 9 to 5 core hours ensure overlap, but without flexible start times, it’s harder to maintain personal routines consistently.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the core hours is 9am-5pm",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "core_hours",
+          "public_value": "9am-5pm"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The fixed start and end times increase commute stress and reduce focused work blocks.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the flexible start end is False",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "flexible_start_end",
+          "public_value": "False"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Four remote hours feels tight for uninterrupted design work, so I’d need to protect those blocks carefully to keep my flow.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the remote hours per day is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "remote_hours_per_day",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Core hours make planning predictable, though commute remains a concern.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the core hours is 9am-5pm",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "core_hours",
+          "public_value": "9am-5pm"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Both have fixed start times, but alternating weeks means fewer daily commutes, which fits my priority better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare flexible_start_end: False and False",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          }
+        ],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Two remote weeks a month cut commute days, but fixed start times still limit deep focus.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the remote weeks per month is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "remote_weeks_per_month",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 31,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Daily Split.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Balances daily in-person collaboration with remote work flexibility, ideal for Maya’s structured yet flexible needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balances daily in-person collaboration with remote work flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Alternating Weeks.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Extended remote weeks maximize focus time and reduce commuting.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 34,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "I choose Alternating Weeks.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Alternating weeks provide long remote stretches and predictable office presence.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Zoe",
+      "text": "I choose Alternating Weeks.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Alternating weeks maximize remote focus periods with regular in-office presence.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Eli",
+      "text": "Flexible In-Office is my final choice.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible in-office days with core hours and flexible start/end times match his autonomy and communication needs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows team members to choose in-office days based on personal needs."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 37,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Alternating Weeks.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "B:concern": 2,
+    "B:core_hours": 2,
+    "B:flexible_start_end": 1,
+    "B:remote_days_per_week": 1,
+    "B:upside": 3,
+    "C:concern": 2,
+    "C:core_hours": 2,
+    "C:flexible_start_end": 4,
+    "C:in_office_weeks_per_month": 2,
+    "C:remote_weeks_per_month": 2,
+    "C:upside": 3,
+    "D:concern": 2,
+    "D:core_hours": 2,
+    "D:flexible_start_end": 3,
+    "D:in_office_hours_per_day": 1,
+    "D:remote_hours_per_day": 2,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "flexible_start_end"
+    ],
+    [
+      "C",
+      "remote_weeks_per_month"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "C",
+    "p3": "C",
+    "p4": "C",
+    "p5": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "C",
+    "votes": {
+      "p1": "D",
+      "p2": "C",
+      "p3": "C",
+      "p4": "C",
+      "p5": "B"
+    },
+    "reason": "3 of 5 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 30,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 20120,
+    "output_tokens": 2786,
+    "moderator_turns": 3,
+    "voluntary_turns": 24,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 5,
+    "participant_turns": 35,
+    "voluntary_turns": 24,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0789,
+    "avg_words_per_participant_turn": 16.91,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 20120,
+    "output_tokens": 2786,
+    "llm_calls": 33,
+    "voluntary_turns_by_persona": {
+      "p3": 5,
+      "p1": 6,
+      "p5": 5,
+      "p2": 4,
+      "p4": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Alternating weeks provide long remote stretches and predictable office presence.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Alternating weeks give long remote stretches and predictable office time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Balances daily in-person collaboration with remote work flexibility, ideal for Maya’s structured yet flexible needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balances daily in-person collaboration with remote work flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Daily Split seems best since it balances daily in-person collaboration with remote work flexibility, fitting my need for structure and teamwork.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Extended remote weeks maximize focus time and reduce commuting.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Extended remote weeks maximize focus time and reduce commuting, so Option C works best.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible in-office days with core hours and flexible start/end times match his autonomy and communication needs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows team members to choose in-office days based on personal needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Flexible in-office days with core hours and flexible start/end times fit my need for autonomy and clear team communication—Option B works best.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Alternating weeks maximize remote focus periods with regular in-office presence.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Alternating weeks seem like a good way to get long remote focus periods while still having regular office time, which feels important to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the flexible start end is False",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "flexible_start_end",
+          "public_value": "False"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Flexible start and end times aren’t available, so that limits some morning ease.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less frequent in-person interaction within a given week conflicts with her desire for daily collaboration.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less frequent in-person interaction within a given week."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Less frequent in-person interaction within a week disrupts the daily collaboration I rely on to keep projects moving smoothly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare core_hours: 11am-4pm and 9am-12pm",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "core_hours",
+            "public_value": "11am-4pm"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "core_hours",
+            "public_value": "9am-12pm"
+          }
+        ],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 11am-4pm core hours in Option B give more flexibility for focused work and meetings than the 9am-12pm block in Option C, which feels too tight for my productivity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Increases commuting frequency and disrupts focus blocks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May increase commuting frequency and reduce deep focus time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That setup increases commuting frequency and breaks up deep focus time too much.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less frequent in-person interaction hinders team alignment.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less frequent in-person interaction within a given week."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Less frequent in-person time each week reduces our ability to stay aligned, which undermines smooth collaboration.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the in office weeks per month is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "in_office_weeks_per_month",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two weeks in the office each month might work better for coordination, though it could still make it tricky to get long, uninterrupted remote work periods.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "Potential uneven overlap may reduce consistent team presence.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Potentially uneven in-office overlap among team members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Eli, do you think the flexible days risk reducing consistent in-person overlap enough to impact teamwork?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Potentially uneven in-office overlap among team members.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Potentially uneven in-office overlap among team members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "There’s a real risk of uneven overlap, which could disrupt teamwork more than we want.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible in-office days allow balancing focus and collaboration.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows team members to choose in-office days based on personal needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I see the value in flexible office days for mixing focus and teamwork, though I’m a bit unsure if the minimum two days is quite enough for steady collaboration.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare core_hours: 9am-12pm and 11am-4pm",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "core_hours",
+            "public_value": "9am-12pm"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "core_hours",
+            "public_value": "11am-4pm"
+          }
+        ],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Core hours 9-12am give clearer focus blocks than 11am-4pm, which cuts into prime remote time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the remote weeks per month is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "remote_weeks_per_month",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two remote weeks per month is workable, but it means we must be very intentional about scheduling in-person collaboration to avoid gaps.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible days offer some choice and reduce commute unpredictability.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows team members to choose in-office days based on personal needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Flexible days offer some choice and reduce commute unpredictability."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Flexible In-Office with minimum 2 days seems okay. It gives some choice and cuts commute unpredictability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the remote days per week is 1-3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "remote_days_per_week",
+          "public_value": "1-3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1-3 remote days keep some routine but I’d want to lock in at least two in-office days for consistent team syncs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare flexible_start_end: False and True",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "flexible_start_end",
+            "public_value": "True"
+          }
+        ],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Having a flexible start and end time feels more important to me than just having set remote weeks, since that flexibility helps keep long focus periods intact.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the in office weeks per month is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "in_office_weeks_per_month",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two in-office weeks per month is the baseline, but we need to pair that with flexible hours to actually protect focused work time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Half-day commuting is disruptive and tiring.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May increase commuting frequency and reduce deep focus time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Half-day commuting feels tiring and breaks focus too much.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare flexible_start_end: False and False",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          }
+        ],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Neither option offers flexible start and end times, which limits adapting my daily routine; still, a full in-office week better supports steady team collaboration than splitting days.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the in office hours per day is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "in_office_hours_per_day",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have flexible schedules that empower personal productivity and maintain team alignment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four in-office hours daily feels like a reasonable minimum; I need that time for team syncs but want flexibility around it.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the remote hours per day is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "remote_hours_per_day",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have long uninterrupted remote work periods balanced with some office time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four remote hours might feel short for deep focus, so I’d probably need quieter stretches beyond that to really settle in.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the core hours is 9am-5pm",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "core_hours",
+          "public_value": "9am-5pm"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 9 to 5 core hours ensure overlap, but without flexible start times, it’s harder to maintain personal routines consistently.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the flexible start end is False",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "flexible_start_end",
+          "public_value": "False"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The fixed start and end times increase commute stress and reduce focused work blocks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the remote hours per day is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "remote_hours_per_day",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize in-person teamwork without sacrificing daily routine consistency.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four remote hours feels tight for uninterrupted design work, so I’d need to protect those blocks carefully to keep my flow.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the core hours is 9am-5pm",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "core_hours",
+          "public_value": "9am-5pm"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Core hours make planning predictable, though commute remains a concern.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare flexible_start_end: False and False",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "flexible_start_end",
+            "public_value": "False"
+          }
+        ],
+        "personal_context": "To maintain a consistent work environment with minimal commute stress.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have fixed start times, but alternating weeks means fewer daily commutes, which fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the remote weeks per month is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "remote_weeks_per_month",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize commuting and maximize focus time during work hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two remote weeks a month cut commute days, but fixed start times still limit deep focus.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Balances daily in-person collaboration with remote work flexibility, ideal for Maya’s structured yet flexible needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balances daily in-person collaboration with remote work flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Daily Split.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Extended remote weeks maximize focus time and reduce commuting.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Alternating Weeks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Alternating weeks provide long remote stretches and predictable office presence.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Alternating Weeks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Alternating weeks maximize remote focus periods with regular in-office presence.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maximizes extended remote work periods while maintaining regular office presence."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Alternating Weeks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible in-office days with core hours and flexible start/end times match his autonomy and communication needs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows team members to choose in-office days based on personal needs."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Flexible In-Office is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

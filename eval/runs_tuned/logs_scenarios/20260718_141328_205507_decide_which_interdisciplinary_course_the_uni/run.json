@@ -1,0 +1,4295 @@
+{
+  "provenance": {
+    "seed": 242118861,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide which interdisciplinary course the university should introduce",
+    "options": [
+      {
+        "id": "A",
+        "name": "Data Science and Environmental Studies",
+        "attrs": {
+          "fields_combined": "Computer Science, Environmental Science",
+          "credits": "4",
+          "semester_offered": "Fall",
+          "prerequisites": "Intro to Programming, Basic Ecology"
+        },
+        "upside": "Equips students with skills to analyze environmental data for sustainability projects.",
+        "concern": "Requires students to have foundational knowledge in both programming and ecology.",
+        "short_name": "Data Science",
+        "aliases": [
+          "Data Science",
+          "Environmental Studies"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Psychology and Digital Media",
+        "attrs": {
+          "fields_combined": "Psychology, Media Studies",
+          "credits": "3",
+          "semester_offered": "Spring",
+          "prerequisites": "Intro to Psychology"
+        },
+        "upside": "Explores human behavior in digital environments, useful for marketing and design careers.",
+        "concern": "Limited technical media production skills taught in the course.",
+        "short_name": "Digital Media",
+        "aliases": [
+          "Digital Media"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Urban Planning and Public Health",
+        "attrs": {
+          "fields_combined": "Urban Studies, Public Health",
+          "credits": "4",
+          "semester_offered": "Fall",
+          "prerequisites": "Intro to Urban Studies or Public Health"
+        },
+        "upside": "Prepares students to design healthier urban environments addressing community needs.",
+        "concern": "May require fieldwork that could be challenging for some students.",
+        "short_name": "Urban Planning",
+        "aliases": [
+          "Urban Planning",
+          "Public Health"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Business Ethics and Artificial Intelligence",
+        "attrs": {
+          "fields_combined": "Business Administration, Artificial Intelligence",
+          "credits": "3",
+          "semester_offered": "Spring",
+          "prerequisites": "Intro to Business, Basic AI Concepts"
+        },
+        "upside": "Focuses on ethical decision-making in AI-driven business contexts.",
+        "concern": "Conceptual content may be abstract without extensive technical AI background.",
+        "short_name": "Business Ethics",
+        "aliases": [
+          "Business Ethics",
+          "Artificial Intelligence"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The university plans to introduce a new interdisciplinary course to enrich its curriculum. The course should integrate at least two distinct academic fields and appeal to undergraduate students across multiple faculties."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Maya is a business ethics researcher focused on AI applications in corporate environments.",
+      "private_goal": "Ensure the course promotes responsible AI use in business practices.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Combines technical and environmental concerns, which is important for sustainability.",
+          "reason_against": "Requires programming and ecology background, which might be too technical for some business students."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Explores human behavior in digital media, relevant to ethical marketing and design.",
+          "reason_against": "Lacks focus on ethics and AI, which are her main interests."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Addresses public health and urban design, important for societal impact.",
+          "reason_against": "Less relevant to her focus on business and AI ethics."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Directly aligns with her interest in ethical decision-making in AI-driven business.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Liam is a psychology major interested in digital media and its effects on behavior.",
+      "private_goal": "Find a course that helps understand digital behavior for a future in marketing.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 21,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Environmental data science is interesting but less relevant to his psychology focus.",
+          "reason_against": "Requires programming and ecology knowledge, which he lacks."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Perfect fit combining psychology and media studies, useful for marketing careers.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Urban planning and public health have social relevance.",
+          "reason_against": "Less aligned with his career goals in digital behavior."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Ethics and AI in business is interesting but less directly related to psychology.",
+          "reason_against": "Abstract AI content may be challenging without technical background."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Zoe studies media and is passionate about understanding digital environments and human behavior.",
+      "private_goal": "Gain insights to create impactful digital content with psychological depth.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 24,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Environmental data science is valuable but outside her media focus.",
+          "reason_against": "Prerequisites in programming and ecology are barriers."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Directly integrates psychology and media studies, ideal for her interests.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Urban planning and public health are socially important.",
+          "reason_against": "Less relevant to her media and psychology focus."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Ethics in AI and business is interesting and somewhat relevant.",
+          "reason_against": "Abstract AI concepts may be difficult without technical background."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Eli is a business student with a strong interest in AI and ethical leadership.",
+      "private_goal": "Promote ethical AI use in future business roles.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 32,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Data science skills are valuable and complement AI knowledge.",
+          "reason_against": "Environmental focus less relevant to his business goals."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Psychology and media knowledge helps understand consumer behavior.",
+          "reason_against": "Less focus on ethics or AI."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Public health and urban planning have societal impact.",
+          "reason_against": "Not directly related to business or AI."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Perfectly matches his interest in ethical AI in business contexts.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Nina studies urban studies and is passionate about improving community health.",
+      "private_goal": "Develop skills to create healthier urban environments.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Data science applied to environmental issues complements urban health work.",
+          "reason_against": "Programming prerequisites may be challenging."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Psychology and media have some relevance to community engagement.",
+          "reason_against": "Less focus on urban or health topics."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Directly aligns with her passion for urban planning and public health.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Ethics and AI in business is less relevant to her goals.",
+          "reason_against": "Abstract AI content and business focus are not aligned."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 3
+      },
+      "background": "Omar is a computer science student interested in applying AI to environmental challenges.",
+      "private_goal": "Learn to use data science for sustainability and environmental impact.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 23,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Combines his programming skills with environmental science for sustainability.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Interesting psychology-media link but not technical enough.",
+          "reason_against": "Limited technical media skills and less relevant to CS."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Urban planning and public health have data applications he could explore.",
+          "reason_against": "Fieldwork might be a challenge."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Business ethics and AI is relevant to his AI interests.",
+          "reason_against": "Conceptual material may lack technical depth."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Ava",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 1
+      },
+      "background": "Ava is a media studies student fascinated by digital behavior and communication.",
+      "private_goal": "Understand psychological aspects of digital media to enhance content creation.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Environmental data science is valuable but outside her media focus.",
+          "reason_against": "Programming and ecology prerequisites are barriers."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Perfectly blends psychology and media studies, ideal for her interests.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Urban planning and public health have social importance.",
+          "reason_against": "Less relevant to her media and psychology focus."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Ethics and AI in business is interesting and somewhat relevant.",
+          "reason_against": "Abstract AI concepts may be difficult without technical background."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "fields_combined"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "semester_offered"
+        ],
+        [
+          "A",
+          "semester_offered"
+        ],
+        [
+          "A",
+          "fields_combined"
+        ],
+        [
+          "D",
+          "fields_combined"
+        ],
+        [
+          "B",
+          "semester_offered"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "fields_combined"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "fields_combined"
+        ],
+        [
+          "B",
+          "semester_offered"
+        ],
+        [
+          "C",
+          "fields_combined"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Ethics in AI and business is interesting and somewhat relevant."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 4,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Psychology and media knowledge helps understand consumer behavior."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "fields_combined"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "fields_combined"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "credits"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Data science applied to environmental issues complements urban health work."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "prerequisites"
+        ],
+        [
+          "B",
+          "credits"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "semester_offered"
+        ],
+        [
+          "D",
+          "prerequisites"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "credits"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "prerequisites"
+        ],
+        [
+          "D",
+          "credits"
+        ],
+        [
+          "B",
+          "prerequisites"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Ethics and AI in business is interesting and somewhat relevant."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "prerequisites"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "D",
+          "prerequisites"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "prerequisites"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Decide which interdisciplinary course the university should introduce.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Ava",
+      "text": "Digital Media perfectly blends psychology and media studies, which fits my interests best.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Perfectly blends psychology and media studies, ideal for her interests.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Business Ethics seems like a solid choice since it focuses on ethical decisions in AI-driven business.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Directly aligns with her interest in ethical decision-making in AI-driven business.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Directly integrating psychology and media studies makes Digital Media the best fit for what I want.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Directly integrates psychology and media studies, ideal for her interests.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Gain insights to create impactful digital content with psychological depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Urban Planning and Public Health seems to directly support creating healthier urban environments.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Directly aligns with her passion for urban planning and public health.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Prepares students to design healthier urban environments addressing community needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Data Science makes sense since it combines programming with environmental science for real sustainability impact.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines his programming skills with environmental science for sustainability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Equips students with skills to analyze environmental data for sustainability projects."
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Digital Media seems like a perfect fit, mixing psychology and media studies—really useful for marketing careers.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Perfect fit combining psychology and media studies, useful for marketing careers.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a course that helps understand digital behavior for a future in marketing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Business Ethics and Artificial Intelligence seems to fit well with ethical AI use.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Perfectly matches his interest in ethical AI in business contexts.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote ethical AI use in future business roles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "That’s interesting—do you think less focus on urban or health topics might limit some practical skills?",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Less focus on urban or health topics.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited technical media production skills taught in the course."
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ava",
+      "text": "Limited technical skills in media production could definitely hold back practical content creation.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the concern is Limited technical media production skills taught in the course.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited technical media production skills taught in the course."
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Combining Business Administration and AI aligns more with promoting responsible AI use, though Psychology and Media Studies bring other valuable skills.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare fields_combined: Business Administration, Artificial Intelligence and Psychology, Media Studies",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "fields_combined",
+            "public_value": "Business Administration, Artificial Intelligence"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "fields_combined",
+            "public_value": "Psychology, Media Studies"
+          }
+        ],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Makes sense, but I’m leaning toward Digital Media since psychology helps understand consumers better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Psychology and media knowledge helps understand consumer behavior.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote ethical AI use in future business roles.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Psychology and media knowledge helps understand consumer behavior."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Psychology and media knowledge helps understand consumer behavior."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Spring timing works, but I’m worried it might clash with some marketing electives I want.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the semester offered is Spring",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "semester_offered",
+          "public_value": "Spring"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a course that helps understand digital behavior for a future in marketing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The credits being 3 keeps it manageable with my main focus on data science, so that’s a plus for balancing workloads.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the credits is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "credits",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Omar, do you think the programming and ecology prerequisites actually block more students than they help?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "Prerequisites in programming and ecology are barriers.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires students to have foundational knowledge in both programming and ecology."
+        },
+        "comparison_sources": [],
+        "personal_context": "Gain insights to create impactful digital content with psychological depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Requiring solid programming and ecology knowledge upfront probably limits more students than it helps.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Requires students to have foundational knowledge in both programming and ecology.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires students to have foundational knowledge in both programming and ecology."
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Fall is when the data science course runs, but spring fits better with promoting responsible AI use in business.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare semester_offered: Spring and Fall",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "semester_offered",
+            "public_value": "Spring"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "semester_offered",
+            "public_value": "Fall"
+          }
+        ],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Fall timing is tricky, but Data Science’s focus on environmental analysis could really complement urban health work.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Data science applied to environmental issues complements urban health work.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Equips students with skills to analyze environmental data for sustainability projects."
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Data science applied to environmental issues complements urban health work."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Data science applied to environmental issues complements urban health work."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Maya, do you think the conceptual focus here risks missing the technical AI depth we need?",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Conceptual material may lack technical depth.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Conceptual content may be abstract without extensive technical AI background."
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It might lean a bit abstract without strong technical AI background, which could be limiting.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Conceptual content may be abstract without extensive technical AI background.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Conceptual content may be abstract without extensive technical AI background."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Maya’s point is valid, but Business Ethics and Artificial Intelligence offers valuable ethical insights that actually matter for digital content impact.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Ethics in AI and business is interesting and somewhat relevant.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Gain insights to create impactful digital content with psychological depth.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Ethics in AI and business is interesting and somewhat relevant."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Ethics in AI and business is interesting and somewhat relevant."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The prerequisites for Urban Planning focus on Intro to Urban Studies or Public Health, which aligns better with improving community health than Business Ethics requiring Intro to Business and Basic AI concepts.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare prerequisites: Intro to Urban Studies or Public Health and Intro to Business, Basic AI Concepts",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Urban Studies or Public Health"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Business, Basic AI Concepts"
+          }
+        ],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Spring timing works better for me to balance with other health-focused courses.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the semester offered is Spring",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "semester_offered",
+          "public_value": "Spring"
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The credits being 3 helps, though I wish it offered more depth.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the credits is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "credits",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote ethical AI use in future business roles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ava",
+      "text": "The prerequisites actually ensure a solid foundation, which I need to grasp AI’s ethical impact better.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the prerequisites is Intro to Business, Basic AI Concepts",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "prerequisites",
+          "public_value": "Intro to Business, Basic AI Concepts"
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ava",
+      "text": "Intro to Psychology is way more relevant for understanding digital behavior than Intro to Urban Studies or Public Health.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare prerequisites: Intro to Psychology and Intro to Urban Studies or Public Health",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Psychology"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Urban Studies or Public Health"
+          }
+        ],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Spring timing is a plus, though I wonder if it aligns well with our responsible AI goals.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the semester offered is Spring",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "semester_offered",
+          "public_value": "Spring"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Three credits seem manageable, but I’d prefer something with a bit more depth for community health impact.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the credits is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "credits",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Programming and ecology prereqs build a stronger base for environmental data science than intro psych, which doesn’t fit my sustainability focus.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare prerequisites: Intro to Programming, Basic Ecology and Intro to Psychology",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Programming, Basic Ecology"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Psychology"
+          }
+        ],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That combined focus feels practical, though I’d like to see more on ethical AI integration too.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the fields combined is Computer Science, Environmental Science",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "fields_combined",
+          "public_value": "Computer Science, Environmental Science"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ava",
+      "text": "Ethics and AI in business is actually pretty relevant, so I’m cool with Option D.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Ethics and AI in business is interesting and somewhat relevant.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Ethics and AI in business is interesting and somewhat relevant."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Ethics and AI in business is interesting and somewhat relevant."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Business ethics with AI is solid, but I’m not sure it dives deep enough into digital behavior for marketing.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the fields combined is Business Administration, Artificial Intelligence",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "fields_combined",
+          "public_value": "Business Administration, Artificial Intelligence"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a course that helps understand digital behavior for a future in marketing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The credits being 3 means it’s a decent time investment, but I’d rather spend that on courses with a stronger environmental data angle.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the credits is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "credits",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Psychology and media feel less about data ethics than computer science combined with environmental science, which fits my priority better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare fields_combined: Psychology, Media Studies and Computer Science, Environmental Science",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "fields_combined",
+            "public_value": "Psychology, Media Studies"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "fields_combined",
+            "public_value": "Computer Science, Environmental Science"
+          }
+        ],
+        "personal_context": "Promote ethical AI use in future business roles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Fieldwork might be a real hurdle—anyone think it’s manageable alongside our schedules?",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fieldwork might be a challenge.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May require fieldwork that could be challenging for some students."
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ava",
+      "text": "Fieldwork is definitely a challenge and could block time for some, so it’s not really manageable for everyone.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is May require fieldwork that could be challenging for some students.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May require fieldwork that could be challenging for some students."
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 36,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Yeah, fieldwork sounds rough, but psychology and media together feel way more aligned with understanding digital behavior than urban studies and public health, which seems less relevant for marketing.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare fields_combined: Psychology, Media Studies and Urban Studies, Public Health",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "fields_combined",
+            "public_value": "Psychology, Media Studies"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "fields_combined",
+            "public_value": "Urban Studies, Public Health"
+          }
+        ],
+        "personal_context": "Find a course that helps understand digital behavior for a future in marketing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Business Ethics.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Directly aligns with her interest in ethical decision-making in AI-driven business.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Digital Media.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Perfect fit combining psychology and media studies, useful for marketing careers.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I choose Digital Media.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Directly integrates psychology and media studies, ideal for her interests.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Digital Media is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Psychology and media knowledge helps understand consumer behavior.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "I choose Urban Planning.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Directly aligns with her passion for urban planning and public health.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Prepares students to design healthier urban environments addressing community needs."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I choose Data Science.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines his programming skills with environmental science for sustainability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Equips students with skills to analyze environmental data for sustainability projects."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Ava",
+      "text": "My final vote is Digital Media.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Perfectly blends psychology and media studies, ideal for her interests.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Digital Media.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:fields_combined": 2,
+    "A:prerequisites": 1,
+    "A:semester_offered": 1,
+    "A:upside": 2,
+    "B:concern": 2,
+    "B:credits": 2,
+    "B:fields_combined": 3,
+    "B:prerequisites": 2,
+    "B:semester_offered": 2,
+    "B:upside": 4,
+    "C:concern": 2,
+    "C:fields_combined": 1,
+    "C:prerequisites": 2,
+    "C:upside": 1,
+    "D:concern": 2,
+    "D:credits": 2,
+    "D:fields_combined": 2,
+    "D:prerequisites": 2,
+    "D:semester_offered": 2,
+    "D:upside": 4
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "fields_combined"
+    ],
+    [
+      "C",
+      "fields_combined"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "B",
+    "p3": "B",
+    "p4": "B",
+    "p5": "C",
+    "p6": "A",
+    "p7": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "D",
+      "p2": "B",
+      "p3": "B",
+      "p4": "B",
+      "p5": "C",
+      "p6": "A",
+      "p7": "B"
+    },
+    "reason": "4 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 36,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 22355,
+    "output_tokens": 3405,
+    "moderator_turns": 3,
+    "voluntary_turns": 27,
+    "visible_movements": 4,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 43,
+    "voluntary_turns": 27,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0652,
+    "avg_words_per_participant_turn": 15.14,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 22355,
+    "output_tokens": 3405,
+    "llm_calls": 39,
+    "voluntary_turns_by_persona": {
+      "p5": 5,
+      "p7": 5,
+      "p1": 4,
+      "p4": 3,
+      "p2": 3,
+      "p6": 5,
+      "p3": 2
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Perfectly blends psychology and media studies, ideal for her interests.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Digital Media perfectly blends psychology and media studies, which fits my interests best.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Directly aligns with her interest in ethical decision-making in AI-driven business.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Business Ethics seems like a solid choice since it focuses on ethical decisions in AI-driven business.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Directly integrates psychology and media studies, ideal for her interests.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Gain insights to create impactful digital content with psychological depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Directly integrating psychology and media studies makes Digital Media the best fit for what I want.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Directly aligns with her passion for urban planning and public health.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Prepares students to design healthier urban environments addressing community needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Urban Planning and Public Health seems to directly support creating healthier urban environments.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines his programming skills with environmental science for sustainability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Equips students with skills to analyze environmental data for sustainability projects."
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Data Science makes sense since it combines programming with environmental science for real sustainability impact.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Perfect fit combining psychology and media studies, useful for marketing careers.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a course that helps understand digital behavior for a future in marketing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Digital Media seems like a perfect fit, mixing psychology and media studies—really useful for marketing careers.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Perfectly matches his interest in ethical AI in business contexts.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote ethical AI use in future business roles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Business Ethics and Artificial Intelligence seems to fit well with ethical AI use.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Less focus on urban or health topics.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited technical media production skills taught in the course."
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s interesting—do you think less focus on urban or health topics might limit some practical skills?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the concern is Limited technical media production skills taught in the course.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited technical media production skills taught in the course."
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Limited technical skills in media production could definitely hold back practical content creation.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare fields_combined: Business Administration, Artificial Intelligence and Psychology, Media Studies",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "fields_combined",
+            "public_value": "Business Administration, Artificial Intelligence"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "fields_combined",
+            "public_value": "Psychology, Media Studies"
+          }
+        ],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Combining Business Administration and AI aligns more with promoting responsible AI use, though Psychology and Media Studies bring other valuable skills.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Psychology and media knowledge helps understand consumer behavior.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote ethical AI use in future business roles.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Psychology and media knowledge helps understand consumer behavior."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Makes sense, but I’m leaning toward Digital Media since psychology helps understand consumers better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the semester offered is Spring",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "semester_offered",
+          "public_value": "Spring"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a course that helps understand digital behavior for a future in marketing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Spring timing works, but I’m worried it might clash with some marketing electives I want.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the credits is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "credits",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The credits being 3 keeps it manageable with my main focus on data science, so that’s a plus for balancing workloads.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "Prerequisites in programming and ecology are barriers.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires students to have foundational knowledge in both programming and ecology."
+        },
+        "comparison_sources": [],
+        "personal_context": "Gain insights to create impactful digital content with psychological depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Omar, do you think the programming and ecology prerequisites actually block more students than they help?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Requires students to have foundational knowledge in both programming and ecology.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires students to have foundational knowledge in both programming and ecology."
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Requiring solid programming and ecology knowledge upfront probably limits more students than it helps.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare semester_offered: Spring and Fall",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "semester_offered",
+            "public_value": "Spring"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "semester_offered",
+            "public_value": "Fall"
+          }
+        ],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fall is when the data science course runs, but spring fits better with promoting responsible AI use in business.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Data science applied to environmental issues complements urban health work.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Equips students with skills to analyze environmental data for sustainability projects."
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Data science applied to environmental issues complements urban health work."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Fall timing is tricky, but Data Science’s focus on environmental analysis could really complement urban health work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Conceptual material may lack technical depth.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Conceptual content may be abstract without extensive technical AI background."
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, do you think the conceptual focus here risks missing the technical AI depth we need?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Conceptual content may be abstract without extensive technical AI background.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Conceptual content may be abstract without extensive technical AI background."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It might lean a bit abstract without strong technical AI background, which could be limiting.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Ethics in AI and business is interesting and somewhat relevant.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Gain insights to create impactful digital content with psychological depth.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Ethics in AI and business is interesting and somewhat relevant."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Maya’s point is valid, but Business Ethics and Artificial Intelligence offers valuable ethical insights that actually matter for digital content impact.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare prerequisites: Intro to Urban Studies or Public Health and Intro to Business, Basic AI Concepts",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Urban Studies or Public Health"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Business, Basic AI Concepts"
+          }
+        ],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The prerequisites for Urban Planning focus on Intro to Urban Studies or Public Health, which aligns better with improving community health than Business Ethics requiring Intro to Business and Basic AI concepts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the semester offered is Spring",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "semester_offered",
+          "public_value": "Spring"
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Spring timing works better for me to balance with other health-focused courses.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the credits is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "credits",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote ethical AI use in future business roles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The credits being 3 helps, though I wish it offered more depth.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the prerequisites is Intro to Business, Basic AI Concepts",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "prerequisites",
+          "public_value": "Intro to Business, Basic AI Concepts"
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The prerequisites actually ensure a solid foundation, which I need to grasp AI’s ethical impact better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare prerequisites: Intro to Psychology and Intro to Urban Studies or Public Health",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Psychology"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Urban Studies or Public Health"
+          }
+        ],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Intro to Psychology is way more relevant for understanding digital behavior than Intro to Urban Studies or Public Health.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the semester offered is Spring",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "semester_offered",
+          "public_value": "Spring"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Spring timing is a plus, though I wonder if it aligns well with our responsible AI goals.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the credits is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "credits",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Develop skills to create healthier urban environments.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three credits seem manageable, but I’d prefer something with a bit more depth for community health impact.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare prerequisites: Intro to Programming, Basic Ecology and Intro to Psychology",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Programming, Basic Ecology"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "prerequisites",
+            "public_value": "Intro to Psychology"
+          }
+        ],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Programming and ecology prereqs build a stronger base for environmental data science than intro psych, which doesn’t fit my sustainability focus.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the fields combined is Computer Science, Environmental Science",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "fields_combined",
+          "public_value": "Computer Science, Environmental Science"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the course promotes responsible AI use in business practices.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That combined focus feels practical, though I’d like to see more on ethical AI integration too.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Ethics and AI in business is interesting and somewhat relevant.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Ethics and AI in business is interesting and somewhat relevant."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Ethics and AI in business is actually pretty relevant, so I’m cool with Option D.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the fields combined is Business Administration, Artificial Intelligence",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "fields_combined",
+          "public_value": "Business Administration, Artificial Intelligence"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a course that helps understand digital behavior for a future in marketing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Business ethics with AI is solid, but I’m not sure it dives deep enough into digital behavior for marketing.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the credits is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "credits",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The credits being 3 means it’s a decent time investment, but I’d rather spend that on courses with a stronger environmental data angle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare fields_combined: Psychology, Media Studies and Computer Science, Environmental Science",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "fields_combined",
+            "public_value": "Psychology, Media Studies"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "fields_combined",
+            "public_value": "Computer Science, Environmental Science"
+          }
+        ],
+        "personal_context": "Promote ethical AI use in future business roles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Psychology and media feel less about data ethics than computer science combined with environmental science, which fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fieldwork might be a challenge.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May require fieldwork that could be challenging for some students."
+        },
+        "comparison_sources": [],
+        "personal_context": "Learn to use data science for sustainability and environmental impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fieldwork might be a real hurdle—anyone think it’s manageable alongside our schedules?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is May require fieldwork that could be challenging for some students.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May require fieldwork that could be challenging for some students."
+        },
+        "comparison_sources": [],
+        "personal_context": "Understand psychological aspects of digital media to enhance content creation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fieldwork is definitely a challenge and could block time for some, so it’s not really manageable for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare fields_combined: Psychology, Media Studies and Urban Studies, Public Health",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "fields_combined",
+            "public_value": "Psychology, Media Studies"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "fields_combined",
+            "public_value": "Urban Studies, Public Health"
+          }
+        ],
+        "personal_context": "Find a course that helps understand digital behavior for a future in marketing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yeah, fieldwork sounds rough, but psychology and media together feel way more aligned with understanding digital behavior than urban studies and public health, which seems less relevant for marketing.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Directly aligns with her interest in ethical decision-making in AI-driven business.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Focuses on ethical decision-making in AI-driven business contexts."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for Business Ethics.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Perfect fit combining psychology and media studies, useful for marketing careers.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Digital Media.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Directly integrates psychology and media studies, ideal for her interests.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Digital Media.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Psychology and media knowledge helps understand consumer behavior.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Digital Media is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Directly aligns with her passion for urban planning and public health.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Prepares students to design healthier urban environments addressing community needs."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Urban Planning.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Combines his programming skills with environmental science for sustainability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Equips students with skills to analyze environmental data for sustainability projects."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Data Science.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Perfectly blends psychology and media studies, ideal for her interests.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Explores human behavior in digital environments, useful for marketing and design careers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Digital Media.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

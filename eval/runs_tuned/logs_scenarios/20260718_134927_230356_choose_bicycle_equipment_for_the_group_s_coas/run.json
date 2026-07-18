@@ -1,0 +1,3854 @@
+{
+  "provenance": {
+    "seed": 242118806,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose bicycle equipment for the group's coast-to-coast ride",
+    "options": [
+      {
+        "id": "A",
+        "name": "Aluminum Frame Touring Bike with Rear Rack",
+        "attrs": {
+          "frame_material": "aluminum",
+          "weight_kg": "12",
+          "cargo_capacity_kg": "25",
+          "weather_resistance": "water-resistant paint",
+          "tire_type": "700x35mm puncture-resistant"
+        },
+        "upside": "Lightweight frame with ample cargo capacity and durable tires for varied terrain.",
+        "concern": "Aluminum frame may transmit more road vibration, potentially reducing comfort on long rides.",
+        "short_name": "Aluminum Frame Bike",
+        "aliases": [
+          "Aluminum Frame Bike",
+          "Aluminum Frame"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Steel Frame Touring Bike with Front and Rear Racks",
+        "attrs": {
+          "frame_material": "steel",
+          "weight_kg": "15",
+          "cargo_capacity_kg": "40",
+          "weather_resistance": "rust-resistant coating",
+          "tire_type": "700x38mm puncture-resistant"
+        },
+        "upside": "Higher cargo capacity and stronger frame suited for heavy loads and rough conditions.",
+        "concern": "Heavier weight may increase rider fatigue over extended distances.",
+        "short_name": "Steel Frame Bike",
+        "aliases": [
+          "Steel Frame Bike",
+          "Front and Rear Racks"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Carbon Fiber Road Bike with Lightweight Panniers",
+        "attrs": {
+          "frame_material": "carbon fiber",
+          "weight_kg": "9",
+          "cargo_capacity_kg": "15",
+          "weather_resistance": "UV and water-resistant finish",
+          "tire_type": "700x28mm slick"
+        },
+        "upside": "Very lightweight and aerodynamic, reducing effort on paved sections.",
+        "concern": "Lower cargo capacity and less durable tires may limit gear and increase puncture risk.",
+        "short_name": "Carbon Fiber Bike",
+        "aliases": [
+          "Carbon Fiber Bike",
+          "Lightweight Panniers"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Hybrid Bike with Integrated Frame Bags and Fender Set",
+        "attrs": {
+          "frame_material": "aluminum",
+          "weight_kg": "13",
+          "cargo_capacity_kg": "20",
+          "weather_resistance": "full fenders and sealed bearings",
+          "tire_type": "700x32mm semi-slick"
+        },
+        "upside": "Balanced design with weather protection and moderate cargo space for versatile terrain.",
+        "concern": "Cargo capacity and weight may be insufficient for heavier gear or rougher terrain.",
+        "short_name": "Hybrid Bike",
+        "aliases": [
+          "Hybrid Bike",
+          "Integrated Frame Bags"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The group of six cyclists plans a coast-to-coast ride requiring durable, lightweight, and weather-resistant bicycle equipment. Each option must support long-distance travel, carry essential gear, and fit standard touring bicycles."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 5
+      },
+      "background": "Experienced cyclist focused on maximizing cargo capacity and durability for long rides.",
+      "private_goal": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Lightweight aluminum frame with ample cargo capacity and durable tires suits long-distance touring well.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Too heavy and increases fatigue, violating the lightweight requirement and comfort for long rides."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Insufficient cargo capacity and less durable tires make it unsuitable for carrying essential gear coast-to-coast."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Cargo capacity and weight are insufficient for the group's needs, failing durability and load requirements."
+        }
+      },
+      "hard_blocker": true
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Casual rider who values weather protection and moderate cargo space for versatile terrain.",
+      "private_goal": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 28,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Lightweight and durable with good cargo capacity, though less weather protection than preferred.",
+          "reason_against": "Aluminum frame may transmit more road vibration, reducing comfort on long rides."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Strong frame and high cargo capacity are good for rough conditions.",
+          "reason_against": "Heavier weight could cause fatigue, which is a concern for me."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Very lightweight and aerodynamic, which is nice on paved roads.",
+          "reason_against": "Cargo capacity is too low and tires less durable, risking gear safety."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Balanced design with weather protection and moderate cargo space fits my versatile terrain needs.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Focused cyclist who prefers practical solutions with moderate weight and weather protection.",
+      "private_goal": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Lightweight and durable with good cargo capacity, suitable for long rides.",
+          "reason_against": "Road vibrations from aluminum frame might reduce comfort over time."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Strong frame and high cargo capacity are beneficial for carrying gear.",
+          "reason_against": "Heavier weight could increase fatigue on long distances."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Very lightweight and aerodynamic, which helps on paved sections.",
+          "reason_against": "Limited cargo capacity and less durable tires reduce practicality."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Good weather protection and balanced cargo capacity make it versatile and comfortable.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Easygoing rider who prefers straightforward, direct options with minimal fuss.",
+      "private_goal": "Keep the bike choice simple and effective without overcomplicating the setup.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Lightweight and durable with good cargo capacity, straightforward and reliable.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Strong frame and large cargo capacity are useful for heavy gear.",
+          "reason_against": "Heavier weight might make the ride more tiring."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Lightweight and aerodynamic, good for speed.",
+          "reason_against": "Cargo capacity and tire durability are insufficient for long touring."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Weather protection and moderate cargo capacity offer versatility.",
+          "reason_against": "Slightly heavier and less cargo capacity than aluminum frame option."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 3
+      },
+      "background": "Strong rider who prioritizes carrying capacity and durability over weight.",
+      "private_goal": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 39,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Lightweight and durable, with decent cargo capacity for most gear.",
+          "reason_against": "Aluminum frame may cause discomfort due to road vibrations."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "High cargo capacity and strong steel frame are ideal for heavy loads and rough conditions.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Very lightweight and aerodynamic, which is nice but less important to me.",
+          "reason_against": "Low cargo capacity and less durable tires limit gear carrying."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Weather protection is good, but cargo capacity is limited for my needs.",
+          "reason_against": "Weight and cargo capacity may be insufficient for heavier gear."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Pragmatic cyclist who values directness and efficiency in equipment choices.",
+      "private_goal": "Select a bike that is lightweight and reliable without unnecessary features.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Lightweight aluminum frame with good cargo capacity fits my efficiency priorities.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Strong frame and high cargo capacity are useful but heavier weight is a drawback.",
+          "reason_against": "Extra weight reduces efficiency on long rides."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Very lightweight and aerodynamic, but cargo capacity is too low.",
+          "reason_against": "Less durable tires increase risk of punctures."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Balanced design with weather protection and moderate cargo space is acceptable.",
+          "reason_against": "Slightly heavier and less cargo capacity than aluminum option."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 1,
+        "C": 1,
+        "D": 1
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "hard_rejected_options": [
+        "C",
+        "D",
+        "B"
+      ],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "tire_type"
+        ],
+        [
+          "D",
+          "cargo_capacity_kg"
+        ],
+        [
+          "B",
+          "weather_resistance"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "frame_material"
+        ],
+        [
+          "A",
+          "weather_resistance"
+        ],
+        [
+          "D",
+          "weight_kg"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "cargo_capacity_kg"
+        ],
+        [
+          "B",
+          "cargo_capacity_kg"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Lightweight and durable with good cargo capacity, suitable for long rides."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "cargo_capacity_kg"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "weight_kg"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "tire_type"
+        ],
+        [
+          "D",
+          "tire_type"
+        ],
+        [
+          "A",
+          "tire_type"
+        ],
+        [
+          "D",
+          "cargo_capacity_kg"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "weight_kg"
+        ],
+        [
+          "D",
+          "tire_type"
+        ],
+        [
+          "D",
+          "weather_resistance"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "frame_material"
+        ],
+        [
+          "B",
+          "frame_material"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "weather_resistance"
+        ],
+        [
+          "D",
+          "weight_kg"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "frame_material"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "weight_kg"
+        ],
+        [
+          "D",
+          "tire_type"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Choose bicycle equipment for the group's coast-to-coast ride.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Lightweight aluminum frame with ample cargo capacity and durable tires suits long-distance touring well, so Option A is the best choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight aluminum frame with ample cargo capacity and durable tires suits long-distance touring well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Strong steel frame and high cargo capacity on the Steel Frame Bike handle heavy loads and rough terrain well.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High cargo capacity and strong steel frame are ideal for heavy loads and rough conditions.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Higher cargo capacity and stronger frame suited for heavy loads and rough conditions."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Hybrid Bike with Integrated Frame Bags and Fender Set offers a balanced design with weather protection and moderate cargo space, which fits my versatile terrain needs.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced design with weather protection and moderate cargo space fits my versatile terrain needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balanced design with weather protection and moderate cargo space for versatile terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Aluminum Frame Bike seems lightweight and durable, with solid cargo space—keeps things simple and reliable.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight and durable with good cargo capacity, straightforward and reliable.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Lightweight aluminum frame with good cargo capacity fits my efficiency priorities, so Option A works.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight aluminum frame with good cargo capacity fits my efficiency priorities.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Good weather protection and balanced cargo make the Hybrid Bike comfortable.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Good weather protection and balanced cargo capacity make it versatile and comfortable.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balanced design with weather protection and moderate cargo space for versatile terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "12 kg is decent, but still a bit heavy for long rides.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the weight kg is 12",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "weight_kg",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Aluminum frame keeps weight manageable but might sacrifice some comfort on rough terrain.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the frame material is aluminum",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frame_material",
+          "public_value": "aluminum"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Cargo capacity of 25 kg is solid, but comfort trade-off worries me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cargo capacity kg is 25",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cargo_capacity_kg",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Would the added racks on the steel frame justify the extra effort from the weight?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Heavier weight might make the ride more tiring.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Heavier weight may increase rider fatigue over extended distances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Racks add weight that will tire you more.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Heavier weight may increase rider fatigue over extended distances.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Heavier weight may increase rider fatigue over extended distances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The steel frame carries 40 kg cargo but adds weight; 20 kg feels like a better balance for comfort and versatility.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cargo_capacity_kg: 20 and 40",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cargo_capacity_kg",
+            "public_value": "20"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cargo_capacity_kg",
+            "public_value": "40"
+          }
+        ],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The cargo and durability won’t hold up on long rides with heavy gear.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Cargo capacity and weight are insufficient for the group's needs, failing durability and load requirements.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Cargo capacity and weight may be insufficient for heavier gear or rougher terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The 700x32mm semi-slick tires should keep rolling smooth enough without extra drag.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tire type is 700x32mm semi-slick",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "tire_type",
+          "public_value": "700x32mm semi-slick"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "13 kg is heavier but necessary to handle rough terrain and heavy loads reliably.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the weight kg is 13",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "weight_kg",
+          "public_value": "13"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "20 kg capacity is decent, but I prioritize durability over comfort trade-offs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the cargo capacity kg is 20",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cargo_capacity_kg",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "700x32mm semi-slick tires work but add slight risk off-road.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tire type is 700x32mm semi-slick",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "tire_type",
+          "public_value": "700x32mm semi-slick"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Full fenders and sealed bearings sound solid for weather, though I prefer to keep it simple.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the weather resistance is full fenders and sealed bearings",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "weather_resistance",
+          "public_value": "full fenders and sealed bearings"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "13 kg is still on the heavier side for me, but the weather protection makes it worth considering.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the weight kg is 13",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "weight_kg",
+          "public_value": "13"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Aluminum frame keeps weight down but not as tough as steel.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frame material is aluminum",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "frame_material",
+          "public_value": "aluminum"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Cargo capacity is 20 kg versus 25 kg—25 fits my long rides better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cargo_capacity_kg: 20 and 25",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cargo_capacity_kg",
+            "public_value": "20"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cargo_capacity_kg",
+            "public_value": "25"
+          }
+        ],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Is the road vibration from the aluminum frame really a dealbreaker for long rides?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Road vibrations from aluminum frame might reduce comfort over time.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Aluminum frame may transmit more road vibration, potentially reducing comfort on long rides."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "It does transmit more vibration, so long rides might get uncomfortable without extra padding.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Aluminum frame may transmit more road vibration, potentially reducing comfort on long rides.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Aluminum frame may transmit more road vibration, potentially reducing comfort on long rides."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Water resistance is just paint, so it won’t fully block heavy rain or mud.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the weather resistance is water-resistant paint",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "weather_resistance",
+          "public_value": "water-resistant paint"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Aluminum frame won’t flex much under heavy loads, which I prefer for rough terrain.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frame material is aluminum",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frame_material",
+          "public_value": "aluminum"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "12 kg is light enough for me, no extra bulk.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the weight kg is 12",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "weight_kg",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Paint won’t hold up in heavy rain, so mud and water can still damage gear.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the weather resistance is water-resistant paint",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "weather_resistance",
+          "public_value": "water-resistant paint"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The 700x35mm puncture-resistant tires are a must for reliability on long rides, even if they’re a bit heavier.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the tire type is 700x35mm puncture-resistant",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "tire_type",
+          "public_value": "700x35mm puncture-resistant"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "700x32mm semi-slick tires are lighter but less puncture-proof than 700x38mm. I prefer the bigger, tougher tires for durability.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare tire_type: 700x32mm semi-slick and 700x38mm puncture-resistant",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "tire_type",
+            "public_value": "700x32mm semi-slick"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "tire_type",
+            "public_value": "700x38mm puncture-resistant"
+          }
+        ],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "700x35mm puncture-resistant tires add weight but cut downtime.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tire type is 700x35mm puncture-resistant",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "tire_type",
+          "public_value": "700x35mm puncture-resistant"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Lightweight and durable frame with good cargo capacity fits long rides better. Aluminum Frame Bike works best for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight and durable with good cargo capacity, suitable for long rides.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Lightweight and durable with good cargo capacity, suitable for long rides."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Lightweight and durable with good cargo capacity, suitable for long rides."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Steel frame is heavier but way tougher for heavy loads and rough terrain than aluminum.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare frame_material: steel and aluminum",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "frame_material",
+            "public_value": "steel"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "frame_material",
+            "public_value": "aluminum"
+          }
+        ],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "15 kg sounds about right, though I’d lean toward lighter if possible for easier handling.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the weight kg is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "weight_kg",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Rust-resistant coating helps, but steel still demands regular care to avoid issues on long trips.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the weather resistance is rust-resistant coating",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "weather_resistance",
+          "public_value": "rust-resistant coating"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Aluminum Frame Bike.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight aluminum frame with ample cargo capacity and durable tires suits long-distance touring well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Hybrid Bike.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced design with weather protection and moderate cargo space fits my versatile terrain needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balanced design with weather protection and moderate cargo space for versatile terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Aluminum Frame Bike is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight and durable with good cargo capacity, suitable for long rides.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I’m voting for Aluminum Frame Bike.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight and durable with good cargo capacity, straightforward and reliable.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "My final vote is Steel Frame Bike.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High cargo capacity and strong steel frame are ideal for heavy loads and rough conditions.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Higher cargo capacity and stronger frame suited for heavy loads and rough conditions."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I choose Aluminum Frame Bike.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight aluminum frame with good cargo capacity fits my efficiency priorities.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Aluminum Frame Bike received the final majority.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:cargo_capacity_kg": 2,
+    "A:concern": 2,
+    "A:frame_material": 3,
+    "A:tire_type": 2,
+    "A:upside": 4,
+    "A:weather_resistance": 2,
+    "A:weight_kg": 2,
+    "B:cargo_capacity_kg": 1,
+    "B:concern": 2,
+    "B:frame_material": 1,
+    "B:tire_type": 1,
+    "B:upside": 1,
+    "B:weather_resistance": 1,
+    "B:weight_kg": 1,
+    "D:cargo_capacity_kg": 3,
+    "D:concern": 1,
+    "D:frame_material": 1,
+    "D:tire_type": 3,
+    "D:upside": 2,
+    "D:weather_resistance": 1,
+    "D:weight_kg": 2
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "weight_kg"
+    ],
+    [
+      "B",
+      "weather_resistance"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "D",
+    "p3": "A",
+    "p4": "A",
+    "p5": "B",
+    "p6": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "D",
+      "p3": "A",
+      "p4": "A",
+      "p5": "B",
+      "p6": "A"
+    },
+    "reason": "4 of 6 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 34,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 21729,
+    "output_tokens": 3111,
+    "moderator_turns": 3,
+    "voluntary_turns": 28,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 40,
+    "voluntary_turns": 28,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0698,
+    "avg_words_per_participant_turn": 13.35,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 21729,
+    "output_tokens": 3111,
+    "llm_calls": 37,
+    "voluntary_turns_by_persona": {
+      "p3": 7,
+      "p2": 5,
+      "p4": 4,
+      "p6": 4,
+      "p1": 4,
+      "p5": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight aluminum frame with ample cargo capacity and durable tires suits long-distance touring well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Lightweight aluminum frame with ample cargo capacity and durable tires suits long-distance touring well, so Option A is the best choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High cargo capacity and strong steel frame are ideal for heavy loads and rough conditions.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Higher cargo capacity and stronger frame suited for heavy loads and rough conditions."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Strong steel frame and high cargo capacity on the Steel Frame Bike handle heavy loads and rough terrain well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced design with weather protection and moderate cargo space fits my versatile terrain needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balanced design with weather protection and moderate cargo space for versatile terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Hybrid Bike with Integrated Frame Bags and Fender Set offers a balanced design with weather protection and moderate cargo space, which fits my versatile terrain needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight and durable with good cargo capacity, straightforward and reliable.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Aluminum Frame Bike seems lightweight and durable, with solid cargo space—keeps things simple and reliable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight aluminum frame with good cargo capacity fits my efficiency priorities.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Lightweight aluminum frame with good cargo capacity fits my efficiency priorities, so Option A works.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Good weather protection and balanced cargo capacity make it versatile and comfortable.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balanced design with weather protection and moderate cargo space for versatile terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Good weather protection and balanced cargo make the Hybrid Bike comfortable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the weight kg is 12",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "weight_kg",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "12 kg is decent, but still a bit heavy for long rides.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the frame material is aluminum",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frame_material",
+          "public_value": "aluminum"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Aluminum frame keeps weight manageable but might sacrifice some comfort on rough terrain.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cargo capacity kg is 25",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cargo_capacity_kg",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cargo capacity of 25 kg is solid, but comfort trade-off worries me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Heavier weight might make the ride more tiring.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Heavier weight may increase rider fatigue over extended distances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Would the added racks on the steel frame justify the extra effort from the weight?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Heavier weight may increase rider fatigue over extended distances.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Heavier weight may increase rider fatigue over extended distances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Racks add weight that will tire you more.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cargo_capacity_kg: 20 and 40",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cargo_capacity_kg",
+            "public_value": "20"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cargo_capacity_kg",
+            "public_value": "40"
+          }
+        ],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The steel frame carries 40 kg cargo but adds weight; 20 kg feels like a better balance for comfort and versatility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Cargo capacity and weight are insufficient for the group's needs, failing durability and load requirements.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Cargo capacity and weight may be insufficient for heavier gear or rougher terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The cargo and durability won’t hold up on long rides with heavy gear.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tire type is 700x32mm semi-slick",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "tire_type",
+          "public_value": "700x32mm semi-slick"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 700x32mm semi-slick tires should keep rolling smooth enough without extra drag.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the weight kg is 13",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "weight_kg",
+          "public_value": "13"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "13 kg is heavier but necessary to handle rough terrain and heavy loads reliably.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the cargo capacity kg is 20",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cargo_capacity_kg",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "20 kg capacity is decent, but I prioritize durability over comfort trade-offs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tire type is 700x32mm semi-slick",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "tire_type",
+          "public_value": "700x32mm semi-slick"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "700x32mm semi-slick tires work but add slight risk off-road.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the weather resistance is full fenders and sealed bearings",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "weather_resistance",
+          "public_value": "full fenders and sealed bearings"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Full fenders and sealed bearings sound solid for weather, though I prefer to keep it simple.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the weight kg is 13",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "weight_kg",
+          "public_value": "13"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "13 kg is still on the heavier side for me, but the weather protection makes it worth considering.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frame material is aluminum",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "frame_material",
+          "public_value": "aluminum"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Aluminum frame keeps weight down but not as tough as steel.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cargo_capacity_kg: 20 and 25",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cargo_capacity_kg",
+            "public_value": "20"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cargo_capacity_kg",
+            "public_value": "25"
+          }
+        ],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cargo capacity is 20 kg versus 25 kg—25 fits my long rides better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Road vibrations from aluminum frame might reduce comfort over time.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Aluminum frame may transmit more road vibration, potentially reducing comfort on long rides."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Is the road vibration from the aluminum frame really a dealbreaker for long rides?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Aluminum frame may transmit more road vibration, potentially reducing comfort on long rides.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Aluminum frame may transmit more road vibration, potentially reducing comfort on long rides."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It does transmit more vibration, so long rides might get uncomfortable without extra padding.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the weather resistance is water-resistant paint",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "weather_resistance",
+          "public_value": "water-resistant paint"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a balanced bike that offers comfort and some cargo without excessive weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Water resistance is just paint, so it won’t fully block heavy rain or mud.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frame material is aluminum",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frame_material",
+          "public_value": "aluminum"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Aluminum frame won’t flex much under heavy loads, which I prefer for rough terrain.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the weight kg is 12",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "weight_kg",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a bike that is lightweight and reliable without unnecessary features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "12 kg is light enough for me, no extra bulk.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the weather resistance is water-resistant paint",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "weather_resistance",
+          "public_value": "water-resistant paint"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Paint won’t hold up in heavy rain, so mud and water can still damage gear.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the tire type is 700x35mm puncture-resistant",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "tire_type",
+          "public_value": "700x35mm puncture-resistant"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 700x35mm puncture-resistant tires are a must for reliability on long rides, even if they’re a bit heavier.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare tire_type: 700x32mm semi-slick and 700x38mm puncture-resistant",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "tire_type",
+            "public_value": "700x32mm semi-slick"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "tire_type",
+            "public_value": "700x38mm puncture-resistant"
+          }
+        ],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "700x32mm semi-slick tires are lighter but less puncture-proof than 700x38mm. I prefer the bigger, tougher tires for durability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tire type is 700x35mm puncture-resistant",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "tire_type",
+          "public_value": "700x35mm puncture-resistant"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "700x35mm puncture-resistant tires add weight but cut downtime.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight and durable with good cargo capacity, suitable for long rides.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose equipment that balances durability and comfort for a smooth long-distance experience.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Lightweight and durable with good cargo capacity, suitable for long rides."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Lightweight and durable frame with good cargo capacity fits long rides better. Aluminum Frame Bike works best for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare frame_material: steel and aluminum",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "frame_material",
+            "public_value": "steel"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "frame_material",
+            "public_value": "aluminum"
+          }
+        ],
+        "personal_context": "Ensure the bike can handle heavy loads and rough terrain without failure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Steel frame is heavier but way tougher for heavy loads and rough terrain than aluminum.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the weight kg is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "weight_kg",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the bike choice simple and effective without overcomplicating the setup.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "15 kg sounds about right, though I’d lean toward lighter if possible for easier handling.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the weather resistance is rust-resistant coating",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "weather_resistance",
+          "public_value": "rust-resistant coating"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the group uses the most reliable and capable bike regardless of comfort trade-offs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Rust-resistant coating helps, but steel still demands regular care to avoid issues on long trips.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight aluminum frame with ample cargo capacity and durable tires suits long-distance touring well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Aluminum Frame Bike.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced design with weather protection and moderate cargo space fits my versatile terrain needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Balanced design with weather protection and moderate cargo space for versatile terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Hybrid Bike.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight and durable with good cargo capacity, suitable for long rides.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Aluminum Frame Bike is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight and durable with good cargo capacity, straightforward and reliable.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Aluminum Frame Bike.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High cargo capacity and strong steel frame are ideal for heavy loads and rough conditions.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Higher cargo capacity and stronger frame suited for heavy loads and rough conditions."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Steel Frame Bike.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lightweight aluminum frame with good cargo capacity fits my efficiency priorities.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Lightweight frame with ample cargo capacity and durable tires for varied terrain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Aluminum Frame Bike.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

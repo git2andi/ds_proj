@@ -1,0 +1,4231 @@
+{
+  "provenance": {
+    "seed": 242118782,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Agree on a cleaning rota system for the climbing club hut",
+    "options": [
+      {
+        "id": "A",
+        "name": "Weekly Rotation by Member Number",
+        "attrs": {
+          "rotation_frequency": "weekly",
+          "assignment_method": "fixed order by member number",
+          "task_distribution": "equal tasks each week",
+          "duration_per_shift": "2 hours"
+        },
+        "upside": "Ensures predictable and equal workload distribution among members.",
+        "concern": "May not accommodate members’ varying availability each week.",
+        "short_name": "Weekly Rotation",
+        "aliases": [
+          "Weekly Rotation",
+          "Rotation by Member"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Monthly Team Cleaning Groups",
+        "attrs": {
+          "rotation_frequency": "monthly",
+          "assignment_method": "two teams of three members",
+          "task_distribution": "shared within teams",
+          "duration_per_shift": "4 hours"
+        },
+        "upside": "Allows teamwork and flexibility within groups for task completion.",
+        "concern": "Longer intervals between cleanings could reduce hut upkeep consistency.",
+        "short_name": "Monthly Team",
+        "aliases": [
+          "Monthly Team",
+          "Team Cleaning Groups"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Task-Based Assignment with Volunteer Sign-Up",
+        "attrs": {
+          "rotation_frequency": "task-based",
+          "assignment_method": "volunteer sign-up each period",
+          "task_distribution": "specific tasks assigned individually",
+          "duration_per_shift": "varies by task"
+        },
+        "upside": "Members can choose tasks that fit their skills and schedules.",
+        "concern": "Risk of uneven task coverage if volunteers are insufficient.",
+        "short_name": "Task Based Assignment",
+        "aliases": [
+          "Task Based Assignment",
+          "Volunteer Sign-Up"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Biweekly Shared Cleaning Sessions",
+        "attrs": {
+          "rotation_frequency": "biweekly",
+          "assignment_method": "all members clean together",
+          "task_distribution": "divided during session",
+          "duration_per_shift": "3 hours"
+        },
+        "upside": "Promotes group cohesion and shared responsibility.",
+        "concern": "Scheduling a time that suits all six members may be challenging.",
+        "short_name": "Biweekly Shared",
+        "aliases": [
+          "Biweekly Shared",
+          "Shared Cleaning Sessions"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The climbing club hut requires a cleaning rota system to ensure regular maintenance. Six members will share cleaning duties, with each option outlining a different scheduling and responsibility approach."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 3,
+        "stubbornness": 1
+      },
+      "background": "Maya is a part-time student who values social activities and group bonding.",
+      "private_goal": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 24,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Ensures predictable and equal workload, which is fair.",
+          "reason_against": "May not fit my variable weekly availability."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Allows teamwork and some flexibility within smaller groups.",
+          "reason_against": "Monthly frequency might reduce hut upkeep consistency."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Task choice could fit my schedule, but might lead to uneven coverage.",
+          "reason_against": "Risk of insufficient volunteers worries me."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "I like cleaning together as a group; it builds camaraderie.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 1,
+        "directness": 3,
+        "stubbornness": 1
+      },
+      "background": "Liam is a busy professional who prefers flexible and self-directed tasks.",
+      "private_goal": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 32,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Equal workload is fair and predictable.",
+          "reason_against": "Fixed weekly schedule may conflict with my work."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Teamwork allows some flexibility and shared effort.",
+          "reason_against": "Monthly cleaning might not keep the hut well maintained."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "I can pick tasks that suit me and my availability.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Group cleaning is good for cohesion.",
+          "reason_against": "Hard to find a time that works for everyone."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Zoe is a committed club member who values teamwork and structured schedules.",
+      "private_goal": "To maintain consistent hut cleanliness with shared responsibility in teams.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Equal workload and predictability are positives.",
+          "reason_against": "Weekly fixed order may not suit all members."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Team cleaning promotes collaboration and flexibility within groups.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Volunteering allows task choice and skill matching.",
+          "reason_against": "Risk of uneven task coverage if volunteers are lacking."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Group sessions encourage shared responsibility.",
+          "reason_against": "Scheduling for all six members is very challenging."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 4,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Eli is highly engaged and direct, pushing for efficient and fair systems.",
+      "private_goal": "To implement a cleaning system that balances flexibility with clear accountability.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 35,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Predictable and equal workload ensures fairness.",
+          "reason_against": "May not accommodate everyone’s availability well."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Teams allow shared effort and some flexibility.",
+          "reason_against": "Monthly frequency might reduce cleaning regularity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Volunteering lets members pick tasks suiting their skills and schedules.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Group cleaning promotes cohesion.",
+          "reason_against": "Difficult to schedule for all members simultaneously."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 1
+      },
+      "background": "Nina is detail-oriented and prefers clear, equal task distribution.",
+      "private_goal": "To have a predictable cleaning schedule with equal workload for all members.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Equal tasks weekly ensure fairness and predictability.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Team cleaning allows some flexibility and shared responsibility.",
+          "reason_against": "Less frequent cleaning might affect hut upkeep."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Task choice is good but risks uneven coverage.",
+          "reason_against": "Volunteer sign-up may lead to some tasks being neglected."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Group cleaning builds cohesion.",
+          "reason_against": "Scheduling for all six members could be difficult."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Omar is reflective and values flexibility balanced with group cooperation.",
+      "private_goal": "To participate in a cleaning system that balances teamwork with adaptable scheduling.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Equal workload is fair and predictable.",
+          "reason_against": "Fixed weekly schedule may not suit my variable availability."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Team cleaning groups provide flexibility and shared effort.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Volunteering allows task choice and schedule fit.",
+          "reason_against": "Risk of uneven task coverage if volunteers are insufficient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Group sessions promote cohesion.",
+          "reason_against": "Scheduling for all six members is challenging."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "rotation_frequency"
+        ],
+        [
+          "D",
+          "rotation_frequency"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Teamwork allows some flexibility and shared effort."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "duration_per_shift"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "assignment_method"
+        ],
+        [
+          "C",
+          "task_distribution"
+        ],
+        [
+          "C",
+          "rotation_frequency"
+        ],
+        [
+          "A",
+          "rotation_frequency"
+        ],
+        [
+          "A",
+          "task_distribution"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "task_distribution"
+        ],
+        [
+          "B",
+          "task_distribution"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Teams allow shared effort and some flexibility."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "duration_per_shift"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "task_distribution"
+        ],
+        [
+          "B",
+          "task_distribution"
+        ],
+        [
+          "A",
+          "rotation_frequency"
+        ],
+        [
+          "B",
+          "rotation_frequency"
+        ],
+        [
+          "D",
+          "duration_per_shift"
+        ],
+        [
+          "B",
+          "duration_per_shift"
+        ],
+        [
+          "C",
+          "duration_per_shift"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 11,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Team cleaning allows some flexibility and shared responsibility."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "D",
+          "assignment_method"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "assignment_method"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "assignment_method"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "task_distribution"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Agree on a cleaning rota system for the climbing club hut.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Volunteering lets members pick tasks that suit their skills and schedules, which makes Option C fairer and more efficient.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Volunteering lets members pick tasks suiting their skills and schedules.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Members can choose tasks that fit their skills and schedules."
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Monthly Team cleaning groups seem to balance teamwork and flexibility, which could help us share the effort more smoothly.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning groups provide flexibility and shared effort.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in a cleaning system that balances teamwork with adaptable scheduling.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Team cleaning promotes collaboration and flexibility within groups, so Monthly Team suits us well.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning promotes collaboration and flexibility within groups.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain consistent hut cleanliness with shared responsibility in teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Equal tasks weekly ensure fairness and predictability, so I prefer Weekly Rotation by Member Number for the cleaning schedule.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Equal tasks weekly ensure fairness and predictability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures predictable and equal workload distribution among members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Biweekly Shared cleaning sessions sound good. I like cleaning together as a group; it builds camaraderie.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "I like cleaning together as a group; it builds camaraderie.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Promotes group cohesion and shared responsibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Task Based Assignment works for me since I can pick tasks that suit my availability.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "I can pick tasks that suit me and my availability.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Members can choose tasks that fit their skills and schedules."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Scheduling a time that works for all six members is tough, which risks lowering participation in biweekly group sessions.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Difficult to schedule for all members simultaneously.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Scheduling a time that suits all six members may be challenging."
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Cleaning together means coordinating everyone’s schedule, which is hard with six people. Fixed order by member number lets us split tasks evenly and predictably.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare assignment_method: fixed order by member number and all members clean together",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "assignment_method",
+            "public_value": "fixed order by member number"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "assignment_method",
+            "public_value": "all members clean together"
+          }
+        ],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Scheduling for all six members often causes conflicts, which could hurt consistent hut cleanliness.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Scheduling for all six members is very challenging.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Scheduling a time that suits all six members may be challenging."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain consistent hut cleanliness with shared responsibility in teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Three-hour shifts are a solid balance—long enough to get real work done, but not so long people burn out or skip their turn.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the duration per shift is 3 hours",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "duration_per_shift",
+          "public_value": "3 hours"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Three hours biweekly works, but it needs to feel like a team effort.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the rotation frequency is biweekly",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "rotation_frequency",
+          "public_value": "biweekly"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Does monthly cleaning risk letting upkeep slip?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Monthly cleaning might not keep the hut well maintained.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer intervals between cleanings could reduce hut upkeep consistency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Longer intervals between cleanings could reduce consistency in upkeep.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Longer intervals between cleanings could reduce hut upkeep consistency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer intervals between cleanings could reduce hut upkeep consistency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain consistent hut cleanliness with shared responsibility in teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Monthly Team could work since teamwork shares effort and adds flexibility, but accountability must stay clear.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Teams allow shared effort and some flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Teams allow shared effort and some flexibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Teams allow shared effort and some flexibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Sharing tasks within teams can work well, though it’s important we stay flexible about when people can contribute.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the task distribution is shared within teams",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "task_distribution",
+          "public_value": "shared within teams"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in a cleaning system that balances teamwork with adaptable scheduling.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Four-hour shifts are workable, but we need strict tracking to keep accountability clear within that time.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the duration per shift is 4 hours",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "duration_per_shift",
+          "public_value": "4 hours"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Volunteers might skip some tasks, which risks uneven coverage and makes the schedule unpredictable.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Volunteer sign-up may lead to some tasks being neglected.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Risk of uneven task coverage if volunteers are insufficient."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Task length varying means we must track each shift carefully to prevent gaps in coverage or accountability.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration per shift is varies by task",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "duration_per_shift",
+          "public_value": "varies by task"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Yeah, task-based rotation works if we keep cleaning sessions consistent for bonding.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the rotation frequency is task-based",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "rotation_frequency",
+          "public_value": "task-based"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "That only works if tasks fit personal schedules well.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the task distribution is specific tasks assigned individually",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "task_distribution",
+          "public_value": "specific tasks assigned individually"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Nina, how do you think we can handle members’ varying availability fairly within this rotation?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "May not accommodate everyone’s availability well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May not accommodate members’ varying availability each week."
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "May not fit everyone’s availability weekly, so we risk uneven workloads without flexibility.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is May not accommodate members’ varying availability each week.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May not accommodate members’ varying availability each week."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Weekly rotation is fixed every week, task-based happens as needed. Task-based fits my schedule better.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare rotation_frequency: task-based and weekly",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "rotation_frequency",
+            "public_value": "task-based"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "rotation_frequency",
+            "public_value": "weekly"
+          }
+        ],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Fair is fair, and equal workload keeps things smooth for everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Ensures predictable and equal workload, which is fair.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures predictable and equal workload distribution among members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Fixed order works, but I need more control.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the assignment method is fixed order by member number",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "assignment_method",
+          "public_value": "fixed order by member number"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Assigning specific tasks individually means clear accountability, while shared tasks risk uneven effort. I prefer clear accountability.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare task_distribution: specific tasks assigned individually and shared within teams",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "task_distribution",
+            "public_value": "specific tasks assigned individually"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "task_distribution",
+            "public_value": "shared within teams"
+          }
+        ],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Two-hour shifts strike a good balance—long enough to be productive, short enough to keep responsibility clear.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration per shift is 2 hours",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_per_shift",
+          "public_value": "2 hours"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Weekly rotation keeps things predictable, but I still need clear task ownership to avoid confusion.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the rotation frequency is weekly",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "rotation_frequency",
+          "public_value": "weekly"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Equal tasks weekly work, but timing flexibility matters.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the task distribution is equal tasks each week",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "task_distribution",
+          "public_value": "equal tasks each week"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Two hours is fine if I can pick my shift time.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the duration per shift is 2 hours",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_per_shift",
+          "public_value": "2 hours"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Task-Based shifts vary in length, while shared sessions are fixed at 3 hours. Variable timing fits my priority better for balancing flexibility with accountability.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_per_shift: varies by task and 3 hours",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "duration_per_shift",
+            "public_value": "varies by task"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "duration_per_shift",
+            "public_value": "3 hours"
+          }
+        ],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Risk of not enough volunteers worries me too. It kills group vibe.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "Risk of insufficient volunteers worries me.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Risk of uneven task coverage if volunteers are insufficient."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Volunteering each period risks uneven workloads, which makes planning and fairness harder to maintain.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the assignment method is volunteer sign-up each period",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "assignment_method",
+          "public_value": "volunteer sign-up each period"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Sharing tasks within teams spreads responsibility better than dividing tasks during sessions.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare task_distribution: shared within teams and divided during session",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "task_distribution",
+            "public_value": "shared within teams"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "task_distribution",
+            "public_value": "divided during session"
+          }
+        ],
+        "personal_context": "To maintain consistent hut cleanliness with shared responsibility in teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Monthly rotation is manageable but requires clear tracking to avoid uneven effort over time.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the rotation frequency is monthly",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "rotation_frequency",
+          "public_value": "monthly"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 36,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Monthly Team currently has 2 of 6 public preferences and the broadest overall support, but not a majority. Maya, Liam, Eli, and Nina, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Team Cleaning Groups fit better because they allow some flexibility and shared responsibility, which helps keep workloads more balanced and predictable.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning allows some flexibility and shared responsibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Team cleaning allows some flexibility and shared responsibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Team cleaning allows some flexibility and shared responsibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 38,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Monthly Team works because teamwork lets us share effort and stay flexible.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Teamwork allows some flexibility and shared effort.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Teamwork allows some flexibility and shared effort."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Teamwork allows some flexibility and shared effort."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Please state your final choice.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Biweekly Shared.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "I like cleaning together as a group; it builds camaraderie.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Promotes group cohesion and shared responsibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Monthly Team.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Teamwork allows some flexibility and shared effort.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Teamwork allows some flexibility and shared effort."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Teamwork allows some flexibility and shared effort."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I’m voting for Monthly Team.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning promotes collaboration and flexibility within groups.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I’m voting for Monthly Team.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Teams allow shared effort and some flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Teams allow shared effort and some flexibility."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Teams allow shared effort and some flexibility."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "I’m voting for Monthly Team.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning allows some flexibility and shared responsibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Team cleaning allows some flexibility and shared responsibility."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Team cleaning allows some flexibility and shared responsibility."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Monthly Team is my final choice.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning groups provide flexibility and shared effort.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 46,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Monthly Team.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:assignment_method": 2,
+    "A:concern": 2,
+    "A:duration_per_shift": 2,
+    "A:rotation_frequency": 2,
+    "A:task_distribution": 1,
+    "A:upside": 2,
+    "B:concern": 2,
+    "B:duration_per_shift": 1,
+    "B:rotation_frequency": 1,
+    "B:task_distribution": 3,
+    "B:upside": 5,
+    "C:assignment_method": 1,
+    "C:concern": 2,
+    "C:duration_per_shift": 2,
+    "C:rotation_frequency": 2,
+    "C:task_distribution": 2,
+    "C:upside": 2,
+    "D:assignment_method": 1,
+    "D:concern": 2,
+    "D:duration_per_shift": 2,
+    "D:rotation_frequency": 1,
+    "D:task_distribution": 1,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "upside"
+    ],
+    [
+      "B",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "B",
+    "p3": "B",
+    "p4": "B",
+    "p5": "B",
+    "p6": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "D",
+      "p2": "B",
+      "p3": "B",
+      "p4": "B",
+      "p5": "B",
+      "p6": "B"
+    },
+    "reason": "5 of 6 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 38,
+    "setup_llm_calls": 3,
+    "repair_calls": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 23166,
+    "output_tokens": 2979,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 6,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 2
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 43,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0851,
+    "avg_words_per_participant_turn": 13.58,
+    "visible_preference_changes": 3,
+    "repair_turns": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 23166,
+    "output_tokens": 2979,
+    "llm_calls": 41,
+    "voluntary_turns_by_persona": {
+      "p4": 11,
+      "p5": 4,
+      "p3": 3,
+      "p1": 4,
+      "p2": 7,
+      "p6": 1
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Volunteering lets members pick tasks suiting their skills and schedules.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Members can choose tasks that fit their skills and schedules."
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Volunteering lets members pick tasks that fit their skills and schedules, making the rota fairer and more efficient.",
+      "validation_errors": [
+        "focused option is not visible"
+      ],
+      "repair_text": "Volunteering lets members pick tasks that suit their skills and schedules, which makes Option C fairer and more efficient.",
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning groups provide flexibility and shared effort.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in a cleaning system that balances teamwork with adaptable scheduling.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Monthly Team cleaning groups seem to balance teamwork and flexibility, which could help us share the effort more smoothly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning promotes collaboration and flexibility within groups.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain consistent hut cleanliness with shared responsibility in teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Team cleaning promotes collaboration and flexibility within groups, so Monthly Team suits us well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Equal tasks weekly ensure fairness and predictability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures predictable and equal workload distribution among members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Equal tasks weekly ensure fairness and predictability, so I prefer Weekly Rotation by Member Number for the cleaning schedule.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "I like cleaning together as a group; it builds camaraderie.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Promotes group cohesion and shared responsibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Biweekly Shared cleaning sessions sound good. I like cleaning together as a group; it builds camaraderie.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "I can pick tasks that suit me and my availability.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Members can choose tasks that fit their skills and schedules."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Task Based Assignment works for me since I can pick tasks that suit my availability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Difficult to schedule for all members simultaneously.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Scheduling a time that suits all six members may be challenging."
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Scheduling a time that works for all six members is tough, which risks lowering participation in biweekly group sessions.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare assignment_method: fixed order by member number and all members clean together",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "assignment_method",
+            "public_value": "fixed order by member number"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "assignment_method",
+            "public_value": "all members clean together"
+          }
+        ],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cleaning together means coordinating everyone’s schedule, which is hard with six people. Fixed order by member number lets us split tasks evenly and predictably.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Scheduling for all six members is very challenging.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Scheduling a time that suits all six members may be challenging."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain consistent hut cleanliness with shared responsibility in teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Scheduling for all six members often causes conflicts, which could hurt consistent hut cleanliness.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the duration per shift is 3 hours",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "duration_per_shift",
+          "public_value": "3 hours"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three-hour shifts are a solid balance—long enough to get real work done, but not so long people burn out or skip their turn.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the rotation frequency is biweekly",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "rotation_frequency",
+          "public_value": "biweekly"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three hours biweekly works, but it needs to feel like a team effort.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Monthly cleaning might not keep the hut well maintained.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer intervals between cleanings could reduce hut upkeep consistency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does monthly cleaning risk letting upkeep slip?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Longer intervals between cleanings could reduce hut upkeep consistency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer intervals between cleanings could reduce hut upkeep consistency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maintain consistent hut cleanliness with shared responsibility in teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Longer intervals between cleanings could reduce consistency in upkeep.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Teams allow shared effort and some flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Teams allow shared effort and some flexibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Monthly Team could work since teamwork shares effort and adds flexibility, but accountability must stay clear.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the task distribution is shared within teams",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "task_distribution",
+          "public_value": "shared within teams"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in a cleaning system that balances teamwork with adaptable scheduling.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sharing tasks within teams can work well, though it’s important we stay flexible about when people can contribute.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the duration per shift is 4 hours",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "duration_per_shift",
+          "public_value": "4 hours"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four-hour shifts are workable, but we need strict tracking to keep accountability clear within that time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Volunteer sign-up may lead to some tasks being neglected.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Risk of uneven task coverage if volunteers are insufficient."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Volunteers might skip some tasks, which risks uneven coverage and makes the schedule unpredictable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration per shift is varies by task",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "duration_per_shift",
+          "public_value": "varies by task"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Task length varying means we must track each shift carefully to prevent gaps in coverage or accountability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the rotation frequency is task-based",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "rotation_frequency",
+          "public_value": "task-based"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yeah, task-based rotation works if we keep cleaning sessions consistent for bonding.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the task distribution is specific tasks assigned individually",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "task_distribution",
+          "public_value": "specific tasks assigned individually"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That only works if tasks fit personal schedules well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "May not accommodate everyone’s availability well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May not accommodate members’ varying availability each week."
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Nina, how do you think we can handle members’ varying availability fairly within this rotation?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is May not accommodate members’ varying availability each week.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May not accommodate members’ varying availability each week."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "May not fit everyone’s availability weekly, so we risk uneven workloads without flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare rotation_frequency: task-based and weekly",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "rotation_frequency",
+            "public_value": "task-based"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "rotation_frequency",
+            "public_value": "weekly"
+          }
+        ],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Weekly rotation is fixed every week, task-based happens as needed. Task-based fits my schedule better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Ensures predictable and equal workload, which is fair.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures predictable and equal workload distribution among members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fair is fair, and equal workload keeps things smooth for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the assignment method is fixed order by member number",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "assignment_method",
+          "public_value": "fixed order by member number"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fixed order works, but I need more control.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare task_distribution: specific tasks assigned individually and shared within teams",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "task_distribution",
+            "public_value": "specific tasks assigned individually"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "task_distribution",
+            "public_value": "shared within teams"
+          }
+        ],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Assigning specific tasks individually means clear accountability, while shared tasks risk uneven effort. I prefer clear accountability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration per shift is 2 hours",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_per_shift",
+          "public_value": "2 hours"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two-hour shifts strike a good balance—long enough to be productive, short enough to keep responsibility clear.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the rotation frequency is weekly",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "rotation_frequency",
+          "public_value": "weekly"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Weekly rotation keeps things predictable, but I still need clear task ownership to avoid confusion.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the task distribution is equal tasks each week",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "task_distribution",
+          "public_value": "equal tasks each week"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Equal tasks weekly work, but timing flexibility matters.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the duration per shift is 2 hours",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_per_shift",
+          "public_value": "2 hours"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two hours is fine if I can pick my shift time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_per_shift: varies by task and 3 hours",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "duration_per_shift",
+            "public_value": "varies by task"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "duration_per_shift",
+            "public_value": "3 hours"
+          }
+        ],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Task-Based shifts vary in length, while shared sessions are fixed at 3 hours. Variable timing fits my priority better for balancing flexibility with accountability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "Risk of insufficient volunteers worries me.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Risk of uneven task coverage if volunteers are insufficient."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have cleaning sessions that foster group cohesion and shared responsibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Risk of not enough volunteers worries me too. It kills group vibe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the assignment method is volunteer sign-up each period",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "assignment_method",
+          "public_value": "volunteer sign-up each period"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Volunteering each period risks uneven workloads, which makes planning and fairness harder to maintain.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare task_distribution: shared within teams and divided during session",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "task_distribution",
+            "public_value": "shared within teams"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "task_distribution",
+            "public_value": "divided during session"
+          }
+        ],
+        "personal_context": "To maintain consistent hut cleanliness with shared responsibility in teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sharing tasks within teams spreads responsibility better than dividing tasks during sessions.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the rotation frequency is monthly",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "rotation_frequency",
+          "public_value": "monthly"
+        },
+        "comparison_sources": [],
+        "personal_context": "To implement a cleaning system that balances flexibility with clear accountability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Monthly rotation is manageable but requires clear tracking to avoid uneven effort over time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning allows some flexibility and shared responsibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a predictable cleaning schedule with equal workload for all members.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Team cleaning allows some flexibility and shared responsibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Team Cleaning Groups fit better because they allow some flexibility and shared responsibility, which helps keep workloads more balanced and predictable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Teamwork allows some flexibility and shared effort.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose cleaning tasks that fit my skills and schedule without strict timing.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Teamwork allows some flexibility and shared effort."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Monthly Team works because teamwork lets us share effort and stay flexible.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "I like cleaning together as a group; it builds camaraderie.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Promotes group cohesion and shared responsibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Biweekly Shared.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Teamwork allows some flexibility and shared effort.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Teamwork allows some flexibility and shared effort."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Monthly Team.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning promotes collaboration and flexibility within groups.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Monthly Team.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Teams allow shared effort and some flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Teams allow shared effort and some flexibility."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Monthly Team.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning allows some flexibility and shared responsibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Team cleaning allows some flexibility and shared responsibility."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Monthly Team.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Team cleaning groups provide flexibility and shared effort.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Allows teamwork and flexibility within groups for task completion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Monthly Team is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

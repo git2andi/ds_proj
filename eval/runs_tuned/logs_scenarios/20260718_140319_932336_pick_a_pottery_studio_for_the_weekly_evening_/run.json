@@ -1,0 +1,1418 @@
+{
+  "provenance": {
+    "seed": 242118839,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick a pottery studio for the weekly evening course",
+    "options": [
+      {
+        "id": "A",
+        "name": "ClayWorks Studio",
+        "attrs": {
+          "location": "Downtown",
+          "price_per_session": "$25",
+          "materials_included": "yes",
+          "class_size_limit": "10",
+          "evening_hours": "6 PM - 9 PM"
+        },
+        "upside": "Located centrally with all materials provided and suitable class size.",
+        "concern": "Parking is limited near the studio.",
+        "short_name": "ClayWorks Studio",
+        "aliases": []
+      },
+      {
+        "id": "B",
+        "name": "Riverbend Pottery",
+        "attrs": {
+          "location": "Riverside",
+          "price_per_session": "$20",
+          "materials_included": "yes",
+          "class_size_limit": "8",
+          "evening_hours": "6 PM - 9 PM"
+        },
+        "upside": "Lower price and includes materials with a smaller class size for more attention.",
+        "concern": "Studio is farther from public transit stops.",
+        "short_name": "Riverbend Pottery",
+        "aliases": []
+      },
+      {
+        "id": "C",
+        "name": "Artisan Clay Hub",
+        "attrs": {
+          "location": "Midtown",
+          "price_per_session": "$30",
+          "materials_included": "yes",
+          "class_size_limit": "12",
+          "evening_hours": "6 PM - 9 PM"
+        },
+        "upside": "Spacious studio with flexible evening hours and all materials included.",
+        "concern": "Slightly higher price per session.",
+        "short_name": "Artisan Clay",
+        "aliases": [
+          "Artisan Clay",
+          "Clay Hub"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "The Pottery Loft",
+        "attrs": {
+          "location": "Uptown",
+          "price_per_session": "$22",
+          "materials_included": "yes",
+          "class_size_limit": "9",
+          "evening_hours": "6 PM - 9 PM"
+        },
+        "upside": "Moderate price and includes materials with a comfortable class size.",
+        "concern": "Studio space is smaller, which may feel cramped during busy sessions.",
+        "short_name": "The Pottery Loft",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "The group needs to select a pottery studio for a weekly evening course that runs from 6 PM to 9 PM. The studio must accommodate three participants and provide all necessary materials for beginners."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Maya works downtown and values convenience and straightforward options.",
+      "private_goal": "Find a centrally located studio with all materials included and minimal hassle.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Central location and all materials included, perfect for convenience.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Lower price is attractive.",
+          "reason_against": "Far from public transit, making commute difficult."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Spacious studio with materials included and flexible hours.",
+          "reason_against": "Higher price than preferred."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Moderate price and materials included with comfortable class size.",
+          "reason_against": "Smaller space might feel cramped."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Liam is budget-conscious but wants a quality learning environment.",
+      "private_goal": "Choose a studio that balances price and class size for better attention.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 35,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Good balance of price, location, and class size.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Lower price and smaller class size for more personalized attention.",
+          "reason_against": "Less accessible via public transit."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Spacious and well-equipped.",
+          "reason_against": "Price is higher than preferred budget."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Moderate price and comfortable class size.",
+          "reason_against": "Smaller studio space might feel cramped."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Zoe enjoys creative environments and values spaciousness and flexibility.",
+      "private_goal": "Find a studio that offers a spacious, flexible evening schedule despite price.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Central location and materials included.",
+          "reason_against": "Limited parking and smaller class size than preferred."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Lower price and smaller class size.",
+          "reason_against": "Far from public transit and less spacious."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Spacious studio with flexible hours and all materials included.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Moderate price and materials included.",
+          "reason_against": "Smaller space may feel cramped."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "class_size_limit"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "price_per_session"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "materials_included"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Central location and materials included."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "price_per_session"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Pick a pottery studio for the weekly evening course.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Central spot with all materials included—ClayWorks Studio works.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central location and all materials included, perfect for convenience.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a centrally located studio with all materials included and minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Artisan Clay has a spacious studio with flexible evening hours and all materials included, which fits what I’m looking for.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious studio with flexible hours and all materials included.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious studio with flexible evening hours and all materials included."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a studio that offers a spacious, flexible evening schedule despite price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "ClayWorks Studio seems like a good balance of price, location, and class size.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Good balance of price, location, and class size.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a studio that balances price and class size for better attention.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Price is a bit steep for me, though.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Price is higher than preferred budget.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Slightly higher price per session."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a studio that balances price and class size for better attention.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "$30 is definitely on the higher side, but the evening flexibility is worth it for me since I work late.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price per session is $30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_per_session",
+          "public_value": "$30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a studio that offers a spacious, flexible evening schedule despite price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "ClayWorks Studio’s central location and included materials make it more convenient, so I’m leaning that way despite the price.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central location and materials included.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a studio that offers a spacious, flexible evening schedule despite price.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Central location and materials included."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Central location and materials included."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Materials included helps, but class size matters more.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the materials included is yes",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "materials_included",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a studio that balances price and class size for better attention.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "$25 per session isn’t bad, but smaller classes really matter.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price per session is $25",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price_per_session",
+          "public_value": "$25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a studio that balances price and class size for better attention.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Ten feels a bit crowded for focused work.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the class size limit is 10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "class_size_limit",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a centrally located studio with all materials included and minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 10,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Please state your final choice.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 11,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "ClayWorks Studio is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central location and all materials included, perfect for convenience.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 12,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "ClayWorks Studio is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Good balance of price, location, and class size.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 13,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "ClayWorks Studio is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central location and materials included.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 14,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The group unanimously chose ClayWorks Studio.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [],
+  "public_point_counts": {
+    "A:class_size_limit": 1,
+    "A:materials_included": 1,
+    "A:price_per_session": 1,
+    "A:upside": 3,
+    "C:concern": 1,
+    "C:price_per_session": 1,
+    "C:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "price_per_session"
+    ],
+    [
+      "A",
+      "class_size_limit"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "A",
+    "p3": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "successful",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "A",
+      "p3": "A"
+    },
+    "reason": "All participants voted for the same option"
+  },
+  "stats": {
+    "llm_calls": 9,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 6230,
+    "output_tokens": 1618,
+    "moderator_turns": 3,
+    "voluntary_turns": 6,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 12,
+    "voluntary_turns": 6,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.2,
+    "avg_words_per_participant_turn": 11.0,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 6230,
+    "output_tokens": 1618,
+    "llm_calls": 12,
+    "voluntary_turns_by_persona": {
+      "p2": 3,
+      "p3": 2,
+      "p1": 1
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central location and all materials included, perfect for convenience.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a centrally located studio with all materials included and minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Central spot with all materials included—ClayWorks Studio works.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious studio with flexible hours and all materials included.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious studio with flexible evening hours and all materials included."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a studio that offers a spacious, flexible evening schedule despite price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Artisan Clay has a spacious studio with flexible evening hours and all materials included, which fits what I’m looking for.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Good balance of price, location, and class size.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a studio that balances price and class size for better attention.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "ClayWorks Studio seems like a good balance of price, location, and class size.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Price is higher than preferred budget.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Slightly higher price per session."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a studio that balances price and class size for better attention.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Price is a bit steep for me, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price per session is $30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_per_session",
+          "public_value": "$30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a studio that offers a spacious, flexible evening schedule despite price.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$30 is definitely on the higher side, but the evening flexibility is worth it for me since I work late.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central location and materials included.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a studio that offers a spacious, flexible evening schedule despite price.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Central location and materials included."
+        },
+        "vote_option": null
+      },
+      "raw_text": "ClayWorks Studio’s central location and included materials make it more convenient, so I’m leaning that way despite the price.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the materials included is yes",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "materials_included",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a studio that balances price and class size for better attention.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Materials included helps, but class size matters more.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price per session is $25",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price_per_session",
+          "public_value": "$25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a studio that balances price and class size for better attention.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$25 per session isn’t bad, but smaller classes really matter.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the class size limit is 10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "class_size_limit",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a centrally located studio with all materials included and minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ten feels a bit crowded for focused work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central location and all materials included, perfect for convenience.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "ClayWorks Studio is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Good balance of price, location, and class size.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "ClayWorks Studio is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central location and materials included.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Located centrally with all materials provided and suitable class size."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "ClayWorks Studio is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

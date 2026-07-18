@@ -1,0 +1,1760 @@
+{
+  "provenance": {
+    "seed": 242118922,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide whether to lease or buy equipment for a small workshop",
+    "options": [
+      {
+        "id": "A",
+        "name": "Lease standard equipment with maintenance included",
+        "attrs": {
+          "contract_duration_years": "3",
+          "monthly_cost_usd": "300",
+          "maintenance_responsibility": "lessor",
+          "equipment_upgrade_option": "True"
+        },
+        "upside": "Lower upfront cost and maintenance handled by lessor",
+        "concern": "Total cost may exceed purchase price over time",
+        "short_name": "Lease standard equipment",
+        "aliases": [
+          "Lease standard equipment",
+          "Lease standard"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Buy new equipment with manufacturer warranty",
+        "attrs": {
+          "purchase_price_usd": "9000",
+          "warranty_years": "2",
+          "maintenance_responsibility": "owner",
+          "expected_lifespan_years": "7"
+        },
+        "upside": "Ownership after purchase and no ongoing lease fees",
+        "concern": "Higher initial investment and maintenance costs after warranty",
+        "short_name": "Buy new equipment",
+        "aliases": [
+          "Buy new equipment",
+          "Buy new"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Lease premium equipment without maintenance",
+        "attrs": {
+          "contract_duration_years": "3",
+          "monthly_cost_usd": "250",
+          "maintenance_responsibility": "lessee",
+          "equipment_upgrade_option": "False"
+        },
+        "upside": "Lower monthly lease cost with access to premium tools",
+        "concern": "Maintenance costs and effort fall on workshop",
+        "short_name": "Lease premium equipment",
+        "aliases": [
+          "Lease premium equipment",
+          "Lease premium"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Buy used equipment with limited warranty",
+        "attrs": {
+          "purchase_price_usd": "5000",
+          "warranty_years": "1",
+          "maintenance_responsibility": "owner",
+          "expected_lifespan_years": "4"
+        },
+        "upside": "Lower purchase price and ownership benefits",
+        "concern": "Shorter lifespan and potential for higher maintenance needs",
+        "short_name": "Buy used equipment",
+        "aliases": [
+          "Buy used equipment",
+          "Buy used"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A small workshop needs equipment for ongoing projects. The decision is between leasing or buying to balance upfront cost, maintenance responsibility, and long-term usage over 3 years."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Maya runs a small workshop focused on precision crafting and values premium tools for quality work.",
+      "private_goal": "Minimize monthly expenses while maintaining access to high-quality equipment.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Lower upfront cost and maintenance handled by lessor reduce immediate financial and operational burden.",
+          "reason_against": "Total cost may exceed purchase price over time, which is a concern for long-term budgeting."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Ownership provides long-term use and no ongoing lease fees after purchase.",
+          "reason_against": "High initial investment and maintenance responsibility after warranty make it less attractive given cash flow priorities."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Lowest monthly lease cost with access to premium tools fits budget constraints and quality needs.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Lower purchase price and ownership benefits offer a middle ground.",
+          "reason_against": "Shorter lifespan and potential for higher maintenance needs may disrupt ongoing projects."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Liam manages the workshop’s finances and prefers investments that build long-term asset value.",
+      "private_goal": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Maintenance included and lower upfront cost ease short-term cash flow.",
+          "reason_against": "Total cost over three years may exceed buying, reducing long-term value."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Ownership after purchase and no ongoing lease fees align with long-term financial goals.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Lower monthly lease cost is appealing but maintenance responsibility is a drawback.",
+          "reason_against": "Maintenance effort and costs on the workshop conflict with preference for hassle-free ownership."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Lower purchase price and ownership benefits offer a cost-effective ownership option.",
+          "reason_against": "Shorter lifespan and limited warranty increase risk and potential maintenance costs."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "monthly_cost_usd"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "expected_lifespan_years"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "purchase_price_usd"
+        ],
+        [
+          "B",
+          "expected_lifespan_years"
+        ],
+        [
+          "C",
+          "equipment_upgrade_option"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "maintenance_responsibility"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "maintenance_responsibility"
+        ],
+        [
+          "B",
+          "warranty_years"
+        ],
+        [
+          "C",
+          "monthly_cost_usd"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 10,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Decide whether to lease or buy equipment for a small workshop.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Hi, I prefer Lease premium equipment; it fits my priorities best.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest monthly lease cost with access to premium tools fits budget constraints and quality needs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly lease cost with access to premium tools"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize monthly expenses while maintaining access to high-quality equipment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Leaning toward Option B since owning equipment avoids lease fees and fits long-term goals.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Ownership after purchase and no ongoing lease fees align with long-term financial goals.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ownership after purchase and no ongoing lease fees"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Maintenance falling on us adds hassle I’d rather avoid for long-term stability.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Maintenance effort and costs on the workshop conflict with preference for hassle-free ownership.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Maintenance costs and effort fall on workshop"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "250 a month feels a bit high for my budget, even if it means less hassle.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly cost is 250",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_cost_usd",
+          "public_value": "250"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize monthly expenses while maintaining access to high-quality equipment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "True, but since maintenance is on the lessee, I worry about unexpected costs over time.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the maintenance responsibility is lessee",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "maintenance_responsibility",
+          "public_value": "lessee"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Leasing might feel easier now, but I’m wary of losing long-term control over assets.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the equipment upgrade option is False",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment_upgrade_option",
+          "public_value": "False"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "250 a month is doable, though I prefer owning to avoid ongoing fees long term.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the monthly cost is 250",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_cost_usd",
+          "public_value": "250"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That higher upfront cost and the maintenance after warranty still feel risky with my cash flow.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High initial investment and maintenance responsibility after warranty make it less attractive given cash flow priorities.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher initial investment and maintenance costs after warranty"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize monthly expenses while maintaining access to high-quality equipment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Upfront costs are higher, but owning means I handle maintenance, which fits my preference better.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare maintenance_responsibility: owner and lessee",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "maintenance_responsibility",
+            "public_value": "owner"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "maintenance_responsibility",
+            "public_value": "lessee"
+          }
+        ],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "9000 is a big upfront hit, but I think owning outright could save more down the road.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the purchase price is 9000",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "purchase_price_usd",
+          "public_value": "9000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Seven years sounds reasonable, though I worry about unexpected repairs once the warranty ends.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the expected lifespan years is 7",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_lifespan_years",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize monthly expenses while maintaining access to high-quality equipment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The warranty covers just 2 years, so I’d still plan for longer-term upkeep costs.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the warranty years is 2",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "warranty_years",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Leasing means we handle maintenance ourselves, while buying puts that responsibility on us; I lean toward owning to keep control.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare maintenance_responsibility: owner and lessee",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "maintenance_responsibility",
+            "public_value": "owner"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "maintenance_responsibility",
+            "public_value": "lessee"
+          }
+        ],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Seven years is a solid run, though I’d prefer stretching that lifespan by owning equipment outright.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expected lifespan years is 7",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_lifespan_years",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "There is no unique leader, so I’m selecting Lease premium equipment from the tied options for this compromise check. Liam, would that choice work for you?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 16,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m a bit hesitant since we’d still handle maintenance, which adds ongoing hassle.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Maintenance effort and costs on the workshop conflict with preference for hassle-free ownership.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Maintenance costs and effort fall on workshop"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 18,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Lease premium equipment.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest monthly lease cost with access to premium tools fits budget constraints and quality needs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly lease cost with access to premium tools"
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 19,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for Buy new equipment.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Ownership after purchase and no ongoing lease fees align with long-term financial goals.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ownership after purchase and no ongoing lease fees"
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 20,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The discussion closes without a majority decision.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "B:concern": 1,
+    "B:expected_lifespan_years": 2,
+    "B:maintenance_responsibility": 2,
+    "B:purchase_price_usd": 1,
+    "B:upside": 1,
+    "B:warranty_years": 1,
+    "C:concern": 2,
+    "C:equipment_upgrade_option": 1,
+    "C:maintenance_responsibility": 3,
+    "C:monthly_cost_usd": 2,
+    "C:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "expected_lifespan_years"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "C",
+      "p2": "B"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 16,
+    "setup_llm_calls": 3,
+    "repair_calls": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 1,
+    "liveness_forced_turns": 0,
+    "input_tokens": 10630,
+    "output_tokens": 1544,
+    "moderator_turns": 4,
+    "voluntary_turns": 13,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 2,
+    "participant_turns": 17,
+    "voluntary_turns": 13,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1905,
+    "avg_words_per_participant_turn": 13.76,
+    "visible_preference_changes": 0,
+    "repair_turns": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 1,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 10630,
+    "output_tokens": 1544,
+    "llm_calls": 19,
+    "voluntary_turns_by_persona": {
+      "p2": 10,
+      "p1": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest monthly lease cost with access to premium tools fits budget constraints and quality needs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly lease cost with access to premium tools"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize monthly expenses while maintaining access to high-quality equipment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Leasing premium equipment seems best since it keeps monthly costs low but still ensures good tools.",
+      "validation_errors": [
+        "focused option is not visible"
+      ],
+      "repair_text": "Leasing premium equipment seems best since it offers the lowest monthly cost and quality tools.",
+      "repair_errors": [
+        "focused option is not visible"
+      ],
+      "final_status": "fallback",
+      "fallback_text": "Hi, I prefer Lease premium equipment; it fits my priorities best."
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Ownership after purchase and no ongoing lease fees align with long-term financial goals.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ownership after purchase and no ongoing lease fees"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Leaning toward Option B since owning equipment avoids lease fees and fits long-term goals.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Maintenance effort and costs on the workshop conflict with preference for hassle-free ownership.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Maintenance costs and effort fall on workshop"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maintenance falling on us adds hassle I’d rather avoid for long-term stability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly cost is 250",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_cost_usd",
+          "public_value": "250"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize monthly expenses while maintaining access to high-quality equipment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "250 a month feels a bit high for my budget, even if it means less hassle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the maintenance responsibility is lessee",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "maintenance_responsibility",
+          "public_value": "lessee"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, but since maintenance is on the lessee, I worry about unexpected costs over time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the equipment upgrade option is False",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "equipment_upgrade_option",
+          "public_value": "False"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Leasing might feel easier now, but I’m wary of losing long-term control over assets.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the monthly cost is 250",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_cost_usd",
+          "public_value": "250"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "250 a month is doable, though I prefer owning to avoid ongoing fees long term.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High initial investment and maintenance responsibility after warranty make it less attractive given cash flow priorities.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher initial investment and maintenance costs after warranty"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize monthly expenses while maintaining access to high-quality equipment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That higher upfront cost and the maintenance after warranty still feel risky with my cash flow.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare maintenance_responsibility: owner and lessee",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "maintenance_responsibility",
+            "public_value": "owner"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "maintenance_responsibility",
+            "public_value": "lessee"
+          }
+        ],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Upfront costs are higher, but owning means I handle maintenance, which fits my preference better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the purchase price is 9000",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "purchase_price_usd",
+          "public_value": "9000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "9000 is a big upfront hit, but I think owning outright could save more down the road.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the expected lifespan years is 7",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_lifespan_years",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize monthly expenses while maintaining access to high-quality equipment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Seven years sounds reasonable, though I worry about unexpected repairs once the warranty ends.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the warranty years is 2",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "warranty_years",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The warranty covers just 2 years, so I’d still plan for longer-term upkeep costs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare maintenance_responsibility: owner and lessee",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "maintenance_responsibility",
+            "public_value": "owner"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "maintenance_responsibility",
+            "public_value": "lessee"
+          }
+        ],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Leasing means we handle maintenance ourselves, while buying puts that responsibility on us; I lean toward owning to keep control.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expected lifespan years is 7",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_lifespan_years",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Seven years is a solid run, though I’d prefer stretching that lifespan by owning equipment outright.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Maintenance effort and costs on the workshop conflict with preference for hassle-free ownership.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Maintenance costs and effort fall on workshop"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure equipment ownership to avoid recurring costs and maximize asset longevity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I’m a bit hesitant since we’d still handle maintenance, which adds ongoing hassle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest monthly lease cost with access to premium tools fits budget constraints and quality needs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly lease cost with access to premium tools"
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for Lease premium equipment.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Ownership after purchase and no ongoing lease fees align with long-term financial goals.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ownership after purchase and no ongoing lease fees"
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Buy new equipment.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [
+    "fallback_turns:1"
+  ],
+  "needs_review": true
+}

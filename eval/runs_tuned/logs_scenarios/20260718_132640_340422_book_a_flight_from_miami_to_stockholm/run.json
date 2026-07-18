@@ -1,0 +1,2650 @@
+{
+  "provenance": {
+    "seed": 242118755,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Book a flight from Miami to Stockholm",
+    "options": [
+      {
+        "id": "A",
+        "name": "Direct Flight with Scandinavian Airlines",
+        "attrs": {
+          "airline": "Scandinavian Airlines",
+          "stops": "0",
+          "departure_time": "morning",
+          "price_usd": "750"
+        },
+        "upside": "No layovers, convenient morning departure.",
+        "concern": "Higher price compared to some alternatives.",
+        "short_name": "Direct Flight Scandinavian",
+        "aliases": [
+          "Direct Flight Scandinavian",
+          "Scandinavian Airlines"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "One-Stop Flight via London with British Airways",
+        "attrs": {
+          "airline": "British Airways",
+          "stops": "1",
+          "layover_duration_min": "90",
+          "departure_time": "afternoon",
+          "price_usd": "620"
+        },
+        "upside": "Moderate price with manageable layover time.",
+        "concern": "Longer total travel time due to layover.",
+        "short_name": "One-Stop London",
+        "aliases": [
+          "One-Stop London",
+          "British Airways"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "One-Stop Flight via Frankfurt with Lufthansa",
+        "attrs": {
+          "airline": "Lufthansa",
+          "stops": "1",
+          "layover_duration_min": "120",
+          "departure_time": "evening",
+          "price_usd": "640"
+        },
+        "upside": "Evening departure allows a flexible schedule.",
+        "concern": "Longer layover increases total travel time.",
+        "short_name": "One-Stop Frankfurt",
+        "aliases": [
+          "One-Stop Frankfurt",
+          "with Lufthansa"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Two-Stop Flight via New York and Amsterdam with Delta",
+        "attrs": {
+          "airline": "Delta",
+          "stops": "2",
+          "layover_duration_min": "60",
+          "departure_time": "morning",
+          "price_usd": "580"
+        },
+        "upside": "Lower price with morning departure.",
+        "concern": "Multiple stops increase travel complexity.",
+        "short_name": "Two-Stop Flight",
+        "aliases": [
+          "Two-Stop Flight",
+          "with Delta"
+        ]
+      }
+    ],
+    "shared_context": [
+      "Three participants need to book a flight from Miami to Stockholm. Options vary by airline, layovers, departure times, and price, all departing within the next two weeks."
+    ],
+    "setup_notes": [
+      "scenario_regenerated_after_validation_error",
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Maya is a project manager who values flexibility in her schedule and prefers evening travel.",
+      "private_goal": "To find a flight that fits her flexible evening plans without excessive layovers.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Direct flight with no layovers is convenient.",
+          "reason_against": "Higher price and morning departure don't fit her preference for evening travel."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Moderate price and manageable layover.",
+          "reason_against": "Afternoon departure is less ideal than evening."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Evening departure fits her schedule and price is reasonable.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Lowest price and morning departure.",
+          "reason_against": "Multiple stops add complexity and morning departure is less preferred."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 1,
+        "directness": 5,
+        "stubbornness": 1
+      },
+      "background": "Liam is a budget-conscious consultant who prefers efficient travel with reasonable prices.",
+      "private_goal": "To minimize travel time and cost while keeping layovers manageable.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 35,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "No layovers and convenient morning departure.",
+          "reason_against": "Higher price than other options."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Good balance of price and layover duration with afternoon departure.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Reasonable price and evening departure offers flexibility.",
+          "reason_against": "Longer layover increases travel time."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Lowest price and morning departure.",
+          "reason_against": "Two stops increase travel complexity and time."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Zoe is a frequent flyer who prioritizes direct flights and morning departures for efficiency.",
+      "private_goal": "To secure the most direct and time-efficient flight despite higher cost.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Direct flight with no layovers and morning departure maximizes efficiency.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Moderate price and manageable layover.",
+          "reason_against": "Longer travel time due to layover."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Evening departure allows schedule flexibility.",
+          "reason_against": "Long layover and later departure reduce efficiency."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Lowest price and morning departure.",
+          "reason_against": "Two stops make travel complex and time-consuming."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 2,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "airline"
+        ],
+        [
+          "C",
+          "airline"
+        ],
+        [
+          "B",
+          "departure_time"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "stops"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Reasonable price and evening departure offers flexibility."
+      },
+      "narrowing_acceptance": "C",
+      "used_point_keys": [
+        [
+          "A",
+          "airline"
+        ],
+        [
+          "B",
+          "price_usd"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "price_usd"
+        ],
+        [
+          "B",
+          "airline"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "departure_time"
+        ],
+        [
+          "B",
+          "layover_duration_min"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 10,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "stops"
+        ],
+        [
+          "C",
+          "stops"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "airline"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "layover_duration_min"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Book a flight from Miami to Stockholm.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Direct Flight Scandinavian is best—no layovers and a morning departure makes the trip way more efficient.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Direct flight with no layovers and morning departure maximizes efficiency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "No layovers, convenient morning departure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "One-Stop London on British Airways balances price and layover well with an afternoon departure.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Good balance of price and layover duration with afternoon departure.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Moderate price with manageable layover time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Evening departure with One-Stop Frankfurt works well and price seems reasonable.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Evening departure fits her schedule and price is reasonable.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a flight that fits her flexible evening plans without excessive layovers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Zoe, does the higher price really justify the time saved?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Higher price than other options.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher price compared to some alternatives."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Yes, saving hours and avoiding layovers is worth the extra cost for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Higher price compared to some alternatives.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher price compared to some alternatives."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Zero stops is great, but evening timing matters most.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the stops is 0",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "stops",
+          "public_value": "0"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a flight that fits her flexible evening plans without excessive layovers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Is anyone okay with longer travel time just to save a bit on price?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Longer travel time due to layover.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer total travel time due to layover."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Longer layovers add too much total travel time.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Longer total travel time due to layover.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer total travel time due to layover."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "British Airways flies via London, Lufthansa goes through Frankfurt. Lufthansa fits better with evening plans for me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare airline: Lufthansa and British Airways",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "airline",
+            "public_value": "Lufthansa"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "airline",
+            "public_value": "British Airways"
+          }
+        ],
+        "personal_context": "To find a flight that fits her flexible evening plans without excessive layovers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Long layovers and late departures add downtime I can’t afford, so that plan wouldn’t work well for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Long layover and later departure reduce efficiency.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer layover increases total travel time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Evening departures help with timing, but total travel time still matters most.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Reasonable price and evening departure offers flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "640 is reasonable, but layovers still add time.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price is 640",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_usd",
+          "public_value": "640"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "One stop adds complexity and risk of delays—I need a direct flight to keep my schedule tight.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the stops is 1",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "stops",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Lufthansa is reliable, but the layover still cuts into my morning efficiency—I can’t compromise on direct, early flights.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the airline is Lufthansa",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "airline",
+          "public_value": "Lufthansa"
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "British Airways adds a stop and more time, Scandinavian Airlines is direct and faster. For minimizing time and cost, Scandinavian fits better.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare airline: British Airways and Scandinavian Airlines",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "airline",
+            "public_value": "British Airways"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "airline",
+            "public_value": "Scandinavian Airlines"
+          }
+        ],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Afternoon departure isn’t ideal for me though.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the departure time is afternoon",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "departure_time",
+          "public_value": "afternoon"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a flight that fits her flexible evening plans without excessive layovers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "A 90-minute layover still cuts into the morning’s efficiency too much for me—I’d lose critical time waiting.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the layover duration min is 90",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "layover_duration_min",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Evening departure and price make One-Stop Frankfurt workable.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reasonable price and evening departure offers flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Reasonable price and evening departure offers flexibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Reasonable price and evening departure offers flexibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Afternoon departure delays arrival and adds wait time.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the departure time is afternoon",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "departure_time",
+          "public_value": "afternoon"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "One stop is better than two, but that 90-minute layover still cuts into morning productivity more than I’m comfortable with.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the stops is 1",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "stops",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "90 minutes is the minimum I can accept without risking missed connections.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the layover duration min is 90",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "layover_duration_min",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Price of 620 is reasonable if layover stays tight.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price is 620",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_usd",
+          "public_value": "620"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 23,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "One-Stop Frankfurt has the strongest public support so far, but the group is still divided. Liam and Zoe, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 24,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The long layover and later departure still make it inefficient for my schedule.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Long layover and later departure reduce efficiency.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer layover increases total travel time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 25,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "One-Stop Frankfurt fits because price is reasonable and evening departure adds needed flexibility.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reasonable price and evening departure offers flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Reasonable price and evening departure offers flexibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Reasonable price and evening departure offers flexibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 26,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 27,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for One-Stop Frankfurt.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Evening departure fits her schedule and price is reasonable.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "One-Stop Frankfurt is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reasonable price and evening departure offers flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Reasonable price and evening departure offers flexibility."
+        },
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Reasonable price and evening departure offers flexibility."
+      },
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 29,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Direct Flight Scandinavian is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Direct flight with no layovers and morning departure maximizes efficiency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "No layovers, convenient morning departure."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 30,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The decision closes with a majority for One-Stop Frankfurt.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:airline": 1,
+    "A:concern": 2,
+    "A:stops": 1,
+    "A:upside": 1,
+    "B:airline": 2,
+    "B:concern": 2,
+    "B:departure_time": 2,
+    "B:layover_duration_min": 2,
+    "B:price_usd": 1,
+    "B:stops": 1,
+    "B:upside": 1,
+    "C:airline": 2,
+    "C:concern": 2,
+    "C:price_usd": 1,
+    "C:stops": 1,
+    "C:upside": 4
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "C",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "C",
+    "p3": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "C",
+    "votes": {
+      "p1": "C",
+      "p2": "C",
+      "p3": "A"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 24,
+    "setup_llm_calls": 4,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 15274,
+    "output_tokens": 2383,
+    "moderator_turns": 4,
+    "voluntary_turns": 20,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 27,
+    "voluntary_turns": 20,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.129,
+    "avg_words_per_participant_turn": 12.3,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 15274,
+    "output_tokens": 2383,
+    "llm_calls": 28,
+    "voluntary_turns_by_persona": {
+      "p2": 10,
+      "p1": 3,
+      "p3": 7
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Direct flight with no layovers and morning departure maximizes efficiency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "No layovers, convenient morning departure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Direct Flight Scandinavian is best—no layovers and a morning departure makes the trip way more efficient.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Good balance of price and layover duration with afternoon departure.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Moderate price with manageable layover time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One-Stop London on British Airways balances price and layover well with an afternoon departure.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Evening departure fits her schedule and price is reasonable.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a flight that fits her flexible evening plans without excessive layovers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Evening departure with One-Stop Frankfurt works well and price seems reasonable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Higher price than other options.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher price compared to some alternatives."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Zoe, does the higher price really justify the time saved?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Higher price compared to some alternatives.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher price compared to some alternatives."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yes, saving hours and avoiding layovers is worth the extra cost for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the stops is 0",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "stops",
+          "public_value": "0"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a flight that fits her flexible evening plans without excessive layovers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Zero stops is great, but evening timing matters most.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Longer travel time due to layover.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer total travel time due to layover."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Is anyone okay with longer travel time just to save a bit on price?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Longer total travel time due to layover.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer total travel time due to layover."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Longer layovers add too much total travel time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare airline: Lufthansa and British Airways",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "airline",
+            "public_value": "Lufthansa"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "airline",
+            "public_value": "British Airways"
+          }
+        ],
+        "personal_context": "To find a flight that fits her flexible evening plans without excessive layovers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "British Airways flies via London, Lufthansa goes through Frankfurt. Lufthansa fits better with evening plans for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Long layover and later departure reduce efficiency.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer layover increases total travel time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Long layovers and late departures add downtime I can’t afford, so that plan wouldn’t work well for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Reasonable price and evening departure offers flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Evening departures help with timing, but total travel time still matters most.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price is 640",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_usd",
+          "public_value": "640"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "640 is reasonable, but layovers still add time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the stops is 1",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "stops",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One stop adds complexity and risk of delays—I need a direct flight to keep my schedule tight.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the airline is Lufthansa",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "airline",
+          "public_value": "Lufthansa"
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Lufthansa is reliable, but the layover still cuts into my morning efficiency—I can’t compromise on direct, early flights.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare airline: British Airways and Scandinavian Airlines",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "airline",
+            "public_value": "British Airways"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "airline",
+            "public_value": "Scandinavian Airlines"
+          }
+        ],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "British Airways adds a stop and more time, Scandinavian Airlines is direct and faster. For minimizing time and cost, Scandinavian fits better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the departure time is afternoon",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "departure_time",
+          "public_value": "afternoon"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a flight that fits her flexible evening plans without excessive layovers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Afternoon departure isn’t ideal for me though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the layover duration min is 90",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "layover_duration_min",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A 90-minute layover still cuts into the morning’s efficiency too much for me—I’d lose critical time waiting.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reasonable price and evening departure offers flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Reasonable price and evening departure offers flexibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Evening departure and price make One-Stop Frankfurt workable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the departure time is afternoon",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "departure_time",
+          "public_value": "afternoon"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Afternoon departure delays arrival and adds wait time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the stops is 1",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "stops",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One stop is better than two, but that 90-minute layover still cuts into morning productivity more than I’m comfortable with.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the layover duration min is 90",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "layover_duration_min",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "90 minutes is the minimum I can accept without risking missed connections.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price is 620",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_usd",
+          "public_value": "620"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Price of 620 is reasonable if layover stays tight.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Long layover and later departure reduce efficiency.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer layover increases total travel time."
+        },
+        "comparison_sources": [],
+        "personal_context": "To secure the most direct and time-efficient flight despite higher cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The long layover and later departure still make it inefficient for my schedule.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reasonable price and evening departure offers flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and cost while keeping layovers manageable.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Reasonable price and evening departure offers flexibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "One-Stop Frankfurt fits because price is reasonable and evening departure adds needed flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Evening departure fits her schedule and price is reasonable.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for One-Stop Frankfurt.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reasonable price and evening departure offers flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Evening departure allows a flexible schedule."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Reasonable price and evening departure offers flexibility."
+        },
+        "vote_option": "C"
+      },
+      "raw_text": "One-Stop Frankfurt is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Direct flight with no layovers and morning departure maximizes efficiency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "No layovers, convenient morning departure."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Direct Flight Scandinavian is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

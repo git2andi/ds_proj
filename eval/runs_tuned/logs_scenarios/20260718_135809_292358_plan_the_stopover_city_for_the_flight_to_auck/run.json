@@ -1,0 +1,2369 @@
+{
+  "provenance": {
+    "seed": 242118827,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Plan the stopover city for the flight to Auckland",
+    "options": [
+      {
+        "id": "A",
+        "name": "Singapore Changi Airport",
+        "attrs": {
+          "country": "Singapore",
+          "average_layover_hours": "4",
+          "visa_requirement": "no visa for short stay",
+          "connecting_flights_per_day": "15"
+        },
+        "upside": "Modern airport with many amenities and frequent connecting flights.",
+        "concern": "Longer layover time compared to some other options.",
+        "short_name": "Singapore Changi",
+        "aliases": [
+          "Singapore Changi",
+          "Changi Airport"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Sydney Kingsford Smith Airport",
+        "attrs": {
+          "country": "Australia",
+          "average_layover_hours": "3",
+          "visa_requirement": "electronic travel authority required",
+          "connecting_flights_per_day": "10"
+        },
+        "upside": "Shorter layover and direct flight options to Auckland.",
+        "concern": "Visa application process may add planning complexity.",
+        "short_name": "Sydney Kingsford",
+        "aliases": [
+          "Sydney Kingsford",
+          "Kingsford Smith"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Honolulu Daniel K. Inouye International Airport",
+        "attrs": {
+          "country": "USA",
+          "average_layover_hours": "5",
+          "visa_requirement": "ESTA required for eligible travelers",
+          "connecting_flights_per_day": "8"
+        },
+        "upside": "Opportunity for a longer rest and sightseeing during layover.",
+        "concern": "Longer layover and more limited flight frequency.",
+        "short_name": "Honolulu Daniel",
+        "aliases": [
+          "Honolulu Daniel",
+          "Daniel Inouye"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Fiji Nadi International Airport",
+        "attrs": {
+          "country": "Fiji",
+          "average_layover_hours": "3.5",
+          "visa_requirement": "no visa for short stay",
+          "connecting_flights_per_day": "7"
+        },
+        "upside": "Short layover with relaxed visa rules and tropical environment.",
+        "concern": "Fewer connecting flights and less airport infrastructure.",
+        "short_name": "Fiji Nadi",
+        "aliases": [
+          "Fiji Nadi",
+          "Nadi International"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The group must select a stopover city for the flight to Auckland. Each option is an international airport city with available connecting flights, visa requirements, and average layover times suitable for a group of three travelers."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Maya is an adventurous traveler who enjoys tropical climates and relaxed environments.",
+      "private_goal": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Modern airport with many amenities and frequent connecting flights.",
+          "reason_against": "Longer layover time than preferred."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Shorter layover and direct flight options to Auckland.",
+          "reason_against": "Visa application adds some planning complexity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Opportunity for sightseeing during layover.",
+          "reason_against": "Longer layover and fewer connecting flights than preferred."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Short layover with relaxed visa rules and a tropical environment.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Liam is a practical planner who values efficiency and smooth travel logistics.",
+      "private_goal": "To minimize layover time while ensuring reliable flight connections.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 35,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Frequent connecting flights and no visa requirement for short stays.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Shorter layover and direct flights to Auckland.",
+          "reason_against": "Visa application process may complicate planning."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Chance for rest and sightseeing.",
+          "reason_against": "Longer layover and fewer flights."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Short layover and easy visa rules.",
+          "reason_against": "Limited connecting flights and less developed airport."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 5
+      },
+      "background": "Zara is a decisive traveler who strictly follows visa and travel regulations.",
+      "private_goal": "To avoid any visa complications and ensure the smoothest possible transit.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "No visa required for short stays, ensuring hassle-free transit.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Visa application process adds risk and complexity, which is unacceptable."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "ESTA requirement introduces potential visa complications."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Less developed airport and fewer flights increase travel uncertainty."
+        }
+      },
+      "hard_blocker": true
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "visa_requirement"
+        ],
+        [
+          "A",
+          "visa_requirement"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "connecting_flights_per_day"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "connecting_flights_per_day"
+        ],
+        [
+          "D",
+          "average_layover_hours"
+        ],
+        [
+          "A",
+          "average_layover_hours"
+        ],
+        [
+          "A",
+          "country"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "country"
+        ],
+        [
+          "D",
+          "visa_requirement"
+        ],
+        [
+          "A",
+          "visa_requirement"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "average_layover_hours"
+        ],
+        [
+          "A",
+          "country"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 1,
+        "C": 1,
+        "D": 1
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "hard_rejected_options": [
+        "C",
+        "B",
+        "D"
+      ],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "connecting_flights_per_day"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "connecting_flights_per_day"
+        ],
+        [
+          "D",
+          "average_layover_hours"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Plan the stopover city for the flight to Auckland.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Singapore Changi allows short stays without a visa, which should keep transit smooth and hassle-free.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "No visa required for short stays, ensuring hassle-free transit.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Modern airport with many amenities and frequent connecting flights."
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "A short layover at Fiji Nadi works well—relaxed visa rules and a chill tropical vibe.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Short layover with relaxed visa rules and a tropical environment.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Short layover with relaxed visa rules and tropical environment."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Singapore Changi has frequent connecting flights and no visa needed for short stays, which helps keep layovers efficient.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Frequent connecting flights and no visa requirement for short stays.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Modern airport with many amenities and frequent connecting flights."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Longer layovers aren’t ideal for me—anyone else think it’s worth it for the airport vibe?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Longer layover time than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Longer layover time compared to some other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Longer layovers can add extra waiting time compared to other options, which isn’t always ideal.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Longer layover time compared to some other options.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Longer layover time compared to some other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "No visa for short stays is definitely a plus, but I still prefer somewhere less busy to unwind quickly.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the visa requirement is no visa for short stay",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "visa_requirement",
+          "public_value": "no visa for short stay"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "The 15 connecting flights daily keep options flexible, though it might also mean more crowding during peak times.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the connecting flights per day is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "connecting_flights_per_day",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Four hours on average could work, but I prefer shorter layovers to keep things moving.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average layover hours is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_layover_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Singapore’s airport is nice, but it’s usually pretty busy for a quick, calm stop.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the country is Singapore",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "country",
+          "public_value": "Singapore"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Fiji Nadi has only 7 connecting flights a day versus 15 at Changi, which fits better with keeping transit straightforward.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare connecting_flights_per_day: 15 and 7",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "connecting_flights_per_day",
+            "public_value": "15"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "connecting_flights_per_day",
+            "public_value": "7"
+          }
+        ],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Four hours is decent, but I’d prefer less time in busy airports for quick stops.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average layover hours is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_layover_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "No visa needed for short stays, which helps avoid extra delays.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the visa requirement is no visa for short stay",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "visa_requirement",
+          "public_value": "no visa for short stay"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Seven connecting flights a day means less crowd and stress than fifteen, which suits quick layovers better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare connecting_flights_per_day: 7 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "connecting_flights_per_day",
+            "public_value": "7"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "connecting_flights_per_day",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Less traffic is good, but fewer flights and simpler facilities could mean bigger delays if something goes off schedule.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Less developed airport and fewer flights increase travel uncertainty.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer connecting flights and less airport infrastructure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "3.5 hours is better than four, but I’d still want a relaxed spot to stretch.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average layover hours is 3.5",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "average_layover_hours",
+          "public_value": "3.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "A shorter layover helps me feel less rushed, though Fiji’s airport might not be the quickest for connections.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the country is Fiji",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "country",
+          "public_value": "Fiji"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Less developed airports might risk unexpected delays, so I’d prefer a bit more buffer time.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Limited connecting flights and less developed airport.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer connecting flights and less airport infrastructure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "No visa needed for short stays is a big plus for a hassle-free layover.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the visa requirement is no visa for short stay",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "visa_requirement",
+          "public_value": "no visa for short stay"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "3.5 hours isn’t too short, but I prefer more time just in case of delays with smaller airports.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average layover hours is 3.5",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "average_layover_hours",
+          "public_value": "3.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Singapore’s airport is in a more developed country, which usually means smoother connections—fits my priority better than Fiji here.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare country: Singapore and Fiji",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "country",
+            "public_value": "Singapore"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "country",
+            "public_value": "Fiji"
+          }
+        ],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "True, no visa helps speed things up, but I’d still lean toward more connection time for peace of mind.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the visa requirement is no visa for short stay",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "visa_requirement",
+          "public_value": "no visa for short stay"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 23,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Fiji Nadi.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Short layover with relaxed visa rules and a tropical environment.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Short layover with relaxed visa rules and tropical environment."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 24,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Singapore Changi.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Frequent connecting flights and no visa requirement for short stays.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Modern airport with many amenities and frequent connecting flights."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 25,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "My final vote is Singapore Changi.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "No visa required for short stays, ensuring hassle-free transit.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Modern airport with many amenities and frequent connecting flights."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 26,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Singapore Changi.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:average_layover_hours": 2,
+    "A:concern": 2,
+    "A:connecting_flights_per_day": 3,
+    "A:country": 2,
+    "A:upside": 2,
+    "A:visa_requirement": 2,
+    "D:average_layover_hours": 2,
+    "D:concern": 2,
+    "D:connecting_flights_per_day": 2,
+    "D:country": 2,
+    "D:upside": 1,
+    "D:visa_requirement": 2
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "country"
+    ],
+    [
+      "D",
+      "visa_requirement"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "A",
+    "p3": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "D",
+      "p2": "A",
+      "p3": "A"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 21,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 13883,
+    "output_tokens": 1888,
+    "moderator_turns": 3,
+    "voluntary_turns": 18,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 24,
+    "voluntary_turns": 18,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.1111,
+    "avg_words_per_participant_turn": 14.96,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 13883,
+    "output_tokens": 1888,
+    "llm_calls": 24,
+    "voluntary_turns_by_persona": {
+      "p1": 7,
+      "p3": 5,
+      "p2": 6
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "No visa required for short stays, ensuring hassle-free transit.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Modern airport with many amenities and frequent connecting flights."
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Singapore Changi allows short stays without a visa, which should keep transit smooth and hassle-free.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Short layover with relaxed visa rules and a tropical environment.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Short layover with relaxed visa rules and tropical environment."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A short layover at Fiji Nadi works well—relaxed visa rules and a chill tropical vibe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Frequent connecting flights and no visa requirement for short stays.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Modern airport with many amenities and frequent connecting flights."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Singapore Changi has frequent connecting flights and no visa needed for short stays, which helps keep layovers efficient.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Longer layover time than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Longer layover time compared to some other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Longer layovers aren’t ideal for me—anyone else think it’s worth it for the airport vibe?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Longer layover time compared to some other options.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Longer layover time compared to some other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Longer layovers can add extra waiting time compared to other options, which isn’t always ideal.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the visa requirement is no visa for short stay",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "visa_requirement",
+          "public_value": "no visa for short stay"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "No visa for short stays is definitely a plus, but I still prefer somewhere less busy to unwind quickly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the connecting flights per day is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "connecting_flights_per_day",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 15 connecting flights daily keep options flexible, though it might also mean more crowding during peak times.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average layover hours is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_layover_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four hours on average could work, but I prefer shorter layovers to keep things moving.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the country is Singapore",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "country",
+          "public_value": "Singapore"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Singapore’s airport is nice, but it’s usually pretty busy for a quick, calm stop.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare connecting_flights_per_day: 15 and 7",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "connecting_flights_per_day",
+            "public_value": "15"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "connecting_flights_per_day",
+            "public_value": "7"
+          }
+        ],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fiji Nadi has only 7 connecting flights a day versus 15 at Changi, which fits better with keeping transit straightforward.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average layover hours is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_layover_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four hours is decent, but I’d prefer less time in busy airports for quick stops.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the visa requirement is no visa for short stay",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "visa_requirement",
+          "public_value": "no visa for short stay"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "No visa needed for short stays, which helps avoid extra delays.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare connecting_flights_per_day: 7 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "connecting_flights_per_day",
+            "public_value": "7"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "connecting_flights_per_day",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Seven connecting flights a day means less crowd and stress than fifteen, which suits quick layovers better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Less developed airport and fewer flights increase travel uncertainty.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer connecting flights and less airport infrastructure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Less traffic is good, but fewer flights and simpler facilities could mean bigger delays if something goes off schedule.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average layover hours is 3.5",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "average_layover_hours",
+          "public_value": "3.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "3.5 hours is better than four, but I’d still want a relaxed spot to stretch.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the country is Fiji",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "country",
+          "public_value": "Fiji"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A shorter layover helps me feel less rushed, though Fiji’s airport might not be the quickest for connections.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Limited connecting flights and less developed airport.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer connecting flights and less airport infrastructure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Less developed airports might risk unexpected delays, so I’d prefer a bit more buffer time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the visa requirement is no visa for short stay",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "visa_requirement",
+          "public_value": "no visa for short stay"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a short layover in a pleasant, less crowded airport with easy visa rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "No visa needed for short stays is a big plus for a hassle-free layover.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average layover hours is 3.5",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "average_layover_hours",
+          "public_value": "3.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To avoid any visa complications and ensure the smoothest possible transit.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "3.5 hours isn’t too short, but I prefer more time just in case of delays with smaller airports.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare country: Singapore and Fiji",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "country",
+            "public_value": "Singapore"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "country",
+            "public_value": "Fiji"
+          }
+        ],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Singapore’s airport is in a more developed country, which usually means smoother connections—fits my priority better than Fiji here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the visa requirement is no visa for short stay",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "visa_requirement",
+          "public_value": "no visa for short stay"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize layover time while ensuring reliable flight connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, no visa helps speed things up, but I’d still lean toward more connection time for peace of mind.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Short layover with relaxed visa rules and a tropical environment.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Short layover with relaxed visa rules and tropical environment."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for Fiji Nadi.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Frequent connecting flights and no visa requirement for short stays.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Modern airport with many amenities and frequent connecting flights."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Singapore Changi.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "No visa required for short stays, ensuring hassle-free transit.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Modern airport with many amenities and frequent connecting flights."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Singapore Changi.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

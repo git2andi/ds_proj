@@ -1,0 +1,3622 @@
+{
+  "provenance": {
+    "seed": 242118811,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Which cloud gaming service should the LAN party group adopt",
+    "options": [
+      {
+        "id": "A",
+        "name": "NVIDIA GeForce NOW",
+        "attrs": {
+          "subscription_cost_per_month": "$10",
+          "game_library_size": "1000+ titles",
+          "device_compatibility": "PC, Mac, Android, Shield TV",
+          "max_resolution": "1080p"
+        },
+        "upside": "Supports a wide range of devices and allows playing games you already own.",
+        "concern": "Session length limits apply on free tier and some latency may occur on lower-end connections.",
+        "short_name": "GeForce NOW",
+        "aliases": [
+          "GeForce NOW",
+          "NVIDIA GeForce"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Xbox Cloud Gaming (xCloud)",
+        "attrs": {
+          "subscription_cost_per_month": "$15",
+          "game_library_size": "300+ titles",
+          "device_compatibility": "PC, Android, iOS, Xbox consoles",
+          "max_resolution": "1080p"
+        },
+        "upside": "Includes access to Xbox Game Pass library with multiplayer support.",
+        "concern": "Requires Xbox Game Pass Ultimate subscription and has limited browser support.",
+        "short_name": "Xbox Cloud",
+        "aliases": [
+          "Xbox Cloud",
+          "Cloud Gaming"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Google Stadia",
+        "attrs": {
+          "subscription_cost_per_month": "$10",
+          "game_library_size": "200+ titles",
+          "device_compatibility": "PC, Mac, Android, Chromecast",
+          "max_resolution": "4K (Pro tier)"
+        },
+        "upside": "Offers 4K streaming on Pro tier and integrates with YouTube for easy sharing.",
+        "concern": "Game purchases are required in addition to subscription and service availability is limited in some regions.",
+        "short_name": "Google Stadia",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "Amazon Luna",
+        "attrs": {
+          "subscription_cost_per_month": "$6",
+          "game_library_size": "100+ titles",
+          "device_compatibility": "PC, Mac, Fire TV, iOS, Android",
+          "max_resolution": "1080p"
+        },
+        "upside": "Lower monthly cost with channels offering different game selections.",
+        "concern": "Smaller library and requires stable internet for smooth multiplayer experience.",
+        "short_name": "Amazon Luna",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "The LAN party group of 5 is selecting a cloud gaming service to use during their events. Each service supports multiplayer gaming, has varying subscription costs, game library sizes, and device compatibility."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Maya is a tech-savvy gamer who enjoys exploring multiplayer games on various devices.",
+      "private_goal": "Find a service with a large game library and broad device compatibility for group play.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Supports many devices and lets us play games we already own.",
+          "reason_against": "Session limits on free tier and possible latency issues could disrupt gameplay."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Includes Xbox Game Pass with multiplayer games and good device support.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Offers 4K streaming and YouTube integration for sharing highlights.",
+          "reason_against": "Smaller library and extra game purchases needed beyond subscription."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Lower cost is attractive.",
+          "reason_against": "Smaller library and concerns about stable internet for multiplayer."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Liam prefers budget-friendly options and values straightforward solutions.",
+      "private_goal": "Choose the most affordable service that still supports multiplayer well.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Good device compatibility and large library.",
+          "reason_against": "Subscription cost is higher than some alternatives."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Good multiplayer support and game pass access.",
+          "reason_against": "More expensive and requires specific subscription."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "4K streaming is nice.",
+          "reason_against": "Requires game purchases and smaller library make it less cost-effective."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Lowest monthly cost and decent device support.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Zoe is a casual gamer who prefers simplicity and playing games she already owns.",
+      "private_goal": "Use a service that lets me play my existing games with minimal hassle.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Allows playing games I already own on many devices.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Good multiplayer and game pass access.",
+          "reason_against": "Subscription requirements and browser limits complicate use."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "4K streaming is appealing.",
+          "reason_against": "Need to buy games separately and smaller library reduce appeal."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Low cost is attractive.",
+          "reason_against": "Smaller library and internet stability concerns."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 4,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Eli is a competitive gamer focused on cost efficiency and reliable multiplayer experiences.",
+      "private_goal": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 40,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Large library and device support are positives.",
+          "reason_against": "Potential latency and session limits could hurt competitive play."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Good multiplayer and game pass library.",
+          "reason_against": "Higher cost and subscription complexity are downsides."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "4K streaming is nice but not essential.",
+          "reason_against": "Smaller library and extra purchases make it less appealing."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Lowest cost and acceptable device compatibility for our needs.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Nina enjoys casual gaming and values easy access to popular multiplayer titles.",
+      "private_goal": "Find a service with good multiplayer games and reasonable cost.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Large library and device flexibility are good.",
+          "reason_against": "Session limits and latency could be problematic."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Includes Xbox Game Pass with many multiplayer games.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "4K streaming and YouTube integration are nice extras.",
+          "reason_against": "Smaller library and extra game purchases reduce value."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Low cost is attractive.",
+          "reason_against": "Smaller library and internet stability concerns."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "game_library_size"
+        ],
+        [
+          "B",
+          "subscription_cost_per_month"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "game_library_size"
+        ],
+        [
+          "D",
+          "device_compatibility"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "game_library_size"
+        ],
+        [
+          "D",
+          "max_resolution"
+        ],
+        [
+          "B",
+          "device_compatibility"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "max_resolution"
+        ],
+        [
+          "D",
+          "subscription_cost_per_month"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 11,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 2,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "subscription_cost_per_month"
+        ],
+        [
+          "B",
+          "device_compatibility"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "game_library_size"
+        ],
+        [
+          "A",
+          "subscription_cost_per_month"
+        ],
+        [
+          "A",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "game_library_size"
+        ],
+        [
+          "D",
+          "device_compatibility"
+        ],
+        [
+          "A",
+          "device_compatibility"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "max_resolution"
+        ],
+        [
+          "D",
+          "max_resolution"
+        ],
+        [
+          "B",
+          "device_compatibility"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "max_resolution"
+        ],
+        [
+          "A",
+          "subscription_cost_per_month"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Large library and device flexibility are good."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Which cloud gaming service should the LAN party group adopt.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Amazon Luna has the lowest cost and decent device support, which fits our multiplayer needs.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest cost and acceptable device compatibility for our needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly cost with channels offering different game selections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Lowest monthly cost with decent device support fits us best. Option D.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest monthly cost and decent device support.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly cost with channels offering different game selections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the most affordable service that still supports multiplayer well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Xbox Cloud includes Xbox Game Pass with multiplayer games and works well on most devices, which covers our group play needs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes Xbox Game Pass with multiplayer games and good device support.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes access to Xbox Game Pass library with multiplayer support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "GeForce NOW lets me play games I already own on pretty much any device.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Allows playing games I already own on many devices.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports a wide range of devices and allows playing games you already own."
+        },
+        "comparison_sources": [],
+        "personal_context": "Use a service that lets me play my existing games with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Xbox Cloud has a lot of multiplayer games with Game Pass, which is nice.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes Xbox Game Pass with many multiplayer games.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes access to Xbox Game Pass library with multiplayer support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Higher cost and subscription complexity make it less reliable for consistent group play on a budget.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "Higher cost and subscription complexity are downsides.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires Xbox Game Pass Ultimate subscription and has limited browser support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "300+ titles sound good, but I still prefer keeping things simple with what I already own.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the game library size is 300+ titles",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "game_library_size",
+          "public_value": "300+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use a service that lets me play my existing games with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Free tier session limits and latency could mess up group sessions—anyone experienced this?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Session limits on free tier and possible latency issues could disrupt gameplay.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Session length limits apply on free tier and some latency may occur on lower-end connections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Session limits and some lag do happen on free tiers, so it might get tricky.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Session length limits apply on free tier and some latency may occur on lower-end connections.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Session length limits apply on free tier and some latency may occur on lower-end connections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Both offer 1080p max resolution, so neither has an edge there for smooth group play on a budget.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare max_resolution: 1080p and 1080p",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "max_resolution",
+            "public_value": "1080p"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "max_resolution",
+            "public_value": "1080p"
+          }
+        ],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "1000+ titles is solid, but I’m more focused on how consistent the connection stays during our sessions.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the game library size is 1000+ titles",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "game_library_size",
+          "public_value": "1000+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The big library and device flexibility with GeForce NOW could work for me.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large library and device flexibility are good.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports a wide range of devices and allows playing games you already own."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Large library and device flexibility are good."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Large library and device flexibility are good."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "$10 a month is reasonable, but I need to be sure it won’t cause lag during our sessions.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the subscription cost per month is $10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Device support across PC, Mac, Android, and Shield TV is good, but I’m mainly on PC, so that’s what matters most to me.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the device compatibility is PC, Mac, Android, Shield TV",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "device_compatibility",
+          "public_value": "PC, Mac, Android, Shield TV"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "1000+ titles cover a lot, which is great for variety, but I need to confirm if cross-device play is smooth for our group.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the game library size is 1000+ titles",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "game_library_size",
+          "public_value": "1000+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "$10 isn’t bad, but I prefer no extra fees.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the subscription cost per month is $10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use a service that lets me play my existing games with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "One supports Mac and Fire TV, the other includes Xbox consoles; Mac and Fire TV fit our group better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare device_compatibility: PC, Mac, Fire TV, iOS, Android and PC, Android, iOS, Xbox consoles",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Mac, Fire TV, iOS, Android"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Android, iOS, Xbox consoles"
+          }
+        ],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Smaller libraries limit game variety, and unstable internet can kill multiplayer sessions—that’s a dealbreaker for me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Smaller library and concerns about stable internet for multiplayer.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller library and requires stable internet for smooth multiplayer experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "More expensive and needs that specific subscription to work.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "More expensive and requires specific subscription.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires Xbox Game Pass Ultimate subscription and has limited browser support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the most affordable service that still supports multiplayer well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "$15 is a bit steep, especially if it locks us into one platform, which could limit device options for some of us.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the subscription cost per month is $15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Covers all our devices except Mac, still good for most.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the device compatibility is PC, Android, iOS, Xbox consoles",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "device_compatibility",
+          "public_value": "PC, Android, iOS, Xbox consoles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the most affordable service that still supports multiplayer well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "300+ titles is decent, but it still feels limited for group play across all devices, especially with Mac users in the mix.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the game library size is 300+ titles",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "game_library_size",
+          "public_value": "300+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "1080p max isn’t bad, but for group sessions, I want something that works smoothly on all our devices without compromises.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the max resolution is 1080p",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_resolution",
+          "public_value": "1080p"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "$15 is affordable for what we get, so I’m good with it.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the subscription cost per month is $15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the most affordable service that still supports multiplayer well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Amazon Luna works on Mac and Fire TV too, while Xbox Cloud covers Xbox consoles instead. For wider device support, Luna fits better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare device_compatibility: PC, Mac, Fire TV, iOS, Android and PC, Android, iOS, Xbox consoles",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Mac, Fire TV, iOS, Android"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Android, iOS, Xbox consoles"
+          }
+        ],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "100+ titles is definitely on the low side for group play, especially if we want variety and options everyone can enjoy.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the game library size is 100+ titles",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "game_library_size",
+          "public_value": "100+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "$6 is a good price, but if the library’s too small, it won’t keep our group engaged long-term.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the subscription cost per month is $6",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "1080p max isn’t a dealbreaker for me since I play on various devices, but it means it won’t look great on bigger screens.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the max resolution is 1080p",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "max_resolution",
+          "public_value": "1080p"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Smaller library might get old fast, and unstable net could kill the fun.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Smaller library and internet stability concerns.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller library and requires stable internet for smooth multiplayer experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Xbox Cloud works on PC, Android, iOS, and Xbox consoles, while Amazon Luna adds Mac and Fire TV but no Xbox. Xbox fits my group’s device mix better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare device_compatibility: PC, Android, iOS, Xbox consoles and PC, Mac, Fire TV, iOS, Android",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Android, iOS, Xbox consoles"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Mac, Fire TV, iOS, Android"
+          }
+        ],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "1080p max is fine for smooth multiplayer and keeps costs down, which matters most for me.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the max resolution is 1080p",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_resolution",
+          "public_value": "1080p"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 32,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Public support is tied at the top, so let’s test Amazon Luna as the option to narrow around. Maya, Zoe, and Nina, could you accept it for the group?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 33,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Still worried about the smaller library and needing super stable internet for smooth group play.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller library and concerns about stable internet for multiplayer.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller library and requires stable internet for smooth multiplayer experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 34,
+      "phase": "NARROWING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Still feels risky with the smaller library and internet needs.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller library and internet stability concerns.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller library and requires stable internet for smooth multiplayer experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Xbox Cloud.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes Xbox Game Pass with multiplayer games and good device support.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes access to Xbox Game Pass library with multiplayer support."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Amazon Luna is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest monthly cost and decent device support.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly cost with channels offering different game selections."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "My final vote is GeForce NOW.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Allows playing games I already own on many devices.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports a wide range of devices and allows playing games you already own."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I choose Amazon Luna.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest cost and acceptable device compatibility for our needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly cost with channels offering different game selections."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "I choose Xbox Cloud.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes Xbox Game Pass with many multiplayer games.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes access to Xbox Game Pass library with multiplayer support."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "No option reached a majority, so the result remains unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:device_compatibility": 1,
+    "A:game_library_size": 2,
+    "A:max_resolution": 1,
+    "A:subscription_cost_per_month": 2,
+    "A:upside": 2,
+    "B:concern": 2,
+    "B:device_compatibility": 4,
+    "B:game_library_size": 2,
+    "B:max_resolution": 2,
+    "B:subscription_cost_per_month": 2,
+    "B:upside": 2,
+    "D:concern": 4,
+    "D:device_compatibility": 3,
+    "D:game_library_size": 1,
+    "D:max_resolution": 2,
+    "D:subscription_cost_per_month": 1,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "D",
+    "p3": "A",
+    "p4": "D",
+    "p5": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "B",
+      "p2": "D",
+      "p3": "A",
+      "p4": "D",
+      "p5": "B"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 33,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 20966,
+    "output_tokens": 2789,
+    "moderator_turns": 4,
+    "voluntary_turns": 28,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 5,
+    "participant_turns": 38,
+    "voluntary_turns": 28,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0952,
+    "avg_words_per_participant_turn": 15.24,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 20966,
+    "output_tokens": 2789,
+    "llm_calls": 36,
+    "voluntary_turns_by_persona": {
+      "p4": 8,
+      "p3": 2,
+      "p1": 11,
+      "p5": 4,
+      "p2": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest cost and acceptable device compatibility for our needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly cost with channels offering different game selections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Amazon Luna has the lowest cost and decent device support, which fits our multiplayer needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest monthly cost and decent device support.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly cost with channels offering different game selections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the most affordable service that still supports multiplayer well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Lowest monthly cost with decent device support fits us best. Option D.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes Xbox Game Pass with multiplayer games and good device support.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes access to Xbox Game Pass library with multiplayer support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Xbox Cloud includes Xbox Game Pass with multiplayer games and works well on most devices, which covers our group play needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Allows playing games I already own on many devices.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports a wide range of devices and allows playing games you already own."
+        },
+        "comparison_sources": [],
+        "personal_context": "Use a service that lets me play my existing games with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "GeForce NOW lets me play games I already own on pretty much any device.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes Xbox Game Pass with many multiplayer games.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes access to Xbox Game Pass library with multiplayer support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Xbox Cloud has a lot of multiplayer games with Game Pass, which is nice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "Higher cost and subscription complexity are downsides.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires Xbox Game Pass Ultimate subscription and has limited browser support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Higher cost and subscription complexity make it less reliable for consistent group play on a budget.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the game library size is 300+ titles",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "game_library_size",
+          "public_value": "300+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use a service that lets me play my existing games with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "300+ titles sound good, but I still prefer keeping things simple with what I already own.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Session limits on free tier and possible latency issues could disrupt gameplay.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Session length limits apply on free tier and some latency may occur on lower-end connections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Free tier session limits and latency could mess up group sessions—anyone experienced this?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Session length limits apply on free tier and some latency may occur on lower-end connections.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Session length limits apply on free tier and some latency may occur on lower-end connections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Session limits and some lag do happen on free tiers, so it might get tricky.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare max_resolution: 1080p and 1080p",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "max_resolution",
+            "public_value": "1080p"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "max_resolution",
+            "public_value": "1080p"
+          }
+        ],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both offer 1080p max resolution, so neither has an edge there for smooth group play on a budget.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the game library size is 1000+ titles",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "game_library_size",
+          "public_value": "1000+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1000+ titles is solid, but I’m more focused on how consistent the connection stays during our sessions.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large library and device flexibility are good.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports a wide range of devices and allows playing games you already own."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Large library and device flexibility are good."
+        },
+        "vote_option": null
+      },
+      "raw_text": "The big library and device flexibility with GeForce NOW could work for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the subscription cost per month is $10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$10 a month is reasonable, but I need to be sure it won’t cause lag during our sessions.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the device compatibility is PC, Mac, Android, Shield TV",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "device_compatibility",
+          "public_value": "PC, Mac, Android, Shield TV"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Device support across PC, Mac, Android, and Shield TV is good, but I’m mainly on PC, so that’s what matters most to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the game library size is 1000+ titles",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "game_library_size",
+          "public_value": "1000+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1000+ titles cover a lot, which is great for variety, but I need to confirm if cross-device play is smooth for our group.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the subscription cost per month is $10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use a service that lets me play my existing games with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$10 isn’t bad, but I prefer no extra fees.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare device_compatibility: PC, Mac, Fire TV, iOS, Android and PC, Android, iOS, Xbox consoles",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Mac, Fire TV, iOS, Android"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Android, iOS, Xbox consoles"
+          }
+        ],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One supports Mac and Fire TV, the other includes Xbox consoles; Mac and Fire TV fit our group better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Smaller library and concerns about stable internet for multiplayer.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller library and requires stable internet for smooth multiplayer experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Smaller libraries limit game variety, and unstable internet can kill multiplayer sessions—that’s a dealbreaker for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "More expensive and requires specific subscription.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires Xbox Game Pass Ultimate subscription and has limited browser support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the most affordable service that still supports multiplayer well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "More expensive and needs that specific subscription to work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the subscription cost per month is $15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$15 is a bit steep, especially if it locks us into one platform, which could limit device options for some of us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the device compatibility is PC, Android, iOS, Xbox consoles",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "device_compatibility",
+          "public_value": "PC, Android, iOS, Xbox consoles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the most affordable service that still supports multiplayer well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Covers all our devices except Mac, still good for most.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the game library size is 300+ titles",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "game_library_size",
+          "public_value": "300+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "300+ titles is decent, but it still feels limited for group play across all devices, especially with Mac users in the mix.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the max resolution is 1080p",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_resolution",
+          "public_value": "1080p"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1080p max isn’t bad, but for group sessions, I want something that works smoothly on all our devices without compromises.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the subscription cost per month is $15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the most affordable service that still supports multiplayer well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$15 is affordable for what we get, so I’m good with it.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare device_compatibility: PC, Mac, Fire TV, iOS, Android and PC, Android, iOS, Xbox consoles",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Mac, Fire TV, iOS, Android"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Android, iOS, Xbox consoles"
+          }
+        ],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Amazon Luna works on Mac and Fire TV too, while Xbox Cloud covers Xbox consoles instead. For wider device support, Luna fits better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the game library size is 100+ titles",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "game_library_size",
+          "public_value": "100+ titles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "100+ titles is definitely on the low side for group play, especially if we want variety and options everyone can enjoy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the subscription cost per month is $6",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "subscription_cost_per_month",
+          "public_value": "$6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$6 is a good price, but if the library’s too small, it won’t keep our group engaged long-term.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the max resolution is 1080p",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "max_resolution",
+          "public_value": "1080p"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1080p max isn’t a dealbreaker for me since I play on various devices, but it means it won’t look great on bigger screens.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Smaller library and internet stability concerns.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller library and requires stable internet for smooth multiplayer experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Smaller library might get old fast, and unstable net could kill the fun.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare device_compatibility: PC, Android, iOS, Xbox consoles and PC, Mac, Fire TV, iOS, Android",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Android, iOS, Xbox consoles"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "device_compatibility",
+            "public_value": "PC, Mac, Fire TV, iOS, Android"
+          }
+        ],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Xbox Cloud works on PC, Android, iOS, and Xbox consoles, while Amazon Luna adds Mac and Fire TV but no Xbox. Xbox fits my group’s device mix better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the max resolution is 1080p",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_resolution",
+          "public_value": "1080p"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a low-cost service that supports smooth multiplayer gaming for the group.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1080p max is fine for smooth multiplayer and keeps costs down, which matters most for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller library and concerns about stable internet for multiplayer.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller library and requires stable internet for smooth multiplayer experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with a large game library and broad device compatibility for group play.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still worried about the smaller library and needing super stable internet for smooth group play.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller library and internet stability concerns.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Smaller library and requires stable internet for smooth multiplayer experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a service with good multiplayer games and reasonable cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still feels risky with the smaller library and internet needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes Xbox Game Pass with multiplayer games and good device support.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes access to Xbox Game Pass library with multiplayer support."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Xbox Cloud.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest monthly cost and decent device support.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly cost with channels offering different game selections."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Amazon Luna is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Allows playing games I already own on many devices.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports a wide range of devices and allows playing games you already own."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is GeForce NOW.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Lowest cost and acceptable device compatibility for our needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Lower monthly cost with channels offering different game selections."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose Amazon Luna.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes Xbox Game Pass with many multiplayer games.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes access to Xbox Game Pass library with multiplayer support."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Xbox Cloud.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

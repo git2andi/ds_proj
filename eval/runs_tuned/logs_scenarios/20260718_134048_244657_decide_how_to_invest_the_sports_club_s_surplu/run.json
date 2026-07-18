@@ -1,0 +1,3396 @@
+{
+  "provenance": {
+    "seed": 242118787,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide how to invest the sports club's surplus budget",
+    "options": [
+      {
+        "id": "A",
+        "name": "Upgrade Club Facilities",
+        "attrs": {
+          "cost": "50000",
+          "expected_lifespan_years": "10",
+          "member_satisfaction_increase_percent": "20",
+          "maintenance_required_annually": "True"
+        },
+        "upside": "Improves member experience and attracts new members.",
+        "concern": "Requires ongoing maintenance and may disrupt activities during upgrades.",
+        "short_name": "Upgrade Facilities",
+        "aliases": [
+          "Upgrade Facilities",
+          "Club Facilities"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Fund Youth Training Programs",
+        "attrs": {
+          "cost": "50000",
+          "target_age_group": "8-18",
+          "program_duration_months": "12",
+          "expected_participants": "100"
+        },
+        "upside": "Supports community youth development and club reputation.",
+        "concern": "Benefits are mostly long-term and may not impact current members immediately.",
+        "short_name": "Fund Youth Training",
+        "aliases": [
+          "Fund Youth Training",
+          "Youth Training Programs"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Purchase New Sports Equipment",
+        "attrs": {
+          "cost": "50000",
+          "equipment_types": "['balls', 'rackets', 'protective gear']",
+          "expected_usage_years": "5",
+          "improves_safety": "True"
+        },
+        "upside": "Enhances safety and quality of training sessions.",
+        "concern": "Equipment will need replacement or repair within a few years.",
+        "short_name": "Purchase Sports Equipment",
+        "aliases": [
+          "Purchase Sports Equipment",
+          "New Sports Equipment"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Organize Community Sports Events",
+        "attrs": {
+          "cost": "50000",
+          "number_of_events": "4",
+          "expected_attendance_per_event": "200",
+          "community_partners_involved": "3"
+        },
+        "upside": "Increases community engagement and club visibility.",
+        "concern": "Events require significant planning and volunteer support.",
+        "short_name": "Organize Community Sports",
+        "aliases": [
+          "Organize Community Sports",
+          "Community Sports Events"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The sports club has a surplus budget of $50,000 to allocate. The decision must consider benefits to members, long-term value, and community engagement while ensuring transparency and accountability."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 5
+      },
+      "background": "Maya is a longtime club member and former athlete focused on facility quality.",
+      "private_goal": "Ensure the club's infrastructure directly benefits all current members.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Upgrading facilities directly improves member experience and attracts new members, aligning with my priority for immediate, tangible benefits.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Youth programs benefit mostly long-term and don't immediately improve current member experience, which is my priority."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Equipment replacement in 5 years is short-term and less impactful than facility upgrades."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Community events are valuable but don't provide lasting infrastructure improvements for members."
+        }
+      },
+      "hard_blocker": true
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Liam coaches youth teams and values long-term club growth through youth development.",
+      "private_goal": "Support programs that build future club talent and community goodwill.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Facilities upgrades improve member satisfaction but may disrupt activities and require maintenance.",
+          "reason_against": "Costly maintenance and disruption could offset some benefits."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Youth training supports community development and enhances the club's reputation long-term.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "New equipment improves safety and training quality.",
+          "reason_against": "Equipment lifespan is shorter, requiring future replacements."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Community events increase engagement and visibility.",
+          "reason_against": "Require significant planning and volunteer effort."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Nina is a casual club member who prefers low-key involvement and minimal disruptions.",
+      "private_goal": "Support initiatives that benefit youth and community without major upheaval.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "",
+          "reason_against": "Facility upgrades will disrupt activities and require ongoing maintenance, which I want to avoid."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Youth training programs support community youth without disrupting current members.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "New equipment improves safety but requires replacement in a few years.",
+          "reason_against": "Shorter lifespan means less long-term value."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Community events engage the club with the neighborhood.",
+          "reason_against": "Events need planning and volunteers, which might be a burden."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Eli is a community liaison focused on increasing club visibility and partnerships.",
+      "private_goal": "Boost community engagement to strengthen club ties and attract support.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Facility upgrades improve member experience but may cause disruption.",
+          "reason_against": "Maintenance and activity disruption are concerns."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Youth programs build community goodwill and future club talent.",
+          "reason_against": "Benefits are mostly long-term and less immediate."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Equipment improves safety but has a limited lifespan.",
+          "reason_against": "Short-term investment with future replacement needed."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Community sports events increase engagement and visibility, aligning with my goal.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Zara is a parent of youth members, passionate about supporting youth development.",
+      "private_goal": "Invest in programs that nurture young athletes and build club reputation.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Facility upgrades benefit members but may disrupt activities.",
+          "reason_against": "Ongoing maintenance is a concern."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Youth training programs support development and community reputation.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "New equipment improves safety and training quality.",
+          "reason_against": "Needs replacement within five years."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Community events increase engagement and visibility.",
+          "reason_against": "Require planning and volunteer effort."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 1,
+        "C": 1,
+        "D": 1
+      },
+      "acceptable_options": [
+        "A"
+      ],
+      "hard_rejected_options": [
+        "C",
+        "B",
+        "D"
+      ],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "cost"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "member_satisfaction_increase_percent"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "cost"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Community events increase engagement and visibility."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "expected_lifespan_years"
+        ],
+        [
+          "D",
+          "expected_attendance_per_event"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "cost"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "maintenance_required_annually"
+        ],
+        [
+          "B",
+          "cost"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "community_partners_involved"
+        ],
+        [
+          "D",
+          "number_of_events"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Youth programs build community goodwill and future club talent."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "expected_attendance_per_event"
+        ],
+        [
+          "A",
+          "expected_lifespan_years"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "cost"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "member_satisfaction_increase_percent"
+        ],
+        [
+          "B",
+          "cost"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "number_of_events"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "maintenance_required_annually"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "program_duration_months"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Decide how to invest the sports club's surplus budget.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Funding Youth Training Programs builds future talent and improves our club’s reputation long-term.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training supports community development and enhances the club's reputation long-term.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Community sports events really help boost engagement and visibility, which fits well with our goals.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Community sports events increase engagement and visibility, aligning with my goal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Increases community engagement and club visibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Youth Training Programs really help develop young athletes and boost our club’s reputation.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training programs support development and community reputation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Youth training programs support youth without disruption.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training programs support community youth without disrupting current members.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support initiatives that benefit youth and community without major upheaval.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Upgrading club facilities directly improves member experience and attracts new members.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Upgrading facilities directly improves member experience and attracts new members, aligning with my priority for immediate, tangible benefits.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Improves member experience and attracts new members."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Still, the disruption could hurt ongoing youth training, which is key for long-term growth.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Costly maintenance and disruption could offset some benefits.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires ongoing maintenance and may disrupt activities during upgrades."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "The annual maintenance is a real commitment, so we must ensure it won’t disrupt key programs.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the maintenance required annually is True",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "maintenance_required_annually",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "That 20% satisfaction boost is promising, though we should watch for program interruptions.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the member satisfaction increase percent is 20",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "member_satisfaction_increase_percent",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The $50,000 cost is significant but necessary for long-term member benefit.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the cost is 50000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost",
+          "public_value": "50000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Community Sports Events increase engagement and visibility, so I can accept organizing them now.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Community events increase engagement and visibility.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Increases community engagement and club visibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Community events increase engagement and visibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Community events increase engagement and visibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "$50,000 is a big ask, so we should be sure it really drives community support.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cost is 50000",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cost",
+          "public_value": "50000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Community events are worthwhile but don’t solve our ongoing infrastructure needs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Community events are valuable but don't provide lasting infrastructure improvements for members.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Events require significant planning and volunteer support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Four events are enough to boost visibility without spreading resources too thin.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the number of events is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "number_of_events",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "200 attendees is solid, but we need follow-up programs to keep them engaged long-term.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the expected attendance per event is 200",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "expected_attendance_per_event",
+          "public_value": "200"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Both cost $50,000, but funding youth training builds future players, which fits our long-term goals better.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: 50000 and 50000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          }
+        ],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "A full year gives time to see real progress, which is crucial for lasting impact.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the program duration months is 12",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "program_duration_months",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The benefits sound mostly long-term—how do we keep current members engaged meanwhile?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Benefits are mostly long-term and less immediate.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Benefits are mostly long-term and may not impact current members immediately."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Short-term engagement needs extra events or challenges alongside youth training.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Benefits are mostly long-term and may not impact current members immediately.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Benefits are mostly long-term and may not impact current members immediately."
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Both cost $50,000, but upgrading facilities improves daily experiences for current members more directly.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: 50000 and 50000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          }
+        ],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Maintenance needs and interruptions might make it tricky to keep momentum going.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Maintenance and activity disruption are concerns.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires ongoing maintenance and may disrupt activities during upgrades."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "That’s true, though with a 10-year lifespan, we should plan ongoing engagement beyond just the upgrades.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expected lifespan years is 10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "expected_lifespan_years",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Maintenance every year means we need steady funding, or the upgrades won’t last.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the maintenance required annually is True",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "maintenance_required_annually",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "A 20% satisfaction increase justifies the steady funding needed to maintain improvements.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the member satisfaction increase percent is 20",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "member_satisfaction_increase_percent",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Given the goodwill and future talent youth programs build, I could see supporting Fund Youth Training now.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth programs build community goodwill and future club talent.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Youth programs build community goodwill and future club talent."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Youth programs build community goodwill and future club talent."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Both cost 50,000, but youth training seems to build longer-term community ties.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: 50000 and 50000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          }
+        ],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Four events seem doable, but I worry about stretching resources thin.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the number of events is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "number_of_events",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support initiatives that benefit youth and community without major upheaval.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Only three partners might keep it manageable here.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the community partners involved is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "community_partners_involved",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support initiatives that benefit youth and community without major upheaval.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "That’s a fair point, though hitting around 200 attendees per event could really boost our visibility.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the expected attendance per event is 200",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "expected_attendance_per_event",
+          "public_value": "200"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Both cost 50,000, but upgrading facilities improves everyone's daily experience more directly.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: 50000 and 50000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          }
+        ],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Ten years isn’t long enough to justify the full cost without strong youth program support alongside.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expected lifespan years is 10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "expected_lifespan_years",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 31,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Upgrade Facilities.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Upgrading facilities directly improves member experience and attracts new members, aligning with my priority for immediate, tangible benefits.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Improves member experience and attracts new members."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Fund Youth Training.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training supports community development and enhances the club's reputation long-term.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 34,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "I’m voting for Fund Youth Training.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training programs support community youth without disrupting current members.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Organize Community Sports is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Community sports events increase engagement and visibility, aligning with my goal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Increases community engagement and club visibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Fund Youth Training is my final choice.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training programs support development and community reputation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 37,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Fund Youth Training.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:cost": 3,
+    "A:expected_lifespan_years": 2,
+    "A:maintenance_required_annually": 2,
+    "A:member_satisfaction_increase_percent": 2,
+    "A:upside": 1,
+    "B:concern": 2,
+    "B:cost": 4,
+    "B:program_duration_months": 1,
+    "B:upside": 4,
+    "D:community_partners_involved": 1,
+    "D:concern": 1,
+    "D:cost": 3,
+    "D:expected_attendance_per_event": 2,
+    "D:number_of_events": 2,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "cost"
+    ],
+    [
+      "A",
+      "expected_lifespan_years"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "B",
+    "p3": "B",
+    "p4": "D",
+    "p5": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "A",
+      "p2": "B",
+      "p3": "B",
+      "p4": "D",
+      "p5": "B"
+    },
+    "reason": "3 of 5 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 31,
+    "setup_llm_calls": 3,
+    "repair_calls": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 18911,
+    "output_tokens": 2512,
+    "moderator_turns": 3,
+    "voluntary_turns": 25,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 5,
+    "participant_turns": 35,
+    "voluntary_turns": 25,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0789,
+    "avg_words_per_participant_turn": 12.11,
+    "visible_preference_changes": 0,
+    "repair_turns": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 18911,
+    "output_tokens": 2512,
+    "llm_calls": 34,
+    "voluntary_turns_by_persona": {
+      "p2": 6,
+      "p5": 4,
+      "p4": 8,
+      "p1": 5,
+      "p3": 2
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training supports community development and enhances the club's reputation long-term.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Funding Youth Training Programs builds future talent and improves our club’s reputation long-term.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Community sports events increase engagement and visibility, aligning with my goal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Increases community engagement and club visibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Community sports events really help boost engagement and visibility, which fits well with our goals.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training programs support development and community reputation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Youth Training Programs really help develop young athletes and boost our club’s reputation.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training programs support community youth without disrupting current members.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support initiatives that benefit youth and community without major upheaval.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Supporting youth training seems like it helps without much disruption.",
+      "validation_errors": [
+        "focused option is not visible"
+      ],
+      "repair_text": "Youth training programs support youth without disruption.",
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Upgrading facilities directly improves member experience and attracts new members, aligning with my priority for immediate, tangible benefits.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Improves member experience and attracts new members."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Upgrading club facilities directly improves member experience and attracts new members.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Costly maintenance and disruption could offset some benefits.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires ongoing maintenance and may disrupt activities during upgrades."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still, the disruption could hurt ongoing youth training, which is key for long-term growth.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the maintenance required annually is True",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "maintenance_required_annually",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The annual maintenance is a real commitment, so we must ensure it won’t disrupt key programs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the member satisfaction increase percent is 20",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "member_satisfaction_increase_percent",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That 20% satisfaction boost is promising, though we should watch for program interruptions.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the cost is 50000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost",
+          "public_value": "50000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The $50,000 cost is significant but necessary for long-term member benefit.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Community events increase engagement and visibility.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Increases community engagement and club visibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Community events increase engagement and visibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Community Sports Events increase engagement and visibility, so I can accept organizing them now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cost is 50000",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cost",
+          "public_value": "50000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$50,000 is a big ask, so we should be sure it really drives community support.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Community events are valuable but don't provide lasting infrastructure improvements for members.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Events require significant planning and volunteer support."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Community events are worthwhile but don’t solve our ongoing infrastructure needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the number of events is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "number_of_events",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four events are enough to boost visibility without spreading resources too thin.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the expected attendance per event is 200",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "expected_attendance_per_event",
+          "public_value": "200"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "200 attendees is solid, but we need follow-up programs to keep them engaged long-term.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: 50000 and 50000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          }
+        ],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both cost $50,000, but funding youth training builds future players, which fits our long-term goals better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the program duration months is 12",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "program_duration_months",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A full year gives time to see real progress, which is crucial for lasting impact.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Benefits are mostly long-term and less immediate.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Benefits are mostly long-term and may not impact current members immediately."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The benefits sound mostly long-term—how do we keep current members engaged meanwhile?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Benefits are mostly long-term and may not impact current members immediately.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Benefits are mostly long-term and may not impact current members immediately."
+        },
+        "comparison_sources": [],
+        "personal_context": "Invest in programs that nurture young athletes and build club reputation.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Short-term engagement needs extra events or challenges alongside youth training.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: 50000 and 50000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          }
+        ],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both cost $50,000, but upgrading facilities improves daily experiences for current members more directly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Maintenance and activity disruption are concerns.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires ongoing maintenance and may disrupt activities during upgrades."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maintenance needs and interruptions might make it tricky to keep momentum going.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expected lifespan years is 10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "expected_lifespan_years",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s true, though with a 10-year lifespan, we should plan ongoing engagement beyond just the upgrades.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the maintenance required annually is True",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "maintenance_required_annually",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maintenance every year means we need steady funding, or the upgrades won’t last.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the member satisfaction increase percent is 20",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "member_satisfaction_increase_percent",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A 20% satisfaction increase justifies the steady funding needed to maintain improvements.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth programs build community goodwill and future club talent.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Youth programs build community goodwill and future club talent."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Given the goodwill and future talent youth programs build, I could see supporting Fund Youth Training now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: 50000 and 50000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          }
+        ],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both cost 50,000, but youth training seems to build longer-term community ties.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the number of events is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "number_of_events",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support initiatives that benefit youth and community without major upheaval.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four events seem doable, but I worry about stretching resources thin.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the community partners involved is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "community_partners_involved",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support initiatives that benefit youth and community without major upheaval.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Only three partners might keep it manageable here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the expected attendance per event is 200",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "expected_attendance_per_event",
+          "public_value": "200"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost community engagement to strengthen club ties and attract support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s a fair point, though hitting around 200 attendees per event could really boost our visibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: 50000 and 50000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "50000"
+          }
+        ],
+        "personal_context": "Ensure the club's infrastructure directly benefits all current members.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both cost 50,000, but upgrading facilities improves everyone's daily experience more directly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expected lifespan years is 10",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "expected_lifespan_years",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support programs that build future club talent and community goodwill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ten years isn’t long enough to justify the full cost without strong youth program support alongside.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Upgrading facilities directly improves member experience and attracts new members, aligning with my priority for immediate, tangible benefits.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Improves member experience and attracts new members."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Upgrade Facilities.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training supports community development and enhances the club's reputation long-term.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Fund Youth Training.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training programs support community youth without disrupting current members.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Fund Youth Training.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Community sports events increase engagement and visibility, aligning with my goal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Increases community engagement and club visibility."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Organize Community Sports is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Youth training programs support development and community reputation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Supports community youth development and club reputation."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Fund Youth Training is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

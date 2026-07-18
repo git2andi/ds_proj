@@ -1,0 +1,2110 @@
+{
+  "provenance": {
+    "seed": 242118779,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Plan the surprise anniversary gift for the grandparents",
+    "options": [
+      {
+        "id": "A",
+        "name": "Custom Photo Album with Family Memories",
+        "attrs": {
+          "type": "sentimental",
+          "preparation_time_days": "7",
+          "cost_usd": "50",
+          "personalization_level": "high"
+        },
+        "upside": "Captures cherished family moments in a lasting keepsake.",
+        "concern": "Requires time to collect and organize photos from family members.",
+        "short_name": "Custom Photo Album",
+        "aliases": [
+          "Custom Photo Album",
+          "Family Memories"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Weekend Getaway at a Nearby Bed and Breakfast",
+        "attrs": {
+          "type": "experience",
+          "duration_days": "2",
+          "cost_usd": "300",
+          "suitability": "relaxing"
+        },
+        "upside": "Provides a shared relaxing experience away from home.",
+        "concern": "May require coordinating schedules and travel arrangements.",
+        "short_name": "Weekend Getaway",
+        "aliases": [
+          "Weekend Getaway",
+          "Bed and Breakfast"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Personalized Garden Bench with Engraved Plaque",
+        "attrs": {
+          "type": "practical",
+          "material": "wood",
+          "cost_usd": "150",
+          "installation_required": "True"
+        },
+        "upside": "Adds a functional and decorative element to their garden.",
+        "concern": "Needs space in the garden and time for installation.",
+        "short_name": "Personalized Garden Bench",
+        "aliases": [
+          "Personalized Garden Bench",
+          "Engraved Plaque"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Subscription to a Monthly Gourmet Food Box",
+        "attrs": {
+          "type": "consumable",
+          "duration_months": "6",
+          "cost_usd": "180",
+          "variety_level": "high"
+        },
+        "upside": "Offers a variety of gourmet foods to enjoy over several months.",
+        "concern": "May include items that do not match their dietary preferences.",
+        "short_name": "Monthly Gourmet Food",
+        "aliases": [
+          "Monthly Gourmet Food",
+          "Gourmet Food Box"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The group is planning a surprise anniversary gift for their grandparents who enjoy sentimental and practical presents. The gift should be meaningful, suitable for both grandparents, and fit within a moderate budget."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Maya is a thoughtful family member who enjoys preserving memories through meaningful keepsakes.",
+      "private_goal": "To create a deeply sentimental gift that highlights family bonds.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Highly personalized and sentimental, capturing cherished family moments.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Offers a relaxing experience for grandparents.",
+          "reason_against": "Too costly and requires complex scheduling, which may be impractical."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Practical and meaningful addition to the garden with personalization.",
+          "reason_against": "Needs garden space and installation effort, which could be inconvenient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Provides enjoyable gourmet food over time.",
+          "reason_against": "Risk of dietary mismatches and less sentimental than preferred."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Liam is a pragmatic planner who values gifts that offer ongoing enjoyment and practicality.",
+      "private_goal": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 41,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Sentimental and meaningful, but less practical and requires effort.",
+          "reason_against": "Time-consuming to prepare and less useful day-to-day."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Creates a memorable experience.",
+          "reason_against": "High cost and scheduling difficulties make it less feasible."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Useful and decorative, offering lasting value.",
+          "reason_against": "Installation and space requirements might be inconvenient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Offers variety and ongoing enjoyment within a moderate budget.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Zoe is an enthusiastic organizer who loves creating shared experiences for loved ones.",
+      "private_goal": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Highly sentimental and personalized, strengthening family ties.",
+          "reason_against": "Takes time to gather photos and organize the album."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Provides a relaxing and memorable shared experience away from home.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Practical and decorative, but less interactive or experiential.",
+          "reason_against": "Needs garden space and installation, which may be inconvenient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Offers variety and enjoyment over time.",
+          "reason_against": "May not suit dietary preferences and less experiential."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "type"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 2,
+        "C": 4,
+        "D": 5
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "preparation_time_days"
+        ],
+        [
+          "B",
+          "cost_usd"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "cost_usd"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Highly sentimental and personalized, strengthening family ties."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "A",
+          "preparation_time_days"
+        ],
+        [
+          "A",
+          "personalization_level"
+        ],
+        [
+          "A",
+          "type"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "cost_usd"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Plan the surprise anniversary gift for the grandparents.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "A Monthly Gourmet Food Box offers variety and ongoing enjoyment.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Offers variety and ongoing enjoyment within a moderate budget.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Offers a variety of gourmet foods to enjoy over several months."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "A Custom Photo Album feels more personal, capturing family memories deeply.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly personalized and sentimental, capturing cherished family moments.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create a deeply sentimental gift that highlights family bonds.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "A Weekend Getaway at a nearby Bed and Breakfast provides a relaxing and memorable shared experience away from home, perfect for them to enjoy together.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Provides a relaxing and memorable shared experience away from home.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a shared relaxing experience away from home."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Seven days for preparation is reasonable, but booking a getaway lets us plan something they’ll talk about long after.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the preparation time days is 7",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "preparation_time_days",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The cost and scheduling make that less practical for them.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High cost and scheduling difficulties make it less feasible.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "May require coordinating schedules and travel arrangements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "180 versus 300 dollars is a big difference. The cheaper one fits ongoing use better.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost_usd: 180 and 300",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cost_usd",
+            "public_value": "180"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cost_usd",
+            "public_value": "300"
+          }
+        ],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Actually, the Custom Photo Album with Family Memories is highly sentimental and personalized, which really strengthens family ties—so it could be a better fit.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly sentimental and personalized, strengthening family ties.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Highly sentimental and personalized, strengthening family ties."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Highly sentimental and personalized, strengthening family ties."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Sentiment’s good, but prepping takes too long and adds hassle.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Time-consuming to prepare and less useful day-to-day.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires time to collect and organize photos from family members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The prep time is a hassle, but the personal touch makes it a unique gift they’ll truly cherish together.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the type is sentimental",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "type",
+          "public_value": "sentimental"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Still, the lasting memories they’ll revisit together outweigh the extra effort for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the personalization level is high",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "personalization_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Seven days prep means the gift can’t arrive quickly enough for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the preparation time days is 7",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "preparation_time_days",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Waiting can be hard, but those memories last much longer.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the type is sentimental",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "type",
+          "public_value": "sentimental"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create a deeply sentimental gift that highlights family bonds.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The $50 cost is fair considering how meaningful and lasting this gift will be for them both.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cost is 50",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost_usd",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Does anyone else worry the food box might not suit their tastes?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Risk of dietary mismatches and less sentimental than preferred.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May include items that do not match their dietary preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create a deeply sentimental gift that highlights family bonds.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "True, some items might not fit their dietary preferences, which could be a problem.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is May include items that do not match their dietary preferences.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May include items that do not match their dietary preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 16,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Custom Photo Album currently has 1 of 3 public preferences and the broadest overall support, but not a majority. Liam and Zoe, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 17,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "That Custom Photo Album fits well since it’s highly sentimental and personalized, which really helps strengthen family ties.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly sentimental and personalized, strengthening family ties.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Highly sentimental and personalized, strengthening family ties."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Highly sentimental and personalized, strengthening family ties."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 18,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Good idea, but it’s too time-consuming and not practical daily.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Time-consuming to prepare and less useful day-to-day.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires time to collect and organize photos from family members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 19,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 20,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Custom Photo Album.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly personalized and sentimental, capturing cherished family moments.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 21,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Monthly Gourmet Food is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Offers variety and ongoing enjoyment within a moderate budget.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Offers a variety of gourmet foods to enjoy over several months."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 22,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I’m voting for Custom Photo Album.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly sentimental and personalized, strengthening family ties.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Highly sentimental and personalized, strengthening family ties."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Highly sentimental and personalized, strengthening family ties."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 23,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Custom Photo Album received the final majority.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:cost_usd": 1,
+    "A:personalization_level": 1,
+    "A:preparation_time_days": 2,
+    "A:type": 2,
+    "A:upside": 3,
+    "B:concern": 1,
+    "B:cost_usd": 1,
+    "B:upside": 1,
+    "D:concern": 2,
+    "D:cost_usd": 1,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "upside"
+    ],
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "D",
+    "p3": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "D",
+      "p3": "A"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 17,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 10841,
+    "output_tokens": 1774,
+    "moderator_turns": 4,
+    "voluntary_turns": 14,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 20,
+    "voluntary_turns": 14,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1667,
+    "avg_words_per_participant_turn": 13.35,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 10841,
+    "output_tokens": 1774,
+    "llm_calls": 20,
+    "voluntary_turns_by_persona": {
+      "p3": 7,
+      "p2": 5,
+      "p1": 2
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Offers variety and ongoing enjoyment within a moderate budget.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Offers a variety of gourmet foods to enjoy over several months."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A Monthly Gourmet Food Box offers variety and ongoing enjoyment.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly personalized and sentimental, capturing cherished family moments.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create a deeply sentimental gift that highlights family bonds.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A Custom Photo Album feels more personal, capturing family memories deeply.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Provides a relaxing and memorable shared experience away from home.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a shared relaxing experience away from home."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A Weekend Getaway at a nearby Bed and Breakfast provides a relaxing and memorable shared experience away from home, perfect for them to enjoy together.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the preparation time days is 7",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "preparation_time_days",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Seven days for preparation is reasonable, but booking a getaway lets us plan something they’ll talk about long after.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High cost and scheduling difficulties make it less feasible.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "May require coordinating schedules and travel arrangements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The cost and scheduling make that less practical for them.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost_usd: 180 and 300",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cost_usd",
+            "public_value": "180"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cost_usd",
+            "public_value": "300"
+          }
+        ],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "180 versus 300 dollars is a big difference. The cheaper one fits ongoing use better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly sentimental and personalized, strengthening family ties.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Highly sentimental and personalized, strengthening family ties."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Actually, the Custom Photo Album with Family Memories is highly sentimental and personalized, which really strengthens family ties—so it could be a better fit.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Time-consuming to prepare and less useful day-to-day.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires time to collect and organize photos from family members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sentiment’s good, but prepping takes too long and adds hassle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the type is sentimental",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "type",
+          "public_value": "sentimental"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The prep time is a hassle, but the personal touch makes it a unique gift they’ll truly cherish together.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the personalization level is high",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "personalization_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still, the lasting memories they’ll revisit together outweigh the extra effort for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the preparation time days is 7",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "preparation_time_days",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Seven days prep means the gift can’t arrive quickly enough for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the type is sentimental",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "type",
+          "public_value": "sentimental"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create a deeply sentimental gift that highlights family bonds.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Waiting can be hard, but those memories last much longer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cost is 50",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost_usd",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The $50 cost is fair considering how meaningful and lasting this gift will be for them both.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Risk of dietary mismatches and less sentimental than preferred.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May include items that do not match their dietary preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create a deeply sentimental gift that highlights family bonds.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does anyone else worry the food box might not suit their tastes?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is May include items that do not match their dietary preferences.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May include items that do not match their dietary preferences."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, some items might not fit their dietary preferences, which could be a problem.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly sentimental and personalized, strengthening family ties.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": "To gift an experience that both grandparents can enjoy together and remember fondly.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Highly sentimental and personalized, strengthening family ties."
+        },
+        "vote_option": null
+      },
+      "raw_text": "That Custom Photo Album fits well since it’s highly sentimental and personalized, which really helps strengthen family ties.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Time-consuming to prepare and less useful day-to-day.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires time to collect and organize photos from family members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a gift that grandparents can appreciate repeatedly without hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Good idea, but it’s too time-consuming and not practical daily.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly personalized and sentimental, capturing cherished family moments.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Custom Photo Album.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Offers variety and ongoing enjoyment within a moderate budget.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Offers a variety of gourmet foods to enjoy over several months."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Monthly Gourmet Food is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Highly sentimental and personalized, strengthening family ties.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Captures cherished family moments in a lasting keepsake."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Highly sentimental and personalized, strengthening family ties."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Custom Photo Album.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

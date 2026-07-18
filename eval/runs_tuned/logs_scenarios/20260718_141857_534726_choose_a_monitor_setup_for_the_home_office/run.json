@@ -1,0 +1,1853 @@
+{
+  "provenance": {
+    "seed": 242118874,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose a monitor setup for the home office",
+    "options": [
+      {
+        "id": "A",
+        "name": "Dual 24-inch 1080p IPS Monitors",
+        "attrs": {
+          "screen_size": "24 inches",
+          "resolution": "1920x1080",
+          "panel_type": "IPS",
+          "refresh_rate": "60Hz",
+          "connectivity": "HDMI, DisplayPort"
+        },
+        "upside": "Provides ample screen space for multitasking with consistent colors and wide viewing angles.",
+        "concern": "May require frequent cable management and desk space is moderately used.",
+        "short_name": "Dual IPS Monitors",
+        "aliases": [
+          "Dual IPS Monitors",
+          "IPS Monitors"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Single 32-inch 4K UHD Monitor",
+        "attrs": {
+          "screen_size": "32 inches",
+          "resolution": "3840x2160",
+          "panel_type": "VA",
+          "refresh_rate": "60Hz",
+          "connectivity": "HDMI, USB-C"
+        },
+        "upside": "High resolution offers detailed visuals and reduces the need for multiple screens.",
+        "concern": "Larger size may dominate desk space and VA panel has narrower viewing angles.",
+        "short_name": "Single UHD Monitor",
+        "aliases": [
+          "Single UHD Monitor",
+          "Single -inch"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Ultrawide 34-inch 3440x1440 Monitor",
+        "attrs": {
+          "screen_size": "34 inches",
+          "resolution": "3440x1440",
+          "panel_type": "IPS",
+          "refresh_rate": "75Hz",
+          "connectivity": "HDMI, DisplayPort, USB-C"
+        },
+        "upside": "Wide aspect ratio supports multitasking without bezels between screens.",
+        "concern": "Ultrawide format may not be compatible with all video conferencing software layouts.",
+        "short_name": "Ultrawide Monitor",
+        "aliases": [
+          "Ultrawide Monitor",
+          "Ultrawide -inch"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Dual 27-inch 1440p Monitors with Adjustable Stands",
+        "attrs": {
+          "screen_size": "27 inches",
+          "resolution": "2560x1440",
+          "panel_type": "IPS",
+          "refresh_rate": "75Hz",
+          "connectivity": "HDMI, DisplayPort"
+        },
+        "upside": "Higher resolution and adjustable stands improve ergonomics and screen clarity.",
+        "concern": "Takes up more desk space and requires calibration for color consistency.",
+        "short_name": "Adjustable Stands",
+        "aliases": [
+          "Adjustable Stands"
+        ]
+      }
+    ],
+    "shared_context": [
+      "Two participants need to select a monitor setup for a home office that supports productivity and ergonomic comfort. The setup must fit a desk space of 60 inches wide and accommodate video conferencing and multitasking."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Maya is a graphic designer who values color accuracy and multitasking efficiency in her home office setup.",
+      "private_goal": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Dual 24-inch IPS monitors provide ample screen space with consistent colors and wide viewing angles, ideal for multitasking and video conferencing.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "High resolution offers detailed visuals.",
+          "reason_against": "Single large screen reduces multitasking flexibility and VA panel has narrower viewing angles."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Ultrawide aspect ratio supports multitasking without bezels.",
+          "reason_against": "May have compatibility issues with some video conferencing layouts."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Higher resolution and adjustable stands improve ergonomics and screen clarity.",
+          "reason_against": "Consumes more desk space and requires color calibration."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Liam is a software developer who prefers a clean, minimal desk setup with high-resolution visuals.",
+      "private_goal": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Provides good multitasking space.",
+          "reason_against": "Dual monitors increase desk clutter and cable management complexity."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Single 32-inch 4K UHD monitor offers detailed visuals and reduces need for multiple screens, fitting a minimalist style.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Ultrawide monitor supports multitasking without bezels and has good resolution.",
+          "reason_against": "Ultrawide format may not work well with all video conferencing software."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Higher resolution and adjustable stands improve ergonomics.",
+          "reason_against": "Takes up more desk space and requires calibration."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "screen_size"
+        ],
+        [
+          "A",
+          "refresh_rate"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "resolution"
+        ],
+        [
+          "A",
+          "panel_type"
+        ],
+        [
+          "B",
+          "refresh_rate"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "screen_size"
+        ],
+        [
+          "B",
+          "panel_type"
+        ],
+        [
+          "B",
+          "resolution"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "connectivity"
+        ],
+        [
+          "A",
+          "panel_type"
+        ],
+        [
+          "A",
+          "resolution"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "resolution"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Choose a monitor setup for the home office.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "A single 32-inch 4K UHD monitor gives detailed visuals and keeps the desk uncluttered.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Single 32-inch 4K UHD monitor offers detailed visuals and reduces need for multiple screens, fitting a minimalist style.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "High resolution offers detailed visuals and reduces the need for multiple screens."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Dual IPS Monitors give consistent colors and wide viewing angles, plus plenty of space for multitasking and video calls.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Dual 24-inch IPS monitors provide ample screen space with consistent colors and wide viewing angles, ideal for multitasking and video conferencing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides ample screen space for multitasking with consistent colors and wide viewing angles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The extra cables and space might just add unwanted clutter here.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Dual monitors increase desk clutter and cable management complexity.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require frequent cable management and desk space is moderately used."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s hear one more concrete point before we narrow this down.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Does anyone think the narrower viewing angles on VA panels actually affect video calls much?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Single large screen reduces multitasking flexibility and VA panel has narrower viewing angles.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Larger size may dominate desk space and VA panel has narrower viewing angles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The narrower angles might matter if you move a lot during calls, though.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Larger size may dominate desk space and VA panel has narrower viewing angles.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Larger size may dominate desk space and VA panel has narrower viewing angles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "32 inches is a good size for multitasking, but I still worry about color shifts if the angle changes during calls.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the screen size is 32 inches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "screen_size",
+          "public_value": "32 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "3840x2160 definitely helps with clarity, though I’m still careful about desk space.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the resolution is 3840x2160",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "resolution",
+          "public_value": "3840x2160"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "VA panels have better contrast, which helps with color accuracy, but I do notice some shifts if I glance off-angle during video calls.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the panel type is VA",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "panel_type",
+          "public_value": "VA"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "60Hz is fine for most tasks, but it can feel a bit sluggish during quick window switching or video playback.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the refresh rate is 60Hz",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "refresh_rate",
+          "public_value": "60Hz"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "1920x1080 on two screens means less sharpness but more space for different windows, which suits multitasking better than one 3840x2160 screen.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare resolution: 1920x1080 and 3840x2160",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "resolution",
+            "public_value": "1920x1080"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "resolution",
+            "public_value": "3840x2160"
+          }
+        ],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "IPS definitely helps with color consistency, though.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the panel type is IPS",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "panel_type",
+          "public_value": "IPS"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "HDMI and DisplayPort work well, but I prefer fewer cables overall.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the connectivity is HDMI, DisplayPort",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "connectivity",
+          "public_value": "HDMI, DisplayPort"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "60Hz works, but it sometimes makes quick window switching less smooth, which can slow me down during calls or multitasking.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the refresh rate is 60Hz",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "refresh_rate",
+          "public_value": "60Hz"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "A bigger 32-inch screen means more detail but less room to spread out multiple windows, so the dual 24-inch setup fits my multitasking needs better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare screen_size: 24 inches and 32 inches",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "screen_size",
+            "public_value": "24 inches"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "screen_size",
+            "public_value": "32 inches"
+          }
+        ],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "IPS panels do keep colors accurate across angles, which is crucial for my design work and multiple open windows.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the panel type is IPS",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "panel_type",
+          "public_value": "IPS"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "1920x1080 is fine, though I find higher resolution easier for detailed work.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the resolution is 1920x1080",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "resolution",
+          "public_value": "1920x1080"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 18,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "There is no unique leader, so I’m selecting Single UHD Monitor from the tied options for this compromise check. Maya, would that choice work for you?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 19,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Dual IPS Monitors is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Dual 24-inch IPS monitors provide ample screen space with consistent colors and wide viewing angles, ideal for multitasking and video conferencing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides ample screen space for multitasking with consistent colors and wide viewing angles."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 20,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Single UHD Monitor.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Single 32-inch 4K UHD monitor offers detailed visuals and reduces need for multiple screens, fitting a minimalist style.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "High resolution offers detailed visuals and reduces the need for multiple screens."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 21,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The group remains split and no final option was selected.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 1,
+    "A:connectivity": 1,
+    "A:panel_type": 2,
+    "A:refresh_rate": 1,
+    "A:resolution": 2,
+    "A:screen_size": 1,
+    "A:upside": 1,
+    "B:concern": 2,
+    "B:panel_type": 1,
+    "B:refresh_rate": 1,
+    "B:resolution": 2,
+    "B:screen_size": 2,
+    "B:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "panel_type"
+    ],
+    [
+      "A",
+      "resolution"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "A",
+      "p2": "B"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 16,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 6,
+    "input_tokens": 11360,
+    "output_tokens": 1688,
+    "moderator_turns": 4,
+    "voluntary_turns": 8,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 2,
+    "participant_turns": 18,
+    "voluntary_turns": 8,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1818,
+    "avg_words_per_participant_turn": 15.28,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 11360,
+    "output_tokens": 1688,
+    "llm_calls": 19,
+    "voluntary_turns_by_persona": {
+      "p2": 3,
+      "p1": 5
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Single 32-inch 4K UHD monitor offers detailed visuals and reduces need for multiple screens, fitting a minimalist style.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "High resolution offers detailed visuals and reduces the need for multiple screens."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A single 32-inch 4K UHD monitor gives detailed visuals and keeps the desk uncluttered.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Dual 24-inch IPS monitors provide ample screen space with consistent colors and wide viewing angles, ideal for multitasking and video conferencing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides ample screen space for multitasking with consistent colors and wide viewing angles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Dual IPS Monitors give consistent colors and wide viewing angles, plus plenty of space for multitasking and video calls.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Dual monitors increase desk clutter and cable management complexity.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require frequent cable management and desk space is moderately used."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The extra cables and space might just add unwanted clutter here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Single large screen reduces multitasking flexibility and VA panel has narrower viewing angles.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Larger size may dominate desk space and VA panel has narrower viewing angles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does anyone think the narrower viewing angles on VA panels actually affect video calls much?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Larger size may dominate desk space and VA panel has narrower viewing angles.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Larger size may dominate desk space and VA panel has narrower viewing angles."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The narrower angles might matter if you move a lot during calls, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the screen size is 32 inches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "screen_size",
+          "public_value": "32 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "32 inches is a good size for multitasking, but I still worry about color shifts if the angle changes during calls.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the resolution is 3840x2160",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "resolution",
+          "public_value": "3840x2160"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "3840x2160 definitely helps with clarity, though I’m still careful about desk space.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the panel type is VA",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "panel_type",
+          "public_value": "VA"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "VA panels have better contrast, which helps with color accuracy, but I do notice some shifts if I glance off-angle during video calls.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the refresh rate is 60Hz",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "refresh_rate",
+          "public_value": "60Hz"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "60Hz is fine for most tasks, but it can feel a bit sluggish during quick window switching or video playback.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare resolution: 1920x1080 and 3840x2160",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "resolution",
+            "public_value": "1920x1080"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "resolution",
+            "public_value": "3840x2160"
+          }
+        ],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1920x1080 on two screens means less sharpness but more space for different windows, which suits multitasking better than one 3840x2160 screen.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the panel type is IPS",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "panel_type",
+          "public_value": "IPS"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "IPS definitely helps with color consistency, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the connectivity is HDMI, DisplayPort",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "connectivity",
+          "public_value": "HDMI, DisplayPort"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "HDMI and DisplayPort work well, but I prefer fewer cables overall.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the refresh rate is 60Hz",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "refresh_rate",
+          "public_value": "60Hz"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "60Hz works, but it sometimes makes quick window switching less smooth, which can slow me down during calls or multitasking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare screen_size: 24 inches and 32 inches",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "screen_size",
+            "public_value": "24 inches"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "screen_size",
+            "public_value": "32 inches"
+          }
+        ],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A bigger 32-inch screen means more detail but less room to spread out multiple windows, so the dual 24-inch setup fits my multitasking needs better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the panel type is IPS",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "panel_type",
+          "public_value": "IPS"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize productivity with a setup that supports multiple simultaneous workflows and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "IPS panels do keep colors accurate across angles, which is crucial for my design work and multiple open windows.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the resolution is 1920x1080",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "resolution",
+          "public_value": "1920x1080"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a single, high-resolution monitor that reduces clutter and supports detailed coding and video calls.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1920x1080 is fine, though I find higher resolution easier for detailed work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Dual 24-inch IPS monitors provide ample screen space with consistent colors and wide viewing angles, ideal for multitasking and video conferencing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides ample screen space for multitasking with consistent colors and wide viewing angles."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Dual IPS Monitors is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Single 32-inch 4K UHD monitor offers detailed visuals and reduces need for multiple screens, fitting a minimalist style.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "High resolution offers detailed visuals and reduces the need for multiple screens."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Single UHD Monitor.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

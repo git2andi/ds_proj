@@ -1,0 +1,4081 @@
+{
+  "provenance": {
+    "seed": 242118776,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Select a podcast format for the department's new show",
+    "options": [
+      {
+        "id": "A",
+        "name": "Roundtable Discussion",
+        "attrs": {
+          "participant_count": "6",
+          "average_runtime_minutes": "40",
+          "interaction_style": "open conversation",
+          "preparation_level": "moderate"
+        },
+        "upside": "Encourages dynamic interaction among all participants.",
+        "concern": "May require strong moderation to keep on topic.",
+        "short_name": "Roundtable Discussion",
+        "aliases": []
+      },
+      {
+        "id": "B",
+        "name": "Interview with Guest Experts",
+        "attrs": {
+          "participant_count": "2",
+          "average_runtime_minutes": "35",
+          "interaction_style": "host-led Q&A",
+          "preparation_level": "high"
+        },
+        "upside": "Focused content with expert insights.",
+        "concern": "Limited direct participation from all six members.",
+        "short_name": "Interview Guest Experts",
+        "aliases": [
+          "Interview Guest Experts",
+          "Guest Experts"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Panel Debate",
+        "attrs": {
+          "participant_count": "6",
+          "average_runtime_minutes": "45",
+          "interaction_style": "structured argument",
+          "preparation_level": "high"
+        },
+        "upside": "Showcases diverse viewpoints with clear structure.",
+        "concern": "May feel confrontational for some participants.",
+        "short_name": "Panel Debate",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "Storytelling and Case Studies",
+        "attrs": {
+          "participant_count": "3",
+          "average_runtime_minutes": "30",
+          "interaction_style": "narrative-driven",
+          "preparation_level": "moderate"
+        },
+        "upside": "Engages listeners with real-world examples.",
+        "concern": "Fewer participants involved per episode.",
+        "short_name": "Storytelling Case Studies",
+        "aliases": [
+          "Storytelling Case Studies",
+          "Case Studies"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The department is launching a new podcast and needs to select a format suitable for six participants. The format should allow balanced participation, fit a 30-45 minute runtime, and engage a professional audience."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Maya is a communications specialist focused on engaging storytelling.",
+      "private_goal": "To create content that captivates listeners with real-world examples.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 32,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Allows dynamic interaction among all participants, which Maya values.",
+          "reason_against": "Requires strong moderation, which could dilute storytelling focus."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Focused expert insights could add depth.",
+          "reason_against": "Limited participation from all six members reduces engagement."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Structured debate offers clear viewpoints.",
+          "reason_against": "May feel confrontational, which conflicts with Maya's storytelling style."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Engages listeners with narrative-driven real-world examples, matching Maya's goals.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Liam is a strategic analyst who prefers clear and structured discussions.",
+      "private_goal": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Open conversation allows balanced participation.",
+          "reason_against": "May lack the clear structure Liam prefers."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Focused content with expert insights.",
+          "reason_against": "Too few participants involved, limiting team representation."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Structured argument showcases diverse viewpoints clearly, fitting Liam’s preference.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Narrative-driven style is engaging.",
+          "reason_against": "Fewer participants and less structure make it less appealing."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 3
+      },
+      "background": "Zara is a content creator who values expressive and direct communication.",
+      "private_goal": "To contribute meaningfully while maintaining a strong voice.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Encourages dynamic interaction, allowing Zara to express herself.",
+          "reason_against": "Requires moderation which might limit directness."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Expert insights are valuable.",
+          "reason_against": "Limited participation reduces Zara’s opportunity to speak."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Structured debate suits Zara’s direct style.",
+          "reason_against": "Confrontational tone may cause tension."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Narrative-driven format allows expressive storytelling.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Eli is a team coordinator who values balanced participation and clear communication.",
+      "private_goal": "To ensure everyone’s voice is heard equally in the podcast.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Supports balanced participation and open conversation.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Focused expert insights are useful.",
+          "reason_against": "Too few participants, limiting team involvement."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Clear structure and diverse viewpoints.",
+          "reason_against": "Potential confrontational tone may hinder balance."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Engaging storytelling.",
+          "reason_against": "Only three participants per episode reduces team balance."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Nina is a research analyst who prefers focused and expert-led discussions.",
+      "private_goal": "To highlight expert knowledge and maintain professional depth.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Allows team interaction.",
+          "reason_against": "Less focused than expert-led formats."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Host-led Q&A with experts fits Nina’s preference for depth and focus.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Structured debate provides diverse expert viewpoints.",
+          "reason_against": "Potentially confrontational style."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Engaging narratives.",
+          "reason_against": "Fewer participants and less expert focus."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Omar is a project manager who values concise and efficient communication.",
+      "private_goal": "To keep the podcast professional and time-effective.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 41,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Open conversation allows some flexibility.",
+          "reason_against": "Moderation may extend runtime."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Focused and host-led format fits Omar’s preference for efficiency.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Clear structure.",
+          "reason_against": "Longer runtime and confrontational style may reduce efficiency."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Engaging stories.",
+          "reason_against": "Fewer participants and shorter runtime limit team involvement."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "preparation_level"
+        ],
+        [
+          "B",
+          "preparation_level"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Open conversation allows balanced participation."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "participant_count"
+        ],
+        [
+          "B",
+          "participant_count"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "average_runtime_minutes"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 4,
+        "D": 5
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "average_runtime_minutes"
+        ],
+        [
+          "B",
+          "interaction_style"
+        ],
+        [
+          "D",
+          "preparation_level"
+        ],
+        [
+          "A",
+          "participant_count"
+        ],
+        [
+          "B",
+          "average_runtime_minutes"
+        ],
+        [
+          "B",
+          "preparation_level"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Clear structure and diverse viewpoints."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "interaction_style"
+        ],
+        [
+          "B",
+          "participant_count"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "interaction_style"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "D",
+          "participant_count"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "participant_count"
+        ],
+        [
+          "A",
+          "interaction_style"
+        ],
+        [
+          "B",
+          "interaction_style"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "preparation_level"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "interaction_style"
+        ],
+        [
+          "A",
+          "average_runtime_minutes"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "average_runtime_minutes"
+        ],
+        [
+          "C",
+          "average_runtime_minutes"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Select a podcast format for the department's new show.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m leaning toward Storytelling Case Studies since they engage listeners with narrative-driven real-world examples, which feels like it could really connect.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Engages listeners with narrative-driven real-world examples, matching Maya's goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Engages listeners with real-world examples."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create content that captivates listeners with real-world examples.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "A host-led Q&A with guest experts offers focused content that aligns well with the depth I prefer.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Host-led Q&A with experts fits Nina’s preference for depth and focus.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Focused content with expert insights."
+        },
+        "comparison_sources": [],
+        "personal_context": "To highlight expert knowledge and maintain professional depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Real-world examples pull people in, and the narrative-driven style of Storytelling Case Studies really lets us express ideas more vividly.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Narrative-driven format allows expressive storytelling.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Engages listeners with real-world examples."
+        },
+        "comparison_sources": [],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Roundtable Discussion supports balanced participation and open conversation.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports balanced participation and open conversation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Encourages dynamic interaction among all participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Guest Experts keep it focused and efficient.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Focused and host-led format fits Omar’s preference for efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Focused content with expert insights."
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Panel Debate might suit us best. It offers a clear structure and showcases diverse viewpoints, which I prefer.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Structured argument showcases diverse viewpoints clearly, fitting Liam’s preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Showcases diverse viewpoints with clear structure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Six participants might stretch time for each voice, so ensuring depth could be a challenge.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the participant count is 6",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "participant_count",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To highlight expert knowledge and maintain professional depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Longer runtime and confrontational style could slow us down.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "Longer runtime and confrontational style may reduce efficiency.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May feel confrontational for some participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Strong moderation could kill the vibe—are we okay with that trade-off?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Requires moderation which might limit directness.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require strong moderation to keep on topic."
+        },
+        "comparison_sources": [],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Strong moderation might be needed to stay on topic, though.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is May require strong moderation to keep on topic.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require strong moderation to keep on topic."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Open conversation allows some flexibility but risks losing focus.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Open conversation allows some flexibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Encourages dynamic interaction among all participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The host-led Q&A keeps the focus tight with expert input, while open conversation feels looser but less controlled; the Q&A fits my priority better.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare interaction_style: host-led Q&A and open conversation",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "interaction_style",
+            "public_value": "host-led Q&A"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "interaction_style",
+            "public_value": "open conversation"
+          }
+        ],
+        "personal_context": "To highlight expert knowledge and maintain professional depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Fewer participants and shorter runtime limit team involvement.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fewer participants and shorter runtime limit team involvement.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer participants involved per episode."
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Three participants do help keep things manageable, though it can limit diverse input.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the participant count is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "participant_count",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The prep seems moderate, which might work, but I usually prefer a bit more depth to really bring stories alive for listeners.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the preparation level is moderate",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "preparation_level",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create content that captivates listeners with real-world examples.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Limiting to three can make it harder to keep every voice balanced.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Only three participants per episode reduces team balance.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer participants involved per episode."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Stories definitely engage, though they need clear focus to keep on track.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the interaction style is narrative-driven",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "interaction_style",
+          "public_value": "narrative-driven"
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Still, having only a few people actively involved might make it harder to keep everyone truly engaged throughout.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Limited participation from all six members reduces engagement.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited direct participation from all six members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create content that captivates listeners with real-world examples.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "The storytelling runs about 30 minutes, while the guest expert interviews go 35. I prefer shorter for keeping energy tight, so 30 fits better with my style.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_runtime_minutes: 30 and 35",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "average_runtime_minutes",
+            "public_value": "30"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "average_runtime_minutes",
+            "public_value": "35"
+          }
+        ],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Shorter is good, but fewer voices risk missing key perspectives.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Too few participants involved, limiting team representation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited direct participation from all six members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Two participants might limit perspectives, but can keep discussion focused.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the participant count is 2",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "participant_count",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Thirty-five minutes is reasonable, though slightly longer might challenge some listeners.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the average runtime minutes is 35",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "average_runtime_minutes",
+          "public_value": "35"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Open conversation feels more balanced; structured argument might limit some voices.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare interaction_style: open conversation and structured argument",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "interaction_style",
+            "public_value": "open conversation"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "interaction_style",
+            "public_value": "structured argument"
+          }
+        ],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Six participants keep it diverse enough without overwhelming the flow, which fits better with staying engaged and impactful.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the participant count is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "participant_count",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Open conversation seems to allow balanced participation, so I could accept Roundtable Discussion.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Open conversation allows balanced participation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Encourages dynamic interaction among all participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Open conversation allows balanced participation."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Open conversation allows balanced participation."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Forty minutes average is fine, though longer might drag.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the average runtime minutes is 40",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_runtime_minutes",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Interview with Guest Experts needs higher prep, which demands more time but fits my priority for depth better than moderate prep storytelling.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare preparation_level: moderate and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "preparation_level",
+            "public_value": "moderate"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "preparation_level",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Panel Debate could work better with clear structure and diverse viewpoints.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Clear structure and diverse viewpoints.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Showcases diverse viewpoints with clear structure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Clear structure and diverse viewpoints."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Clear structure and diverse viewpoints."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Six participants might risk diluting some voices.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the participant count is 6",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "participant_count",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The preparation level is definitely high, which should help keep discussions focused despite the number of participants.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the preparation level is high",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "preparation_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To highlight expert knowledge and maintain professional depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Prep sounds solid. Thirty-five minutes feels tighter and better for keeping it efficient than forty-five, though.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_runtime_minutes: 35 and 45",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "average_runtime_minutes",
+            "public_value": "35"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "average_runtime_minutes",
+            "public_value": "45"
+          }
+        ],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Two participants might limit perspective diversity, though.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the participant count is 2",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "participant_count",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Two participants might simplify the flow, but I worry it won’t capture enough viewpoints to keep the conversation sharp.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the interaction style is host-led Q&A",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "interaction_style",
+          "public_value": "host-led Q&A"
+        },
+        "comparison_sources": [],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The prep being high definitely helps, though I wonder if too much focus on experts might limit some relatable, everyday stories.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the preparation level is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "preparation_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create content that captivates listeners with real-world examples.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 35,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The leading options remain tied. Let’s use Storytelling Case Studies as the bounded tie-break target. Liam, Eli, Nina, and Omar, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 36,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Fewer participants and less structure still feel limiting.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fewer participants and less structure make it less appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer participants involved per episode."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Only three participants feels a bit too limited for balanced input.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Only three participants per episode reduces team balance.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer participants involved per episode."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Storytelling Case Studies.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Engages listeners with narrative-driven real-world examples, matching Maya's goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Engages listeners with real-world examples."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Panel Debate.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Structured argument showcases diverse viewpoints clearly, fitting Liam’s preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Showcases diverse viewpoints with clear structure."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Storytelling Case Studies is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Narrative-driven format allows expressive storytelling.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Engages listeners with real-world examples."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I’m voting for Roundtable Discussion.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports balanced participation and open conversation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Encourages dynamic interaction among all participants."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Interview Guest Experts is my final choice.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Host-led Q&A with experts fits Nina’s preference for depth and focus.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Focused content with expert insights."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I choose Interview Guest Experts.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Focused and host-led format fits Omar’s preference for efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Focused content with expert insights."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The group remains split and no final option was selected.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:average_runtime_minutes": 1,
+    "A:concern": 2,
+    "A:interaction_style": 2,
+    "A:participant_count": 1,
+    "A:upside": 3,
+    "B:average_runtime_minutes": 3,
+    "B:concern": 2,
+    "B:interaction_style": 2,
+    "B:participant_count": 2,
+    "B:preparation_level": 2,
+    "B:upside": 2,
+    "C:average_runtime_minutes": 1,
+    "C:concern": 1,
+    "C:interaction_style": 1,
+    "C:participant_count": 2,
+    "C:preparation_level": 1,
+    "C:upside": 2,
+    "D:average_runtime_minutes": 1,
+    "D:concern": 4,
+    "D:interaction_style": 1,
+    "D:participant_count": 1,
+    "D:preparation_level": 2,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "C",
+    "p3": "D",
+    "p4": "A",
+    "p5": "B",
+    "p6": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "D",
+      "p2": "C",
+      "p3": "D",
+      "p4": "A",
+      "p5": "B",
+      "p6": "B"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 36,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 21373,
+    "output_tokens": 2806,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 42,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.087,
+    "avg_words_per_participant_turn": 12.83,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 21373,
+    "output_tokens": 2806,
+    "llm_calls": 39,
+    "voluntary_turns_by_persona": {
+      "p5": 3,
+      "p6": 6,
+      "p3": 5,
+      "p4": 7,
+      "p1": 3,
+      "p2": 6
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Engages listeners with narrative-driven real-world examples, matching Maya's goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Engages listeners with real-world examples."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create content that captivates listeners with real-world examples.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I’m leaning toward Storytelling Case Studies since they engage listeners with narrative-driven real-world examples, which feels like it could really connect.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Host-led Q&A with experts fits Nina’s preference for depth and focus.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Focused content with expert insights."
+        },
+        "comparison_sources": [],
+        "personal_context": "To highlight expert knowledge and maintain professional depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A host-led Q&A with guest experts offers focused content that aligns well with the depth I prefer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Narrative-driven format allows expressive storytelling.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Engages listeners with real-world examples."
+        },
+        "comparison_sources": [],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Real-world examples pull people in, and the narrative-driven style of Storytelling Case Studies really lets us express ideas more vividly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports balanced participation and open conversation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Encourages dynamic interaction among all participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Roundtable Discussion supports balanced participation and open conversation.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Focused and host-led format fits Omar’s preference for efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Focused content with expert insights."
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Guest Experts keep it focused and efficient.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Structured argument showcases diverse viewpoints clearly, fitting Liam’s preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Showcases diverse viewpoints with clear structure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Panel Debate might suit us best. It offers a clear structure and showcases diverse viewpoints, which I prefer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the participant count is 6",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "participant_count",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To highlight expert knowledge and maintain professional depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Six participants might stretch time for each voice, so ensuring depth could be a challenge.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "Longer runtime and confrontational style may reduce efficiency.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May feel confrontational for some participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Longer runtime and confrontational style could slow us down.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Requires moderation which might limit directness.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require strong moderation to keep on topic."
+        },
+        "comparison_sources": [],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Strong moderation could kill the vibe—are we okay with that trade-off?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is May require strong moderation to keep on topic.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require strong moderation to keep on topic."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Strong moderation might be needed to stay on topic, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Open conversation allows some flexibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Encourages dynamic interaction among all participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Open conversation allows some flexibility but risks losing focus.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare interaction_style: host-led Q&A and open conversation",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "interaction_style",
+            "public_value": "host-led Q&A"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "interaction_style",
+            "public_value": "open conversation"
+          }
+        ],
+        "personal_context": "To highlight expert knowledge and maintain professional depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The host-led Q&A keeps the focus tight with expert input, while open conversation feels looser but less controlled; the Q&A fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fewer participants and shorter runtime limit team involvement.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer participants involved per episode."
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fewer participants and shorter runtime limit team involvement.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the participant count is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "participant_count",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three participants do help keep things manageable, though it can limit diverse input.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the preparation level is moderate",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "preparation_level",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create content that captivates listeners with real-world examples.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The prep seems moderate, which might work, but I usually prefer a bit more depth to really bring stories alive for listeners.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Only three participants per episode reduces team balance.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer participants involved per episode."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Limiting to three can make it harder to keep every voice balanced.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the interaction style is narrative-driven",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "interaction_style",
+          "public_value": "narrative-driven"
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Stories definitely engage, though they need clear focus to keep on track.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Limited participation from all six members reduces engagement.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited direct participation from all six members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create content that captivates listeners with real-world examples.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still, having only a few people actively involved might make it harder to keep everyone truly engaged throughout.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_runtime_minutes: 30 and 35",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "average_runtime_minutes",
+            "public_value": "30"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "average_runtime_minutes",
+            "public_value": "35"
+          }
+        ],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The storytelling runs about 30 minutes, while the guest expert interviews go 35. I prefer shorter for keeping energy tight, so 30 fits better with my style.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Too few participants involved, limiting team representation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited direct participation from all six members."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Shorter is good, but fewer voices risk missing key perspectives.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the participant count is 2",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "participant_count",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two participants might limit perspectives, but can keep discussion focused.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the average runtime minutes is 35",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "average_runtime_minutes",
+          "public_value": "35"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Thirty-five minutes is reasonable, though slightly longer might challenge some listeners.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare interaction_style: open conversation and structured argument",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "interaction_style",
+            "public_value": "open conversation"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "interaction_style",
+            "public_value": "structured argument"
+          }
+        ],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Open conversation feels more balanced; structured argument might limit some voices.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the participant count is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "participant_count",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Six participants keep it diverse enough without overwhelming the flow, which fits better with staying engaged and impactful.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Open conversation allows balanced participation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Encourages dynamic interaction among all participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Open conversation allows balanced participation."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Open conversation seems to allow balanced participation, so I could accept Roundtable Discussion.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the average runtime minutes is 40",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_runtime_minutes",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Forty minutes average is fine, though longer might drag.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare preparation_level: moderate and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "preparation_level",
+            "public_value": "moderate"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "preparation_level",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Interview with Guest Experts needs higher prep, which demands more time but fits my priority for depth better than moderate prep storytelling.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Clear structure and diverse viewpoints.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Showcases diverse viewpoints with clear structure."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Clear structure and diverse viewpoints."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Panel Debate could work better with clear structure and diverse viewpoints.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the participant count is 6",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "participant_count",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Six participants might risk diluting some voices.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the preparation level is high",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "preparation_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To highlight expert knowledge and maintain professional depth.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The preparation level is definitely high, which should help keep discussions focused despite the number of participants.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_runtime_minutes: 35 and 45",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "average_runtime_minutes",
+            "public_value": "35"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "average_runtime_minutes",
+            "public_value": "45"
+          }
+        ],
+        "personal_context": "To keep the podcast professional and time-effective.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Prep sounds solid. Thirty-five minutes feels tighter and better for keeping it efficient than forty-five, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the participant count is 2",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "participant_count",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two participants might limit perspective diversity, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the interaction style is host-led Q&A",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "interaction_style",
+          "public_value": "host-led Q&A"
+        },
+        "comparison_sources": [],
+        "personal_context": "To contribute meaningfully while maintaining a strong voice.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two participants might simplify the flow, but I worry it won’t capture enough viewpoints to keep the conversation sharp.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the preparation level is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "preparation_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create content that captivates listeners with real-world examples.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The prep being high definitely helps, though I wonder if too much focus on experts might limit some relatable, everyday stories.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fewer participants and less structure make it less appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer participants involved per episode."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the podcast presents diverse viewpoints in a professional manner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fewer participants and less structure still feel limiting.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Only three participants per episode reduces team balance.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer participants involved per episode."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone’s voice is heard equally in the podcast.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Only three participants feels a bit too limited for balanced input.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Engages listeners with narrative-driven real-world examples, matching Maya's goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Engages listeners with real-world examples."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Storytelling Case Studies.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Structured argument showcases diverse viewpoints clearly, fitting Liam’s preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Showcases diverse viewpoints with clear structure."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Panel Debate.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Narrative-driven format allows expressive storytelling.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Engages listeners with real-world examples."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Storytelling Case Studies is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports balanced participation and open conversation.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Encourages dynamic interaction among all participants."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Roundtable Discussion.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Host-led Q&A with experts fits Nina’s preference for depth and focus.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Focused content with expert insights."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Interview Guest Experts is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Focused and host-led format fits Omar’s preference for efficiency.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Focused content with expert insights."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Interview Guest Experts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

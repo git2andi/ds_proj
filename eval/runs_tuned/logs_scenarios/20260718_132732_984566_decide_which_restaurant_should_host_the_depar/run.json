@@ -1,0 +1,3949 @@
+{
+  "provenance": {
+    "seed": 242118757,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide which restaurant should host the department farewell dinner",
+    "options": [
+      {
+        "id": "A",
+        "name": "The Garden Bistro",
+        "attrs": {
+          "distance_km": "3.2",
+          "cuisine": "Mediterranean",
+          "private_area": "semi-private room",
+          "price_per_person_usd": "35",
+          "parking": "street parking"
+        },
+        "upside": "Offers a semi-private room with a garden view and Mediterranean menu.",
+        "concern": "Limited parking options may require walking from nearby lots.",
+        "short_name": "The Garden Bistro",
+        "aliases": []
+      },
+      {
+        "id": "B",
+        "name": "Harborview Steakhouse",
+        "attrs": {
+          "distance_km": "4.5",
+          "cuisine": "Steakhouse",
+          "private_area": "private dining room",
+          "price_per_person_usd": "50",
+          "parking": "valet parking"
+        },
+        "upside": "Includes a private dining room and valet parking for convenience.",
+        "concern": "Higher price per person compared to other options.",
+        "short_name": "Harborview Steakhouse",
+        "aliases": []
+      },
+      {
+        "id": "C",
+        "name": "Noodle House Express",
+        "attrs": {
+          "distance_km": "2.8",
+          "cuisine": "Asian Fusion",
+          "private_area": "semi-private booth",
+          "price_per_person_usd": "25",
+          "parking": "adjacent lot"
+        },
+        "upside": "Affordable pricing with a semi-private booth near the entrance.",
+        "concern": "Smaller space may feel cramped for the group size.",
+        "short_name": "Noodle House",
+        "aliases": [
+          "Noodle House",
+          "House Express"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "La Trattoria Italiana",
+        "attrs": {
+          "distance_km": "4.0",
+          "cuisine": "Italian",
+          "private_area": "private dining room",
+          "price_per_person_usd": "40",
+          "parking": "garage parking"
+        },
+        "upside": "Private dining room with garage parking and classic Italian dishes.",
+        "concern": "Garage parking requires a short walk and may incur fees.",
+        "short_name": "La Trattoria",
+        "aliases": [
+          "La Trattoria",
+          "Trattoria Italiana"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The department farewell dinner will be held next Friday evening for 5 participants. Each restaurant must accommodate a group of 5, offer a private or semi-private dining area, and be located within 5 kilometers of the office."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Maya is a project manager who enjoys classic Italian cuisine and values comfortable, private settings.",
+      "private_goal": "Ensure the farewell dinner feels special with a private room and quality food.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Offers a semi-private room with a nice garden view and Mediterranean menu.",
+          "reason_against": "Limited parking may inconvenience some attendees."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Private dining room and valet parking add convenience and exclusivity.",
+          "reason_against": "Price is higher than some other options."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Affordable pricing and convenient parking.",
+          "reason_against": "Semi-private booth feels cramped and less suitable for a special occasion."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Private dining room with garage parking and classic Italian dishes fits her preference perfectly.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 1
+      },
+      "background": "Liam is a software developer who prefers casual atmospheres and values convenience.",
+      "private_goal": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Semi-private room with garden view and Mediterranean cuisine is appealing and close by.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Private dining and valet parking are convenient.",
+          "reason_against": "Price is too high and location is farther away."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Affordable and very close with adjacent parking.",
+          "reason_against": "Space may feel cramped for the group."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Private room and good food quality.",
+          "reason_against": "Parking garage is a bit inconvenient and may cost extra."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Zoe is a data analyst who prefers quiet, private settings and classic cuisine.",
+      "private_goal": "Find a private dining room with good food that feels comfortable and not crowded.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Semi-private room and Mediterranean food are decent options.",
+          "reason_against": "Parking limitations could be inconvenient."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Private dining room and valet parking provide comfort and convenience.",
+          "reason_against": "Price is higher than preferred."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Affordable and close with parking available.",
+          "reason_against": "Semi-private booth is too small and less private."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Private dining room with classic Italian dishes matches her preferences well.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Eli is a marketing specialist who values exclusivity and convenience in dining experiences.",
+      "private_goal": "Secure a fully private room with easy parking to impress the team.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Semi-private room with a pleasant garden view.",
+          "reason_against": "Limited parking and less privacy than desired."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Private dining room and valet parking offer the exclusivity and convenience he wants.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Affordable and close with adjacent parking.",
+          "reason_against": "Semi-private booth is too cramped for the group."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Private dining room and good food quality.",
+          "reason_against": "Garage parking is less convenient and may cost extra."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 4,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Nina is a UX designer who enjoys affordable dining with a cozy atmosphere.",
+      "private_goal": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Semi-private room with a garden view and Mediterranean menu is appealing.",
+          "reason_against": "Parking is limited to street parking."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Private room and valet parking are convenient.",
+          "reason_against": "Price is too high for her budget."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Most affordable option with a semi-private booth and adjacent parking.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Private dining room and classic Italian food are nice but pricier.",
+          "reason_against": "Garage parking may be inconvenient and costly."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "price_per_person_usd"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "distance_km"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "price_per_person_usd"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Affordable and very close with adjacent parking."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "cuisine"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "parking"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "price_per_person_usd"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 0,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Private dining room and good food quality."
+      },
+      "narrowing_acceptance": "D",
+      "used_point_keys": [
+        [
+          "A",
+          "parking"
+        ],
+        [
+          "B",
+          "private_area"
+        ],
+        [
+          "C",
+          "parking"
+        ],
+        [
+          "B",
+          "distance_km"
+        ],
+        [
+          "B",
+          "price_per_person_usd"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "cuisine"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "private_area"
+        ],
+        [
+          "B",
+          "cuisine"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Semi-private room with a garden view and Mediterranean menu is appealing."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "cuisine"
+        ],
+        [
+          "B",
+          "private_area"
+        ],
+        [
+          "A",
+          "distance_km"
+        ],
+        [
+          "B",
+          "parking"
+        ],
+        [
+          "D",
+          "price_per_person_usd"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "price_per_person_usd"
+        ],
+        [
+          "A",
+          "cuisine"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "cuisine"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 10,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Decide which restaurant should host the department farewell dinner.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "La Trattoria has a private room and classic Italian dishes, which feels right to me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room with classic Italian dishes matches her preferences well.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a private dining room with good food that feels comfortable and not crowded.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The private dining room with garage parking and classic Italian dishes at La Trattoria sounds like a great fit for what I had in mind.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room with garage parking and classic Italian dishes fits her preference perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Noodle House is the most affordable with a semi-private booth and parking nearby, which fits our needs well.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Most affordable option with a semi-private booth and adjacent parking.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Affordable pricing with a semi-private booth near the entrance."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Garden Bistro’s semi-private room with a garden view is appealing and close by.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private room with garden view and Mediterranean cuisine is appealing and close by.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a semi-private room with a garden view and Mediterranean menu."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Harborview Steakhouse has a private room and valet parking, which feels more exclusive and convenient.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room and valet parking offer the exclusivity and convenience he wants.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes a private dining room and valet parking for convenience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The private room and valet sound nice, but the price is too high for my budget.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Price is too high for her budget.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher price per person compared to other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "50 per person is a bit steep, especially if it’s a longer evening.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the price per person is 50",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_per_person_usd",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Steakhouse food usually means higher prices, so it might not fit my budget for a cozy, longer dinner.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cuisine is Steakhouse",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cuisine",
+          "public_value": "Steakhouse"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Valet parking is convenient, but it might add extra cost or feel less casual for a budget-friendly vibe.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the parking is valet parking",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "parking",
+          "public_value": "valet parking"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The semi-private booth might feel a bit cramped for all of us.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private booth is too cramped for the group.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Smaller space may feel cramped for the group size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Cramped booth aside, Noodle House’s close parking and low price make it worth considering.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable and very close with adjacent parking.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Affordable pricing with a semi-private booth near the entrance."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Affordable and very close with adjacent parking."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Affordable and very close with adjacent parking."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The $40 per person at La Trattoria is higher than $25 at Noodle House, but I think the price might be worth it for a more comfortable and private setting.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare price_per_person_usd: 40 and 25",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "price_per_person_usd",
+            "public_value": "40"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "price_per_person_usd",
+            "public_value": "25"
+          }
+        ],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Parking fees and that extra walk make it less convenient for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Parking garage is a bit inconvenient and may cost extra.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Garage parking requires a short walk and may incur fees."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Liam, do you think the walk from parking would really be a big issue for everyone?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Limited parking may inconvenience some attendees.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited parking options may require walking from nearby lots."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "For some, the extra walk from limited parking lots will definitely be a hassle.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Limited parking options may require walking from nearby lots.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited parking options may require walking from nearby lots."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Steakhouse offers a more classic vibe, Mediterranean feels lighter—steak fits my priority better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cuisine: Steakhouse and Mediterranean",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cuisine",
+            "public_value": "Steakhouse"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cuisine",
+            "public_value": "Mediterranean"
+          }
+        ],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The semi-private space with a garden view sounds cozy and more intimate, which fits my priority well.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private room with a garden view and Mediterranean menu is appealing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a semi-private room with a garden view and Mediterranean menu."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Street parking might slow arrival and feel less convenient.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the parking is street parking",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "parking",
+          "public_value": "street parking"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Asian Fusion is more casual and varied, Mediterranean feels lighter and fresher—Asian Fusion suits my cozy, budget vibe better.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cuisine: Asian Fusion and Mediterranean",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "cuisine",
+            "public_value": "Asian Fusion"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cuisine",
+            "public_value": "Mediterranean"
+          }
+        ],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "3.2 km isn’t too far, but combined with street parking, it might add hassle I’d prefer to avoid.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the distance km is 3.2",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "distance_km",
+          "public_value": "3.2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The semi-private booth might feel a bit cramped for our group size, which seems less fitting for a special occasion.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private booth feels cramped and less suitable for a special occasion.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Smaller space may feel cramped for the group size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "25 per person is reasonable for what we get, though I still want a bit more space to feel comfortable.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the price per person is 25",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_per_person_usd",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "One has a private dining room, the other just semi-private—private fits my priority better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare private_area: private dining room and semi-private room",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "private_area",
+            "public_value": "private dining room"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "private_area",
+            "public_value": "semi-private room"
+          }
+        ],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Price is definitely too high and the farther location means more hassle with parking.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Price is too high and location is farther away.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher price per person compared to other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Fifty each is steep, but the private room could be worth it.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price per person is 50",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_per_person_usd",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The private dining room does offer more privacy, but I still worry it might feel a bit formal for what I want.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the private area is private dining room",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "private_area",
+          "public_value": "private dining room"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Valet parking definitely adds ease, and the private room feels more like a quiet space I’d enjoy, even if it seems a bit formal.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "Private dining room and valet parking add convenience and exclusivity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes a private dining room and valet parking for convenience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Valet helps, but I still prefer parking myself to avoid waiting around.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the parking is valet parking",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "parking",
+          "public_value": "valet parking"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "4.5 km is doable, but parking convenience matters more here.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the distance km is 4.5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "distance_km",
+          "public_value": "4.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "25 dollars per person at Noodle House is more budget-friendly than 40 at La Trattoria, so it fits my priority better.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare price_per_person_usd: 25 and 40",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "price_per_person_usd",
+            "public_value": "25"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "price_per_person_usd",
+            "public_value": "40"
+          }
+        ],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "2.8 km isn’t too far, but I’d still lean toward somewhere quieter and more private, even if it’s a bit farther.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the distance km is 2.8",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "distance_km",
+          "public_value": "2.8"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Asian Fusion sounds good, but I’m sticking with closer spots for easier parking.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cuisine is Asian Fusion",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cuisine",
+          "public_value": "Asian Fusion"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "That adjacent parking helps, though I’d still want a private room to impress.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the parking is adjacent lot",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "parking",
+          "public_value": "adjacent lot"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Actually, The Garden Bistro’s semi-private room with a garden view and Mediterranean menu sounds cozy enough to consider.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private room with a garden view and Mediterranean menu is appealing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a semi-private room with a garden view and Mediterranean menu."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Semi-private room with a garden view and Mediterranean menu is appealing."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Semi-private room with a garden view and Mediterranean menu is appealing."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 35,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The discussion currently leans most toward La Trattoria, without a majority yet. Liam, Eli, and Nina, would that choice work for you?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 36,
+      "phase": "NARROWING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "La Trattoria seems to fit with that private room and good food quality.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room and good food quality.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Private dining room and good food quality."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Private dining room and good food quality."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The parking garage isn’t super convenient and might cost extra, so I’d pass.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Parking garage is a bit inconvenient and may cost extra.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Garage parking requires a short walk and may incur fees."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is La Trattoria.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room with garage parking and classic Italian dishes fits her preference perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Garden Bistro is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private room with garden view and Mediterranean cuisine is appealing and close by.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a semi-private room with a garden view and Mediterranean menu."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I’m voting for La Trattoria.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room with classic Italian dishes matches her preferences well.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "My final vote is La Trattoria.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room and good food quality.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Private dining room and good food quality."
+        },
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Private dining room and good food quality."
+      },
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "My final vote is Noodle House.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Most affordable option with a semi-private booth and adjacent parking.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Affordable pricing with a semi-private booth near the entrance."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose La Trattoria.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:cuisine": 2,
+    "A:distance_km": 1,
+    "A:parking": 1,
+    "A:private_area": 1,
+    "A:upside": 3,
+    "B:concern": 2,
+    "B:cuisine": 2,
+    "B:distance_km": 1,
+    "B:parking": 2,
+    "B:price_per_person_usd": 2,
+    "B:private_area": 2,
+    "B:upside": 2,
+    "C:concern": 2,
+    "C:cuisine": 2,
+    "C:distance_km": 1,
+    "C:parking": 1,
+    "C:price_per_person_usd": 3,
+    "C:upside": 2,
+    "D:concern": 2,
+    "D:price_per_person_usd": 2,
+    "D:upside": 3
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "upside"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "A",
+    "p3": "D",
+    "p4": "D",
+    "p5": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "votes": {
+      "p1": "D",
+      "p2": "A",
+      "p3": "D",
+      "p4": "D",
+      "p5": "C"
+    },
+    "reason": "3 of 5 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 36,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 22394,
+    "output_tokens": 2836,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 4,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 5,
+    "participant_turns": 41,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0889,
+    "avg_words_per_participant_turn": 15.02,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 22394,
+    "output_tokens": 2836,
+    "llm_calls": 39,
+    "voluntary_turns_by_persona": {
+      "p5": 10,
+      "p2": 7,
+      "p4": 8,
+      "p1": 5
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room with classic Italian dishes matches her preferences well.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a private dining room with good food that feels comfortable and not crowded.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "La Trattoria has a private room and classic Italian dishes, which feels right to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room with garage parking and classic Italian dishes fits her preference perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The private dining room with garage parking and classic Italian dishes at La Trattoria sounds like a great fit for what I had in mind.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Most affordable option with a semi-private booth and adjacent parking.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Affordable pricing with a semi-private booth near the entrance."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Noodle House is the most affordable with a semi-private booth and parking nearby, which fits our needs well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private room with garden view and Mediterranean cuisine is appealing and close by.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a semi-private room with a garden view and Mediterranean menu."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Garden Bistro’s semi-private room with a garden view is appealing and close by.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room and valet parking offer the exclusivity and convenience he wants.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes a private dining room and valet parking for convenience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Harborview Steakhouse has a private room and valet parking, which feels more exclusive and convenient.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Price is too high for her budget.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher price per person compared to other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The private room and valet sound nice, but the price is too high for my budget.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the price per person is 50",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_per_person_usd",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "50 per person is a bit steep, especially if it’s a longer evening.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cuisine is Steakhouse",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cuisine",
+          "public_value": "Steakhouse"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Steakhouse food usually means higher prices, so it might not fit my budget for a cozy, longer dinner.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the parking is valet parking",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "parking",
+          "public_value": "valet parking"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Valet parking is convenient, but it might add extra cost or feel less casual for a budget-friendly vibe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private booth is too cramped for the group.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Smaller space may feel cramped for the group size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The semi-private booth might feel a bit cramped for all of us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable and very close with adjacent parking.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Affordable pricing with a semi-private booth near the entrance."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Affordable and very close with adjacent parking."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Cramped booth aside, Noodle House’s close parking and low price make it worth considering.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare price_per_person_usd: 40 and 25",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "price_per_person_usd",
+            "public_value": "40"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "price_per_person_usd",
+            "public_value": "25"
+          }
+        ],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The $40 per person at La Trattoria is higher than $25 at Noodle House, but I think the price might be worth it for a more comfortable and private setting.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Parking garage is a bit inconvenient and may cost extra.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Garage parking requires a short walk and may incur fees."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Parking fees and that extra walk make it less convenient for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Limited parking may inconvenience some attendees.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited parking options may require walking from nearby lots."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liam, do you think the walk from parking would really be a big issue for everyone?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Limited parking options may require walking from nearby lots.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited parking options may require walking from nearby lots."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "For some, the extra walk from limited parking lots will definitely be a hassle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cuisine: Steakhouse and Mediterranean",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cuisine",
+            "public_value": "Steakhouse"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cuisine",
+            "public_value": "Mediterranean"
+          }
+        ],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Steakhouse offers a more classic vibe, Mediterranean feels lighter—steak fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private room with a garden view and Mediterranean menu is appealing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a semi-private room with a garden view and Mediterranean menu."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The semi-private space with a garden view sounds cozy and more intimate, which fits my priority well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the parking is street parking",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "parking",
+          "public_value": "street parking"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Street parking might slow arrival and feel less convenient.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cuisine: Asian Fusion and Mediterranean",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "cuisine",
+            "public_value": "Asian Fusion"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cuisine",
+            "public_value": "Mediterranean"
+          }
+        ],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Asian Fusion is more casual and varied, Mediterranean feels lighter and fresher—Asian Fusion suits my cozy, budget vibe better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the distance km is 3.2",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "distance_km",
+          "public_value": "3.2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "3.2 km isn’t too far, but combined with street parking, it might add hassle I’d prefer to avoid.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private booth feels cramped and less suitable for a special occasion.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Smaller space may feel cramped for the group size."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The semi-private booth might feel a bit cramped for our group size, which seems less fitting for a special occasion.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the price per person is 25",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_per_person_usd",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "25 per person is reasonable for what we get, though I still want a bit more space to feel comfortable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare private_area: private dining room and semi-private room",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "private_area",
+            "public_value": "private dining room"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "private_area",
+            "public_value": "semi-private room"
+          }
+        ],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One has a private dining room, the other just semi-private—private fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Price is too high and location is farther away.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher price per person compared to other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Price is definitely too high and the farther location means more hassle with parking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price per person is 50",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_per_person_usd",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fifty each is steep, but the private room could be worth it.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the private area is private dining room",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "private_area",
+          "public_value": "private dining room"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The private dining room does offer more privacy, but I still worry it might feel a bit formal for what I want.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "Private dining room and valet parking add convenience and exclusivity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes a private dining room and valet parking for convenience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Valet parking definitely adds ease, and the private room feels more like a quiet space I’d enjoy, even if it seems a bit formal.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the parking is valet parking",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "parking",
+          "public_value": "valet parking"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Valet helps, but I still prefer parking myself to avoid waiting around.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the distance km is 4.5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "distance_km",
+          "public_value": "4.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "4.5 km is doable, but parking convenience matters more here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare price_per_person_usd: 25 and 40",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "price_per_person_usd",
+            "public_value": "25"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "price_per_person_usd",
+            "public_value": "40"
+          }
+        ],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "25 dollars per person at Noodle House is more budget-friendly than 40 at La Trattoria, so it fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the distance km is 2.8",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "distance_km",
+          "public_value": "2.8"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the farewell dinner feels special with a private room and quality food.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2.8 km isn’t too far, but I’d still lean toward somewhere quieter and more private, even if it’s a bit farther.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cuisine is Asian Fusion",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cuisine",
+          "public_value": "Asian Fusion"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Asian Fusion sounds good, but I’m sticking with closer spots for easier parking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the parking is adjacent lot",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "parking",
+          "public_value": "adjacent lot"
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That adjacent parking helps, though I’d still want a private room to impress.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private room with a garden view and Mediterranean menu is appealing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a semi-private room with a garden view and Mediterranean menu."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a budget-friendly restaurant with a semi-private space that feels intimate.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Semi-private room with a garden view and Mediterranean menu is appealing."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Actually, The Garden Bistro’s semi-private room with a garden view and Mediterranean menu sounds cozy enough to consider.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room and good food quality.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Secure a fully private room with easy parking to impress the team.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Private dining room and good food quality."
+        },
+        "vote_option": null
+      },
+      "raw_text": "La Trattoria seems to fit with that private room and good food quality.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Parking garage is a bit inconvenient and may cost extra.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Garage parking requires a short walk and may incur fees."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a restaurant that is close with easy parking and a relaxed vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The parking garage isn’t super convenient and might cost extra, so I’d pass.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room with garage parking and classic Italian dishes fits her preference perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is La Trattoria.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Semi-private room with garden view and Mediterranean cuisine is appealing and close by.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a semi-private room with a garden view and Mediterranean menu."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "The Garden Bistro is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room with classic Italian dishes matches her preferences well.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for La Trattoria.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Private dining room and good food quality.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Private dining room with garage parking and classic Italian dishes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Private dining room and good food quality."
+        },
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is La Trattoria.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Most affordable option with a semi-private booth and adjacent parking.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Affordable pricing with a semi-private booth near the entrance."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Noodle House.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

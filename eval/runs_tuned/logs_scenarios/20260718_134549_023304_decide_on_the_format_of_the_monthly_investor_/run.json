@@ -1,0 +1,2386 @@
+{
+  "provenance": {
+    "seed": 242118798,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide on the format of the monthly investor update",
+    "options": [
+      {
+        "id": "A",
+        "name": "Detailed Written Report with Financial Appendices",
+        "attrs": {
+          "length_pages": "12",
+          "delivery_method": "email",
+          "update_frequency": "monthly",
+          "includes_graphs": "True",
+          "estimated_read_time_minutes": "20"
+        },
+        "upside": "Provides comprehensive information and detailed financial data.",
+        "concern": "May require significant time to read and digest.",
+        "short_name": "Detailed Written Report",
+        "aliases": [
+          "Detailed Written Report",
+          "Financial Appendices"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Live Video Presentation with Q&A Session",
+        "attrs": {
+          "duration_minutes": "30",
+          "delivery_method": "video conference",
+          "update_frequency": "monthly",
+          "interactive": "True",
+          "recorded_for_later_viewing": "True"
+        },
+        "upside": "Allows real-time interaction and clarifications.",
+        "concern": "Scheduling conflicts may limit live attendance.",
+        "short_name": "Live Video Presentation",
+        "aliases": [
+          "Live Video Presentation",
+          "Q&A Session"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Concise Slide Deck Summary with Key Metrics",
+        "attrs": {
+          "slide_count": "10",
+          "delivery_method": "email and intranet",
+          "update_frequency": "monthly",
+          "includes_key_metrics": "True",
+          "estimated_view_time_minutes": "10"
+        },
+        "upside": "Quick to review and highlights essential information.",
+        "concern": "May omit detailed explanations and context.",
+        "short_name": "Concise Slide Deck",
+        "aliases": [
+          "Concise Slide Deck",
+          "Key Metrics"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Audio Podcast Update with Executive Commentary",
+        "attrs": {
+          "duration_minutes": "15",
+          "delivery_method": "podcast platform",
+          "update_frequency": "monthly",
+          "includes_executive_insights": "True",
+          "accessible_on_demand": "True"
+        },
+        "upside": "Enables multitasking and provides executive perspectives.",
+        "concern": "Lacks visual data presentation and detailed figures.",
+        "short_name": "Audio Podcast Update",
+        "aliases": [
+          "Audio Podcast Update",
+          "Executive Commentary"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The monthly investor update aims to inform stakeholders about financial performance and strategic progress. Four participants will decide on a format that balances detail, accessibility, and time efficiency."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Maya is a communications manager focused on clear and efficient stakeholder updates.",
+      "private_goal": "To ensure updates are concise and easy to digest while still informative.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Provides comprehensive information and detailed financial data.",
+          "reason_against": "May require significant time to read and digest, which conflicts with Maya's preference for brevity."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Allows real-time interaction and clarifications, which can enhance understanding.",
+          "reason_against": "Scheduling conflicts may limit attendance, reducing accessibility."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Quick to review and highlights essential information, matching Maya's goal for concise updates.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Enables multitasking and provides executive perspectives, adding value without heavy time commitment.",
+          "reason_against": "Lacks visual data presentation and detailed figures, which may limit completeness."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Liam is a finance director who prioritizes thorough financial transparency in reports.",
+      "private_goal": "To ensure all financial details are fully disclosed and accessible for in-depth review.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 47,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Provides comprehensive information and detailed financial data, meeting Liam's need for transparency.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Allows real-time interaction and clarifications, which can deepen understanding.",
+          "reason_against": "Scheduling conflicts may reduce live attendance, limiting reach."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Quick to review and highlights key metrics.",
+          "reason_against": "May omit detailed explanations and context, which Liam finds insufficient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Provides executive insights and is accessible on demand.",
+          "reason_against": "Lacks visual data and detailed figures, making it less suitable for Liam's needs."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 4,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Nina is a strategic analyst who demands detailed data to support decision-making.",
+      "private_goal": "To have access to the most comprehensive and detailed financial information possible.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 39,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Provides comprehensive information and detailed financial data, critical for Nina's analysis.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Interactive format allows for clarifications and deeper understanding.",
+          "reason_against": "Scheduling conflicts may limit attendance, which is a drawback."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Highlights essential information quickly.",
+          "reason_against": "May omit detailed explanations and context, which Nina finds insufficient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Provides executive insights and is accessible on demand.",
+          "reason_against": "Lacks visual data and detailed figures, limiting its usefulness for Nina."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Omar is an investor relations specialist focused on stakeholder engagement and clarity.",
+      "private_goal": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Comprehensive and detailed financial data is available for those who want it.",
+          "reason_against": "Too lengthy and time-consuming for most stakeholders, reducing engagement."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Interactive and allows for real-time questions, increasing engagement.",
+          "reason_against": "Scheduling conflicts may limit participation, reducing effectiveness."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Quick to review and highlights essential information, balancing detail and accessibility.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Enables multitasking and provides executive perspectives, enhancing engagement.",
+          "reason_against": "Lacks visual data presentation and detailed figures, which may limit completeness."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 2,
+        "B": 3,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "includes_key_metrics"
+        ],
+        [
+          "C",
+          "estimated_view_time_minutes"
+        ],
+        [
+          "C",
+          "update_frequency"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "slide_count"
+        ],
+        [
+          "A",
+          "delivery_method"
+        ],
+        [
+          "C",
+          "delivery_method"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "update_frequency"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "update_frequency"
+        ],
+        [
+          "C",
+          "slide_count"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "delivery_method"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 2,
+        "B": 3,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "includes_key_metrics"
+        ],
+        [
+          "C",
+          "estimated_view_time_minutes"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "delivery_method"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Decide on the format of the monthly investor update.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Detailed Written Report with Financial Appendices offers necessary transparency.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides comprehensive information and detailed financial data, meeting Liam's need for transparency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides comprehensive information and detailed financial data."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all financial details are fully disclosed and accessible for in-depth review.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Concise Slide Deck is quick to review and highlights essential information, balancing detail and accessibility.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Quick to review and highlights essential information, balancing detail and accessibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Quick to review and highlights essential information."
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "We need the Detailed Written Report with Financial Appendices for full transparency and thorough financial data.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides comprehensive information and detailed financial data, critical for Nina's analysis.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides comprehensive information and detailed financial data."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Concise Slide Deck works well since it’s quick to review and highlights key metrics clearly.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Quick to review and highlights essential information, matching Maya's goal for concise updates.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Quick to review and highlights essential information."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s hear one more concrete point before we narrow this down.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Quick reviews are helpful, but lacking detailed context limits accuracy in strategic decisions.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "May omit detailed explanations and context, which Nina finds insufficient.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May omit detailed explanations and context."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Too lengthy reports risk losing most stakeholders’ attention and reduce engagement.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Too lengthy and time-consuming for most stakeholders, reducing engagement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require significant time to read and digest."
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Both update monthly, but concise summaries fit better for quick engagement and clarity.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare update_frequency: monthly and monthly",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "update_frequency",
+            "public_value": "monthly"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "update_frequency",
+            "public_value": "monthly"
+          }
+        ],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Email and intranet reach everyone effectively but need concise content to keep attention.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the delivery method is email and intranet",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "delivery_method",
+          "public_value": "email and intranet"
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The deck has 10 slides, which is manageable if each is focused and clear.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the slide count is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "slide_count",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Including key metrics definitely helps keep the updates meaningful without adding length.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the includes key metrics is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "includes_key_metrics",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Email and intranet work for broad access, but I need more detailed data than brief summaries provide.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the delivery method is email and intranet",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "delivery_method",
+          "public_value": "email and intranet"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Ten minutes is about right to keep it engaging without overwhelming.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the estimated view time minutes is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "estimated_view_time_minutes",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Monthly updates limit how current the data is, which slows my ability to react quickly to trends.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the update frequency is monthly",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "update_frequency",
+          "public_value": "monthly"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That level of detail might take quite a while to process, which could slow down quick updates.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "May require significant time to read and digest, which conflicts with Maya's preference for brevity.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require significant time to read and digest."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "This approach risks missing necessary explanations and context.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "May omit detailed explanations and context, which Liam finds insufficient.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May omit detailed explanations and context."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all financial details are fully disclosed and accessible for in-depth review.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Ten minutes is manageable, though it means we need to focus tightly on the essentials.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the estimated view time minutes is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "estimated_view_time_minutes",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Including key metrics keeps updates focused and measurable, which helps maintain clarity.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the includes key metrics is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "includes_key_metrics",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Email and intranet together reach more people quickly, so that fits my priority better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare delivery_method: email and intranet and email",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "delivery_method",
+            "public_value": "email and intranet"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "delivery_method",
+            "public_value": "email"
+          }
+        ],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "The slide count is only 10, which limits how much detailed financial data we can include for thorough analysis.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the slide count is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "slide_count",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 21,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Public support is tied at the top, so let’s test Concise Slide Deck as the option to narrow around. Liam and Nina, could you accept it for the group?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 22,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Concise Slide Deck is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Quick to review and highlights essential information, matching Maya's goal for concise updates.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Quick to review and highlights essential information."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 23,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Detailed Written Report is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides comprehensive information and detailed financial data, meeting Liam's need for transparency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides comprehensive information and detailed financial data."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 24,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Detailed Written Report is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides comprehensive information and detailed financial data, critical for Nina's analysis.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides comprehensive information and detailed financial data."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 25,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Concise Slide Deck is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Quick to review and highlights essential information, balancing detail and accessibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Quick to review and highlights essential information."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 26,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final vote remained split, so the decision is unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:delivery_method": 1,
+    "A:update_frequency": 1,
+    "A:upside": 2,
+    "C:concern": 2,
+    "C:delivery_method": 3,
+    "C:estimated_view_time_minutes": 2,
+    "C:includes_key_metrics": 2,
+    "C:slide_count": 2,
+    "C:update_frequency": 2,
+    "C:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "delivery_method"
+    ],
+    [
+      "C",
+      "slide_count"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "A",
+    "p3": "A",
+    "p4": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "C",
+      "p2": "A",
+      "p3": "A",
+      "p4": "C"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 19,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 3,
+    "input_tokens": 12171,
+    "output_tokens": 2171,
+    "moderator_turns": 4,
+    "voluntary_turns": 12,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 4,
+    "participant_turns": 23,
+    "voluntary_turns": 12,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1481,
+    "avg_words_per_participant_turn": 12.61,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 12171,
+    "output_tokens": 2171,
+    "llm_calls": 22,
+    "voluntary_turns_by_persona": {
+      "p4": 4,
+      "p1": 6,
+      "p3": 1,
+      "p2": 1
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides comprehensive information and detailed financial data, meeting Liam's need for transparency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides comprehensive information and detailed financial data."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all financial details are fully disclosed and accessible for in-depth review.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Detailed Written Report with Financial Appendices offers necessary transparency.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Quick to review and highlights essential information, balancing detail and accessibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Quick to review and highlights essential information."
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Concise Slide Deck is quick to review and highlights essential information, balancing detail and accessibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides comprehensive information and detailed financial data, critical for Nina's analysis.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides comprehensive information and detailed financial data."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "We need the Detailed Written Report with Financial Appendices for full transparency and thorough financial data.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Quick to review and highlights essential information, matching Maya's goal for concise updates.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Quick to review and highlights essential information."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Concise Slide Deck works well since it’s quick to review and highlights key metrics clearly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "May omit detailed explanations and context, which Nina finds insufficient.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May omit detailed explanations and context."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Quick reviews are helpful, but lacking detailed context limits accuracy in strategic decisions.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Too lengthy and time-consuming for most stakeholders, reducing engagement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require significant time to read and digest."
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Too lengthy reports risk losing most stakeholders’ attention and reduce engagement.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare update_frequency: monthly and monthly",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "update_frequency",
+            "public_value": "monthly"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "update_frequency",
+            "public_value": "monthly"
+          }
+        ],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both update monthly, but concise summaries fit better for quick engagement and clarity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the delivery method is email and intranet",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "delivery_method",
+          "public_value": "email and intranet"
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Email and intranet reach everyone effectively but need concise content to keep attention.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the slide count is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "slide_count",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The deck has 10 slides, which is manageable if each is focused and clear.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the includes key metrics is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "includes_key_metrics",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Including key metrics definitely helps keep the updates meaningful without adding length.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the delivery method is email and intranet",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "delivery_method",
+          "public_value": "email and intranet"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Email and intranet work for broad access, but I need more detailed data than brief summaries provide.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the estimated view time minutes is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "estimated_view_time_minutes",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ten minutes is about right to keep it engaging without overwhelming.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the update frequency is monthly",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "update_frequency",
+          "public_value": "monthly"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Monthly updates limit how current the data is, which slows my ability to react quickly to trends.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "May require significant time to read and digest, which conflicts with Maya's preference for brevity.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require significant time to read and digest."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That level of detail might take quite a while to process, which could slow down quick updates.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "May omit detailed explanations and context, which Liam finds insufficient.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "May omit detailed explanations and context."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all financial details are fully disclosed and accessible for in-depth review.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "This approach risks missing necessary explanations and context.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the estimated view time minutes is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "estimated_view_time_minutes",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ten minutes is manageable, though it means we need to focus tightly on the essentials.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the includes key metrics is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "includes_key_metrics",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To deliver updates that are accessible and engaging without overwhelming stakeholders.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Including key metrics keeps updates focused and measurable, which helps maintain clarity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare delivery_method: email and intranet and email",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "delivery_method",
+            "public_value": "email and intranet"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "delivery_method",
+            "public_value": "email"
+          }
+        ],
+        "personal_context": "To ensure updates are concise and easy to digest while still informative.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Email and intranet together reach more people quickly, so that fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the slide count is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "slide_count",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most comprehensive and detailed financial information possible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The slide count is only 10, which limits how much detailed financial data we can include for thorough analysis.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Quick to review and highlights essential information, matching Maya's goal for concise updates.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Quick to review and highlights essential information."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Concise Slide Deck is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides comprehensive information and detailed financial data, meeting Liam's need for transparency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides comprehensive information and detailed financial data."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Detailed Written Report is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides comprehensive information and detailed financial data, critical for Nina's analysis.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides comprehensive information and detailed financial data."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Detailed Written Report is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Quick to review and highlights essential information, balancing detail and accessibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Quick to review and highlights essential information."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Concise Slide Deck is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

@@ -1,0 +1,4017 @@
+{
+  "provenance": {
+    "seed": 242118758,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose a board game for the monthly game night",
+    "options": [
+      {
+        "id": "A",
+        "name": "Catan: Traders & Barbarians Expansion",
+        "attrs": {
+          "max_players": "6",
+          "avg_playtime_minutes": "90",
+          "game_type": "strategy",
+          "complexity": "medium"
+        },
+        "upside": "Supports exactly six players with strategic resource management.",
+        "concern": "Setup and rules are more complex than base game.",
+        "short_name": "Catan Traders",
+        "aliases": [
+          "Catan Traders",
+          "Traders & Barbarians"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Ticket to Ride: Europe",
+        "attrs": {
+          "max_players": "5",
+          "avg_playtime_minutes": "60",
+          "game_type": "route building",
+          "complexity": "low"
+        },
+        "upside": "Easy to learn and quick to play.",
+        "concern": "Officially supports only up to five players, may require house rules for six.",
+        "short_name": "Ticket to Ride",
+        "aliases": [
+          "Ticket to Ride",
+          "Ride Europe"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "7 Wonders",
+        "attrs": {
+          "max_players": "7",
+          "avg_playtime_minutes": "30",
+          "game_type": "card drafting",
+          "complexity": "medium"
+        },
+        "upside": "Designed for up to seven players with fast rounds.",
+        "concern": "Gameplay may be less interactive for some players.",
+        "short_name": "7 Wonders",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "Dixit",
+        "attrs": {
+          "max_players": "6",
+          "avg_playtime_minutes": "45",
+          "game_type": "party",
+          "complexity": "low"
+        },
+        "upside": "Encourages creativity and is easy to play for all skill levels.",
+        "concern": "Less competitive and strategic compared to other options.",
+        "short_name": "Dixit",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "A group of six friends is selecting a board game for their monthly game night. The game must accommodate all six players and provide engaging gameplay within approximately 90 minutes."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Maya enjoys casual game nights and values easy-to-learn games that keep everyone engaged.",
+      "private_goal": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Supports six players and offers strategic depth.",
+          "reason_against": "Setup and rules are complex, which may slow down the game night."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Easy to learn and quick to play, perfect for a smooth game night.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Fast rounds and supports more players than needed.",
+          "reason_against": "May be less engaging for some due to lower interaction."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Encourages creativity and is simple for all skill levels.",
+          "reason_against": "Less competitive and strategic, which might bore some players."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Liam prefers games that are quick and allow for strategic thinking without too much complexity.",
+      "private_goal": "Choose a game that balances speed and strategy for all six players.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Supports six players and has strategic depth.",
+          "reason_against": "More complex setup and rules might slow down the game."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Easy and quick to play.",
+          "reason_against": "Only supports five players officially, which is a problem."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Designed for up to seven players with fast rounds and good strategy.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Easy and creative, good for light fun.",
+          "reason_against": "Lacks competitive depth Liam prefers."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Zoe enjoys strategic games that challenge the group and accommodate all players.",
+      "private_goal": "Select a game that offers deep strategy and supports exactly six players.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Supports six players with strategic resource management.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Simple and quick.",
+          "reason_against": "Does not officially support six players, which is a dealbreaker."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Supports up to seven players and has fast rounds.",
+          "reason_against": "Less interactive gameplay might reduce engagement."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Easy and creative, good for casual play.",
+          "reason_against": "Not strategic enough for Zoe's taste."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Eli values direct and efficient gameplay with clear rules and good player engagement.",
+      "private_goal": "Pick a game that is straightforward and enjoyable for all six players within 90 minutes.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Supports six players and offers strategic depth.",
+          "reason_against": "Setup complexity might slow down the game."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Quick and easy to learn.",
+          "reason_against": "Only supports five players officially, which is a limitation."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Designed for up to seven players with fast rounds and clear gameplay.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Simple and creative, easy for all skill levels.",
+          "reason_against": "Less competitive and strategic."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Nina enjoys immersive strategy games that challenge the group and foster teamwork.",
+      "private_goal": "Find a game that supports six players and offers meaningful strategic decisions.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Supports six players with strategic resource management and teamwork.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Easy and quick to learn.",
+          "reason_against": "Does not officially support six players."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Supports up to seven players and has quick rounds.",
+          "reason_against": "Less interactive gameplay might reduce engagement."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Encourages creativity and is easy to play.",
+          "reason_against": "Less competitive and strategic."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Omar prefers straightforward games that are easy to pick up and play with a larger group.",
+      "private_goal": "Choose a game that can comfortably include six players without complicated rules.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 33,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Supports six players and offers strategy.",
+          "reason_against": "Setup complexity and longer playtime are drawbacks."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Easy to learn, quick to play, and familiar.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Supports more players and has fast rounds.",
+          "reason_against": "Less interactive gameplay."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Simple, creative, and suitable for all skill levels.",
+          "reason_against": "Less competitive and strategic."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Fast rounds and supports more players than needed."
+      },
+      "narrowing_acceptance": "C",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "complexity"
+        ],
+        [
+          "C",
+          "max_players"
+        ],
+        [
+          "A",
+          "complexity"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Supports six players and has strategic depth."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "complexity"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "complexity"
+        ],
+        [
+          "C",
+          "avg_playtime_minutes"
+        ],
+        [
+          "A",
+          "avg_playtime_minutes"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Supports up to seven players and has fast rounds."
+      },
+      "narrowing_acceptance": "C",
+      "used_point_keys": [
+        [
+          "B",
+          "game_type"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "max_players"
+        ],
+        [
+          "B",
+          "complexity"
+        ],
+        [
+          "A",
+          "complexity"
+        ],
+        [
+          "C",
+          "game_type"
+        ],
+        [
+          "A",
+          "game_type"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "max_players"
+        ],
+        [
+          "B",
+          "max_players"
+        ],
+        [
+          "A",
+          "complexity"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Supports up to seven players and has quick rounds."
+      },
+      "narrowing_acceptance": "C",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "complexity"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "max_players"
+        ],
+        [
+          "C",
+          "game_type"
+        ],
+        [
+          "A",
+          "game_type"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "avg_playtime_minutes"
+        ],
+        [
+          "A",
+          "max_players"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Choose a board game for the monthly game night.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Ticket to Ride is easy to learn and quick to play, so it fits perfectly for a smooth game night.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to learn and quick to play, perfect for a smooth game night.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Easy to learn and quick to play."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Ticket to Ride is familiar and easy to get into for six.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to learn, quick to play, and familiar.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Easy to learn and quick to play."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that can comfortably include six players without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Catan Traders works well—it supports six players with strategic resource management.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports six players with strategic resource management.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports exactly six players with strategic resource management."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "7 Wonders fits six players well with fast rounds and clear gameplay.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Designed for up to seven players with fast rounds and clear gameplay.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a game that is straightforward and enjoyable for all six players within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Catan Traders could work well since it supports six players and really encourages strategic resource management and teamwork.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports six players with strategic resource management and teamwork.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports exactly six players with strategic resource management."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "7 Wonders is designed for up to seven players with fast rounds and good strategy.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Designed for up to seven players with fast rounds and good strategy.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Nina, do you think the setup and playtime might slow us down too much?",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "Setup complexity and longer playtime are drawbacks.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Setup and rules are more complex than base game."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that can comfortably include six players without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Setup is definitely more involved than the base game, so it might slow us down a bit.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Setup and rules are more complex than base game.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Setup and rules are more complex than base game."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The Traders expansion is medium complexity and might drag setup, while Ticket to Ride is low complexity and fits our quick 90-minute game priority better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare complexity: low and medium",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "complexity",
+            "public_value": "low"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "complexity",
+            "public_value": "medium"
+          }
+        ],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "That five-player limit might slow us down with six though.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Only supports five players officially, which is a problem.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Officially supports only up to five players, may require house rules for six."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "That’s true, the max is five, so it might exclude someone or need a rotation if we want everyone involved.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the max players is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_players",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Liam, do you think the lower interaction in that game might make it less fun for some of us?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "May be less engaging for some due to lower interaction.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Gameplay may be less interactive for some players."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Yeah, I guess less interaction might make it a bit dull for some.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Gameplay may be less interactive for some players.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Gameplay may be less interactive for some players."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Hmm, I see the lower interaction point, but since 7 Wonders supports up to seven players and has quick rounds, I could be okay with it.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has quick rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has quick rounds."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Supports up to seven players and has quick rounds."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "One’s a deep strategy game, the other’s card drafting—strategy fits my priority better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare game_type: strategy and card drafting",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "game_type",
+            "public_value": "strategy"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "game_type",
+            "public_value": "card drafting"
+          }
+        ],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "It might be a bit tricky since it officially supports only five players, which could affect the flow with six.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Does not officially support six players.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Officially supports only up to five players, may require house rules for six."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Max five players means it won’t run smoothly for six.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the max players is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_players",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a game that is straightforward and enjoyable for all six players within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Route building fits my priority, but the player limit is a dealbreaker.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the game type is route building",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "game_type",
+          "public_value": "route building"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Card drafting in 7 Wonders feels lighter, but the deeper strategy of Catan Traders suits my preference better.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare game_type: strategy and card drafting",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "game_type",
+            "public_value": "strategy"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "game_type",
+            "public_value": "card drafting"
+          }
+        ],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The max is 6, so it should fit our group fine.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the max players is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "max_players",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that can comfortably include six players without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Catan Traders could work since it handles six players and still has some strategy.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports six players and has strategic depth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports exactly six players with strategic resource management."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Supports six players and has strategic depth."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Supports six players and has strategic depth."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Medium complexity is fine, but we need clear rules to keep it moving.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the complexity is medium",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "complexity",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a game that is straightforward and enjoyable for all six players within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Six players is the limit, so no worries about overcrowding.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the max players is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "max_players",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a game that is straightforward and enjoyable for all six players within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "7 Wonders supports seven players and has fast rounds, so that works.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has fast rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has fast rounds."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Supports up to seven players and has fast rounds."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Medium complexity sounds manageable, though I prefer something with a bit more depth for group strategy.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the complexity is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "complexity",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Seven players fit, which is great, but I still need the setup and gameplay under 90 minutes to keep it fun for everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the max players is 7",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "max_players",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Setup time can add up, even if playtime’s short.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average playtime minutes is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "avg_playtime_minutes",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that can comfortably include six players without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Both have medium complexity, but I lean toward faster rounds over setup time.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare complexity: medium and medium",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "complexity",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "complexity",
+            "public_value": "medium"
+          }
+        ],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "True, max players is 7, but I prefer exactly six for balanced turns.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the max players is 7",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "max_players",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Thirty minutes sounds good, though I’d worry about keeping everyone engaged that long.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average playtime minutes is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "avg_playtime_minutes",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "One has medium complexity, the other low—medium fits my strategy focus better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare complexity: medium and low",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "complexity",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "complexity",
+            "public_value": "low"
+          }
+        ],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Ninety minutes feels a bit long for keeping it quick.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average playtime minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "avg_playtime_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 33,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The discussion currently leans most toward 7 Wonders, without a majority yet. Maya, Zoe, Nina, and Omar, would that choice work for you?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 34,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "7 Wonders fits well—it’s designed for up to seven players and has fast rounds, so setup and play stay within our 90-minute limit.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fast rounds and supports more players than needed.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Fast rounds and supports more players than needed."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Fast rounds and supports more players than needed."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 35,
+      "phase": "NARROWING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "That sounds promising—7 Wonders allowing up to seven players and quick rounds could work well for keeping everyone involved.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has quick rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has quick rounds."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Supports up to seven players and has quick rounds."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "7 Wonders is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fast rounds and supports more players than needed.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Fast rounds and supports more players than needed."
+        },
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Fast rounds and supports more players than needed."
+      },
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for 7 Wonders.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Designed for up to seven players with fast rounds and good strategy.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I choose 7 Wonders.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has fast rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has fast rounds."
+        },
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Supports up to seven players and has fast rounds."
+      },
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I’m voting for 7 Wonders.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Designed for up to seven players with fast rounds and clear gameplay.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "I’m voting for 7 Wonders.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has quick rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has quick rounds."
+        },
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Supports up to seven players and has quick rounds."
+      },
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I choose Ticket to Ride.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to learn, quick to play, and familiar.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Easy to learn and quick to play."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The decision closes with a majority for 7 Wonders.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:avg_playtime_minutes": 1,
+    "A:complexity": 4,
+    "A:concern": 2,
+    "A:game_type": 2,
+    "A:max_players": 2,
+    "A:upside": 3,
+    "B:complexity": 2,
+    "B:concern": 2,
+    "B:game_type": 1,
+    "B:max_players": 2,
+    "B:upside": 2,
+    "C:avg_playtime_minutes": 2,
+    "C:complexity": 2,
+    "C:concern": 2,
+    "C:game_type": 2,
+    "C:max_players": 2,
+    "C:upside": 6
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "upside"
+    ],
+    [
+      "C",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "C",
+    "p3": "C",
+    "p4": "C",
+    "p5": "C",
+    "p6": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "C",
+    "votes": {
+      "p1": "C",
+      "p2": "C",
+      "p3": "C",
+      "p4": "C",
+      "p5": "C",
+      "p6": "B"
+    },
+    "reason": "5 of 6 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 34,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 20896,
+    "output_tokens": 2917,
+    "moderator_turns": 4,
+    "voluntary_turns": 26,
+    "visible_movements": 7,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 40,
+    "voluntary_turns": 26,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0909,
+    "avg_words_per_participant_turn": 13.65,
+    "visible_preference_changes": 3,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 20896,
+    "output_tokens": 2917,
+    "llm_calls": 37,
+    "voluntary_turns_by_persona": {
+      "p6": 3,
+      "p1": 4,
+      "p2": 5,
+      "p5": 6,
+      "p3": 5,
+      "p4": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to learn and quick to play, perfect for a smooth game night.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Easy to learn and quick to play."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ticket to Ride is easy to learn and quick to play, so it fits perfectly for a smooth game night.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to learn, quick to play, and familiar.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Easy to learn and quick to play."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that can comfortably include six players without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ticket to Ride is familiar and easy to get into for six.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports six players with strategic resource management.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports exactly six players with strategic resource management."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Catan Traders works well—it supports six players with strategic resource management.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Designed for up to seven players with fast rounds and clear gameplay.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a game that is straightforward and enjoyable for all six players within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "7 Wonders fits six players well with fast rounds and clear gameplay.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports six players with strategic resource management and teamwork.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports exactly six players with strategic resource management."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Catan Traders could work well since it supports six players and really encourages strategic resource management and teamwork.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Designed for up to seven players with fast rounds and good strategy.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "7 Wonders is designed for up to seven players with fast rounds and good strategy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "Setup complexity and longer playtime are drawbacks.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Setup and rules are more complex than base game."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that can comfortably include six players without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Nina, do you think the setup and playtime might slow us down too much?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Setup and rules are more complex than base game.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Setup and rules are more complex than base game."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Setup is definitely more involved than the base game, so it might slow us down a bit.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare complexity: low and medium",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "complexity",
+            "public_value": "low"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "complexity",
+            "public_value": "medium"
+          }
+        ],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Traders expansion is medium complexity and might drag setup, while Ticket to Ride is low complexity and fits our quick 90-minute game priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Only supports five players officially, which is a problem.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Officially supports only up to five players, may require house rules for six."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That five-player limit might slow us down with six though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the max players is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_players",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s true, the max is five, so it might exclude someone or need a rotation if we want everyone involved.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "May be less engaging for some due to lower interaction.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Gameplay may be less interactive for some players."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liam, do you think the lower interaction in that game might make it less fun for some of us?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Gameplay may be less interactive for some players.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Gameplay may be less interactive for some players."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yeah, I guess less interaction might make it a bit dull for some.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has quick rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has quick rounds."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Hmm, I see the lower interaction point, but since 7 Wonders supports up to seven players and has quick rounds, I could be okay with it.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare game_type: strategy and card drafting",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "game_type",
+            "public_value": "strategy"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "game_type",
+            "public_value": "card drafting"
+          }
+        ],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One’s a deep strategy game, the other’s card drafting—strategy fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Does not officially support six players.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Officially supports only up to five players, may require house rules for six."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It might be a bit tricky since it officially supports only five players, which could affect the flow with six.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the max players is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_players",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a game that is straightforward and enjoyable for all six players within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Max five players means it won’t run smoothly for six.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the game type is route building",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "game_type",
+          "public_value": "route building"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Route building fits my priority, but the player limit is a dealbreaker.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare game_type: strategy and card drafting",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "game_type",
+            "public_value": "strategy"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "game_type",
+            "public_value": "card drafting"
+          }
+        ],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Card drafting in 7 Wonders feels lighter, but the deeper strategy of Catan Traders suits my preference better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the max players is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "max_players",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that can comfortably include six players without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The max is 6, so it should fit our group fine.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports six players and has strategic depth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports exactly six players with strategic resource management."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Supports six players and has strategic depth."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Catan Traders could work since it handles six players and still has some strategy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the complexity is medium",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "complexity",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a game that is straightforward and enjoyable for all six players within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Medium complexity is fine, but we need clear rules to keep it moving.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the max players is 6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "max_players",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a game that is straightforward and enjoyable for all six players within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Six players is the limit, so no worries about overcrowding.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has fast rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has fast rounds."
+        },
+        "vote_option": null
+      },
+      "raw_text": "7 Wonders supports seven players and has fast rounds, so that works.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the complexity is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "complexity",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Medium complexity sounds manageable, though I prefer something with a bit more depth for group strategy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the max players is 7",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "max_players",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Seven players fit, which is great, but I still need the setup and gameplay under 90 minutes to keep it fun for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average playtime minutes is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "avg_playtime_minutes",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that can comfortably include six players without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Setup time can add up, even if playtime’s short.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare complexity: medium and medium",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "complexity",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "complexity",
+            "public_value": "medium"
+          }
+        ],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have medium complexity, but I lean toward faster rounds over setup time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the max players is 7",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "max_players",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, max players is 7, but I prefer exactly six for balanced turns.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average playtime minutes is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "avg_playtime_minutes",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Thirty minutes sounds good, though I’d worry about keeping everyone engaged that long.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare complexity: medium and low",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "complexity",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "complexity",
+            "public_value": "low"
+          }
+        ],
+        "personal_context": "Select a game that offers deep strategy and supports exactly six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One has medium complexity, the other low—medium fits my strategy focus better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the average playtime minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "avg_playtime_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a game that balances speed and strategy for all six players.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ninety minutes feels a bit long for keeping it quick.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fast rounds and supports more players than needed.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that is quick to set up and can be played comfortably within 90 minutes.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Fast rounds and supports more players than needed."
+        },
+        "vote_option": null
+      },
+      "raw_text": "7 Wonders fits well—it’s designed for up to seven players and has fast rounds, so setup and play stay within our 90-minute limit.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has quick rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a game that supports six players and offers meaningful strategic decisions.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has quick rounds."
+        },
+        "vote_option": null
+      },
+      "raw_text": "That sounds promising—7 Wonders allowing up to seven players and quick rounds could work well for keeping everyone involved.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fast rounds and supports more players than needed.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Fast rounds and supports more players than needed."
+        },
+        "vote_option": "C"
+      },
+      "raw_text": "7 Wonders is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Designed for up to seven players with fast rounds and good strategy.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for 7 Wonders.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has fast rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has fast rounds."
+        },
+        "vote_option": "C"
+      },
+      "raw_text": "I choose 7 Wonders.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Designed for up to seven players with fast rounds and clear gameplay.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for 7 Wonders.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports up to seven players and has quick rounds.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Designed for up to seven players with fast rounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Supports up to seven players and has quick rounds."
+        },
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for 7 Wonders.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to learn, quick to play, and familiar.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Easy to learn and quick to play."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Ticket to Ride.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

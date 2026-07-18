@@ -1,0 +1,3590 @@
+{
+  "provenance": {
+    "seed": 242118800,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Select the beer styles for the homebrew club's competition entry",
+    "options": [
+      {
+        "id": "A",
+        "name": "American Pale Ale",
+        "attrs": {
+          "bitterness_IBU": "40",
+          "alcohol_ABV": "5.5%",
+          "fermentation_days": "14",
+          "color_SR_Malt": "10"
+        },
+        "upside": "Widely appreciated style with balanced malt and hop flavors.",
+        "concern": "Moderate bitterness may not appeal to those preferring lighter beers.",
+        "short_name": "American Pale",
+        "aliases": [
+          "American Pale",
+          "Pale Ale"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Belgian Witbier",
+        "attrs": {
+          "bitterness_IBU": "15",
+          "alcohol_ABV": "4.8%",
+          "fermentation_days": "12",
+          "spices_used": "['coriander', 'orange peel']"
+        },
+        "upside": "Light and refreshing with unique spice notes.",
+        "concern": "Spice flavors might be unfamiliar or off-putting to some judges.",
+        "short_name": "Belgian Witbier",
+        "aliases": []
+      },
+      {
+        "id": "C",
+        "name": "Imperial Stout",
+        "attrs": {
+          "bitterness_IBU": "60",
+          "alcohol_ABV": "9.0%",
+          "fermentation_days": "21",
+          "color_SR_Malt": "120"
+        },
+        "upside": "Rich and complex with strong malt character.",
+        "concern": "Longer fermentation and higher alcohol require more careful brewing.",
+        "short_name": "Imperial Stout",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "German Hefeweizen",
+        "attrs": {
+          "bitterness_IBU": "12",
+          "alcohol_ABV": "5.0%",
+          "fermentation_days": "10",
+          "yeast_characteristics": "['banana', 'clove']"
+        },
+        "upside": "Distinct yeast flavors and smooth mouthfeel.",
+        "concern": "Yeast profile may not suit all palates and requires precise fermentation control.",
+        "short_name": "German Hefeweizen",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "The homebrew club is selecting beer styles for its upcoming competition entry. Six members will vote, and the chosen styles must be suitable for homebrewing and judged fairly in a local amateur contest."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Maya is an experienced homebrewer who enjoys experimenting with yeast-driven beers.",
+      "private_goal": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Balanced malt and hop flavors make it a safe, widely appreciated choice.",
+          "reason_against": "Moderate bitterness might be too strong for some palates."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Light and refreshing, good for variety.",
+          "reason_against": "Spices might be unfamiliar and detract from yeast character."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Rich and complex flavor is interesting.",
+          "reason_against": "Long fermentation and high alcohol make it harder to brew well."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Distinct yeast flavors and smooth mouthfeel align perfectly with my brewing interests.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Liam is a detail-oriented brewer who appreciates subtle spice and lighter beers.",
+      "private_goal": "To promote a style that stands out with unique spice notes but remains accessible.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Balanced and familiar, good for broad appeal.",
+          "reason_against": "Bitterness may be too strong compared to lighter styles."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Light, refreshing, and uniquely spiced, which can impress judges.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Complex flavor but difficult to brew well at home.",
+          "reason_against": "Long fermentation and high alcohol are challenging for amateurs."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Nice yeast character and smoothness.",
+          "reason_against": "Yeast profile may not suit all palates."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Nina is a casual homebrewer who prefers straightforward, balanced beers.",
+      "private_goal": "To pick a style that is easy to brew and broadly liked by judges.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 28,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Widely appreciated with balanced flavors and moderate bitterness.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Light and refreshing, good for variety.",
+          "reason_against": "Spice flavors might be unfamiliar or off-putting."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Rich and complex but harder to brew and judge fairly.",
+          "reason_against": "Long fermentation and high alcohol increase risk."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Distinct yeast flavors add interest.",
+          "reason_against": "Requires careful fermentation control."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Omar is a passionate brewer who values unique and flavorful beer styles.",
+      "private_goal": "To select a style that stands out with interesting flavor profiles for the competition.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 39,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Balanced and popular style that judges will appreciate.",
+          "reason_against": "Bitterness might be a bit strong for some."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Unique spice notes and light body make it refreshing and distinctive.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Rich and complex but more difficult to brew consistently.",
+          "reason_against": "Long fermentation and high alcohol pose challenges."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Distinct yeast flavors and smooth mouthfeel add complexity.",
+          "reason_against": "Requires precise fermentation control."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Zoe is an adventurous brewer who enjoys bold, high-alcohol beers.",
+      "private_goal": "To push for a strong, complex beer that showcases brewing skill.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Balanced and approachable, good fallback option.",
+          "reason_against": "Moderate bitterness might not be exciting enough."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Light and refreshing, adds variety.",
+          "reason_against": "Spices may not appeal to all judges."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Rich, complex, and bold, perfect for showcasing skill.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Interesting yeast flavors but less bold than preferred.",
+          "reason_against": "May not stand out enough in competition."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Eli is a meticulous brewer who values complexity and depth in beers.",
+      "private_goal": "To select a style that offers rich flavors and brewing challenge.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Balanced and reliable style with good judge appeal.",
+          "reason_against": "Bitterness could be a bit much for lighter beer fans."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Light and refreshing, good contrast.",
+          "reason_against": "Spice flavors might be too unusual."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Rich, complex, and rewarding to brew well.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Distinct yeast character adds complexity.",
+          "reason_against": "Requires precise fermentation control."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "color_sr_malt"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "D",
+          "yeast_characteristics"
+        ],
+        [
+          "C",
+          "bitterness_ibu"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "fermentation_days"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "fermentation_days"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 0,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "fermentation_days"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "bitterness_ibu"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "color_sr_malt"
+        ],
+        [
+          "C",
+          "fermentation_days"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Distinct yeast character adds complexity."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "alcohol_abv"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "alcohol_abv"
+        ],
+        [
+          "D",
+          "bitterness_ibu"
+        ],
+        [
+          "C",
+          "alcohol_abv"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "bitterness_ibu"
+        ],
+        [
+          "C",
+          "bitterness_ibu"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Select the beer styles for the homebrew club's competition entry.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The distinct yeast flavors and smooth mouthfeel in German Hefeweizen fit my brewing interests well.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Distinct yeast flavors and smooth mouthfeel align perfectly with my brewing interests.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Distinct yeast flavors and smooth mouthfeel."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Belgian Witbier has a light body and unique spice notes, which could make it both refreshing and distinctive for the competition.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unique spice notes and light body make it refreshing and distinctive.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Light and refreshing with unique spice notes."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "American Pale is pretty straightforward, with balanced flavors and moderate bitterness.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Widely appreciated with balanced flavors and moderate bitterness.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely appreciated style with balanced malt and hop flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a style that is easy to brew and broadly liked by judges.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Imperial Stout offers a rich, complex malt character that makes it especially rewarding to brew well—definitely worth the extra attention.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich, complex, and rewarding to brew well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich and complex with strong malt character."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Belgian Witbier’s light, refreshing nature paired with unique spice notes can really stand out and impress judges.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Light, refreshing, and uniquely spiced, which can impress judges.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Light and refreshing with unique spice notes."
+        },
+        "comparison_sources": [],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Zoe",
+      "text": "Imperial Stout is rich, complex, and bold—perfect for showcasing real brewing skill.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich, complex, and bold, perfect for showcasing skill.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich and complex with strong malt character."
+        },
+        "comparison_sources": [],
+        "personal_context": "To push for a strong, complex beer that showcases brewing skill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "True, it’s tricky managing the longer fermentation without losing some nuanced flavors I want to highlight.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "Long fermentation and high alcohol pose challenges.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer fermentation and higher alcohol require more careful brewing."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "60 IBU is solid for bitterness, though I’d watch it doesn’t overpower the more subtle flavors I want to bring out.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the bitterness IBU is 60",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "bitterness_IBU",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That SR malt color at 120 can add depth but risks masking delicate yeast notes.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the color SR Malt is 120",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "color_SR_Malt",
+          "public_value": "120"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Nina, do you think the moderate bitterness here might deter those preferring something lighter?",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Bitterness could be a bit much for lighter beer fans.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Moderate bitterness may not appeal to those preferring lighter beers."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Moderate bitterness might put off some who want lighter beers, though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Moderate bitterness may not appeal to those preferring lighter beers.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Moderate bitterness may not appeal to those preferring lighter beers."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a style that is easy to brew and broadly liked by judges.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Balanced bitterness usually wins over judges, though it’s key to keep those subtle flavors noticeable.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced and popular style that judges will appreciate.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely appreciated style with balanced malt and hop flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Fermentation runs 12 days for the Witbier and 14 for the Pale Ale; the shorter time suits my preference for a lighter, subtly spiced profile better.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare fermentation_days: 12 and 14",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "fermentation_days",
+            "public_value": "12"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "fermentation_days",
+            "public_value": "14"
+          }
+        ],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "That style needs tight fermentation control—do we have the setup to handle that consistently?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Requires precise fermentation control.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Yeast profile may not suit all palates and requires precise fermentation control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It does need careful control and the yeast might not please everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Yeast profile may not suit all palates and requires precise fermentation control.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Yeast profile may not suit all palates and requires precise fermentation control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Nice yeast character and smoothness are definite strengths, though we need to ensure our fermentation control is sharp to keep that profile consistent.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Nice yeast character and smoothness.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Distinct yeast flavors and smooth mouthfeel."
+        },
+        "comparison_sources": [],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "The 9.0% ABV brings more complexity and challenge than the 5.0%, which aligns better with my preference for depth and a bolder profile.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare alcohol_ABV: 9.0% and 5.0%",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "alcohol_ABV",
+            "public_value": "9.0%"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "alcohol_ABV",
+            "public_value": "5.0%"
+          }
+        ],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Liam’s point about yeast character is well taken; the distinct profile in Option D could add the complexity I value, provided we maintain precise fermentation control.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Distinct yeast character adds complexity.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Distinct yeast flavors and smooth mouthfeel."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Distinct yeast character adds complexity."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "C",
+        "movement_reason": "Distinct yeast character adds complexity."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Ten days is doable, though I’d watch for any off-flavors if fermentation drags a bit longer.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the fermentation days is 10",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "fermentation_days",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "The bitterness at 12 IBU is mild, which supports a balanced profile but might limit the layering I usually aim for in complexity.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the bitterness IBU is 12",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "bitterness_IBU",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The banana and clove notes bring softness, which I like for mouthfeel.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the yeast characteristics is ['banana', 'clove']",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "yeast_characteristics",
+          "public_value": "['banana', 'clove']"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Long ferment and higher alcohol mean more room for mistakes, which might be tough for less experienced brewers to manage.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Long fermentation and high alcohol are challenging for amateurs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer fermentation and higher alcohol require more careful brewing."
+        },
+        "comparison_sources": [],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Bitterness at 60 IBU adds edge, not quite my style.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the bitterness IBU is 60",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "bitterness_IBU",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zoe",
+      "text": "21 days fermentation is solid for building depth and complexity, especially with higher alcohol to balance those intense flavors.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the fermentation days is 21",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "fermentation_days",
+          "public_value": "21"
+        },
+        "comparison_sources": [],
+        "personal_context": "To push for a strong, complex beer that showcases brewing skill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "The 9.0% ABV offers more complexity and challenge in balancing flavors than 4.8%, which better suits my brewing goals.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare alcohol_ABV: 9.0% and 4.8%",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "alcohol_ABV",
+            "public_value": "9.0%"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "alcohol_ABV",
+            "public_value": "4.8%"
+          }
+        ],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zoe",
+      "text": "Color at 120 gives a strong base for bold beers, but pushing complexity needs more than just malt color.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the color SR Malt is 120",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "color_SR_Malt",
+          "public_value": "120"
+        },
+        "comparison_sources": [],
+        "personal_context": "To push for a strong, complex beer that showcases brewing skill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Liam, do you think spices might hide the yeast’s smoothness here?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Spices might be unfamiliar and detract from yeast character.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Spice flavors might be unfamiliar or off-putting to some judges."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Spices could mask the yeast’s smoothness, especially if judges aren’t used to those flavors.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Spice flavors might be unfamiliar or off-putting to some judges.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Spice flavors might be unfamiliar or off-putting to some judges."
+        },
+        "comparison_sources": [],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Spices might dull smoothness, true, but 60 IBU offers a richer bitterness to balance complexity better than 15 does.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare bitterness_IBU: 60 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "bitterness_IBU",
+            "public_value": "60"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "bitterness_IBU",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 30,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The strongest common-ground options are tied, so I’ll use Imperial Stout as the compromise target. Maya, Liam, Nina, and Omar, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 31,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Long ferment and high alcohol feel tricky here.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Long fermentation and high alcohol make it harder to brew well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer fermentation and higher alcohol require more careful brewing."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose German Hefeweizen.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Distinct yeast flavors and smooth mouthfeel align perfectly with my brewing interests.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Distinct yeast flavors and smooth mouthfeel."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 34,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Belgian Witbier.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Light, refreshing, and uniquely spiced, which can impress judges.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Light and refreshing with unique spice notes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "I choose American Pale.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Widely appreciated with balanced flavors and moderate bitterness.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely appreciated style with balanced malt and hop flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "My final vote is Belgian Witbier.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unique spice notes and light body make it refreshing and distinctive.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Light and refreshing with unique spice notes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Zoe",
+      "text": "I’m voting for Imperial Stout.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich, complex, and bold, perfect for showcasing skill.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich and complex with strong malt character."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Imperial Stout is my final choice.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich, complex, and rewarding to brew well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich and complex with strong malt character."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final vote remained split, so the decision is unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:fermentation_days": 1,
+    "A:upside": 2,
+    "B:alcohol_abv": 1,
+    "B:bitterness_ibu": 1,
+    "B:concern": 2,
+    "B:fermentation_days": 1,
+    "B:upside": 2,
+    "C:alcohol_abv": 2,
+    "C:bitterness_ibu": 3,
+    "C:color_sr_malt": 2,
+    "C:concern": 3,
+    "C:fermentation_days": 1,
+    "C:upside": 2,
+    "D:alcohol_abv": 1,
+    "D:bitterness_ibu": 1,
+    "D:concern": 2,
+    "D:fermentation_days": 1,
+    "D:upside": 3,
+    "D:yeast_characteristics": 1
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "bitterness_ibu"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "B",
+    "p3": "A",
+    "p4": "B",
+    "p5": "C",
+    "p6": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "D",
+      "p2": "B",
+      "p3": "A",
+      "p4": "B",
+      "p5": "C",
+      "p6": "C"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 30,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 18859,
+    "output_tokens": 2984,
+    "moderator_turns": 4,
+    "voluntary_turns": 22,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 36,
+    "voluntary_turns": 22,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1,
+    "avg_words_per_participant_turn": 14.81,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 18859,
+    "output_tokens": 2984,
+    "llm_calls": 33,
+    "voluntary_turns_by_persona": {
+      "p4": 5,
+      "p1": 6,
+      "p6": 6,
+      "p2": 3,
+      "p5": 2
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Distinct yeast flavors and smooth mouthfeel align perfectly with my brewing interests.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Distinct yeast flavors and smooth mouthfeel."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The distinct yeast flavors and smooth mouthfeel in German Hefeweizen fit my brewing interests well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unique spice notes and light body make it refreshing and distinctive.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Light and refreshing with unique spice notes."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Belgian Witbier has a light body and unique spice notes, which could make it both refreshing and distinctive for the competition.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Widely appreciated with balanced flavors and moderate bitterness.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely appreciated style with balanced malt and hop flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a style that is easy to brew and broadly liked by judges.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "American Pale is pretty straightforward, with balanced flavors and moderate bitterness.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich, complex, and rewarding to brew well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich and complex with strong malt character."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Imperial Stout offers a rich, complex malt character that makes it especially rewarding to brew well—definitely worth the extra attention.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Light, refreshing, and uniquely spiced, which can impress judges.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Light and refreshing with unique spice notes."
+        },
+        "comparison_sources": [],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Belgian Witbier’s light, refreshing nature paired with unique spice notes can really stand out and impress judges.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich, complex, and bold, perfect for showcasing skill.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich and complex with strong malt character."
+        },
+        "comparison_sources": [],
+        "personal_context": "To push for a strong, complex beer that showcases brewing skill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Imperial Stout is rich, complex, and bold—perfect for showcasing real brewing skill.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "Long fermentation and high alcohol pose challenges.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer fermentation and higher alcohol require more careful brewing."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, it’s tricky managing the longer fermentation without losing some nuanced flavors I want to highlight.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the bitterness IBU is 60",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "bitterness_IBU",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "60 IBU is solid for bitterness, though I’d watch it doesn’t overpower the more subtle flavors I want to bring out.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the color SR Malt is 120",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "color_SR_Malt",
+          "public_value": "120"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That SR malt color at 120 can add depth but risks masking delicate yeast notes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Bitterness could be a bit much for lighter beer fans.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Moderate bitterness may not appeal to those preferring lighter beers."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Nina, do you think the moderate bitterness here might deter those preferring something lighter?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Moderate bitterness may not appeal to those preferring lighter beers.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Moderate bitterness may not appeal to those preferring lighter beers."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a style that is easy to brew and broadly liked by judges.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Moderate bitterness might put off some who want lighter beers, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced and popular style that judges will appreciate.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely appreciated style with balanced malt and hop flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Balanced bitterness usually wins over judges, though it’s key to keep those subtle flavors noticeable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare fermentation_days: 12 and 14",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "fermentation_days",
+            "public_value": "12"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "fermentation_days",
+            "public_value": "14"
+          }
+        ],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fermentation runs 12 days for the Witbier and 14 for the Pale Ale; the shorter time suits my preference for a lighter, subtly spiced profile better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Requires precise fermentation control.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Yeast profile may not suit all palates and requires precise fermentation control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That style needs tight fermentation control—do we have the setup to handle that consistently?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Yeast profile may not suit all palates and requires precise fermentation control.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Yeast profile may not suit all palates and requires precise fermentation control."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It does need careful control and the yeast might not please everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Nice yeast character and smoothness.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Distinct yeast flavors and smooth mouthfeel."
+        },
+        "comparison_sources": [],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Nice yeast character and smoothness are definite strengths, though we need to ensure our fermentation control is sharp to keep that profile consistent.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare alcohol_ABV: 9.0% and 5.0%",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "alcohol_ABV",
+            "public_value": "9.0%"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "alcohol_ABV",
+            "public_value": "5.0%"
+          }
+        ],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 9.0% ABV brings more complexity and challenge than the 5.0%, which aligns better with my preference for depth and a bolder profile.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Distinct yeast character adds complexity.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Distinct yeast flavors and smooth mouthfeel."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Distinct yeast character adds complexity."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Liam’s point about yeast character is well taken; the distinct profile in Option D could add the complexity I value, provided we maintain precise fermentation control.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the fermentation days is 10",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "fermentation_days",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that stands out with interesting flavor profiles for the competition.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ten days is doable, though I’d watch for any off-flavors if fermentation drags a bit longer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the bitterness IBU is 12",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "bitterness_IBU",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The bitterness at 12 IBU is mild, which supports a balanced profile but might limit the layering I usually aim for in complexity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the yeast characteristics is ['banana', 'clove']",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "yeast_characteristics",
+          "public_value": "['banana', 'clove']"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The banana and clove notes bring softness, which I like for mouthfeel.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Long fermentation and high alcohol are challenging for amateurs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer fermentation and higher alcohol require more careful brewing."
+        },
+        "comparison_sources": [],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Long ferment and higher alcohol mean more room for mistakes, which might be tough for less experienced brewers to manage.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the bitterness IBU is 60",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "bitterness_IBU",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Bitterness at 60 IBU adds edge, not quite my style.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the fermentation days is 21",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "fermentation_days",
+          "public_value": "21"
+        },
+        "comparison_sources": [],
+        "personal_context": "To push for a strong, complex beer that showcases brewing skill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "21 days fermentation is solid for building depth and complexity, especially with higher alcohol to balance those intense flavors.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare alcohol_ABV: 9.0% and 4.8%",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "alcohol_ABV",
+            "public_value": "9.0%"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "alcohol_ABV",
+            "public_value": "4.8%"
+          }
+        ],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 9.0% ABV offers more complexity and challenge in balancing flavors than 4.8%, which better suits my brewing goals.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the color SR Malt is 120",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "color_SR_Malt",
+          "public_value": "120"
+        },
+        "comparison_sources": [],
+        "personal_context": "To push for a strong, complex beer that showcases brewing skill.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Color at 120 gives a strong base for bold beers, but pushing complexity needs more than just malt color.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Spices might be unfamiliar and detract from yeast character.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Spice flavors might be unfamiliar or off-putting to some judges."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liam, do you think spices might hide the yeast’s smoothness here?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Spice flavors might be unfamiliar or off-putting to some judges.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Spice flavors might be unfamiliar or off-putting to some judges."
+        },
+        "comparison_sources": [],
+        "personal_context": "To promote a style that stands out with unique spice notes but remains accessible.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Spices could mask the yeast’s smoothness, especially if judges aren’t used to those flavors.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare bitterness_IBU: 60 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "bitterness_IBU",
+            "public_value": "60"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "bitterness_IBU",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To select a style that offers rich flavors and brewing challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Spices might dull smoothness, true, but 60 IBU offers a richer bitterness to balance complexity better than 15 does.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Long fermentation and high alcohol make it harder to brew well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer fermentation and higher alcohol require more careful brewing."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a beer style that showcases unique yeast flavors and smooth mouthfeel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Long ferment and high alcohol feel tricky here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Distinct yeast flavors and smooth mouthfeel align perfectly with my brewing interests.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Distinct yeast flavors and smooth mouthfeel."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose German Hefeweizen.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Light, refreshing, and uniquely spiced, which can impress judges.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Light and refreshing with unique spice notes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Belgian Witbier.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Widely appreciated with balanced flavors and moderate bitterness.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely appreciated style with balanced malt and hop flavors."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose American Pale.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unique spice notes and light body make it refreshing and distinctive.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Light and refreshing with unique spice notes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Belgian Witbier.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich, complex, and bold, perfect for showcasing skill.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich and complex with strong malt character."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for Imperial Stout.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rich, complex, and rewarding to brew well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Rich and complex with strong malt character."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Imperial Stout is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

@@ -1,0 +1,4483 @@
+{
+  "provenance": {
+    "seed": 242118807,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Agree on the highlight reel song for the season finale video",
+    "options": [
+      {
+        "id": "A",
+        "name": "Upbeat Indie Pop Track",
+        "attrs": {
+          "duration_seconds": "180",
+          "license_type": "royalty-free",
+          "tempo_bpm": "120",
+          "mood": "energetic"
+        },
+        "upside": "Matches the video length perfectly and maintains an energetic vibe.",
+        "concern": "May feel generic to some viewers due to common indie pop elements.",
+        "short_name": "Upbeat Indie Pop",
+        "aliases": [
+          "Upbeat Indie Pop",
+          "Indie Pop Track"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Instrumental Electronic Groove",
+        "attrs": {
+          "duration_seconds": "175",
+          "license_type": "licensed",
+          "tempo_bpm": "128",
+          "mood": "dynamic"
+        },
+        "upside": "Provides a modern and dynamic sound that complements fast-paced footage.",
+        "concern": "Requires a group license fee which may impact budget.",
+        "short_name": "Instrumental Electronic",
+        "aliases": [
+          "Instrumental Electronic",
+          "Electronic Groove"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Acoustic Folk Melody",
+        "attrs": {
+          "duration_seconds": "185",
+          "license_type": "royalty-free",
+          "tempo_bpm": "95",
+          "mood": "warm"
+        },
+        "upside": "Offers a warm and authentic tone that highlights emotional moments.",
+        "concern": "Slower tempo might reduce energy in some highlight scenes.",
+        "short_name": "Acoustic Folk",
+        "aliases": [
+          "Acoustic Folk",
+          "Folk Melody"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Up-tempo Rock Anthem",
+        "attrs": {
+          "duration_seconds": "180",
+          "license_type": "licensed",
+          "tempo_bpm": "140",
+          "mood": "intense"
+        },
+        "upside": "Delivers an intense and powerful atmosphere suited for climactic scenes.",
+        "concern": "License restrictions limit use to this project only.",
+        "short_name": "Up-tempo Rock",
+        "aliases": [
+          "Up-tempo Rock",
+          "Rock Anthem"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The group of 7 is selecting a song for the season finale highlight reel video. The song must fit a 3-minute video, be royalty-free or licensed for group use, and match the energetic tone of the season."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Maya is a music producer who values modern and dynamic soundscapes.",
+      "private_goal": "Ensure the song complements fast-paced footage and energizes viewers.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Matches the video length perfectly and has an energetic vibe.",
+          "reason_against": "Feels less dynamic compared to electronic options."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Provides a modern and dynamic sound ideal for fast-paced footage.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Warm tone is nice but tempo is too slow for energy needed.",
+          "reason_against": "Slower tempo might reduce energy in highlight scenes."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Intense and powerful, good for climactic moments.",
+          "reason_against": "License restrictions limit future reuse."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Liam is a budget-conscious editor who prefers straightforward choices.",
+      "private_goal": "Avoid costly licenses and keep the selection simple.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 35,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Royalty-free and fits video length perfectly.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Dynamic sound is appealing.",
+          "reason_against": "License fee is a budget concern."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Royalty-free and warm tone is a plus.",
+          "reason_against": "Slower tempo might reduce energy."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Intense mood is good.",
+          "reason_against": "License restrictions and cost make it impractical."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Zoe is a creative director who values intensity and emotional impact.",
+      "private_goal": "Choose a song that delivers a powerful and memorable finale.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Energetic and fits length well.",
+          "reason_against": "Feels too generic for a climactic finale."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Modern and dynamic, supports energy well.",
+          "reason_against": "License fee is a drawback."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Warm and authentic tone.",
+          "reason_against": "Too slow and less intense for finale energy."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Intense and powerful, perfect for climactic scenes.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Eli is a storyteller who prefers warm and emotional tones.",
+      "private_goal": "Highlight emotional moments with a genuine and heartfelt song.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Energetic and fits video length.",
+          "reason_against": "May feel generic, less emotional."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Dynamic and modern sound.",
+          "reason_against": "License fee is a concern."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Warm and authentic tone highlights emotion well.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Intense mood is good but less warm.",
+          "reason_against": "License restrictions and less emotional warmth."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Nina is a pragmatic project manager focused on quality and licensing.",
+      "private_goal": "Select a licensed track that balances quality and usability.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 33,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Fits length and is royalty-free.",
+          "reason_against": "Generic sound and less dynamic."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Modern, dynamic, and licensed for group use.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Warm tone is nice but tempo is slow.",
+          "reason_against": "Less energetic for highlights."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Intense and powerful.",
+          "reason_against": "License restrictions limit reuse."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Omar is a quiet but thoughtful editor who values authenticity.",
+      "private_goal": "Choose a song that feels genuine and fits the mood naturally.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Energetic and fits length.",
+          "reason_against": "Generic feel less appealing."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Dynamic and modern.",
+          "reason_against": "License fee is a downside."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Warm and authentic tone matches emotional highlights.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Powerful mood is good.",
+          "reason_against": "License restrictions and less natural feel."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Ivy",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Ivy is a direct and passionate editor who prioritizes intensity.",
+      "private_goal": "Ensure the finale has a strong, memorable impact.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Energetic and fits length.",
+          "reason_against": "Not intense enough for finale impact."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Dynamic and modern sound supports energy.",
+          "reason_against": "License fee is a drawback."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Warm tone is nice but tempo too slow.",
+          "reason_against": "Less intense for a strong finale."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Intense and powerful, perfect for climactic scenes.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "duration_seconds"
+        ],
+        [
+          "D",
+          "license_type"
+        ],
+        [
+          "C",
+          "license_type"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "D",
+          "duration_seconds"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Modern and dynamic, supports energy well."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "C",
+          "duration_seconds"
+        ],
+        [
+          "D",
+          "tempo_bpm"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "tempo_bpm"
+        ],
+        [
+          "D",
+          "duration_seconds"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "duration_seconds"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Dynamic and modern sound."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "D",
+          "tempo_bpm"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "mood"
+        ],
+        [
+          "C",
+          "mood"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "mood"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "tempo_bpm"
+        ],
+        [
+          "D",
+          "mood"
+        ],
+        [
+          "B",
+          "tempo_bpm"
+        ],
+        [
+          "B",
+          "license_type"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Dynamic and modern."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "C",
+          "mood"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "mood"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Dynamic and modern sound supports energy."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "license_type"
+        ],
+        [
+          "D",
+          "mood"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "D",
+          "duration_seconds"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "duration_seconds"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Agree on the highlight reel song for the season finale video.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The warm, authentic tone in Acoustic Folk feels right for this.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Warm and authentic tone matches emotional highlights.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers a warm and authentic tone that highlights emotional moments."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that feels genuine and fits the mood naturally.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "That Acoustic Folk melody really brings out the warmth and emotion in the moments we want to highlight.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Warm and authentic tone highlights emotion well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers a warm and authentic tone that highlights emotional moments."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Instrumental Electronic has a modern, dynamic vibe that fits perfectly with fast-paced footage and keeps energy up throughout.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Provides a modern and dynamic sound ideal for fast-paced footage.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "This Up-tempo Rock feels intense and powerful, perfect for climactic scenes.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Intense and powerful, perfect for climactic scenes.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Delivers an intense and powerful atmosphere suited for climactic scenes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Seems like Instrumental Electronic fits well—modern, dynamic, and licensed for our use.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Modern, dynamic, and licensed for group use.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "This Up-tempo Rock delivers the intense, powerful energy we need to make the finale truly unforgettable.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Intense and powerful, perfect for climactic scenes.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Delivers an intense and powerful atmosphere suited for climactic scenes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Upbeat Indie Pop is royalty-free and fits the video length well.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Royalty-free and fits video length perfectly.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Matches the video length perfectly and maintains an energetic vibe."
+        },
+        "comparison_sources": [],
+        "personal_context": "Avoid costly licenses and keep the selection simple.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "It might work for some, but feels a bit safe for the finale.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Feels too generic for a climactic finale.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May feel generic to some viewers due to common indie pop elements."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Energetic is good, though I’d worry about keeping it polished enough.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the mood is energetic",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "mood",
+          "public_value": "energetic"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Slowing down the tempo here drains energy from the highlights and risks weakening the finale’s punch.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less intense for a strong finale.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Slower tempo might reduce energy in some highlight scenes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The Rock Anthem is 180 seconds, the Folk Melody 185—still, shorter fits the finale’s intensity better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_seconds: 180 and 185",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "duration_seconds",
+            "public_value": "180"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "duration_seconds",
+            "public_value": "185"
+          }
+        ],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Slowing down here definitely risks losing the drive needed to match fast cuts and keep viewers hooked.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Slower tempo might reduce energy in highlight scenes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Slower tempo might reduce energy in some highlight scenes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Nina, does the license fee for this track force us to cut corners elsewhere?",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "License fee is a drawback.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires a group license fee which may impact budget."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "It might tighten the budget, so I’d prefer caution.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the concern is Requires a group license fee which may impact budget.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires a group license fee which may impact budget."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I see the budget worries, but Instrumental Electronic feels modern and keeps the energy up.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Modern and dynamic, supports energy well.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Modern and dynamic, supports energy well."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Modern and dynamic, supports energy well."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The warm mood feels more natural to me than dynamic.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare mood: warm and dynamic",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "mood",
+            "public_value": "warm"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "mood",
+            "public_value": "dynamic"
+          }
+        ],
+        "personal_context": "Choose a song that feels genuine and fits the mood naturally.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Up-tempo rock brings energy, but the license feels tight and the vibe less warm than we might hope.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "License restrictions and less emotional warmth.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "License restrictions limit use to this project only."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "140 bpm keeps the pace urgent, though it might sacrifice some depth.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the tempo bpm is 140",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "tempo_bpm",
+          "public_value": "140"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Dynamic and modern works better here, so Option B feels okay.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that feels genuine and fits the mood naturally.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Dynamic and modern."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "128 bpm fits, though I worry about fitting all licensing terms.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the tempo bpm is 128",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "tempo_bpm",
+          "public_value": "128"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "175 seconds is tight for a strong finish, though it could work.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration seconds is 175",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "duration_seconds",
+          "public_value": "175"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "175 seconds is tight, and while the dynamic mood feels urgent, the warm tone would highlight those heartfelt moments better for me.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare mood: warm and dynamic",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "mood",
+            "public_value": "warm"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "mood",
+            "public_value": "dynamic"
+          }
+        ],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "185 seconds gives enough room to build energy steadily without dragging, which suits the fast pace well.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the duration seconds is 185",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "duration_seconds",
+          "public_value": "185"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "95 bpm sounds manageable, though it might limit some dynamic shifts.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tempo bpm is 95",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "tempo_bpm",
+          "public_value": "95"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Royalty-free is definitely a plus, but the folk melody feels too mellow to keep up the energy for fast-paced footage.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the license type is royalty-free",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "license_type",
+          "public_value": "royalty-free"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The license limits use to just this project, so cost-wise it feels off.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "License restrictions and cost make it impractical.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "License restrictions limit use to this project only."
+        },
+        "comparison_sources": [],
+        "personal_context": "Avoid costly licenses and keep the selection simple.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Licensed means we can’t reuse it, which locks us in and hurts flexibility for future projects.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the license type is licensed",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "license_type",
+          "public_value": "licensed"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "True, though the intense mood helps maintain focus despite the lock-in.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the mood is intense",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "mood",
+          "public_value": "intense"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "180 seconds works well for building energy, but the track still needs to match that fast pace throughout.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration seconds is 180",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "duration_seconds",
+          "public_value": "180"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "140 bpm keeps the pace lively, but I wonder if it lets the emotional moments breathe enough.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tempo bpm is 140",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "tempo_bpm",
+          "public_value": "140"
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "140 bpm risks flattening the finale’s impact; intensity needs moments that punch harder, not just keep pace.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the mood is intense",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "mood",
+          "public_value": "intense"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "The Rock Anthem’s 180 seconds give just enough room to build real intensity, while 175 seconds feels tight—longer fits the strong finale I want.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_seconds: 180 and 175",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "duration_seconds",
+            "public_value": "180"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "duration_seconds",
+            "public_value": "175"
+          }
+        ],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Since the license is clear, we can focus fully on tweaking the track’s energy without legal worries.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the license type is licensed",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "license_type",
+          "public_value": "licensed"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Instrumental Electronic’s dynamic, modern sound can boost energy without losing intensity, so I’m open to Option B now.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern sound supports energy.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Dynamic and modern sound supports energy."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Dynamic and modern sound supports energy."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The license is solid, but I’d still double-check usage limits.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the license type is licensed",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "license_type",
+          "public_value": "licensed"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 36,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "128 bpm sets a solid pace, though I worry it might feel a bit even for a finale.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the tempo bpm is 128",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "tempo_bpm",
+          "public_value": "128"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Instrumental Electronic is currently the leading option, though it is still short of a majority. Liam, Zoe, Eli, Omar, and Ivy, could you accept it for the group?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 38,
+      "phase": "NARROWING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Instrumental Electronic could fit here, feels dynamic and modern enough.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that feels genuine and fits the mood naturally.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Dynamic and modern."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 39,
+      "phase": "NARROWING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "That Instrumental Electronic’s dynamic, modern vibe could work well, though I hope it still lets the story’s emotional beats breathe.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern sound.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern sound."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Dynamic and modern sound."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Instrumental Electronic.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Provides a modern and dynamic sound ideal for fast-paced footage.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Upbeat Indie Pop is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Royalty-free and fits video length perfectly.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Matches the video length perfectly and maintains an energetic vibe."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I choose Instrumental Electronic.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Modern and dynamic, supports energy well.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Modern and dynamic, supports energy well."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Modern and dynamic, supports energy well."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Instrumental Electronic is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern sound.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern sound."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Dynamic and modern sound."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Instrumental Electronic is my final choice.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Modern, dynamic, and licensed for group use.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 46,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I’m voting for Instrumental Electronic.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Dynamic and modern."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 47,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "I’m voting for Instrumental Electronic.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern sound supports energy.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Dynamic and modern sound supports energy."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Dynamic and modern sound supports energy."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 48,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Instrumental Electronic received the final majority.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 1,
+    "A:mood": 1,
+    "A:upside": 1,
+    "B:concern": 2,
+    "B:duration_seconds": 2,
+    "B:license_type": 1,
+    "B:mood": 2,
+    "B:tempo_bpm": 2,
+    "B:upside": 7,
+    "C:concern": 2,
+    "C:duration_seconds": 2,
+    "C:license_type": 1,
+    "C:mood": 2,
+    "C:tempo_bpm": 1,
+    "C:upside": 2,
+    "D:concern": 2,
+    "D:duration_seconds": 3,
+    "D:license_type": 2,
+    "D:mood": 2,
+    "D:tempo_bpm": 2,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "upside"
+    ],
+    [
+      "B",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "A",
+    "p3": "B",
+    "p4": "B",
+    "p5": "B",
+    "p6": "B",
+    "p7": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "B",
+      "p2": "A",
+      "p3": "B",
+      "p4": "B",
+      "p5": "B",
+      "p6": "B",
+      "p7": "B"
+    },
+    "reason": "6 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 38,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 23119,
+    "output_tokens": 3169,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 8,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 45,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0816,
+    "avg_words_per_participant_turn": 13.33,
+    "visible_preference_changes": 4,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 23119,
+    "output_tokens": 3169,
+    "llm_calls": 41,
+    "voluntary_turns_by_persona": {
+      "p3": 6,
+      "p5": 5,
+      "p7": 6,
+      "p1": 5,
+      "p6": 3,
+      "p4": 4,
+      "p2": 1
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Warm and authentic tone matches emotional highlights.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers a warm and authentic tone that highlights emotional moments."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that feels genuine and fits the mood naturally.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The warm, authentic tone in Acoustic Folk feels right for this.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Warm and authentic tone highlights emotion well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers a warm and authentic tone that highlights emotional moments."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That Acoustic Folk melody really brings out the warmth and emotion in the moments we want to highlight.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Provides a modern and dynamic sound ideal for fast-paced footage.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Instrumental Electronic has a modern, dynamic vibe that fits perfectly with fast-paced footage and keeps energy up throughout.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Intense and powerful, perfect for climactic scenes.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Delivers an intense and powerful atmosphere suited for climactic scenes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "This Up-tempo Rock feels intense and powerful, perfect for climactic scenes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Modern, dynamic, and licensed for group use.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Seems like Instrumental Electronic fits well—modern, dynamic, and licensed for our use.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Intense and powerful, perfect for climactic scenes.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Delivers an intense and powerful atmosphere suited for climactic scenes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "This Up-tempo Rock delivers the intense, powerful energy we need to make the finale truly unforgettable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Royalty-free and fits video length perfectly.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Matches the video length perfectly and maintains an energetic vibe."
+        },
+        "comparison_sources": [],
+        "personal_context": "Avoid costly licenses and keep the selection simple.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Upbeat Indie Pop is royalty-free and fits the video length well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Feels too generic for a climactic finale.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May feel generic to some viewers due to common indie pop elements."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It might work for some, but feels a bit safe for the finale.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the mood is energetic",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "mood",
+          "public_value": "energetic"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Energetic is good, though I’d worry about keeping it polished enough.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Less intense for a strong finale.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Slower tempo might reduce energy in some highlight scenes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Slowing down the tempo here drains energy from the highlights and risks weakening the finale’s punch.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_seconds: 180 and 185",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "duration_seconds",
+            "public_value": "180"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "duration_seconds",
+            "public_value": "185"
+          }
+        ],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Rock Anthem is 180 seconds, the Folk Melody 185—still, shorter fits the finale’s intensity better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Slower tempo might reduce energy in highlight scenes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Slower tempo might reduce energy in some highlight scenes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Slowing down here definitely risks losing the drive needed to match fast cuts and keep viewers hooked.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "License fee is a drawback.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires a group license fee which may impact budget."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Nina, does the license fee for this track force us to cut corners elsewhere?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the concern is Requires a group license fee which may impact budget.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires a group license fee which may impact budget."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It might tighten the budget, so I’d prefer caution.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Modern and dynamic, supports energy well.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Modern and dynamic, supports energy well."
+        },
+        "vote_option": null
+      },
+      "raw_text": "I see the budget worries, but Instrumental Electronic feels modern and keeps the energy up.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare mood: warm and dynamic",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "mood",
+            "public_value": "warm"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "mood",
+            "public_value": "dynamic"
+          }
+        ],
+        "personal_context": "Choose a song that feels genuine and fits the mood naturally.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The warm mood feels more natural to me than dynamic.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "License restrictions and less emotional warmth.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "License restrictions limit use to this project only."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Up-tempo rock brings energy, but the license feels tight and the vibe less warm than we might hope.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the tempo bpm is 140",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "tempo_bpm",
+          "public_value": "140"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "140 bpm keeps the pace urgent, though it might sacrifice some depth.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that feels genuine and fits the mood naturally.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Dynamic and modern works better here, so Option B feels okay.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the tempo bpm is 128",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "tempo_bpm",
+          "public_value": "128"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "128 bpm fits, though I worry about fitting all licensing terms.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration seconds is 175",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "duration_seconds",
+          "public_value": "175"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "175 seconds is tight for a strong finish, though it could work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare mood: warm and dynamic",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "mood",
+            "public_value": "warm"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "mood",
+            "public_value": "dynamic"
+          }
+        ],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "175 seconds is tight, and while the dynamic mood feels urgent, the warm tone would highlight those heartfelt moments better for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the duration seconds is 185",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "duration_seconds",
+          "public_value": "185"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "185 seconds gives enough room to build energy steadily without dragging, which suits the fast pace well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tempo bpm is 95",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "tempo_bpm",
+          "public_value": "95"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "95 bpm sounds manageable, though it might limit some dynamic shifts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the license type is royalty-free",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "license_type",
+          "public_value": "royalty-free"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Royalty-free is definitely a plus, but the folk melody feels too mellow to keep up the energy for fast-paced footage.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "License restrictions and cost make it impractical.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "License restrictions limit use to this project only."
+        },
+        "comparison_sources": [],
+        "personal_context": "Avoid costly licenses and keep the selection simple.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The license limits use to just this project, so cost-wise it feels off.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the license type is licensed",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "license_type",
+          "public_value": "licensed"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Licensed means we can’t reuse it, which locks us in and hurts flexibility for future projects.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the mood is intense",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "mood",
+          "public_value": "intense"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, though the intense mood helps maintain focus despite the lock-in.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration seconds is 180",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "duration_seconds",
+          "public_value": "180"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "180 seconds works well for building energy, but the track still needs to match that fast pace throughout.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the tempo bpm is 140",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "tempo_bpm",
+          "public_value": "140"
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "140 bpm keeps the pace lively, but I wonder if it lets the emotional moments breathe enough.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the mood is intense",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "mood",
+          "public_value": "intense"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "140 bpm risks flattening the finale’s impact; intensity needs moments that punch harder, not just keep pace.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_seconds: 180 and 175",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "duration_seconds",
+            "public_value": "180"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "duration_seconds",
+            "public_value": "175"
+          }
+        ],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Rock Anthem’s 180 seconds give just enough room to build real intensity, while 175 seconds feels tight—longer fits the strong finale I want.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the license type is licensed",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "license_type",
+          "public_value": "licensed"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the song complements fast-paced footage and energizes viewers.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Since the license is clear, we can focus fully on tweaking the track’s energy without legal worries.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern sound supports energy.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the finale has a strong, memorable impact.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Dynamic and modern sound supports energy."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Instrumental Electronic’s dynamic, modern sound can boost energy without losing intensity, so I’m open to Option B now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the license type is licensed",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "license_type",
+          "public_value": "licensed"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a licensed track that balances quality and usability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The license is solid, but I’d still double-check usage limits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the tempo bpm is 128",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "tempo_bpm",
+          "public_value": "128"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that delivers a powerful and memorable finale.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "128 bpm sets a solid pace, though I worry it might feel a bit even for a finale.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a song that feels genuine and fits the mood naturally.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Instrumental Electronic could fit here, feels dynamic and modern enough.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern sound.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight emotional moments with a genuine and heartfelt song.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern sound."
+        },
+        "vote_option": null
+      },
+      "raw_text": "That Instrumental Electronic’s dynamic, modern vibe could work well, though I hope it still lets the story’s emotional beats breathe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Provides a modern and dynamic sound ideal for fast-paced footage.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Instrumental Electronic.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Royalty-free and fits video length perfectly.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Matches the video length perfectly and maintains an energetic vibe."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Upbeat Indie Pop is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Modern and dynamic, supports energy well.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Modern and dynamic, supports energy well."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Instrumental Electronic.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern sound.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern sound."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "Instrumental Electronic is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Modern, dynamic, and licensed for group use.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Instrumental Electronic is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Dynamic and modern."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Instrumental Electronic.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dynamic and modern sound supports energy.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a modern and dynamic sound that complements fast-paced footage."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Dynamic and modern sound supports energy."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Instrumental Electronic.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

@@ -1,0 +1,4142 @@
+{
+  "provenance": {
+    "seed": 242118878,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick a tactical approach for the volleyball team's next tournament",
+    "options": [
+      {
+        "id": "A",
+        "name": "Aggressive Serve and Attack",
+        "attrs": {
+          "focus": "offense",
+          "serve_style": "powerful jump serves",
+          "attack_type": "fast spikes",
+          "player_stamina_required": "high",
+          "opponent_pressure": "high"
+        },
+        "upside": "Can put opponents under constant pressure and control the pace of the game.",
+        "concern": "Requires high stamina and may lead to more unforced errors.",
+        "short_name": "Aggressive Serve",
+        "aliases": [
+          "Aggressive Serve",
+          "Serve and Attack"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Defensive Block and Counter",
+        "attrs": {
+          "focus": "defense",
+          "block_strategy": "double blocks at net",
+          "counter_attack": "quick transition plays",
+          "player_stamina_required": "moderate",
+          "opponent_pressure": "medium"
+        },
+        "upside": "Minimizes opponent scoring opportunities and exploits counterattack chances.",
+        "concern": "May concede initial points and relies on precise timing.",
+        "short_name": "Defensive Block",
+        "aliases": [
+          "Defensive Block",
+          "Block and Counter"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Balanced Rotation with Focus on Serve Receive",
+        "attrs": {
+          "focus": "balanced",
+          "rotation_style": "frequent substitutions",
+          "serve_receive_technique": "formation-based",
+          "player_stamina_required": "moderate",
+          "opponent_pressure": "variable"
+        },
+        "upside": "Maintains consistent energy and adapts to opponent serving styles.",
+        "concern": "Requires strong communication and coordination among players.",
+        "short_name": "Balanced Rotation",
+        "aliases": [
+          "Balanced Rotation",
+          "Serve Receive"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Specialized Setter-Driven Offense",
+        "attrs": {
+          "focus": "offense",
+          "setter_role": "central playmaker",
+          "attack_variation": "diverse hitting options",
+          "player_stamina_required": "moderate",
+          "opponent_pressure": "medium"
+        },
+        "upside": "Creates unpredictable attacks and utilizes team strengths effectively.",
+        "concern": "Depends heavily on setter’s decision-making and precision.",
+        "short_name": "Specialized Setter",
+        "aliases": [
+          "Specialized Setter",
+          "Setter-Driven Offense"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The volleyball team must select a tactical approach for the upcoming tournament. The approach should balance offensive and defensive strategies while considering player stamina and opponent analysis."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 4,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Maya is a strategic thinker who values team balance and stamina management.",
+      "private_goal": "Ensure the team maintains consistent energy throughout the tournament.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 24,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Aggressive play can pressure opponents.",
+          "reason_against": "Requires high stamina, which risks player fatigue and errors."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Moderate stamina requirement fits well with team endurance.",
+          "reason_against": "May concede points early, which could hurt momentum."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Balanced rotation supports stamina and adapts to opponents.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Moderate stamina and diverse attacks add unpredictability.",
+          "reason_against": "Heavily depends on setter’s precision, which is a risk."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Liam is a direct and vocal player who prioritizes solid defense and counterattacks.",
+      "private_goal": "Maximize defensive strength to exploit opponent weaknesses.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Can pressure opponents aggressively.",
+          "reason_against": "High stamina demand and risk of errors make it less reliable."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Strong defense and counterattacks align with my playstyle.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Balanced stamina and adaptability are useful.",
+          "reason_against": "Requires coordination which can slow plays."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Offers varied attacks and moderate stamina use.",
+          "reason_against": "Relies too much on one player’s decisions."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 4,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Nina is an assertive attacker who values creative offensive strategies.",
+      "private_goal": "Leverage diverse attacks to keep opponents guessing.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Fast spikes and pressure can disrupt opponents.",
+          "reason_against": "High stamina requirement may reduce consistency."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Good for counterattacks and defense.",
+          "reason_against": "Less offensive focus than preferred."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Balanced and adaptable to opponent styles.",
+          "reason_against": "Communication demands might slow tempo."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Central setter-driven offense enables varied and unpredictable attacks.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Eli is a calm player who prefers steady, defensive tactics with moderate stamina use.",
+      "private_goal": "Keep the team’s defense solid while conserving energy.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Can pressure opponents.",
+          "reason_against": "Too high stamina demand and error risk."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Double blocks and counterattacks fit my defensive preference.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Moderate stamina and adaptability are good.",
+          "reason_against": "Requires strong team coordination."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Offers offensive variety with moderate stamina.",
+          "reason_against": "Too reliant on setter’s decisions."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 3
+      },
+      "background": "Zara is a confident player who favors aggressive offense to dominate matches.",
+      "private_goal": "Push the team to control the game pace with strong attacks.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 21,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Powerful jump serves and fast spikes fit my aggressive style.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Good defense but too passive for my taste.",
+          "reason_against": "May concede points early and slows game pace."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Balanced approach is safe.",
+          "reason_against": "Less aggressive than I prefer."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Setter-driven offense adds unpredictability.",
+          "reason_against": "Depends on one player’s precision."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Omar is a thoughtful player who values tactical diversity and moderate stamina use.",
+      "private_goal": "Help the team use varied attacks to adapt mid-game.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Can pressure opponents effectively.",
+          "reason_against": "High stamina requirement and error risk are drawbacks."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Strong defense and counterattacks are valuable.",
+          "reason_against": "May concede early points."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Balanced rotation helps maintain energy and adapt.",
+          "reason_against": "Needs strong communication."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Diverse hitting options and moderate stamina fit my tactical preference.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Moderate stamina requirement fits well with team endurance."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "block_strategy"
+        ],
+        [
+          "D",
+          "opponent_pressure"
+        ],
+        [
+          "A",
+          "attack_type"
+        ],
+        [
+          "B",
+          "player_stamina_required"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "player_stamina_required"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "block_strategy"
+        ],
+        [
+          "A",
+          "serve_style"
+        ],
+        [
+          "B",
+          "opponent_pressure"
+        ],
+        [
+          "D",
+          "focus"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 4,
+        "D": 5
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Good for counterattacks and defense."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "B",
+          "counter_attack"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "player_stamina_required"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "opponent_pressure"
+        ],
+        [
+          "D",
+          "focus"
+        ],
+        [
+          "B",
+          "focus"
+        ],
+        [
+          "A",
+          "opponent_pressure"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "attack_type"
+        ],
+        [
+          "A",
+          "focus"
+        ],
+        [
+          "B",
+          "focus"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "focus"
+        ],
+        [
+          "B",
+          "focus"
+        ],
+        [
+          "D",
+          "setter_role"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 4,
+        "D": 5
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Strong defense and counterattacks are valuable."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "B",
+          "counter_attack"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Pick a tactical approach for the volleyball team's next tournament.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Thinking balanced rotation could work well—it keeps energy steady and adjusts to how opponents serve.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced rotation supports stamina and adapts to opponents.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maintains consistent energy and adapts to opponent serving styles."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Central setter-driven offense gives us diverse attacks that keep opponents off balance—Option D’s the way to go.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Central setter-driven offense enables varied and unpredictable attacks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Creates unpredictable attacks and utilizes team strengths effectively."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Hi, I prefer Specialized Setter; it fits my priorities best.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Diverse hitting options and moderate stamina fit my tactical preference.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Creates unpredictable attacks and utilizes team strengths effectively."
+        },
+        "comparison_sources": [],
+        "personal_context": "Help the team use varied attacks to adapt mid-game.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Strong defense minimizes scoring chances and sets up counterattacks—Option B fits my style best.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Strong defense and counterattacks align with my playstyle.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Double blocks and counterattacks fit my defensive preference—Option B seems steady.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Double blocks and counterattacks fit my defensive preference.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Powerful jump serves and fast spikes keep us pushing the pace—Aggressive Serve all the way.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Powerful jump serves and fast spikes fit my aggressive style.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Can put opponents under constant pressure and control the pace of the game."
+        },
+        "comparison_sources": [],
+        "personal_context": "Push the team to control the game pace with strong attacks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "High stamina’s a killer for consistency—I’d rather mix in some surprises than burn out chasing nonstop power.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "High stamina requirement may reduce consistency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires high stamina and may lead to more unforced errors."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "High stamina demand risks early fatigue, which kills my ability to stay solid on defense and launch counters later.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the player stamina required is high",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "player_stamina_required",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Could starting more defensively risk losing momentum early on, though? Just wondering.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "May concede points early, which could hurt momentum.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "May concede initial points and relies on precise timing."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Starting defensively might let them score early since it needs precise timing, so balance is key.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is May concede initial points and relies on precise timing.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "May concede initial points and relies on precise timing."
+        },
+        "comparison_sources": [],
+        "personal_context": "Help the team use varied attacks to adapt mid-game.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "I get the timing risk, but Defensive Block and Counter could actually set us up to punish their mistakes and tighten our defense early.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Good for counterattacks and defense.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Good for counterattacks and defense."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Good for counterattacks and defense."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Sure, defense tightens us up early, but offense controls the pace and keeps pressure nonstop.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare focus: offense and defense",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "focus",
+            "public_value": "offense"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "focus",
+            "public_value": "defense"
+          }
+        ],
+        "personal_context": "Push the team to control the game pace with strong attacks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "High pressure means mixing up attacks is non-negotiable—predictability gets crushed fast.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the opponent pressure is high",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "opponent_pressure",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "High stamina demand and risk of errors make it less reliable for sustained pressure. Better to focus on solid defense to force mistakes instead.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "High stamina demand and risk of errors make it less reliable.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires high stamina and may lead to more unforced errors."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Fast spikes can wear us out quick, so I’d worry about keeping enough energy to finish strong.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the attack type is fast spikes",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "attack_type",
+          "public_value": "fast spikes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Powerful jump serves can break their rhythm early, but we need to be ready to absorb that initial impact without overcommitting.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the serve style is powerful jump serves",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "serve_style",
+          "public_value": "powerful jump serves"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Breaking their rhythm helps, but we should keep energy for steady blocks.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the focus is offense",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "focus",
+          "public_value": "offense"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Still, pushing hard early can pay off if we rotate attackers smartly to manage that stamina drain.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the player stamina required is high",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "player_stamina_required",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Fast spikes work if we stay ready to shift back.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the attack type is fast spikes",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "attack_type",
+          "public_value": "fast spikes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Defense focuses on steady control, offense uses more energy—defense fits our stamina plan better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare focus: defense and offense",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "focus",
+            "public_value": "defense"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "focus",
+            "public_value": "offense"
+          }
+        ],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Double blocks at the net force errors if we hold steady. That’s our best shot at cutting their angles and turning defense into quick counters.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the block strategy is double blocks at net",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "block_strategy",
+          "public_value": "double blocks at net"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Liam’s point about steady blocks is solid, but I’m leaning toward Defensive Block since its moderate stamina use might keep us fresher longer.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Moderate stamina requirement fits well with team endurance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Moderate stamina requirement fits well with team endurance."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Moderate stamina requirement fits well with team endurance."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Quick transitions can catch them off guard, but they demand sharp timing and stamina, so balancing that with steady defense is key.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the counter attack is quick transition plays",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "counter_attack",
+          "public_value": "quick transition plays"
+        },
+        "comparison_sources": [],
+        "personal_context": "Help the team use varied attacks to adapt mid-game.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "True, stamina’s moderate here, though I worry if we push too hard early, we might dip later when it counts most.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the player stamina required is moderate",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "player_stamina_required",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Medium pressure means we can stay tight on defense without burning out early. That’s when solid counters really pay off.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the opponent pressure is medium",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "opponent_pressure",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Agree on keeping pressure steady, but quick transitions force them to react faster, giving us openings we can exploit.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the counter attack is quick transition plays",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "counter_attack",
+          "public_value": "quick transition plays"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Double blocks up front do help contain attacks, but I worry it might wear us down if we stay there too long without some rest.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the block strategy is double blocks at net",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "block_strategy",
+          "public_value": "double blocks at net"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Wearing down’s real, but staying sharp with varied counters keeps us unpredictable and ready to strike back.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the opponent pressure is medium",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "opponent_pressure",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Focused on offense, Specialized Setter gives us aggressive edge; defense-first Block and Counter slows our pace—offense fits my style better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare focus: offense and defense",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "focus",
+            "public_value": "offense"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "focus",
+            "public_value": "defense"
+          }
+        ],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Relying too much on one player’s choices risks our defense getting caught off guard if that link breaks. We need more consistency behind the setter’s calls.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "Relies too much on one player’s decisions.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Depends heavily on setter’s decision-making and precision."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Consistency’s key, but locking down a strong setter-driven offense keeps us dictating the game tempo.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the setter role is central playmaker",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "setter_role",
+          "public_value": "central playmaker"
+        },
+        "comparison_sources": [],
+        "personal_context": "Push the team to control the game pace with strong attacks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The pressure feels medium, so keeping energy steady might matter more than pushing full throttle early on.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the opponent pressure is medium",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "opponent_pressure",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Steady energy is fine, but without locking down defense, any aggressive offense will just get shut down quickly.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the focus is offense",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "focus",
+          "public_value": "offense"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Too reliant on setter’s calls can leave gaps.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Too reliant on setter’s decisions.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Depends heavily on setter’s decision-making and precision."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 35,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Defensive Block is currently the leading option, though it is still short of a majority. Nina, Zara, and Omar, could you accept it for the group?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 36,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Defensive Block fits since it locks down defense and sets up good counterattack chances, which keeps opponents guessing.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Good for counterattacks and defense.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Good for counterattacks and defense."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Good for counterattacks and defense."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Strong defense with counterattacks suits my approach since it balances energy use and keeps our options open, so Option B works for me.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Strong defense and counterattacks are valuable.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Help the team use varied attacks to adapt mid-game.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Strong defense and counterattacks are valuable."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Strong defense and counterattacks are valuable."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Defensive Block.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Moderate stamina requirement fits well with team endurance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for Defensive Block.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Strong defense and counterattacks align with my playstyle.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Defensive Block is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Good for counterattacks and defense.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Good for counterattacks and defense."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Good for counterattacks and defense."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Defensive Block is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Double blocks and counterattacks fit my defensive preference.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "I choose Aggressive Serve.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Powerful jump serves and fast spikes fit my aggressive style.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Can put opponents under constant pressure and control the pace of the game."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Defensive Block is my final choice.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Strong defense and counterattacks are valuable.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Strong defense and counterattacks are valuable."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Strong defense and counterattacks are valuable."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Defensive Block.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:attack_type": 2,
+    "A:concern": 2,
+    "A:focus": 3,
+    "A:opponent_pressure": 1,
+    "A:player_stamina_required": 2,
+    "A:serve_style": 1,
+    "A:upside": 1,
+    "B:block_strategy": 2,
+    "B:concern": 2,
+    "B:counter_attack": 2,
+    "B:focus": 3,
+    "B:opponent_pressure": 2,
+    "B:player_stamina_required": 1,
+    "B:upside": 6,
+    "C:upside": 1,
+    "D:concern": 2,
+    "D:focus": 2,
+    "D:opponent_pressure": 1,
+    "D:setter_role": 1,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "upside"
+    ],
+    [
+      "B",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "B",
+    "p3": "B",
+    "p4": "B",
+    "p5": "A",
+    "p6": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "B",
+      "p2": "B",
+      "p3": "B",
+      "p4": "B",
+      "p5": "A",
+      "p6": "B"
+    },
+    "reason": "5 of 6 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 38,
+    "setup_llm_calls": 3,
+    "repair_calls": 1,
+    "dropped_turns": 1,
+    "fallback_turns": 1,
+    "liveness_forced_turns": 0,
+    "input_tokens": 23925,
+    "output_tokens": 3119,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 5,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 42,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.087,
+    "avg_words_per_participant_turn": 15.69,
+    "visible_preference_changes": 3,
+    "repair_turns": 1,
+    "dropped_turns": 1,
+    "fallback_turns": 1,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 23925,
+    "output_tokens": 3119,
+    "llm_calls": 41,
+    "voluntary_turns_by_persona": {
+      "p3": 8,
+      "p2": 7,
+      "p1": 6,
+      "p6": 3,
+      "p5": 2,
+      "p4": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced rotation supports stamina and adapts to opponents.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Maintains consistent energy and adapts to opponent serving styles."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Thinking balanced rotation could work well—it keeps energy steady and adjusts to how opponents serve.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Central setter-driven offense enables varied and unpredictable attacks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Creates unpredictable attacks and utilizes team strengths effectively."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Central setter-driven offense gives us diverse attacks that keep opponents off balance—Option D’s the way to go.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Diverse hitting options and moderate stamina fit my tactical preference.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Creates unpredictable attacks and utilizes team strengths effectively."
+        },
+        "comparison_sources": [],
+        "personal_context": "Help the team use varied attacks to adapt mid-game.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "D fits well since it offers diverse hitting options and keeps stamina use moderate, which helps us adapt mid-game.",
+      "validation_errors": [
+        "focused option is not visible"
+      ],
+      "repair_text": "D fits my style since its diverse hitting options and moderate stamina use help us adapt tactically mid-game.",
+      "repair_errors": [
+        "focused option is not visible"
+      ],
+      "final_status": "fallback",
+      "fallback_text": "Hi, I prefer Specialized Setter; it fits my priorities best."
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Strong defense and counterattacks align with my playstyle.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Strong defense minimizes scoring chances and sets up counterattacks—Option B fits my style best.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Double blocks and counterattacks fit my defensive preference.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Double blocks and counterattacks fit my defensive preference—Option B seems steady.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Powerful jump serves and fast spikes fit my aggressive style.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Can put opponents under constant pressure and control the pace of the game."
+        },
+        "comparison_sources": [],
+        "personal_context": "Push the team to control the game pace with strong attacks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Powerful jump serves and fast spikes keep us pushing the pace—Aggressive Serve all the way.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "High stamina requirement may reduce consistency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires high stamina and may lead to more unforced errors."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High stamina’s a killer for consistency—I’d rather mix in some surprises than burn out chasing nonstop power.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the player stamina required is high",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "player_stamina_required",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High stamina demand risks early fatigue, which kills my ability to stay solid on defense and launch counters later.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "May concede points early, which could hurt momentum.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "May concede initial points and relies on precise timing."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Could starting more defensively risk losing momentum early on, though? Just wondering.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is May concede initial points and relies on precise timing.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "May concede initial points and relies on precise timing."
+        },
+        "comparison_sources": [],
+        "personal_context": "Help the team use varied attacks to adapt mid-game.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Starting defensively might let them score early since it needs precise timing, so balance is key.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Good for counterattacks and defense.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Good for counterattacks and defense."
+        },
+        "vote_option": null
+      },
+      "raw_text": "I get the timing risk, but Defensive Block and Counter could actually set us up to punish their mistakes and tighten our defense early.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare focus: offense and defense",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "focus",
+            "public_value": "offense"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "focus",
+            "public_value": "defense"
+          }
+        ],
+        "personal_context": "Push the team to control the game pace with strong attacks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sure, defense tightens us up early, but offense controls the pace and keeps pressure nonstop.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the opponent pressure is high",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "opponent_pressure",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High pressure means mixing up attacks is non-negotiable—predictability gets crushed fast.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "High stamina demand and risk of errors make it less reliable.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires high stamina and may lead to more unforced errors."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High stamina demand and risk of errors make it less reliable for sustained pressure. Better to focus on solid defense to force mistakes instead.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the attack type is fast spikes",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "attack_type",
+          "public_value": "fast spikes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fast spikes can wear us out quick, so I’d worry about keeping enough energy to finish strong.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the serve style is powerful jump serves",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "serve_style",
+          "public_value": "powerful jump serves"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Powerful jump serves can break their rhythm early, but we need to be ready to absorb that initial impact without overcommitting.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the focus is offense",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "focus",
+          "public_value": "offense"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Breaking their rhythm helps, but we should keep energy for steady blocks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the player stamina required is high",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "player_stamina_required",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still, pushing hard early can pay off if we rotate attackers smartly to manage that stamina drain.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the attack type is fast spikes",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "attack_type",
+          "public_value": "fast spikes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fast spikes work if we stay ready to shift back.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare focus: defense and offense",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "focus",
+            "public_value": "defense"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "focus",
+            "public_value": "offense"
+          }
+        ],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Defense focuses on steady control, offense uses more energy—defense fits our stamina plan better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the block strategy is double blocks at net",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "block_strategy",
+          "public_value": "double blocks at net"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Double blocks at the net force errors if we hold steady. That’s our best shot at cutting their angles and turning defense into quick counters.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Moderate stamina requirement fits well with team endurance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Moderate stamina requirement fits well with team endurance."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Liam’s point about steady blocks is solid, but I’m leaning toward Defensive Block since its moderate stamina use might keep us fresher longer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the counter attack is quick transition plays",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "counter_attack",
+          "public_value": "quick transition plays"
+        },
+        "comparison_sources": [],
+        "personal_context": "Help the team use varied attacks to adapt mid-game.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Quick transitions can catch them off guard, but they demand sharp timing and stamina, so balancing that with steady defense is key.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the player stamina required is moderate",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "player_stamina_required",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, stamina’s moderate here, though I worry if we push too hard early, we might dip later when it counts most.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the opponent pressure is medium",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "opponent_pressure",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Medium pressure means we can stay tight on defense without burning out early. That’s when solid counters really pay off.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the counter attack is quick transition plays",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "counter_attack",
+          "public_value": "quick transition plays"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Agree on keeping pressure steady, but quick transitions force them to react faster, giving us openings we can exploit.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare focus: defense and offense",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "focus",
+            "public_value": "defense"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "focus",
+            "public_value": "offense"
+          }
+        ],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Defense focus here is solid at 8, while offense sits at 6—defense fits my priority better for exploiting their weaknesses.",
+      "validation_errors": [
+        "unsupported numeric claim: 8",
+        "unsupported numeric claim: 6"
+      ],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "dropped",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the block strategy is double blocks at net",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "block_strategy",
+          "public_value": "double blocks at net"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Double blocks up front do help contain attacks, but I worry it might wear us down if we stay there too long without some rest.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the opponent pressure is medium",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "opponent_pressure",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Wearing down’s real, but staying sharp with varied counters keeps us unpredictable and ready to strike back.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare focus: offense and defense",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "focus",
+            "public_value": "offense"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "focus",
+            "public_value": "defense"
+          }
+        ],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Focused on offense, Specialized Setter gives us aggressive edge; defense-first Block and Counter slows our pace—offense fits my style better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "Relies too much on one player’s decisions.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Depends heavily on setter’s decision-making and precision."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Relying too much on one player’s choices risks our defense getting caught off guard if that link breaks. We need more consistency behind the setter’s calls.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the setter role is central playmaker",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "setter_role",
+          "public_value": "central playmaker"
+        },
+        "comparison_sources": [],
+        "personal_context": "Push the team to control the game pace with strong attacks.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Consistency’s key, but locking down a strong setter-driven offense keeps us dictating the game tempo.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the opponent pressure is medium",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "opponent_pressure",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the team maintains consistent energy throughout the tournament.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The pressure feels medium, so keeping energy steady might matter more than pushing full throttle early on.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the focus is offense",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "focus",
+          "public_value": "offense"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize defensive strength to exploit opponent weaknesses.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Steady energy is fine, but without locking down defense, any aggressive offense will just get shut down quickly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Too reliant on setter’s decisions.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Depends heavily on setter’s decision-making and precision."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the team’s defense solid while conserving energy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Too reliant on setter’s calls can leave gaps.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Good for counterattacks and defense.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage diverse attacks to keep opponents guessing.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Good for counterattacks and defense."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Defensive Block fits since it locks down defense and sets up good counterattack chances, which keeps opponents guessing.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Strong defense and counterattacks are valuable.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": "Help the team use varied attacks to adapt mid-game.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Strong defense and counterattacks are valuable."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Strong defense with counterattacks suits my approach since it balances energy use and keeps our options open, so Option B works for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Moderate stamina requirement fits well with team endurance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Defensive Block.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Strong defense and counterattacks align with my playstyle.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Defensive Block.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Good for counterattacks and defense.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Good for counterattacks and defense."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "Defensive Block is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Double blocks and counterattacks fit my defensive preference.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Defensive Block is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Powerful jump serves and fast spikes fit my aggressive style.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Can put opponents under constant pressure and control the pace of the game."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Aggressive Serve.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Strong defense and counterattacks are valuable.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Minimizes opponent scoring opportunities and exploits counterattack chances."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Strong defense and counterattacks are valuable."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "Defensive Block is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {
+    "unsupported numeric claim: 8": 1,
+    "unsupported numeric claim: 6": 1
+  },
+  "protocol_errors": [],
+  "quality_flags": [
+    "dropped_turns:1",
+    "fallback_turns:1"
+  ],
+  "needs_review": true
+}

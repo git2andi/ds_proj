@@ -1,0 +1,2560 @@
+{
+  "provenance": {
+    "seed": 242118941,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide how to allocate the student association's event budget",
+    "options": [
+      {
+        "id": "A",
+        "name": "Balanced Allocation Across All Event Categories",
+        "attrs": {
+          "venue_budget": "3000",
+          "catering_budget": "3000",
+          "marketing_budget": "2000",
+          "entertainment_budget": "2000",
+          "number_of_events": "5"
+        },
+        "upside": "Ensures all event aspects receive funding to maintain overall quality.",
+        "concern": "May limit the scale of individual events due to budget spread.",
+        "short_name": "Balanced Allocation",
+        "aliases": [
+          "Balanced Allocation",
+          "Across Event Categories"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Focus on High-Impact Marketing and Entertainment",
+        "attrs": {
+          "venue_budget": "2000",
+          "catering_budget": "1500",
+          "marketing_budget": "4000",
+          "entertainment_budget": "2500",
+          "number_of_events": "4"
+        },
+        "upside": "Aims to increase event attendance and engagement through promotion and activities.",
+        "concern": "Reduced venue and catering budgets might affect event comfort and logistics.",
+        "short_name": "High-Impact Marketing",
+        "aliases": [
+          "High-Impact Marketing",
+          "Marketing and Entertainment"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Emphasis on Venue and Catering Quality",
+        "attrs": {
+          "venue_budget": "4500",
+          "catering_budget": "4000",
+          "marketing_budget": "1000",
+          "entertainment_budget": "500",
+          "number_of_events": "3"
+        },
+        "upside": "Provides comfortable and well-catered events to enhance attendee experience.",
+        "concern": "Limited marketing and entertainment could reduce event visibility and excitement.",
+        "short_name": "Venue and Catering",
+        "aliases": [
+          "Venue and Catering",
+          "Catering Quality"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Minimalist Budget with Focus on Cost Efficiency",
+        "attrs": {
+          "venue_budget": "1500",
+          "catering_budget": "1500",
+          "marketing_budget": "3000",
+          "entertainment_budget": "4000",
+          "number_of_events": "6"
+        },
+        "upside": "Supports a higher number of events with emphasis on entertainment and promotion.",
+        "concern": "Lower venue and catering budgets may impact event comfort and attendee satisfaction.",
+        "short_name": "Minimalist Budget",
+        "aliases": [
+          "Minimalist Budget",
+          "Cost Efficiency"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The student association has a total event budget of $10,000 to allocate for the upcoming semester. The budget must cover venue, catering, marketing, and entertainment costs for multiple events planned by the group."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Maya is a budget-conscious student who values maximizing event quantity and entertainment.",
+      "private_goal": "To host as many engaging events as possible within the budget.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 21,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Balanced funding ensures decent quality across all event aspects.",
+          "reason_against": "Spreading budget limits the number of events and entertainment scale."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Focus on marketing and entertainment could boost attendance.",
+          "reason_against": "Lower venue and catering budgets may reduce event comfort."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "High venue and catering quality improves attendee experience.",
+          "reason_against": "Fewer events and minimal entertainment limit engagement opportunities."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Supports the highest number of events with strong entertainment and promotion.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 3
+      },
+      "background": "Liam is a detail-oriented organizer who prioritizes quality and attendee comfort.",
+      "private_goal": "To create memorable, well-catered events that leave a lasting impression.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 23,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Balanced allocation maintains overall event quality.",
+          "reason_against": "May not provide the high-quality venue and catering Liam prefers."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Strong marketing and entertainment might attract more attendees.",
+          "reason_against": "Venue and catering budgets are too low for comfortable events."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Emphasis on venue and catering aligns with Liam’s focus on attendee comfort.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "More events and entertainment are appealing in theory.",
+          "reason_against": "Low venue and catering budgets conflict with Liam’s quality standards."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Zoe is a pragmatic team player who values balanced quality and event variety.",
+      "private_goal": "To ensure all event components are adequately funded for consistent quality.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 20,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Balanced allocation supports quality across venue, catering, marketing, and entertainment.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Focus on marketing and entertainment could increase engagement.",
+          "reason_against": "Reduced venue and catering budgets might affect comfort."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "High venue and catering quality enhances attendee experience.",
+          "reason_against": "Limited marketing and entertainment reduce visibility and excitement."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "More events and entertainment are attractive.",
+          "reason_against": "Low venue and catering budgets may hurt overall event satisfaction."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "entertainment_budget"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "entertainment_budget"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Balanced allocation maintains overall event quality."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "C",
+          "venue_budget"
+        ],
+        [
+          "A",
+          "marketing_budget"
+        ],
+        [
+          "A",
+          "entertainment_budget"
+        ],
+        [
+          "A",
+          "catering_budget"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "venue_budget"
+        ],
+        [
+          "D",
+          "venue_budget"
+        ],
+        [
+          "A",
+          "number_of_events"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 9,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "entertainment_budget"
+        ],
+        [
+          "A",
+          "catering_budget"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "entertainment_budget"
+        ],
+        [
+          "A",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Decide how to allocate the student association's event budget.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Focusing on Venue and Catering makes the most sense—comfortable spaces and quality food directly boost everyone’s experience.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Emphasis on venue and catering aligns with Liam’s focus on attendee comfort.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Provides comfortable and well-catered events to enhance attendee experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Minimalist Budget works best since it maximizes event count and keeps entertainment strong.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Supports the highest number of events with strong entertainment and promotion.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Supports a higher number of events with emphasis on entertainment and promotion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Balanced allocation makes sure venue, catering, marketing, and entertainment all get enough support.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation supports quality across venue, catering, marketing, and entertainment.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Five events is a solid number, but squeezing quality into all of them means we can’t skimp on venue or catering.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the number of events is 5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "number_of_events",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "But Liam, don’t you think fewer events with less entertainment actually shrink how much people engage overall?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Fewer events and minimal entertainment limit engagement opportunities.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Limited marketing and entertainment could reduce event visibility and excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Limited marketing and entertainment definitely hurt visibility, which cuts engagement overall.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Limited marketing and entertainment could reduce event visibility and excitement.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Limited marketing and entertainment could reduce event visibility and excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Entertainment gets $2000 with balanced allocation versus just $500 focusing on venue—more entertainment fits my priority better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare entertainment_budget: 2000 and 500",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "entertainment_budget",
+            "public_value": "2000"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "entertainment_budget",
+            "public_value": "500"
+          }
+        ],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Balanced funding keeps the vibe solid everywhere, so no event feels weak.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Balanced funding ensures decent quality across all event aspects.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "What trade-off matters most before we decide?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Balanced funding works if we keep marketing tight around that $2000—otherwise, some parts will feel underwhelming.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the marketing budget is 2000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "marketing_budget",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "3000 for catering is solid, but we need to keep marketing lean to avoid gaps elsewhere.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the catering budget is 3000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "catering_budget",
+          "public_value": "3000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "3000 for the venue means we have to nail comfort and setup—no cutting corners there if we want guests to remember this event.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the venue budget is 3000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "venue_budget",
+          "public_value": "3000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Low venue and catering budgets here will definitely hurt the vibe and comfort we need for a standout event.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Low venue and catering budgets conflict with Liam’s quality standards.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Lower venue and catering budgets may impact event comfort and attendee satisfaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "True, but $4000 for entertainment beats $500—more events keep things lively.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare entertainment_budget: 4000 and 500",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "entertainment_budget",
+            "public_value": "4000"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "entertainment_budget",
+            "public_value": "500"
+          }
+        ],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "More events are good, but skimping on venue and food risks a flat overall experience.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Low venue and catering budgets may hurt overall event satisfaction.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Lower venue and catering budgets may impact event comfort and attendee satisfaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Zoe, do you think spreading the budget across events really justifies sacrificing the quality of venue and catering?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "May not provide the high-quality venue and catering Liam prefers.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit the scale of individual events due to budget spread."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Spreading the budget does limit individual event scale, so quality could suffer.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is May limit the scale of individual events due to budget spread.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit the scale of individual events due to budget spread."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Fair point, but Balanced Allocation keeps overall event quality intact by funding all aspects—not just venue and catering—so I can get behind it now.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation maintains overall event quality.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Balanced allocation maintains overall event quality."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Balanced allocation maintains overall event quality."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "With only 3000 for catering, spreading too thin risks everyone leaving hungry or unimpressed, which kills the whole vibe.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the catering budget is 3000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "catering_budget",
+          "public_value": "3000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "$4500 on venue and catering means way better food and space comfort than $1500, which fits my priority for memorable, well-catered events.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare venue_budget: 4500 and 1500",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "venue_budget",
+            "public_value": "4500"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "venue_budget",
+            "public_value": "1500"
+          }
+        ],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "$2000 for entertainment feels tight; cutting here risks leaving a bland impression despite solid food and space.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the entertainment budget is 2000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "entertainment_budget",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 22,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Balanced Allocation has the strongest public support so far, but the group is still divided. Maya and Liam, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 23,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Spreading the budget means fewer events and smaller-scale entertainment, so no.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Spreading budget limits the number of events and entertainment scale.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit the scale of individual events due to budget spread."
+        },
+        "comparison_sources": [],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 24,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Balanced Allocation keeps quality consistent across the board, which fits my goal for a well-rounded, memorable event experience.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation maintains overall event quality.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Balanced allocation maintains overall event quality."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Balanced allocation maintains overall event quality."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 25,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Please state your final choice.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 26,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Minimalist Budget.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Supports the highest number of events with strong entertainment and promotion.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Supports a higher number of events with emphasis on entertainment and promotion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 27,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Balanced Allocation is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation maintains overall event quality.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Balanced allocation maintains overall event quality."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Balanced allocation maintains overall event quality."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "My final vote is Balanced Allocation.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation supports quality across venue, catering, marketing, and entertainment.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 29,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Balanced Allocation.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:catering_budget": 2,
+    "A:concern": 3,
+    "A:entertainment_budget": 2,
+    "A:marketing_budget": 1,
+    "A:number_of_events": 1,
+    "A:upside": 4,
+    "A:venue_budget": 1,
+    "C:concern": 2,
+    "C:entertainment_budget": 2,
+    "C:upside": 1,
+    "C:venue_budget": 1,
+    "D:concern": 2,
+    "D:entertainment_budget": 1,
+    "D:upside": 1,
+    "D:venue_budget": 1
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "A",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "A",
+    "p3": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "D",
+      "p2": "A",
+      "p3": "A"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 22,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 1,
+    "input_tokens": 14289,
+    "output_tokens": 2012,
+    "moderator_turns": 5,
+    "voluntary_turns": 16,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 25,
+    "voluntary_turns": 16,
+    "moderator_turns": 5,
+    "moderator_ratio": 0.1667,
+    "avg_words_per_participant_turn": 15.12,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 14289,
+    "output_tokens": 2012,
+    "llm_calls": 25,
+    "voluntary_turns_by_persona": {
+      "p2": 9,
+      "p1": 4,
+      "p3": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Emphasis on venue and catering aligns with Liam’s focus on attendee comfort.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Provides comfortable and well-catered events to enhance attendee experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Focusing on Venue and Catering makes the most sense—comfortable spaces and quality food directly boost everyone’s experience.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Supports the highest number of events with strong entertainment and promotion.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Supports a higher number of events with emphasis on entertainment and promotion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Minimalist Budget works best since it maximizes event count and keeps entertainment strong.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation supports quality across venue, catering, marketing, and entertainment.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Balanced allocation makes sure venue, catering, marketing, and entertainment all get enough support.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the number of events is 5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "number_of_events",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Five events is a solid number, but squeezing quality into all of them means we can’t skimp on venue or catering.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Fewer events and minimal entertainment limit engagement opportunities.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Limited marketing and entertainment could reduce event visibility and excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "But Liam, don’t you think fewer events with less entertainment actually shrink how much people engage overall?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Limited marketing and entertainment could reduce event visibility and excitement.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Limited marketing and entertainment could reduce event visibility and excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Limited marketing and entertainment definitely hurt visibility, which cuts engagement overall.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare entertainment_budget: 2000 and 500",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "entertainment_budget",
+            "public_value": "2000"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "entertainment_budget",
+            "public_value": "500"
+          }
+        ],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Entertainment gets $2000 with balanced allocation versus just $500 focusing on venue—more entertainment fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Balanced funding ensures decent quality across all event aspects.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Balanced funding keeps the vibe solid everywhere, so no event feels weak.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the marketing budget is 2000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "marketing_budget",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Balanced funding works if we keep marketing tight around that $2000—otherwise, some parts will feel underwhelming.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the catering budget is 3000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "catering_budget",
+          "public_value": "3000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "3000 for catering is solid, but we need to keep marketing lean to avoid gaps elsewhere.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the venue budget is 3000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "venue_budget",
+          "public_value": "3000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "3000 for the venue means we have to nail comfort and setup—no cutting corners there if we want guests to remember this event.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Low venue and catering budgets conflict with Liam’s quality standards.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Lower venue and catering budgets may impact event comfort and attendee satisfaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Low venue and catering budgets here will definitely hurt the vibe and comfort we need for a standout event.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare entertainment_budget: 4000 and 500",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "entertainment_budget",
+            "public_value": "4000"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "entertainment_budget",
+            "public_value": "500"
+          }
+        ],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, but $4000 for entertainment beats $500—more events keep things lively.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Low venue and catering budgets may hurt overall event satisfaction.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Lower venue and catering budgets may impact event comfort and attendee satisfaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "More events are good, but skimping on venue and food risks a flat overall experience.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "May not provide the high-quality venue and catering Liam prefers.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit the scale of individual events due to budget spread."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Zoe, do you think spreading the budget across events really justifies sacrificing the quality of venue and catering?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is May limit the scale of individual events due to budget spread.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit the scale of individual events due to budget spread."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure all event components are adequately funded for consistent quality.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Spreading the budget does limit individual event scale, so quality could suffer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation maintains overall event quality.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Balanced allocation maintains overall event quality."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Fair point, but Balanced Allocation keeps overall event quality intact by funding all aspects—not just venue and catering—so I can get behind it now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the catering budget is 3000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "catering_budget",
+          "public_value": "3000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "With only 3000 for catering, spreading too thin risks everyone leaving hungry or unimpressed, which kills the whole vibe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare venue_budget: 4500 and 1500",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "venue_budget",
+            "public_value": "4500"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "venue_budget",
+            "public_value": "1500"
+          }
+        ],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$4500 on venue and catering means way better food and space comfort than $1500, which fits my priority for memorable, well-catered events.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the entertainment budget is 2000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "entertainment_budget",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$2000 for entertainment feels tight; cutting here risks leaving a bland impression despite solid food and space.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Spreading budget limits the number of events and entertainment scale.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit the scale of individual events due to budget spread."
+        },
+        "comparison_sources": [],
+        "personal_context": "To host as many engaging events as possible within the budget.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Spreading the budget means fewer events and smaller-scale entertainment, so no.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation maintains overall event quality.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "To create memorable, well-catered events that leave a lasting impression.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Balanced allocation maintains overall event quality."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Balanced Allocation keeps quality consistent across the board, which fits my goal for a well-rounded, memorable event experience.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Supports the highest number of events with strong entertainment and promotion.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Supports a higher number of events with emphasis on entertainment and promotion."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose Minimalist Budget.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation maintains overall event quality.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Balanced allocation maintains overall event quality."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "Balanced Allocation is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced allocation supports quality across venue, catering, marketing, and entertainment.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures all event aspects receive funding to maintain overall quality."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Balanced Allocation.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

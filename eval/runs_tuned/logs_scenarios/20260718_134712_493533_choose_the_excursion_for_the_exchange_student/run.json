@@ -1,0 +1,4385 @@
+{
+  "provenance": {
+    "seed": 242118801,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose the excursion for the exchange students' welcome week",
+    "options": [
+      {
+        "id": "A",
+        "name": "Historic City Walking Tour",
+        "attrs": {
+          "duration_hours": "3",
+          "distance_km": "5",
+          "travel_time_minutes": "30",
+          "group_size_limit": "20",
+          "cost_per_person_usd": "15"
+        },
+        "upside": "Provides cultural insights and encourages group interaction through guided exploration.",
+        "concern": "May be physically demanding for participants with limited mobility.",
+        "short_name": "Historic City Tour",
+        "aliases": [
+          "Historic City Tour",
+          "City Walking Tour"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Botanical Garden Visit with Guided Workshop",
+        "attrs": {
+          "duration_hours": "2.5",
+          "travel_time_minutes": "20",
+          "group_size_limit": "25",
+          "cost_per_person_usd": "20",
+          "workshop_included": "True"
+        },
+        "upside": "Offers a relaxing environment with educational content and hands-on activities.",
+        "concern": "Limited physical activity may not engage participants seeking more dynamic experiences.",
+        "short_name": "Botanical Garden Visit",
+        "aliases": [
+          "Botanical Garden Visit",
+          "Guided Workshop"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Local Art Museum and Interactive Exhibit",
+        "attrs": {
+          "duration_hours": "3",
+          "travel_time_minutes": "40",
+          "group_size_limit": "30",
+          "cost_per_person_usd": "18",
+          "interactive_exhibit": "True"
+        },
+        "upside": "Combines cultural exposure with interactive learning opportunities.",
+        "concern": "Indoor setting may feel restrictive for participants preferring outdoor activities.",
+        "short_name": "Local Art Museum",
+        "aliases": [
+          "Local Art Museum",
+          "Interactive Exhibit"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Outdoor Adventure Park with Team Challenges",
+        "attrs": {
+          "duration_hours": "4",
+          "travel_time_minutes": "50",
+          "group_size_limit": "15",
+          "cost_per_person_usd": "25",
+          "physical_intensity_level": "moderate"
+        },
+        "upside": "Encourages teamwork and physical activity in an engaging outdoor setting.",
+        "concern": "May be unsuitable for participants with physical limitations or low activity preference.",
+        "short_name": "Outdoor Adventure Park",
+        "aliases": [
+          "Outdoor Adventure Park",
+          "Team Challenges"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The exchange students' welcome week includes an excursion for 7 participants. The activity should accommodate diverse interests, be accessible within 2 hours travel from campus, and offer opportunities for social interaction and cultural exposure."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 4,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Maya is an art history student passionate about interactive cultural experiences.",
+      "private_goal": "To engage deeply with local culture while meeting new people.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Provides cultural insights and group interaction, which Maya values.",
+          "reason_against": "May be physically demanding, which Maya is cautious about but willing to handle."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Offers educational content and a relaxed environment.",
+          "reason_against": "Less interactive than preferred, might not fully satisfy her engagement needs."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Combines cultural exposure with interactive learning, perfectly matching her interests.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Encourages teamwork and outdoor activity but may be too physically demanding and less cultural.",
+          "reason_against": "May be unsuitable for participants with physical limitations or low activity preference."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Liam is a quiet literature student who prefers calm and contemplative activities.",
+      "private_goal": "To enjoy a low-key, culturally enriching experience without too much physical strain.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 24,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Cultural insights are appealing.",
+          "reason_against": "Physical demand might be a concern for Liam."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Relaxing and educational with minimal physical activity.",
+          "reason_against": "Might be less engaging socially."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Interactive exhibits offer cultural enrichment without high physical demand.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Too physically intense and active, not suited to his preference for calm.",
+          "reason_against": "May be unsuitable for participants with physical limitations or low activity preference."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Zoe is a tech enthusiast who enjoys interactive and innovative learning experiences.",
+      "private_goal": "To participate in activities that combine culture with hands-on engagement.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 21,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Cultural content is interesting but less interactive than preferred.",
+          "reason_against": "Physical demands might be a minor concern."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Hands-on workshop offers some interaction and relaxation.",
+          "reason_against": "Less dynamic than the art museum experience."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Interactive exhibits align well with her interest in technology and culture.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Too physically demanding and less focused on cultural or interactive learning.",
+          "reason_against": "May be unsuitable for participants with physical limitations or low activity preference."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Eli is a history major who values authentic cultural experiences and group bonding.",
+      "private_goal": "To explore historical sites while fostering strong social connections.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Direct cultural immersion and group interaction fit his priorities.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Educational and relaxing but less culturally immersive than desired.",
+          "reason_against": "Limited physical activity might reduce engagement."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Cultural exposure with interactive elements is appealing.",
+          "reason_against": "Indoor setting less preferred than outdoor historical sites."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Too physically intense and less focused on history or culture.",
+          "reason_against": "May be unsuitable for participants with physical limitations or low activity preference."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 4,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Nina is an outgoing sports science student who enjoys physical challenges and teamwork.",
+      "private_goal": "To engage in active, social experiences that build camaraderie.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 23,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Cultural and social aspects are appealing but less active than preferred.",
+          "reason_against": "Physical demand is moderate, which she can handle."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Relaxing and educational but lacks physical activity and excitement.",
+          "reason_against": "Too passive for her energetic nature."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Cultural and interactive but not physically challenging enough.",
+          "reason_against": "Indoor setting limits physical engagement."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Encourages teamwork and physical activity, matching her energetic and social goals.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Omar is a pragmatic engineering student who prefers straightforward and efficient plans.",
+      "private_goal": "To choose an excursion that balances cultural value with manageable effort.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 25,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Efficient travel time and cultural content suit his practical mindset.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Relaxing and educational but less direct cultural exposure.",
+          "reason_against": "Less engaging physically and socially."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Good cultural exposure with interactive elements, though slightly longer travel.",
+          "reason_against": "Indoor setting might feel restrictive."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Too physically demanding and lengthy for his preference.",
+          "reason_against": "May be unsuitable for participants with physical limitations or low activity preference."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Ivy",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Ivy is a social psychology student who enjoys group activities and outdoor experiences.",
+      "private_goal": "To participate in activities that foster teamwork and social bonding outdoors.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Good for group interaction and cultural learning.",
+          "reason_against": "Physical demand might be challenging but manageable."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Relaxing and educational but less social and active.",
+          "reason_against": "Limited physical activity reduces appeal."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Cultural and interactive but indoor and less active.",
+          "reason_against": "Less suited for outdoor preference."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Encourages teamwork and physical activity in an outdoor setting, matching her social and active goals.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Provides cultural insights and group interaction, which Maya values."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "travel_time_minutes"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "interactive_exhibit"
+        ],
+        [
+          "C",
+          "travel_time_minutes"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "travel_time_minutes"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "group_size_limit"
+        ],
+        [
+          "A",
+          "cost_per_person_usd"
+        ],
+        [
+          "A",
+          "group_size_limit"
+        ],
+        [
+          "C",
+          "duration_hours"
+        ],
+        [
+          "A",
+          "duration_hours"
+        ],
+        [
+          "D",
+          "cost_per_person_usd"
+        ],
+        [
+          "C",
+          "cost_per_person_usd"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "duration_hours"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "duration_hours"
+        ],
+        [
+          "C",
+          "interactive_exhibit"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Cultural and social aspects are appealing but less active than preferred."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "A",
+          "travel_time_minutes"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "duration_hours"
+        ],
+        [
+          "C",
+          "cost_per_person_usd"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "group_size_limit"
+        ],
+        [
+          "A",
+          "cost_per_person_usd"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "group_size_limit"
+        ],
+        [
+          "D",
+          "group_size_limit"
+        ],
+        [
+          "A",
+          "distance_km"
+        ],
+        [
+          "D",
+          "travel_time_minutes"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Good for group interaction and cultural learning."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "distance_km"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Choose the excursion for the exchange students' welcome week.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The Historic City Tour fits best—good cultural content with efficient travel time.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Efficient travel time and cultural content suit his practical mindset.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Sounds good—direct cultural immersion and group interaction in the Historic City Tour seem valuable.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Direct cultural immersion and group interaction fit his priorities.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore historical sites while fostering strong social connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Outdoor Adventure Park sounds great—team challenges get everyone moving and bonding, exactly what we need.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Encourages teamwork and physical activity, matching her energetic and social goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages teamwork and physical activity in an engaging outdoor setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Local Art Museum’s interactive exhibits offer cultural enrichment without too much physical effort.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interactive exhibits offer cultural enrichment without high physical demand.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy a low-key, culturally enriching experience without too much physical strain.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The Local Art Museum’s interactive exhibits seem cool—they combine cultural exposure with hands-on learning, which I really like.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines cultural exposure with interactive learning, perfectly matching her interests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Outdoor Adventure Park is perfect—it mixes teamwork with physical activity outdoors, exactly what we need.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Encourages teamwork and physical activity in an outdoor setting, matching her social and active goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages teamwork and physical activity in an engaging outdoor setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that foster teamwork and social bonding outdoors.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The interactive exhibits at the Local Art Museum seem pretty cool.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interactive exhibits align well with her interest in technology and culture.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "True, and I think those hands-on parts make it easier to connect with the culture, though I sometimes wish there was more chance to chat with locals too.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the interactive exhibit is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "interactive_exhibit",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Outdoors and activity sound fun, but I worry it might be a bit much for anyone who prefers something more low-key or has physical limits.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "May be unsuitable for participants with physical limitations or low activity preference.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May be unsuitable for participants with physical limitations or low activity preference."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The walking tour allows 20 people, which fits better for a balanced, manageable group size than 15.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare group_size_limit: 20 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "group_size_limit",
+            "public_value": "20"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "group_size_limit",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "That outdoor challenge sounds intense and might exclude those who’d prefer something gentler.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "May be unsuitable for participants with physical limitations or low activity preference.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May be unsuitable for participants with physical limitations or low activity preference."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy a low-key, culturally enriching experience without too much physical strain.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Fifty minutes travel means more downtime; I prefer something with less transit and more culture.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the travel time minutes is 50",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Does anyone know if the walking pace is gentle enough for a relaxed stroll?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Physical demand might be a concern for Liam.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May be physically demanding for participants with limited mobility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy a low-key, culturally enriching experience without too much physical strain.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "It might be a bit much for anyone with limited mobility, though.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is May be physically demanding for participants with limited mobility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May be physically demanding for participants with limited mobility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore historical sites while fostering strong social connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "A group size of 30 feels more flexible than 20 for me, still depends on the vibe though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare group_size_limit: 30 and 20",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "group_size_limit",
+            "public_value": "30"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "group_size_limit",
+            "public_value": "20"
+          }
+        ],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Indoor spots like that can feel way too static for me—I need more movement to stay engaged.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Indoor setting limits physical engagement.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Indoor setting may feel restrictive for participants preferring outdoor activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Three hours feels a bit long without breaks, though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration hours is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "30 people max makes it manageable, so the group won’t feel too crowded.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the group size limit is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "group_size_limit",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The interactive exhibit could keep things lively, which I like.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the interactive exhibit is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "interactive_exhibit",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore historical sites while fostering strong social connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Lively is good, but being stuck indoors limits chances for real team bonding outdoors.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "Less suited for outdoor preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Indoor setting may feel restrictive for participants preferring outdoor activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that foster teamwork and social bonding outdoors.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "40 minutes there is a bit longer than I hoped, so I’d prefer something less tiring.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p7",
+        "reason": "the travel time minutes is 40",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy a low-key, culturally enriching experience without too much physical strain.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Three hours sounds doable, but that’s a decent chunk of time to stay energized without a break.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration hours is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "18 each isn’t bad, but keeping energy up for that long indoors might still be tricky for me.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cost per person is 18",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "18"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "40 minutes is a bit of a stretch for me, especially if we want to stay energized and really dive into the exhibits.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the travel time minutes is 40",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Three hours is the same either way, but I lean toward the city tour for the history angle.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_hours: 3 and 3",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "duration_hours",
+            "public_value": "3"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "duration_hours",
+            "public_value": "3"
+          }
+        ],
+        "personal_context": "To explore historical sites while fostering strong social connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Five kilometers isn’t bad, but the walking pace has to stay manageable for me.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the distance km is 5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "distance_km",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "30 minutes travel is fair, but it cuts into our active time—would rather keep moving than wait around.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the travel time minutes is 30",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Omar’s pace concern makes the Historic City Tour more doable, though it’s less active than I usually prefer.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Cultural and social aspects are appealing but less active than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Cultural and social aspects are appealing but less active than preferred."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Cultural and social aspects are appealing but less active than preferred."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "18 bucks sounds nicer than 25 for sure, and I’m leaning more toward cultural stuff anyway.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost_per_person_usd: 18 and 25",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "cost_per_person_usd",
+            "public_value": "18"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "cost_per_person_usd",
+            "public_value": "25"
+          }
+        ],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Okay, I’m warming up to the Historic City Walking Tour since it offers some real cultural insights and a chance to chat with everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides cultural insights and group interaction, which Maya values.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Provides cultural insights and group interaction, which Maya values."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Provides cultural insights and group interaction, which Maya values."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "15 per person is reasonable, but the pace and distance still fit better with my energy.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cost per person is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "5 km sounds manageable, though I’d prefer something a bit more active to boost teamwork outdoors.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the distance km is 5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "distance_km",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that foster teamwork and social bonding outdoors.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "30 minutes travel sounds doable, but I’m a bit picky about spending that long just getting there instead of diving into the experience sooner.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the travel time minutes is 30",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "18 bucks is a bit more, but hands-on feels worth it to me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost_per_person_usd: 18 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "cost_per_person_usd",
+            "public_value": "18"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cost_per_person_usd",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Three hours sounds okay, though might feel long without breaks.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the duration hours is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 36,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Historic City Tour currently has 2 of 7 public preferences and the broadest overall support, but not a majority. Maya, Liam, Zoe, Nina, and Ivy, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Historic City Tour could work since it’s social and cultural, though it’s less active than I’d usually prefer.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Cultural and social aspects are appealing but less active than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Cultural and social aspects are appealing but less active than preferred."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Cultural and social aspects are appealing but less active than preferred."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 38,
+      "phase": "NARROWING",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Historic City Tour fits since it’s great for group bonding and learning together.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Good for group interaction and cultural learning.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that foster teamwork and social bonding outdoors.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Good for group interaction and cultural learning."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Good for group interaction and cultural learning."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Historic City Tour.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides cultural insights and group interaction, which Maya values.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Provides cultural insights and group interaction, which Maya values."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Provides cultural insights and group interaction, which Maya values."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Local Art Museum.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interactive exhibits offer cultural enrichment without high physical demand.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I’m voting for Local Art Museum.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interactive exhibits align well with her interest in technology and culture.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "My final vote is Historic City Tour.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Direct cultural immersion and group interaction fit his priorities.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "I’m voting for Historic City Tour.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Cultural and social aspects are appealing but less active than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Cultural and social aspects are appealing but less active than preferred."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Cultural and social aspects are appealing but less active than preferred."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I choose Historic City Tour.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Efficient travel time and cultural content suit his practical mindset.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 46,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "My final vote is Historic City Tour.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Good for group interaction and cultural learning.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Good for group interaction and cultural learning."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Good for group interaction and cultural learning."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 47,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Historic City Tour.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:cost_per_person_usd": 2,
+    "A:distance_km": 2,
+    "A:duration_hours": 2,
+    "A:group_size_limit": 2,
+    "A:travel_time_minutes": 2,
+    "A:upside": 6,
+    "C:concern": 2,
+    "C:cost_per_person_usd": 3,
+    "C:duration_hours": 3,
+    "C:group_size_limit": 2,
+    "C:interactive_exhibit": 2,
+    "C:travel_time_minutes": 2,
+    "C:upside": 3,
+    "D:concern": 2,
+    "D:cost_per_person_usd": 1,
+    "D:group_size_limit": 1,
+    "D:travel_time_minutes": 1,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "upside"
+    ],
+    [
+      "A",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "C",
+    "p3": "C",
+    "p4": "A",
+    "p5": "A",
+    "p6": "A",
+    "p7": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "C",
+      "p3": "C",
+      "p4": "A",
+      "p5": "A",
+      "p6": "A",
+      "p7": "A"
+    },
+    "reason": "5 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 37,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 23303,
+    "output_tokens": 2761,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 6,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 44,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0833,
+    "avg_words_per_participant_turn": 14.55,
+    "visible_preference_changes": 3,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 23303,
+    "output_tokens": 2761,
+    "llm_calls": 40,
+    "voluntary_turns_by_persona": {
+      "p1": 5,
+      "p6": 5,
+      "p2": 3,
+      "p4": 3,
+      "p3": 5,
+      "p5": 6,
+      "p7": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Efficient travel time and cultural content suit his practical mindset.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Historic City Tour fits best—good cultural content with efficient travel time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Direct cultural immersion and group interaction fit his priorities.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore historical sites while fostering strong social connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sounds good—direct cultural immersion and group interaction in the Historic City Tour seem valuable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Encourages teamwork and physical activity, matching her energetic and social goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages teamwork and physical activity in an engaging outdoor setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Outdoor Adventure Park sounds great—team challenges get everyone moving and bonding, exactly what we need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interactive exhibits offer cultural enrichment without high physical demand.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy a low-key, culturally enriching experience without too much physical strain.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Local Art Museum’s interactive exhibits offer cultural enrichment without too much physical effort.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines cultural exposure with interactive learning, perfectly matching her interests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Local Art Museum’s interactive exhibits seem cool—they combine cultural exposure with hands-on learning, which I really like.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Encourages teamwork and physical activity in an outdoor setting, matching her social and active goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages teamwork and physical activity in an engaging outdoor setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that foster teamwork and social bonding outdoors.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Outdoor Adventure Park is perfect—it mixes teamwork with physical activity outdoors, exactly what we need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interactive exhibits align well with her interest in technology and culture.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The interactive exhibits at the Local Art Museum seem pretty cool.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the interactive exhibit is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "interactive_exhibit",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, and I think those hands-on parts make it easier to connect with the culture, though I sometimes wish there was more chance to chat with locals too.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "May be unsuitable for participants with physical limitations or low activity preference.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May be unsuitable for participants with physical limitations or low activity preference."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Outdoors and activity sound fun, but I worry it might be a bit much for anyone who prefers something more low-key or has physical limits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare group_size_limit: 20 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "group_size_limit",
+            "public_value": "20"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "group_size_limit",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The walking tour allows 20 people, which fits better for a balanced, manageable group size than 15.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "May be unsuitable for participants with physical limitations or low activity preference.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May be unsuitable for participants with physical limitations or low activity preference."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy a low-key, culturally enriching experience without too much physical strain.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That outdoor challenge sounds intense and might exclude those who’d prefer something gentler.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the travel time minutes is 50",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fifty minutes travel means more downtime; I prefer something with less transit and more culture.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Physical demand might be a concern for Liam.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May be physically demanding for participants with limited mobility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy a low-key, culturally enriching experience without too much physical strain.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does anyone know if the walking pace is gentle enough for a relaxed stroll?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is May be physically demanding for participants with limited mobility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May be physically demanding for participants with limited mobility."
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore historical sites while fostering strong social connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It might be a bit much for anyone with limited mobility, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare group_size_limit: 30 and 20",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "group_size_limit",
+            "public_value": "30"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "group_size_limit",
+            "public_value": "20"
+          }
+        ],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A group size of 30 feels more flexible than 20 for me, still depends on the vibe though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Indoor setting limits physical engagement.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Indoor setting may feel restrictive for participants preferring outdoor activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Indoor spots like that can feel way too static for me—I need more movement to stay engaged.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration hours is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three hours feels a bit long without breaks, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the group size limit is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "group_size_limit",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "30 people max makes it manageable, so the group won’t feel too crowded.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the interactive exhibit is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "interactive_exhibit",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To explore historical sites while fostering strong social connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The interactive exhibit could keep things lively, which I like.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "Less suited for outdoor preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Indoor setting may feel restrictive for participants preferring outdoor activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that foster teamwork and social bonding outdoors.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Lively is good, but being stuck indoors limits chances for real team bonding outdoors.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p7",
+        "reason": "the travel time minutes is 40",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy a low-key, culturally enriching experience without too much physical strain.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "40 minutes there is a bit longer than I hoped, so I’d prefer something less tiring.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration hours is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three hours sounds doable, but that’s a decent chunk of time to stay energized without a break.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cost per person is 18",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "18"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "18 each isn’t bad, but keeping energy up for that long indoors might still be tricky for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the travel time minutes is 40",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "40 minutes is a bit of a stretch for me, especially if we want to stay energized and really dive into the exhibits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_hours: 3 and 3",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "duration_hours",
+            "public_value": "3"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "duration_hours",
+            "public_value": "3"
+          }
+        ],
+        "personal_context": "To explore historical sites while fostering strong social connections.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three hours is the same either way, but I lean toward the city tour for the history angle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the distance km is 5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "distance_km",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Five kilometers isn’t bad, but the walking pace has to stay manageable for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the travel time minutes is 30",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "30 minutes travel is fair, but it cuts into our active time—would rather keep moving than wait around.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Cultural and social aspects are appealing but less active than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Cultural and social aspects are appealing but less active than preferred."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Omar’s pace concern makes the Historic City Tour more doable, though it’s less active than I usually prefer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost_per_person_usd: 18 and 25",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "cost_per_person_usd",
+            "public_value": "18"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "cost_per_person_usd",
+            "public_value": "25"
+          }
+        ],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "18 bucks sounds nicer than 25 for sure, and I’m leaning more toward cultural stuff anyway.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides cultural insights and group interaction, which Maya values.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Provides cultural insights and group interaction, which Maya values."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Okay, I’m warming up to the Historic City Walking Tour since it offers some real cultural insights and a chance to chat with everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cost per person is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose an excursion that balances cultural value with manageable effort.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "15 per person is reasonable, but the pace and distance still fit better with my energy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the distance km is 5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "distance_km",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that foster teamwork and social bonding outdoors.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "5 km sounds manageable, though I’d prefer something a bit more active to boost teamwork outdoors.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the travel time minutes is 30",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel_time_minutes",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage deeply with local culture while meeting new people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "30 minutes travel sounds doable, but I’m a bit picky about spending that long just getting there instead of diving into the experience sooner.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost_per_person_usd: 18 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "cost_per_person_usd",
+            "public_value": "18"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cost_per_person_usd",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "18 bucks is a bit more, but hands-on feels worth it to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the duration hours is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that combine culture with hands-on engagement.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three hours sounds okay, though might feel long without breaks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Cultural and social aspects are appealing but less active than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in active, social experiences that build camaraderie.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Cultural and social aspects are appealing but less active than preferred."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Historic City Tour could work since it’s social and cultural, though it’s less active than I’d usually prefer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Good for group interaction and cultural learning.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in activities that foster teamwork and social bonding outdoors.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Good for group interaction and cultural learning."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Historic City Tour fits since it’s great for group bonding and learning together.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides cultural insights and group interaction, which Maya values.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Provides cultural insights and group interaction, which Maya values."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Historic City Tour.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interactive exhibits offer cultural enrichment without high physical demand.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Local Art Museum.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interactive exhibits align well with her interest in technology and culture.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines cultural exposure with interactive learning opportunities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for Local Art Museum.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Direct cultural immersion and group interaction fit his priorities.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Historic City Tour.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Cultural and social aspects are appealing but less active than preferred.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Cultural and social aspects are appealing but less active than preferred."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Historic City Tour.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Efficient travel time and cultural content suit his practical mindset.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Historic City Tour.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Good for group interaction and cultural learning.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides cultural insights and encourages group interaction through guided exploration."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Good for group interaction and cultural learning."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Historic City Tour.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

@@ -1,0 +1,1811 @@
+{
+  "provenance": {
+    "seed": 242118886,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Select a retirement gift for a long-serving professor",
+    "options": [
+      {
+        "id": "A",
+        "name": "Custom Engraved Crystal Award",
+        "attrs": {
+          "material": "crystal",
+          "engraving": "professor's name and years of service",
+          "dimensions": "8 inches tall",
+          "weight": "2 pounds"
+        },
+        "upside": "Elegant and durable keepsake suitable for office display.",
+        "concern": "Fragile and requires careful handling during transport.",
+        "short_name": "Engraved Crystal Award",
+        "aliases": [
+          "Engraved Crystal Award",
+          "Custom Crystal Award"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Leather-Bound Personalized Journal",
+        "attrs": {
+          "cover_material": "genuine leather",
+          "page_count": "200",
+          "personalization": "professor's initials embossed",
+          "size": "8.5 x 11 inches"
+        },
+        "upside": "Practical for note-taking or personal reflections.",
+        "concern": "May be less visually impactful as a display item.",
+        "short_name": "Leather-Bound Journal",
+        "aliases": [
+          "Leather-Bound Journal",
+          "Personalized Journal"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Framed Commemorative University Diploma Replica",
+        "attrs": {
+          "frame_material": "wood",
+          "dimensions": "16 x 20 inches",
+          "content": "replica diploma with retirement recognition",
+          "glass_type": "UV-protective"
+        },
+        "upside": "Visually striking and honors academic achievement.",
+        "concern": "Requires wall space and may not suit all decor styles.",
+        "short_name": "Framed Diploma Replica",
+        "aliases": [
+          "Framed Diploma Replica",
+          "Commemorative University Diploma"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Gift Card to Local Bookstore",
+        "attrs": {
+          "value": "$150",
+          "usable_for": "books, stationery, and gifts",
+          "validity_period": "1 year",
+          "redeemable_in_store": "True"
+        },
+        "upside": "Allows recipient to choose preferred items.",
+        "concern": "Less personalized and may feel less commemorative.",
+        "short_name": "Gift Card Bookstore",
+        "aliases": [
+          "Gift Card Bookstore",
+          "Gift Card"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A group of two colleagues is selecting a retirement gift for a professor who has served 35 years in the university. The gift should be meaningful, appropriate for academic achievement, and suitable for display or personal use."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Maya is a senior faculty member involved in departmental administration.",
+      "private_goal": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Elegant and durable keepsake suitable for office display.",
+          "reason_against": "Fragile and requires careful handling during transport."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Practical for note-taking or personal reflections.",
+          "reason_against": "May be less visually impactful as a display item and less flexible than a gift card."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Visually striking and honors academic achievement.",
+          "reason_against": "Requires wall space and may not suit all decor styles."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Allows recipient to choose preferred items, making it very flexible and personal.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Liam is a junior colleague with limited involvement in gift decisions.",
+      "private_goal": "Select a practical and personal gift that the professor can use regularly.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 30,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Elegant and suitable for display in the office.",
+          "reason_against": "Fragility is a concern and may be inconvenient to transport."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Practical for note-taking or personal reflections, with personalization adding meaning.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Honors academic achievement and is visually striking.",
+          "reason_against": "Requires wall space which may not fit all preferences."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Flexible choice for the recipient.",
+          "reason_against": "Less personalized and may feel less commemorative."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 2,
+        "C": 4,
+        "D": 5
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "cover_material"
+        ],
+        [
+          "D",
+          "validity_period"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "redeemable_in_store"
+        ],
+        [
+          "D",
+          "value"
+        ],
+        [
+          "D",
+          "usable_for"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "validity_period"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "redeemable_in_store"
+        ],
+        [
+          "D",
+          "value"
+        ],
+        [
+          "B",
+          "size"
+        ],
+        [
+          "B",
+          "page_count"
+        ],
+        [
+          "D",
+          "usable_for"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Select a retirement gift for a long-serving professor.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "A leather-bound journal seems practical for notes, and personalizing it adds a nice touch.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Practical for note-taking or personal reflections, with personalization adding meaning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Practical for note-taking or personal reflections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "A Gift Card Bookstore allows the professor to select what they truly want, making it flexible and personal.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Allows recipient to choose preferred items, making it very flexible and personal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Allows recipient to choose preferred items."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The journal may lack visual impact and limits choice compared to a gift card.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "May be less visually impactful as a display item and less flexible than a gift card.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "May be less visually impactful as a display item."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Does anyone have a different reaction to what has been said?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The size is actually pretty standard, so it should fit well for daily use.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the size is 8.5 x 11 inches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "size",
+          "public_value": "8.5 x 11 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "200 pages should be enough for regular notes, though.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the page count is 200",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "page_count",
+          "public_value": "200"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Genuine leather adds quality, but it still restricts the recipient’s personal preference.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cover material is genuine leather",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cover_material",
+          "public_value": "genuine leather"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Maya, do you think a gift card might feel less personal for the professor?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Less personalized and may feel less commemorative.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Less personalized and may feel less commemorative."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It might feel less commemorative since it’s less personalized than a physical gift.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Less personalized and may feel less commemorative.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Less personalized and may feel less commemorative."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "True, and that flexibility aligns with the priority of meaningful choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the redeemable in store is True",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "redeemable_in_store",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "One year’s validity still allows enough time for thoughtful use without rush.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the validity period is 1 year",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "validity_period",
+          "public_value": "1 year"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Its use for books, stationery, and gifts offers practical variety without forcing a single choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the usable for is books, stationery, and gifts",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "usable_for",
+          "public_value": "books, stationery, and gifts"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "$150 is fair, though a more personal touch could matter too.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the value is $150",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "value",
+          "public_value": "$150"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "One year is decent, but I worry it might get forgotten.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the validity period is 1 year",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "validity_period",
+          "public_value": "1 year"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "That variety helps, though I’d still lean toward something used daily.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the usable for is books, stationery, and gifts",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "usable_for",
+          "public_value": "books, stationery, and gifts"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "$150 sets a clear budget, but I prioritize meaningful choice over daily use.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the value is $150",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "value",
+          "public_value": "$150"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "It’s good it’s redeemable in store, so he can pick what suits him.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the redeemable in store is True",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "redeemable_in_store",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 18,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The strongest common-ground options are tied, so I’ll use Gift Card Bookstore as the compromise target. Liam, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 19,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Gift Card Bookstore.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Allows recipient to choose preferred items, making it very flexible and personal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Allows recipient to choose preferred items."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 20,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for Leather-Bound Journal.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Practical for note-taking or personal reflections, with personalization adding meaning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Practical for note-taking or personal reflections."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 21,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The discussion closes without a majority decision.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "B:concern": 1,
+    "B:cover_material": 1,
+    "B:page_count": 1,
+    "B:size": 1,
+    "B:upside": 1,
+    "D:concern": 2,
+    "D:redeemable_in_store": 2,
+    "D:upside": 1,
+    "D:usable_for": 2,
+    "D:validity_period": 2,
+    "D:value": 2
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "value"
+    ],
+    [
+      "D",
+      "redeemable_in_store"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "D",
+      "p2": "B"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 16,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 4,
+    "input_tokens": 10334,
+    "output_tokens": 1453,
+    "moderator_turns": 4,
+    "voluntary_turns": 9,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 2,
+    "participant_turns": 18,
+    "voluntary_turns": 9,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1818,
+    "avg_words_per_participant_turn": 11.94,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 10334,
+    "output_tokens": 1453,
+    "llm_calls": 19,
+    "voluntary_turns_by_persona": {
+      "p1": 6,
+      "p2": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Practical for note-taking or personal reflections, with personalization adding meaning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Practical for note-taking or personal reflections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A leather-bound journal seems practical for notes, and personalizing it adds a nice touch.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Allows recipient to choose preferred items, making it very flexible and personal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Allows recipient to choose preferred items."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A Gift Card Bookstore allows the professor to select what they truly want, making it flexible and personal.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "May be less visually impactful as a display item and less flexible than a gift card.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "May be less visually impactful as a display item."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The journal may lack visual impact and limits choice compared to a gift card.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the size is 8.5 x 11 inches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "size",
+          "public_value": "8.5 x 11 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The size is actually pretty standard, so it should fit well for daily use.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the page count is 200",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "page_count",
+          "public_value": "200"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "200 pages should be enough for regular notes, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cover material is genuine leather",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cover_material",
+          "public_value": "genuine leather"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Genuine leather adds quality, but it still restricts the recipient’s personal preference.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Less personalized and may feel less commemorative.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Less personalized and may feel less commemorative."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, do you think a gift card might feel less personal for the professor?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Less personalized and may feel less commemorative.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Less personalized and may feel less commemorative."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It might feel less commemorative since it’s less personalized than a physical gift.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the redeemable in store is True",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "redeemable_in_store",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, and that flexibility aligns with the priority of meaningful choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the validity period is 1 year",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "validity_period",
+          "public_value": "1 year"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One year’s validity still allows enough time for thoughtful use without rush.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the usable for is books, stationery, and gifts",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "usable_for",
+          "public_value": "books, stationery, and gifts"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Its use for books, stationery, and gifts offers practical variety without forcing a single choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the value is $150",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "value",
+          "public_value": "$150"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$150 is fair, though a more personal touch could matter too.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the validity period is 1 year",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "validity_period",
+          "public_value": "1 year"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One year is decent, but I worry it might get forgotten.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the usable for is books, stationery, and gifts",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "usable_for",
+          "public_value": "books, stationery, and gifts"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That variety helps, though I’d still lean toward something used daily.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the value is $150",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "value",
+          "public_value": "$150"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a gift that feels meaningful and allows the professor freedom to select what they want.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$150 sets a clear budget, but I prioritize meaningful choice over daily use.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the redeemable in store is True",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "redeemable_in_store",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a practical and personal gift that the professor can use regularly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s good it’s redeemable in store, so he can pick what suits him.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Allows recipient to choose preferred items, making it very flexible and personal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Allows recipient to choose preferred items."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose Gift Card Bookstore.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Practical for note-taking or personal reflections, with personalization adding meaning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Practical for note-taking or personal reflections."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Leather-Bound Journal.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

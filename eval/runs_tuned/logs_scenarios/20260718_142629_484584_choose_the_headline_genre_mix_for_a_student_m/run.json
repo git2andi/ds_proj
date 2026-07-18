@@ -1,0 +1,4137 @@
+{
+  "provenance": {
+    "seed": 242118891,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose the headline genre mix for a student music festival",
+    "options": [
+      {
+        "id": "A",
+        "name": "Rock and Indie Focus",
+        "attrs": {
+          "primary_genres": "Rock, Indie",
+          "expected_attendance": "1500",
+          "number_of_headliners": "3",
+          "logistical_complexity": "medium"
+        },
+        "upside": "Attracts a dedicated fanbase familiar with local bands.",
+        "concern": "May limit appeal to fans of other genres.",
+        "short_name": "Rock and Indie",
+        "aliases": [
+          "Rock and Indie",
+          "Indie Focus"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Mixed Pop and Electronic",
+        "attrs": {
+          "primary_genres": "Pop, Electronic",
+          "expected_attendance": "2000",
+          "number_of_headliners": "4",
+          "logistical_complexity": "high"
+        },
+        "upside": "Broad appeal with energetic performances and dance-friendly sets.",
+        "concern": "Higher production needs increase setup time and costs.",
+        "short_name": "Mixed Pop",
+        "aliases": [
+          "Mixed Pop",
+          "Pop and Electronic"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Hip-Hop and R&B Blend",
+        "attrs": {
+          "primary_genres": "Hip-Hop, R&B",
+          "expected_attendance": "1700",
+          "number_of_headliners": "3",
+          "logistical_complexity": "medium"
+        },
+        "upside": "Engages a younger demographic with trending artists.",
+        "concern": "Sound requirements may be challenging for an outdoor venue.",
+        "short_name": "Hip-Hop Blend",
+        "aliases": [
+          "Hip-Hop Blend",
+          "B Blend"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Eclectic Mix Across Genres",
+        "attrs": {
+          "primary_genres": "Rock, Pop, Hip-Hop, Electronic",
+          "expected_attendance": "1800",
+          "number_of_headliners": "5",
+          "logistical_complexity": "very high"
+        },
+        "upside": "Offers variety to satisfy diverse musical tastes.",
+        "concern": "Complex scheduling and higher costs due to multiple genre setups.",
+        "short_name": "Eclectic Mix",
+        "aliases": [
+          "Eclectic Mix",
+          "Mix Across Genres"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A student music festival is selecting a headline genre mix to appeal to a diverse audience of 7 decision-makers. Each option balances genre variety, expected attendance, and logistical complexity for a one-day outdoor event."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Maya is a university music club president passionate about local rock and indie scenes.",
+      "private_goal": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Attracts a dedicated fanbase familiar with local bands, aligning with my goal to support local music.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Broad appeal could increase attendance and energy.",
+          "reason_against": "High logistical complexity and less focus on local rock/indie."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Engages younger demographics, which is good for festival growth.",
+          "reason_against": "Sound requirements might complicate outdoor setup."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Variety satisfies diverse tastes, potentially increasing attendance.",
+          "reason_against": "Very high logistical complexity and cost."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Liam is a student event coordinator focused on maximizing attendance and smooth operations.",
+      "private_goal": "Drive the largest possible crowd while keeping production manageable.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 25,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Dedicated fanbase is good but limited in size.",
+          "reason_against": "May limit appeal and expected attendance is lower."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Highest expected attendance with broad appeal and energetic performances.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Good demographic engagement and medium complexity.",
+          "reason_against": "Sound challenges outdoors could cause issues."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Variety could attract a larger crowd.",
+          "reason_against": "Very high logistical complexity and cost."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 4,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Zara is a music journalist who values authentic and focused music experiences.",
+      "private_goal": "Promote genres with strong artistic identity and loyal audiences.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Rock and Indie focus offers authentic, loyal fan engagement.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Broad appeal but feels less authentic and more commercial.",
+          "reason_against": "High logistical complexity and less focus on core genres."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Hip-Hop and R&B are culturally relevant and engaging.",
+          "reason_against": "Sound challenges outdoors could affect quality."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Variety is interesting but may dilute focus.",
+          "reason_against": "Very high complexity and cost."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 3
+      },
+      "background": "Eli is a technical stage manager experienced in outdoor event logistics.",
+      "private_goal": "Minimize technical risks and ensure smooth sound and stage transitions.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Medium logistical complexity and fewer headliners ease management.",
+          "reason_against": "Limited genre variety may reduce audience size."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Broad appeal but high production needs increase setup time.",
+          "reason_against": "Higher risk of delays and costs."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Medium complexity with a focused genre blend I can manage well.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Variety is good but very high complexity is risky.",
+          "reason_against": "Complex scheduling and costs increase failure points."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 2,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Nina is a student marketing lead aiming to attract a young, trendy crowd.",
+      "private_goal": "Boost festival buzz with popular and current music styles.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 21,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Dedicated fanbase but less trendy for younger audiences.",
+          "reason_against": "May limit appeal and attendance."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Broad appeal and energetic performances attract youth.",
+          "reason_against": "High production costs but worth the buzz."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Hip-Hop and R&B are trending and engage young demographics well.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Variety could attract diverse groups.",
+          "reason_against": "Very high logistical complexity and costs."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 1
+      },
+      "background": "Omar is a finance student focused on cost efficiency and risk reduction.",
+      "private_goal": "Keep festival costs reasonable while maintaining good attendance.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 23,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Medium complexity and decent attendance with loyal fans.",
+          "reason_against": "Limited genre appeal."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Highest attendance but high costs and complexity.",
+          "reason_against": "Production needs increase risk and expenses."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Medium complexity with good attendance and demographic appeal.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Variety is good but very high costs and complexity are risky.",
+          "reason_against": "Too expensive and complicated."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Tess",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 4,
+        "stubbornness": 1
+      },
+      "background": "Tess is a pragmatic student leader who values straightforward decisions and efficiency.",
+      "private_goal": "Choose a headline mix that maximizes attendance with minimal fuss.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Good fanbase but limited appeal and attendance.",
+          "reason_against": "May not maximize attendance."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Highest expected attendance and broad appeal.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Good demographic but sound challenges outdoors.",
+          "reason_against": "Medium complexity but less attendance than B."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Variety appeals broadly.",
+          "reason_against": "Very high complexity and costs."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Engages younger demographics, which is good for festival growth."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "expected_attendance"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "expected_attendance"
+        ],
+        [
+          "C",
+          "number_of_headliners"
+        ],
+        [
+          "C",
+          "logistical_complexity"
+        ],
+        [
+          "B",
+          "number_of_headliners"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "expected_attendance"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Hip-Hop and R&B are culturally relevant and engaging."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Medium logistical complexity and fewer headliners ease management."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "expected_attendance"
+        ],
+        [
+          "C",
+          "number_of_headliners"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "expected_attendance"
+        ],
+        [
+          "A",
+          "number_of_headliners"
+        ],
+        [
+          "C",
+          "primary_genres"
+        ],
+        [
+          "B",
+          "logistical_complexity"
+        ],
+        [
+          "B",
+          "expected_attendance"
+        ],
+        [
+          "C",
+          "logistical_complexity"
+        ],
+        [
+          "B",
+          "number_of_headliners"
+        ],
+        [
+          "A",
+          "logistical_complexity"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Medium complexity and decent attendance with loyal fans."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "primary_genres"
+        ],
+        [
+          "B",
+          "primary_genres"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "primary_genres"
+        ],
+        [
+          "B",
+          "primary_genres"
+        ],
+        [
+          "A",
+          "logistical_complexity"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Choose the headline genre mix for a student music festival.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Rock and Indie focus is best — it draws a dedicated fanbase already into local bands, which is exactly how we build community and support the scene.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Attracts a dedicated fanbase familiar with local bands, aligning with my goal to support local music.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Attracts a dedicated fanbase familiar with local bands."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Hip-Hop Blend hits a good middle ground—medium complexity, solid attendance, and it pulls a key demographic.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity with good attendance and demographic appeal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep festival costs reasonable while maintaining good attendance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Mixed Pop seems to draw the biggest crowd with energetic sets.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Highest expected attendance with broad appeal and energetic performances.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Broad appeal with energetic performances and dance-friendly sets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive the largest possible crowd while keeping production manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Hip-Hop Blend keeps things manageable with medium complexity and a focused genre mix, which fits our setup better than broader options.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity with a focused genre blend I can manage well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "Mixed Pop has the highest expected attendance and broad appeal.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Highest expected attendance and broad appeal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Broad appeal with energetic performances and dance-friendly sets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a headline mix that maximizes attendance with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Hip-Hop Blend is smart—trending genres connect with young crowds.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Hip-Hop and R&B are trending and engage young demographics well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Rock and Indie focus seems to attract a loyal, authentic fanbase who really connect with local bands.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Rock and Indie focus offers authentic, loyal fan engagement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Attracts a dedicated fanbase familiar with local bands."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote genres with strong artistic identity and loyal audiences.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "1500 is a solid crowd size, but it only really works if those fans are actually into the local acts, not just passing through.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the expected attendance is 1500",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "expected_attendance",
+          "public_value": "1500"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "It might keep the crowd smaller and miss some genre fans.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "May limit appeal and expected attendance is lower.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit appeal to fans of other genres."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive the largest possible crowd while keeping production manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Liam’s point is valid, but Rock and Indie has medium complexity and loyal fans, so costs and attendance are more predictable.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity and decent attendance with loyal fans.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Attracts a dedicated fanbase familiar with local bands."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep festival costs reasonable while maintaining good attendance.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Medium complexity and decent attendance with loyal fans."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Medium complexity and decent attendance with loyal fans."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Both have medium logistical complexity, but Hip-Hop Blend vibes better with our crowd.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare logistical_complexity: medium and medium",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "logistical_complexity",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "logistical_complexity",
+            "public_value": "medium"
+          }
+        ],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "Still risks smaller crowds by missing other fans.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "May not maximize attendance.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit appeal to fans of other genres."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a headline mix that maximizes attendance with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "1500’s solid, but we need bigger energy to pull them in.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the expected attendance is 1500",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "expected_attendance",
+          "public_value": "1500"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Eli, do you think outdoor sound issues might make the vibe less authentic for this kind of set?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "Sound challenges outdoors could affect quality.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Sound requirements may be challenging for an outdoor venue."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote genres with strong artistic identity and loyal audiences.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Outdoor sound can definitely challenge the vibe, especially with complex mixes like this.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Sound requirements may be challenging for an outdoor venue.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Sound requirements may be challenging for an outdoor venue."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Eli’s point on sound is legit, but I’m leaning toward Hip-Hop Blend since it pulls in younger crowds, which we really need for festival growth.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Engages younger demographics, which is good for festival growth.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Engages younger demographics, which is good for festival growth."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Engages younger demographics, which is good for festival growth."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "Pop and Electronic attract broader crowds than Hip-Hop and R&B, so it fits better with pulling numbers quickly.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare primary_genres: Pop, Electronic and Hip-Hop, R&B",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "primary_genres",
+            "public_value": "Pop, Electronic"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "primary_genres",
+            "public_value": "Hip-Hop, R&B"
+          }
+        ],
+        "personal_context": "Choose a headline mix that maximizes attendance with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Higher production needs mean setup will take longer and cost more, which raises the risk of delays I have to manage closely.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "Higher risk of delays and costs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher production needs increase setup time and costs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Four headliners means we can hype up diverse sets without losing focus.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the number of headliners is 4",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "number_of_headliners",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Four headliners help, but 2000 feels tight for smooth flow.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the expected attendance is 2000",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_attendance",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive the largest possible crowd while keeping production manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Medium logistical complexity and fewer headliners in Rock and Indie Focus make it easier to manage transitions and reduce risk.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Medium logistical complexity and fewer headliners ease management.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Attracts a dedicated fanbase familiar with local bands."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Medium logistical complexity and fewer headliners ease management."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Medium logistical complexity and fewer headliners ease management."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "Medium complexity helps, but risks limiting crowd size.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the logistical complexity is medium",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "logistical_complexity",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a headline mix that maximizes attendance with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Rock and Indie focus lowers artist costs and keeps the vibe consistent, which helps control the budget.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the primary genres is Rock, Indie",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "primary_genres",
+          "public_value": "Rock, Indie"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep festival costs reasonable while maintaining good attendance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Three headliners keep it tight but limits big-name pull.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the number of headliners is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "number_of_headliners",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Three headliners keep it focused and support local acts better than four, which risks diluting the community feel we want.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare number_of_headliners: 3 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "number_of_headliners",
+            "public_value": "3"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "number_of_headliners",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "1700 is a solid crowd size; keeping it tight with three headliners means smoother transitions and less risk on stage.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expected attendance is 1700",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "expected_attendance",
+          "public_value": "1700"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Keeping it tight makes sense, but I’m leaning toward Hip-Hop Blend since it’s culturally relevant and really connects with younger audiences.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Hip-Hop and R&B are culturally relevant and engaging.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote genres with strong artistic identity and loyal audiences.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Hip-Hop and R&B are culturally relevant and engaging."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Hip-Hop and R&B are culturally relevant and engaging."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The medium complexity is manageable, but adding hip-hop risks overshadowing the local rock scene, which is our core vibe and community glue.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the logistical complexity is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "logistical_complexity",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Agreed on the vibe risk, but Hip-Hop and R&B draw the biggest crowd now.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the primary genres is Hip-Hop, R&B",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "primary_genres",
+          "public_value": "Hip-Hop, R&B"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "1700 is a decent crowd, but if we lean too heavily on hip-hop, we risk losing the tight-knit local rock community that keeps this festival unique.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the expected attendance is 1700",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "expected_attendance",
+          "public_value": "1700"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Three headliners means we have to nail every transition perfectly to keep everything on schedule and avoid technical risks.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the number of headliners is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "number_of_headliners",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Still, juggling mixed pop and electronic sounds feels like it might stretch us too thin and complicate logistics more than we need.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High logistical complexity and less focus on core genres.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher production needs increase setup time and costs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote genres with strong artistic identity and loyal audiences.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "2000 feels right for the scale but means zero room for error.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the expected attendance is 2000",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_attendance",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Pop and Electronic are solid draws but balancing their mix will be key to controlling costs.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the primary genres is Pop, Electronic",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "primary_genres",
+          "public_value": "Pop, Electronic"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep festival costs reasonable while maintaining good attendance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Pop and Electronic have high logistical complexity; Hip-Hop Blend is medium, so it fits our buzz priority better.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare logistical_complexity: medium and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "logistical_complexity",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "logistical_complexity",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Hip-Hop Blend is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Engages younger demographics, which is good for festival growth.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Mixed Pop is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Highest expected attendance with broad appeal and energetic performances.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Broad appeal with energetic performances and dance-friendly sets."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "I’m voting for Hip-Hop Blend.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Hip-Hop and R&B are culturally relevant and engaging.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I choose Hip-Hop Blend.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity with a focused genre blend I can manage well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "I’m voting for Hip-Hop Blend.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Hip-Hop and R&B are trending and engage young demographics well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I choose Hip-Hop Blend.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity with good attendance and demographic appeal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "I choose Mixed Pop.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Highest expected attendance and broad appeal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Broad appeal with energetic performances and dance-friendly sets."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Hip-Hop Blend.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:expected_attendance": 2,
+    "A:logistical_complexity": 2,
+    "A:number_of_headliners": 1,
+    "A:primary_genres": 1,
+    "A:upside": 4,
+    "B:concern": 2,
+    "B:expected_attendance": 2,
+    "B:logistical_complexity": 1,
+    "B:number_of_headliners": 2,
+    "B:primary_genres": 2,
+    "B:upside": 2,
+    "C:concern": 2,
+    "C:expected_attendance": 2,
+    "C:logistical_complexity": 3,
+    "C:number_of_headliners": 2,
+    "C:primary_genres": 2,
+    "C:upside": 5
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "logistical_complexity"
+    ],
+    [
+      "B",
+      "logistical_complexity"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "B",
+    "p3": "C",
+    "p4": "C",
+    "p5": "C",
+    "p6": "C",
+    "p7": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "C",
+    "votes": {
+      "p1": "C",
+      "p2": "B",
+      "p3": "C",
+      "p4": "C",
+      "p5": "C",
+      "p6": "C",
+      "p7": "B"
+    },
+    "reason": "5 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 35,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 21964,
+    "output_tokens": 3280,
+    "moderator_turns": 3,
+    "voluntary_turns": 27,
+    "visible_movements": 4,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 42,
+    "voluntary_turns": 27,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0667,
+    "avg_words_per_participant_turn": 14.64,
+    "visible_preference_changes": 2,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 21964,
+    "output_tokens": 3280,
+    "llm_calls": 38,
+    "voluntary_turns_by_persona": {
+      "p1": 5,
+      "p2": 2,
+      "p6": 3,
+      "p5": 7,
+      "p7": 3,
+      "p3": 3,
+      "p4": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Attracts a dedicated fanbase familiar with local bands, aligning with my goal to support local music.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Attracts a dedicated fanbase familiar with local bands."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Rock and Indie focus is best — it draws a dedicated fanbase already into local bands, which is exactly how we build community and support the scene.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity with good attendance and demographic appeal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep festival costs reasonable while maintaining good attendance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Hip-Hop Blend hits a good middle ground—medium complexity, solid attendance, and it pulls a key demographic.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Highest expected attendance with broad appeal and energetic performances.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Broad appeal with energetic performances and dance-friendly sets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive the largest possible crowd while keeping production manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Mixed Pop seems to draw the biggest crowd with energetic sets.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity with a focused genre blend I can manage well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Hip-Hop Blend keeps things manageable with medium complexity and a focused genre mix, which fits our setup better than broader options.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Highest expected attendance and broad appeal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Broad appeal with energetic performances and dance-friendly sets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a headline mix that maximizes attendance with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Mixed Pop has the highest expected attendance and broad appeal.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Hip-Hop and R&B are trending and engage young demographics well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Hip-Hop Blend is smart—trending genres connect with young crowds.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Rock and Indie focus offers authentic, loyal fan engagement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Attracts a dedicated fanbase familiar with local bands."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote genres with strong artistic identity and loyal audiences.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Rock and Indie focus seems to attract a loyal, authentic fanbase who really connect with local bands.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the expected attendance is 1500",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "expected_attendance",
+          "public_value": "1500"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1500 is a solid crowd size, but it only really works if those fans are actually into the local acts, not just passing through.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "May limit appeal and expected attendance is lower.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit appeal to fans of other genres."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive the largest possible crowd while keeping production manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It might keep the crowd smaller and miss some genre fans.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity and decent attendance with loyal fans.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Attracts a dedicated fanbase familiar with local bands."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep festival costs reasonable while maintaining good attendance.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Medium complexity and decent attendance with loyal fans."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Liam’s point is valid, but Rock and Indie has medium complexity and loyal fans, so costs and attendance are more predictable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare logistical_complexity: medium and medium",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "logistical_complexity",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "logistical_complexity",
+            "public_value": "medium"
+          }
+        ],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have medium logistical complexity, but Hip-Hop Blend vibes better with our crowd.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "May not maximize attendance.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May limit appeal to fans of other genres."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a headline mix that maximizes attendance with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still risks smaller crowds by missing other fans.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the expected attendance is 1500",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "expected_attendance",
+          "public_value": "1500"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1500’s solid, but we need bigger energy to pull them in.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "Sound challenges outdoors could affect quality.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Sound requirements may be challenging for an outdoor venue."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote genres with strong artistic identity and loyal audiences.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Eli, do you think outdoor sound issues might make the vibe less authentic for this kind of set?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Sound requirements may be challenging for an outdoor venue.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Sound requirements may be challenging for an outdoor venue."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Outdoor sound can definitely challenge the vibe, especially with complex mixes like this.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Engages younger demographics, which is good for festival growth.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Engages younger demographics, which is good for festival growth."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Eli’s point on sound is legit, but I’m leaning toward Hip-Hop Blend since it pulls in younger crowds, which we really need for festival growth.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare primary_genres: Pop, Electronic and Hip-Hop, R&B",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "primary_genres",
+            "public_value": "Pop, Electronic"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "primary_genres",
+            "public_value": "Hip-Hop, R&B"
+          }
+        ],
+        "personal_context": "Choose a headline mix that maximizes attendance with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Pop and Electronic attract broader crowds than Hip-Hop and R&B, so it fits better with pulling numbers quickly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "Higher risk of delays and costs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher production needs increase setup time and costs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Higher production needs mean setup will take longer and cost more, which raises the risk of delays I have to manage closely.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the number of headliners is 4",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "number_of_headliners",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four headliners means we can hype up diverse sets without losing focus.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the expected attendance is 2000",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_attendance",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive the largest possible crowd while keeping production manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four headliners help, but 2000 feels tight for smooth flow.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Medium logistical complexity and fewer headliners ease management.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Attracts a dedicated fanbase familiar with local bands."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Medium logistical complexity and fewer headliners ease management."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Medium logistical complexity and fewer headliners in Rock and Indie Focus make it easier to manage transitions and reduce risk.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the logistical complexity is medium",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "logistical_complexity",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a headline mix that maximizes attendance with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Medium complexity helps, but risks limiting crowd size.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the primary genres is Rock, Indie",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "primary_genres",
+          "public_value": "Rock, Indie"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep festival costs reasonable while maintaining good attendance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Rock and Indie focus lowers artist costs and keeps the vibe consistent, which helps control the budget.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the number of headliners is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "number_of_headliners",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three headliners keep it tight but limits big-name pull.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare number_of_headliners: 3 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "number_of_headliners",
+            "public_value": "3"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "number_of_headliners",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three headliners keep it focused and support local acts better than four, which risks diluting the community feel we want.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expected attendance is 1700",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "expected_attendance",
+          "public_value": "1700"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1700 is a solid crowd size; keeping it tight with three headliners means smoother transitions and less risk on stage.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Hip-Hop and R&B are culturally relevant and engaging.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote genres with strong artistic identity and loyal audiences.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Hip-Hop and R&B are culturally relevant and engaging."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Keeping it tight makes sense, but I’m leaning toward Hip-Hop Blend since it’s culturally relevant and really connects with younger audiences.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the logistical complexity is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "logistical_complexity",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The medium complexity is manageable, but adding hip-hop risks overshadowing the local rock scene, which is our core vibe and community glue.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the primary genres is Hip-Hop, R&B",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "primary_genres",
+          "public_value": "Hip-Hop, R&B"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Agreed on the vibe risk, but Hip-Hop and R&B draw the biggest crowd now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the expected attendance is 1700",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "expected_attendance",
+          "public_value": "1700"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the festival highlights local talent and fosters a strong community vibe.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1700 is a decent crowd, but if we lean too heavily on hip-hop, we risk losing the tight-knit local rock community that keeps this festival unique.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the number of headliners is 3",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "number_of_headliners",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize technical risks and ensure smooth sound and stage transitions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three headliners means we have to nail every transition perfectly to keep everything on schedule and avoid technical risks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High logistical complexity and less focus on core genres.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Higher production needs increase setup time and costs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote genres with strong artistic identity and loyal audiences.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still, juggling mixed pop and electronic sounds feels like it might stretch us too thin and complicate logistics more than we need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the expected attendance is 2000",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_attendance",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2000 feels right for the scale but means zero room for error.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the primary genres is Pop, Electronic",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "primary_genres",
+          "public_value": "Pop, Electronic"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep festival costs reasonable while maintaining good attendance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Pop and Electronic are solid draws but balancing their mix will be key to controlling costs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare logistical_complexity: medium and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "logistical_complexity",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "logistical_complexity",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Boost festival buzz with popular and current music styles.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Pop and Electronic have high logistical complexity; Hip-Hop Blend is medium, so it fits our buzz priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Engages younger demographics, which is good for festival growth.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Hip-Hop Blend is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Highest expected attendance with broad appeal and energetic performances.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Broad appeal with energetic performances and dance-friendly sets."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Mixed Pop is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Hip-Hop and R&B are culturally relevant and engaging.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for Hip-Hop Blend.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity with a focused genre blend I can manage well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Hip-Hop Blend.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Hip-Hop and R&B are trending and engage young demographics well.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for Hip-Hop Blend.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Medium complexity with good attendance and demographic appeal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Engages a younger demographic with trending artists."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Hip-Hop Blend.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Highest expected attendance and broad appeal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Broad appeal with energetic performances and dance-friendly sets."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Mixed Pop.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

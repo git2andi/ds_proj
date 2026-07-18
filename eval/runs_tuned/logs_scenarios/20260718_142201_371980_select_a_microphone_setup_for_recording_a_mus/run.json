@@ -1,0 +1,1901 @@
+{
+  "provenance": {
+    "seed": 242118881,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Select a microphone setup for recording a music podcast",
+    "options": [
+      {
+        "id": "A",
+        "name": "USB Condenser Microphone with Audio Interface",
+        "attrs": {
+          "connection_type": "USB",
+          "channels_supported": "2",
+          "frequency_response_Hz": "20-20000",
+          "price_usd": "150"
+        },
+        "upside": "Easy to set up and compatible with most computers.",
+        "concern": "Limited to two simultaneous inputs, which may restrict group flexibility.",
+        "short_name": "USB Condenser Microphone",
+        "aliases": [
+          "USB Condenser Microphone",
+          "Audio Interface"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "XLR Dynamic Microphone Kit with Mixer",
+        "attrs": {
+          "connection_type": "XLR",
+          "channels_supported": "4",
+          "frequency_response_Hz": "50-15000",
+          "price_usd": "300"
+        },
+        "upside": "Supports multiple microphones and reduces background noise.",
+        "concern": "Requires additional equipment and setup time.",
+        "short_name": "XLR Dynamic Microphone",
+        "aliases": [
+          "XLR Dynamic Microphone",
+          "Dynamic Microphone Kit"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Portable Digital Recorder with Built-in Microphones",
+        "attrs": {
+          "connection_type": "Built-in",
+          "channels_supported": "4",
+          "frequency_response_Hz": "20-20000",
+          "price_usd": "200"
+        },
+        "upside": "All-in-one solution that is easy to transport.",
+        "concern": "Built-in mics may capture more ambient noise than dedicated microphones.",
+        "short_name": "Portable Digital Recorder",
+        "aliases": [
+          "Portable Digital Recorder",
+          "Built-in Microphones"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Lavalier Microphone Set with Wireless Transmitters",
+        "attrs": {
+          "connection_type": "Wireless",
+          "channels_supported": "3",
+          "frequency_response_Hz": "60-18000",
+          "price_usd": "250"
+        },
+        "upside": "Allows freedom of movement and clear individual audio capture.",
+        "concern": "Wireless signals can be prone to interference in some environments.",
+        "short_name": "Lavalier Microphone Set",
+        "aliases": [
+          "Lavalier Microphone Set",
+          "Wireless Transmitters"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A group of three podcasters needs to select a microphone setup for recording a music podcast. The setup must support multi-person recording, provide clear audio quality, and fit within a moderate budget."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Maya is a music producer passionate about portable and flexible recording solutions.",
+      "private_goal": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Easy to set up and compatible with most computers.",
+          "reason_against": "Limited to two simultaneous inputs, which may restrict group flexibility."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Supports multiple microphones and reduces background noise.",
+          "reason_against": "Requires additional equipment and setup time, less portable."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "All-in-one solution that is easy to transport and supports four channels.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Allows freedom of movement and clear individual audio capture.",
+          "reason_against": "Wireless signals can be prone to interference in some environments."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Liam is a tech-savvy podcaster focused on straightforward, reliable setups.",
+      "private_goal": "Choose a simple, budget-friendly microphone setup that works well with two people.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Easy to set up and compatible with most computers, fits moderate budget.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Supports multiple microphones and reduces background noise.",
+          "reason_against": "Requires additional equipment and setup time, more expensive."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "All-in-one solution that is easy to transport.",
+          "reason_against": "Built-in mics may capture more ambient noise than dedicated microphones."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Allows freedom of movement and clear individual audio capture.",
+          "reason_against": "Wireless signals can be prone to interference in some environments."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Zara is an audio engineer who values clear audio quality and multi-person support.",
+      "private_goal": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Easy to set up and compatible with most computers.",
+          "reason_against": "Limited to two simultaneous inputs, insufficient for three podcasters."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Supports multiple microphones and reduces background noise.",
+          "reason_against": "Requires additional equipment and setup time."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Supports four channels with decent frequency response and easy transport.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Allows freedom of movement and clear individual audio capture.",
+          "reason_against": "Wireless signals can be prone to interference in some environments."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "channels_supported"
+        ],
+        [
+          "A",
+          "connection_type"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "frequency_response_hz"
+        ],
+        [
+          "C",
+          "connection_type"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "price_usd"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "frequency_response_hz"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "frequency_response_hz"
+        ],
+        [
+          "A",
+          "price_usd"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "channels_supported"
+        ],
+        [
+          "A",
+          "connection_type"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "frequency_response_hz"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Select a microphone setup for recording a music podcast.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "A Portable Digital Recorder works best here—easy to carry and supports four channels for group recording.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "All-in-one solution that is easy to transport and supports four channels.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All-in-one solution that is easy to transport."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "USB Condenser Microphone is easy to set up and fits a moderate budget.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to set up and compatible with most computers, fits moderate budget.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Easy to set up and compatible with most computers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a simple, budget-friendly microphone setup that works well with two people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "The Portable Digital Recorder supports four channels and is easy to transport.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports four channels with decent frequency response and easy transport.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All-in-one solution that is easy to transport."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Built-in mics might pick up too much background noise for us.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Built-in mics may capture more ambient noise than dedicated microphones.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Built-in mics may capture more ambient noise than dedicated microphones."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a simple, budget-friendly microphone setup that works well with two people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "But with only two inputs, can it really handle a full group session smoothly?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Limited to two simultaneous inputs, which may restrict group flexibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited to two simultaneous inputs, which may restrict group flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Two inputs might feel tight for three people, limiting flexibility a bit.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Limited to two simultaneous inputs, which may restrict group flexibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited to two simultaneous inputs, which may restrict group flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "150 is reasonable for a USB mic with an interface, but I need more inputs to record everyone comfortably on the go.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price is 150",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price_usd",
+          "public_value": "150"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "The 20-20000 Hz range covers everything needed, but input count still matters here.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the frequency response Hz is 20-20000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frequency_response_Hz",
+          "public_value": "20-20000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Built-in mics mean no extra gear, so it’s way easier to move around, while USB needs a computer connection every time. Built-in fits my portable, flexible setup better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare connection_type: Built-in and USB",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "connection_type",
+            "public_value": "Built-in"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "connection_type",
+            "public_value": "USB"
+          }
+        ],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Two channels seriously limit recording more than two people, so it won’t work for group sessions on the move.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the channels supported is 2",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "channels_supported",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "150 is fair, but I prefer a reliable two-person setup.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the price is 150",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price_usd",
+          "public_value": "150"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a simple, budget-friendly microphone setup that works well with two people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The 20-20000 Hz range is solid, but without enough inputs for multiple mics, it won’t handle group recordings well on the go.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frequency response Hz is 20-20000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frequency_response_Hz",
+          "public_value": "20-20000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "USB connection is reliable but means you’re tied to a computer.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the connection type is USB",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "connection_type",
+          "public_value": "USB"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Two channels could work if we keep it simple, though three might get tricky.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the channels supported is 2",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "channels_supported",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Both have 20-20000 Hz response, but I lean toward the simpler two-channel setup.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare frequency_response_Hz: 20-20000 and 20-20000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "frequency_response_Hz",
+            "public_value": "20-20000"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "frequency_response_Hz",
+            "public_value": "20-20000"
+          }
+        ],
+        "personal_context": "Choose a simple, budget-friendly microphone setup that works well with two people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 16,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 17,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Portable Digital Recorder.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "All-in-one solution that is easy to transport and supports four channels.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All-in-one solution that is easy to transport."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 18,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for USB Condenser Microphone.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to set up and compatible with most computers, fits moderate budget.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Easy to set up and compatible with most computers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 19,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "I’m voting for Portable Digital Recorder.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports four channels with decent frequency response and easy transport.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All-in-one solution that is easy to transport."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 20,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Portable Digital Recorder.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:channels_supported": 2,
+    "A:concern": 2,
+    "A:connection_type": 2,
+    "A:frequency_response_hz": 3,
+    "A:price_usd": 2,
+    "A:upside": 1,
+    "C:concern": 1,
+    "C:connection_type": 1,
+    "C:frequency_response_hz": 1,
+    "C:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "frequency_response_hz"
+    ],
+    [
+      "C",
+      "frequency_response_hz"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "A",
+    "p3": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "C",
+    "votes": {
+      "p1": "C",
+      "p2": "A",
+      "p3": "C"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 15,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 10338,
+    "output_tokens": 1824,
+    "moderator_turns": 3,
+    "voluntary_turns": 12,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 18,
+    "voluntary_turns": 12,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.1429,
+    "avg_words_per_participant_turn": 13.72,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 10338,
+    "output_tokens": 1824,
+    "llm_calls": 18,
+    "voluntary_turns_by_persona": {
+      "p2": 3,
+      "p1": 5,
+      "p3": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "All-in-one solution that is easy to transport and supports four channels.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All-in-one solution that is easy to transport."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A Portable Digital Recorder works best here—easy to carry and supports four channels for group recording.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to set up and compatible with most computers, fits moderate budget.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Easy to set up and compatible with most computers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a simple, budget-friendly microphone setup that works well with two people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "USB Condenser Microphone is easy to set up and fits a moderate budget.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports four channels with decent frequency response and easy transport.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All-in-one solution that is easy to transport."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Portable Digital Recorder supports four channels and is easy to transport.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Built-in mics may capture more ambient noise than dedicated microphones.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Built-in mics may capture more ambient noise than dedicated microphones."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a simple, budget-friendly microphone setup that works well with two people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Built-in mics might pick up too much background noise for us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Limited to two simultaneous inputs, which may restrict group flexibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited to two simultaneous inputs, which may restrict group flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "But with only two inputs, can it really handle a full group session smoothly?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Limited to two simultaneous inputs, which may restrict group flexibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited to two simultaneous inputs, which may restrict group flexibility."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two inputs might feel tight for three people, limiting flexibility a bit.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price is 150",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price_usd",
+          "public_value": "150"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "150 is reasonable for a USB mic with an interface, but I need more inputs to record everyone comfortably on the go.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the frequency response Hz is 20-20000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frequency_response_Hz",
+          "public_value": "20-20000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 20-20000 Hz range covers everything needed, but input count still matters here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare connection_type: Built-in and USB",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "connection_type",
+            "public_value": "Built-in"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "connection_type",
+            "public_value": "USB"
+          }
+        ],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Built-in mics mean no extra gear, so it’s way easier to move around, while USB needs a computer connection every time. Built-in fits my portable, flexible setup better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the channels supported is 2",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "channels_supported",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two channels seriously limit recording more than two people, so it won’t work for group sessions on the move.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the price is 150",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "price_usd",
+          "public_value": "150"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a simple, budget-friendly microphone setup that works well with two people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "150 is fair, but I prefer a reliable two-person setup.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frequency response Hz is 20-20000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frequency_response_Hz",
+          "public_value": "20-20000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an all-in-one setup that is easy to transport and supports multi-person recording.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 20-20000 Hz range is solid, but without enough inputs for multiple mics, it won’t handle group recordings well on the go.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the connection type is USB",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "connection_type",
+          "public_value": "USB"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "USB connection is reliable but means you’re tied to a computer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the channels supported is 2",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "channels_supported",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a microphone setup that balances audio clarity with ease of use for three people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two channels could work if we keep it simple, though three might get tricky.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare frequency_response_Hz: 20-20000 and 20-20000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "frequency_response_Hz",
+            "public_value": "20-20000"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "frequency_response_Hz",
+            "public_value": "20-20000"
+          }
+        ],
+        "personal_context": "Choose a simple, budget-friendly microphone setup that works well with two people.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have 20-20000 Hz response, but I lean toward the simpler two-channel setup.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "All-in-one solution that is easy to transport and supports four channels.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All-in-one solution that is easy to transport."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Portable Digital Recorder.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Easy to set up and compatible with most computers, fits moderate budget.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Easy to set up and compatible with most computers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for USB Condenser Microphone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Supports four channels with decent frequency response and easy transport.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All-in-one solution that is easy to transport."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for Portable Digital Recorder.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

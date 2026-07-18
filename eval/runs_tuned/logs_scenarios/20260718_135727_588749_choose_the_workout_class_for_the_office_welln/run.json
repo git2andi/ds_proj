@@ -1,0 +1,4405 @@
+{
+  "provenance": {
+    "seed": 242118825,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose the workout class for the office wellness program",
+    "options": [
+      {
+        "id": "A",
+        "name": "Yoga for Flexibility and Stress Relief",
+        "attrs": {
+          "intensity_level": "low to moderate",
+          "equipment_needed": "yoga mats",
+          "instructor_certification": "certified yoga instructor",
+          "participant_capacity": "15"
+        },
+        "upside": "Promotes relaxation and improves flexibility with minimal physical strain.",
+        "concern": "May not provide enough cardiovascular workout for some participants.",
+        "short_name": "Yoga Flexibility",
+        "aliases": [
+          "Yoga Flexibility",
+          "Stress Relief"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "High-Intensity Interval Training (HIIT)",
+        "attrs": {
+          "intensity_level": "high",
+          "equipment_needed": "none",
+          "instructor_certification": "certified fitness trainer",
+          "participant_capacity": "15"
+        },
+        "upside": "Offers a vigorous workout that can improve cardiovascular fitness quickly.",
+        "concern": "Intensity may be challenging for beginners or those with joint issues.",
+        "short_name": "High-Intensity Interval",
+        "aliases": [
+          "High-Intensity Interval",
+          "Interval Training"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Pilates Core Strengthening",
+        "attrs": {
+          "intensity_level": "moderate",
+          "equipment_needed": "mats and resistance bands",
+          "instructor_certification": "certified Pilates instructor",
+          "participant_capacity": "15"
+        },
+        "upside": "Focuses on core strength and posture improvement with controlled movements.",
+        "concern": "Requires some familiarity with Pilates techniques to maximize benefits.",
+        "short_name": "Pilates Core",
+        "aliases": [
+          "Pilates Core",
+          "Core Strengthening"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Dance Cardio Workout",
+        "attrs": {
+          "intensity_level": "moderate to high",
+          "equipment_needed": "none",
+          "instructor_certification": "certified dance fitness instructor",
+          "participant_capacity": "15"
+        },
+        "upside": "Combines cardiovascular exercise with fun, rhythm-based movements.",
+        "concern": "May be less appealing to participants uncomfortable with dance or rhythm.",
+        "short_name": "Dance Cardio",
+        "aliases": [
+          "Dance Cardio",
+          "Cardio Workout"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The office wellness program offers weekly workout classes designed to improve employee health and engagement. Each class accommodates up to 15 participants and lasts 45 minutes, held onsite during lunch hours."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Maya is a project manager who values engaging and energetic activities during lunch breaks.",
+      "private_goal": "To find a workout that is fun and keeps energy levels high without being too technical.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Promotes relaxation and flexibility, which can help with stress.",
+          "reason_against": "May not be active enough to keep me energized during the day."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Offers a vigorous workout that boosts cardiovascular fitness.",
+          "reason_against": "Intensity might be a bit much but manageable."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Good for core strength and posture, which is helpful for desk work.",
+          "reason_against": "Requires some Pilates familiarity, which I lack."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Fun, rhythm-based cardio that keeps me engaged and energized.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Liam is a data analyst who prefers calm and mindful activities to balance his intense workdays.",
+      "private_goal": "To reduce stress and improve flexibility without overexerting myself.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Perfect for stress relief and gentle flexibility improvement.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Great cardiovascular benefits.",
+          "reason_against": "Too intense and risky for beginners or those with joint concerns."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Good balance of moderate intensity and core strengthening.",
+          "reason_against": "Needs some Pilates knowledge to get full benefits."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Cardio and fun combined.",
+          "reason_against": "Dance might be uncomfortable for those not into rhythm."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 1,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Zara is a graphic designer who values low-impact workouts that help with relaxation and flexibility.",
+      "private_goal": "To improve my flexibility and reduce work-related tension without overexertion.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Excellent for relaxation and flexibility with low physical strain.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Good for cardiovascular health.",
+          "reason_against": "Too intense and potentially risky for me."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Strengthens core and posture at moderate intensity.",
+          "reason_against": "Requires Pilates familiarity which I don’t have yet."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Fun cardio workout.",
+          "reason_against": "Dance may be intimidating for those less confident."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Eli is an IT support specialist who prefers straightforward, high-intensity workouts to maximize limited time.",
+      "private_goal": "To get a quick, effective workout that improves my cardiovascular health.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Good for stress relief.",
+          "reason_against": "Too low intensity; doesn’t meet my fitness goals."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "High-intensity workout that quickly improves cardiovascular fitness.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Moderate intensity and core strengthening.",
+          "reason_against": "Less cardio focus than I want."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Good cardio with fun elements.",
+          "reason_against": "Dance might be less straightforward than I prefer."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 1
+      },
+      "background": "Nina is a marketing specialist who enjoys challenging workouts to stay fit and energized.",
+      "private_goal": "To push my limits with intense workouts that keep me motivated.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Good for relaxation.",
+          "reason_against": "Not intense enough to meet my fitness goals."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "High-intensity training that improves fitness quickly.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Good for core strength.",
+          "reason_against": "Moderate intensity doesn’t fully satisfy my preference."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Fun and moderately intense cardio.",
+          "reason_against": "Less intense than HIIT but still enjoyable."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Omar is a customer service representative who prefers moderate workouts that improve posture and strength.",
+      "private_goal": "To strengthen my core and improve posture without high impact exercises.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Relaxing and improves flexibility with low strain.",
+          "reason_against": "Lacks strength focus I want."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Great cardiovascular benefits.",
+          "reason_against": "Too intense and hard on joints."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Focuses on core strength and posture with moderate intensity.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Good cardio and fun.",
+          "reason_against": "Dance may be uncomfortable for me."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Tess",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Tess is a financial analyst who enjoys workouts that combine intensity with variety.",
+      "private_goal": "To improve cardiovascular health with engaging and varied exercises.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Good for stress relief and flexibility.",
+          "reason_against": "Not intense enough for my cardio goals."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "High-intensity workout that boosts cardiovascular fitness quickly.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Core strengthening and moderate intensity.",
+          "reason_against": "Less cardio focus than preferred."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Fun cardio with rhythm and variety.",
+          "reason_against": "Dance might be intimidating for some."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Offers a vigorous workout that boosts cardiovascular fitness."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "intensity_level"
+        ],
+        [
+          "D",
+          "equipment_needed"
+        ],
+        [
+          "B",
+          "equipment_needed"
+        ],
+        [
+          "D",
+          "participant_capacity"
+        ],
+        [
+          "B",
+          "participant_capacity"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Good balance of moderate intensity and core strengthening."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "intensity_level"
+        ],
+        [
+          "D",
+          "intensity_level"
+        ],
+        [
+          "A",
+          "intensity_level"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "intensity_level"
+        ],
+        [
+          "C",
+          "instructor_certification"
+        ],
+        [
+          "A",
+          "participant_capacity"
+        ],
+        [
+          "B",
+          "participant_capacity"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "intensity_level"
+        ],
+        [
+          "D",
+          "instructor_certification"
+        ],
+        [
+          "B",
+          "instructor_certification"
+        ],
+        [
+          "A",
+          "intensity_level"
+        ],
+        [
+          "A",
+          "instructor_certification"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "equipment_needed"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "participant_capacity"
+        ],
+        [
+          "A",
+          "participant_capacity"
+        ],
+        [
+          "A",
+          "equipment_needed"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Choose the workout class for the office wellness program.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "High-Intensity Interval Training is a high-intensity workout that boosts cardiovascular fitness quickly, which fits well with keeping workouts varied and effective.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity workout that boosts cardiovascular fitness quickly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular health with engaging and varied exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Dance Cardio is fun, rhythm-based cardio that keeps me engaged and energized.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fun, rhythm-based cardio that keeps me engaged and energized.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines cardiovascular exercise with fun, rhythm-based movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "High-Intensity Interval Training is tough but effective—it improves fitness quickly, which is exactly what we need.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity training that improves fitness quickly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": "To push my limits with intense workouts that keep me motivated.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Yoga Flexibility is perfect for stress relief and gentle flexibility improvement, which fits well with balancing intense workdays.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Perfect for stress relief and gentle flexibility improvement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Promotes relaxation and improves flexibility with minimal physical strain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Yoga Flexibility is great for relaxation and flexibility with low physical strain.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Excellent for relaxation and flexibility with low physical strain.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Promotes relaxation and improves flexibility with minimal physical strain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "High-Intensity Interval workouts seem to quickly boost cardiovascular fitness, which fits my goal well.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity workout that quickly improves cardiovascular fitness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Pilates Core focuses on core strength and posture with moderate intensity.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Focuses on core strength and posture with moderate intensity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Focuses on core strength and posture improvement with controlled movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To strengthen my core and improve posture without high impact exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Certified Pilates instruction adds trust but still feels a bit intense for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the instructor certification is certified Pilates instructor",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "instructor_certification",
+          "public_value": "certified Pilates instructor"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Moderate intensity is okay, but still a bit much.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the intensity level is moderate",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "intensity_level",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Too much technique slows me down and kills energy.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Requires some Pilates familiarity, which I lack.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Requires some familiarity with Pilates techniques to maximize benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "Core work is key for posture and endurance, and moderate effort helps me keep my heart rate up without burning out.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Core strengthening and moderate intensity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Focuses on core strength and posture improvement with controlled movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular health with engaging and varied exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "That level of intensity feels too risky for anyone new or with joint concerns, which makes it a tough fit here.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Too intense and risky for beginners or those with joint concerns.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Intensity may be challenging for beginners or those with joint issues."
+        },
+        "comparison_sources": [],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Both hold 15 people, but lower risk fits better here.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare participant_capacity: 15 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "participant_capacity",
+            "public_value": "15"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "participant_capacity",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Too intense and risky for my joints and flexibility goals.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Too intense and potentially risky for me.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Intensity may be challenging for beginners or those with joint issues."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The instructor being certified fitness trainer adds credibility, but I still prefer pushing hard for quick cardio benefits.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the instructor certification is certified fitness trainer",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "instructor_certification",
+          "public_value": "certified fitness trainer"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "No gear makes it easy to jump in anywhere.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the equipment needed is none",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "equipment_needed",
+          "public_value": "none"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "High intensity works, but I need fun energy too.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the intensity level is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "intensity_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "15 participants might feel crowded for calming movement.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the participant capacity is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "participant_capacity",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "Is anyone else worried it won’t raise heart rates enough for solid cardio gains?",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Not intense enough for my cardio goals.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May not provide enough cardiovascular workout for some participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular health with engaging and varied exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "That’s a fair concern—some might not get enough cardio from it to really push their limits.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the concern is May not provide enough cardiovascular workout for some participants.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May not provide enough cardiovascular workout for some participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To push my limits with intense workouts that keep me motivated.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Both have 15 spots, so space isn’t an issue. Pilates fits my posture goal better though.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare participant_capacity: 15 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "participant_capacity",
+            "public_value": "15"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "participant_capacity",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To strengthen my core and improve posture without high impact exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Sounds good for posture, but might not get my heart rate up enough.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "Less cardio focus than I want.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Requires some familiarity with Pilates techniques to maximize benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I see Eli’s point, but Pilates Core offers a good balance of moderate intensity and core strengthening, which fits my goal better than just flexibility.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Good balance of moderate intensity and core strengthening.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Focuses on core strength and posture improvement with controlled movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Good balance of moderate intensity and core strengthening."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Good balance of moderate intensity and core strengthening."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Maya, do you think dance feels intimidating for beginners here?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Dance may be intimidating for those less confident.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May be less appealing to participants uncomfortable with dance or rhythm."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It’s probably off-putting for those unsure about rhythm.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is May be less appealing to participants uncomfortable with dance or rhythm.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May be less appealing to participants uncomfortable with dance or rhythm."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "Agree with Maya—rhythm can be tricky, but the variety keeps my heart rate up better than steady-state cardio.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fun cardio with rhythm and variety.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines cardiovascular exercise with fun, rhythm-based movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular health with engaging and varied exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "A certified fitness trainer might focus more on overall intensity, which fits my quick cardio goal better than dance-specific certification.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare instructor_certification: certified fitness trainer and certified dance fitness instructor",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "instructor_certification",
+            "public_value": "certified fitness trainer"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "instructor_certification",
+            "public_value": "certified dance fitness instructor"
+          }
+        ],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "No equipment needed is a big plus—I can squeeze intense sessions in anytime without extra hassle.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the equipment needed is none",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "equipment_needed",
+          "public_value": "none"
+        },
+        "comparison_sources": [],
+        "personal_context": "To push my limits with intense workouts that keep me motivated.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Intensity is definitely there, which suits my quick sessions, though it can feel a bit much without breaks.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the intensity level is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "intensity_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Low to moderate intensity fits my priority better than moderate intensity since I want to reduce stress without pushing too hard.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare intensity_level: low to moderate and moderate",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "intensity_level",
+            "public_value": "low to moderate"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "intensity_level",
+            "public_value": "moderate"
+          }
+        ],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Being a certified yoga instructor adds credibility, but I still lean toward higher intensity for cardio.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the instructor certification is certified yoga instructor",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "instructor_certification",
+          "public_value": "certified yoga instructor"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Low to moderate intensity might work for stress, but it’s not quite enough cardio for me.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the intensity level is low to moderate",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "intensity_level",
+          "public_value": "low to moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The only gear needed is yoga mats, which works well for me.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the equipment needed is yoga mats",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "equipment_needed",
+          "public_value": "yoga mats"
+        },
+        "comparison_sources": [],
+        "personal_context": "To strengthen my core and improve posture without high impact exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "15 feels like the max for real relaxation though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the participant capacity is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "participant_capacity",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Both need no equipment, but dance cardio feels more fun and energizing for lunch.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare equipment_needed: none and none",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "equipment_needed",
+            "public_value": "none"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "equipment_needed",
+            "public_value": "none"
+          }
+        ],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 36,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Moderate to high intensity might make it harder for me to fully relax afterward, which is important for managing stress.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the intensity level is moderate to high",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "intensity_level",
+          "public_value": "moderate to high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "High-Intensity Interval currently has 3 of 7 public preferences and the broadest overall support, but not a majority. Maya, Liam, Zara, and Omar, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 38,
+      "phase": "NARROWING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "It feels a bit too intense and tough on my joints.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Too intense and hard on joints.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Intensity may be challenging for beginners or those with joint issues."
+        },
+        "comparison_sources": [],
+        "personal_context": "To strengthen my core and improve posture without high impact exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 39,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "High-Intensity Interval fits because it’s vigorous and boosts cardio fast.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Offers a vigorous workout that boosts cardiovascular fitness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Offers a vigorous workout that boosts cardiovascular fitness."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Offers a vigorous workout that boosts cardiovascular fitness."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is High-Intensity Interval.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Offers a vigorous workout that boosts cardiovascular fitness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Offers a vigorous workout that boosts cardiovascular fitness."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "Offers a vigorous workout that boosts cardiovascular fitness."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Yoga Flexibility.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Perfect for stress relief and gentle flexibility improvement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Promotes relaxation and improves flexibility with minimal physical strain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "My final vote is Yoga Flexibility.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Excellent for relaxation and flexibility with low physical strain.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Promotes relaxation and improves flexibility with minimal physical strain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I choose High-Intensity Interval.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity workout that quickly improves cardiovascular fitness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "High-Intensity Interval is my final choice.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity training that improves fitness quickly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 46,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I choose Pilates Core.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Focuses on core strength and posture with moderate intensity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Focuses on core strength and posture improvement with controlled movements."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 47,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Tess",
+      "text": "My final vote is High-Intensity Interval.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity workout that boosts cardiovascular fitness quickly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 48,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for High-Intensity Interval.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:equipment_needed": 1,
+    "A:instructor_certification": 1,
+    "A:intensity_level": 2,
+    "A:participant_capacity": 2,
+    "A:upside": 2,
+    "B:concern": 3,
+    "B:equipment_needed": 3,
+    "B:instructor_certification": 2,
+    "B:intensity_level": 2,
+    "B:participant_capacity": 2,
+    "B:upside": 4,
+    "C:concern": 2,
+    "C:instructor_certification": 1,
+    "C:intensity_level": 2,
+    "C:participant_capacity": 1,
+    "C:upside": 3,
+    "D:concern": 2,
+    "D:equipment_needed": 1,
+    "D:instructor_certification": 1,
+    "D:intensity_level": 1,
+    "D:participant_capacity": 1,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "B",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "A",
+    "p3": "A",
+    "p4": "B",
+    "p5": "B",
+    "p6": "C",
+    "p7": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "B",
+      "p2": "A",
+      "p3": "A",
+      "p4": "B",
+      "p5": "B",
+      "p6": "C",
+      "p7": "B"
+    },
+    "reason": "4 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 38,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 23470,
+    "output_tokens": 3254,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 3,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 45,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0816,
+    "avg_words_per_participant_turn": 12.93,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 23470,
+    "output_tokens": 3254,
+    "llm_calls": 41,
+    "voluntary_turns_by_persona": {
+      "p3": 6,
+      "p1": 6,
+      "p7": 3,
+      "p2": 4,
+      "p4": 6,
+      "p5": 2,
+      "p6": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity workout that boosts cardiovascular fitness quickly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular health with engaging and varied exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High-Intensity Interval Training is a high-intensity workout that boosts cardiovascular fitness quickly, which fits well with keeping workouts varied and effective.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fun, rhythm-based cardio that keeps me engaged and energized.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines cardiovascular exercise with fun, rhythm-based movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Dance Cardio is fun, rhythm-based cardio that keeps me engaged and energized.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity training that improves fitness quickly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": "To push my limits with intense workouts that keep me motivated.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High-Intensity Interval Training is tough but effective—it improves fitness quickly, which is exactly what we need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Perfect for stress relief and gentle flexibility improvement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Promotes relaxation and improves flexibility with minimal physical strain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yoga Flexibility is perfect for stress relief and gentle flexibility improvement, which fits well with balancing intense workdays.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Excellent for relaxation and flexibility with low physical strain.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Promotes relaxation and improves flexibility with minimal physical strain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yoga Flexibility is great for relaxation and flexibility with low physical strain.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity workout that quickly improves cardiovascular fitness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High-Intensity Interval workouts seem to quickly boost cardiovascular fitness, which fits my goal well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Focuses on core strength and posture with moderate intensity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Focuses on core strength and posture improvement with controlled movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To strengthen my core and improve posture without high impact exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Pilates Core focuses on core strength and posture with moderate intensity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the instructor certification is certified Pilates instructor",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "instructor_certification",
+          "public_value": "certified Pilates instructor"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Certified Pilates instruction adds trust but still feels a bit intense for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the intensity level is moderate",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "intensity_level",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Moderate intensity is okay, but still a bit much.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Requires some Pilates familiarity, which I lack.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Requires some familiarity with Pilates techniques to maximize benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Too much technique slows me down and kills energy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Core strengthening and moderate intensity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Focuses on core strength and posture improvement with controlled movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular health with engaging and varied exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Core work is key for posture and endurance, and moderate effort helps me keep my heart rate up without burning out.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Too intense and risky for beginners or those with joint concerns.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Intensity may be challenging for beginners or those with joint issues."
+        },
+        "comparison_sources": [],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That level of intensity feels too risky for anyone new or with joint concerns, which makes it a tough fit here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare participant_capacity: 15 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "participant_capacity",
+            "public_value": "15"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "participant_capacity",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both hold 15 people, but lower risk fits better here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Too intense and potentially risky for me.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Intensity may be challenging for beginners or those with joint issues."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Too intense and risky for my joints and flexibility goals.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the instructor certification is certified fitness trainer",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "instructor_certification",
+          "public_value": "certified fitness trainer"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The instructor being certified fitness trainer adds credibility, but I still prefer pushing hard for quick cardio benefits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the equipment needed is none",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "equipment_needed",
+          "public_value": "none"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "No gear makes it easy to jump in anywhere.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the intensity level is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "intensity_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High intensity works, but I need fun energy too.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the participant capacity is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "participant_capacity",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "15 participants might feel crowded for calming movement.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Not intense enough for my cardio goals.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May not provide enough cardiovascular workout for some participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular health with engaging and varied exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Is anyone else worried it won’t raise heart rates enough for solid cardio gains?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the concern is May not provide enough cardiovascular workout for some participants.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May not provide enough cardiovascular workout for some participants."
+        },
+        "comparison_sources": [],
+        "personal_context": "To push my limits with intense workouts that keep me motivated.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s a fair concern—some might not get enough cardio from it to really push their limits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare participant_capacity: 15 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "participant_capacity",
+            "public_value": "15"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "participant_capacity",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "To strengthen my core and improve posture without high impact exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have 15 spots, so space isn’t an issue. Pilates fits my posture goal better though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "Less cardio focus than I want.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Requires some familiarity with Pilates techniques to maximize benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sounds good for posture, but might not get my heart rate up enough.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Good balance of moderate intensity and core strengthening.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Focuses on core strength and posture improvement with controlled movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Good balance of moderate intensity and core strengthening."
+        },
+        "vote_option": null
+      },
+      "raw_text": "I see Eli’s point, but Pilates Core offers a good balance of moderate intensity and core strengthening, which fits my goal better than just flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Dance may be intimidating for those less confident.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May be less appealing to participants uncomfortable with dance or rhythm."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, do you think dance feels intimidating for beginners here?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is May be less appealing to participants uncomfortable with dance or rhythm.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May be less appealing to participants uncomfortable with dance or rhythm."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s probably off-putting for those unsure about rhythm.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fun cardio with rhythm and variety.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines cardiovascular exercise with fun, rhythm-based movements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve cardiovascular health with engaging and varied exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Agree with Maya—rhythm can be tricky, but the variety keeps my heart rate up better than steady-state cardio.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare instructor_certification: certified fitness trainer and certified dance fitness instructor",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "instructor_certification",
+            "public_value": "certified fitness trainer"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "instructor_certification",
+            "public_value": "certified dance fitness instructor"
+          }
+        ],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A certified fitness trainer might focus more on overall intensity, which fits my quick cardio goal better than dance-specific certification.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the equipment needed is none",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "equipment_needed",
+          "public_value": "none"
+        },
+        "comparison_sources": [],
+        "personal_context": "To push my limits with intense workouts that keep me motivated.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "No equipment needed is a big plus—I can squeeze intense sessions in anytime without extra hassle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the intensity level is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "intensity_level",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Intensity is definitely there, which suits my quick sessions, though it can feel a bit much without breaks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare intensity_level: low to moderate and moderate",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "intensity_level",
+            "public_value": "low to moderate"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "intensity_level",
+            "public_value": "moderate"
+          }
+        ],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Low to moderate intensity fits my priority better than moderate intensity since I want to reduce stress without pushing too hard.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the instructor certification is certified yoga instructor",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "instructor_certification",
+          "public_value": "certified yoga instructor"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Being a certified yoga instructor adds credibility, but I still lean toward higher intensity for cardio.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the intensity level is low to moderate",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "intensity_level",
+          "public_value": "low to moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "To get a quick, effective workout that improves my cardiovascular health.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Low to moderate intensity might work for stress, but it’s not quite enough cardio for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the equipment needed is yoga mats",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "equipment_needed",
+          "public_value": "yoga mats"
+        },
+        "comparison_sources": [],
+        "personal_context": "To strengthen my core and improve posture without high impact exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The only gear needed is yoga mats, which works well for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the participant capacity is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "participant_capacity",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To improve my flexibility and reduce work-related tension without overexertion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "15 feels like the max for real relaxation though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare equipment_needed: none and none",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "equipment_needed",
+            "public_value": "none"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "equipment_needed",
+            "public_value": "none"
+          }
+        ],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both need no equipment, but dance cardio feels more fun and energizing for lunch.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the intensity level is moderate to high",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "intensity_level",
+          "public_value": "moderate to high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To reduce stress and improve flexibility without overexerting myself.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Moderate to high intensity might make it harder for me to fully relax afterward, which is important for managing stress.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Too intense and hard on joints.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Intensity may be challenging for beginners or those with joint issues."
+        },
+        "comparison_sources": [],
+        "personal_context": "To strengthen my core and improve posture without high impact exercises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It feels a bit too intense and tough on my joints.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Offers a vigorous workout that boosts cardiovascular fitness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a workout that is fun and keeps energy levels high without being too technical.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Offers a vigorous workout that boosts cardiovascular fitness."
+        },
+        "vote_option": null
+      },
+      "raw_text": "High-Intensity Interval fits because it’s vigorous and boosts cardio fast.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Offers a vigorous workout that boosts cardiovascular fitness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "Offers a vigorous workout that boosts cardiovascular fitness."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is High-Intensity Interval.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Perfect for stress relief and gentle flexibility improvement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Promotes relaxation and improves flexibility with minimal physical strain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Yoga Flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Excellent for relaxation and flexibility with low physical strain.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Promotes relaxation and improves flexibility with minimal physical strain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Yoga Flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity workout that quickly improves cardiovascular fitness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose High-Intensity Interval.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity training that improves fitness quickly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "High-Intensity Interval is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Focuses on core strength and posture with moderate intensity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Focuses on core strength and posture improvement with controlled movements."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Pilates Core.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High-intensity workout that boosts cardiovascular fitness quickly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers a vigorous workout that can improve cardiovascular fitness quickly."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is High-Intensity Interval.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

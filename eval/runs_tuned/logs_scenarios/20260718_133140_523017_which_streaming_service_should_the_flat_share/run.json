@@ -1,0 +1,2228 @@
+{
+  "provenance": {
+    "seed": 242118767,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Which streaming service should the flat share subscribe to",
+    "options": [
+      {
+        "id": "A",
+        "name": "Netflix Standard Plan",
+        "attrs": {
+          "monthly_price_usd": "15.49",
+          "simultaneous_streams": "2",
+          "content_genres": "movies, TV shows, documentaries",
+          "offline_downloads": "True"
+        },
+        "upside": "Offers a wide range of original and licensed content with offline viewing.",
+        "concern": "Allows only two simultaneous streams, which may limit usage among three people.",
+        "short_name": "Netflix Standard",
+        "aliases": [
+          "Netflix Standard",
+          "Standard Plan"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Amazon Prime Video",
+        "attrs": {
+          "monthly_price_usd": "14.99",
+          "simultaneous_streams": "3",
+          "content_genres": "movies, TV shows, Amazon originals",
+          "offline_downloads": "True"
+        },
+        "upside": "Includes three simultaneous streams and access to additional Prime benefits.",
+        "concern": "Content library may have fewer recent releases compared to competitors.",
+        "short_name": "Amazon Prime",
+        "aliases": [
+          "Amazon Prime",
+          "Prime Video"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Disney+ Subscription",
+        "attrs": {
+          "monthly_price_usd": "7.99",
+          "simultaneous_streams": "4",
+          "content_genres": "family, animation, Marvel, Star Wars",
+          "offline_downloads": "True"
+        },
+        "upside": "Supports four simultaneous streams and strong family-friendly content.",
+        "concern": "Content focus is narrower, which might not suit all tastes in the flat.",
+        "short_name": "Disney+ Subscription",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "Hulu (No Ads) Plan",
+        "attrs": {
+          "monthly_price_usd": "19.99",
+          "simultaneous_streams": "2",
+          "content_genres": "current TV shows, movies, originals",
+          "offline_downloads": "True"
+        },
+        "upside": "Offers current TV episodes soon after airing and ad-free viewing.",
+        "concern": "Only two simultaneous streams and a higher price may limit group use.",
+        "short_name": "Hulu No Ads",
+        "aliases": [
+          "Hulu No Ads",
+          "No Ads Plan"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A flat share of three people wants to subscribe to a streaming service. They seek a service with a variety of content, simultaneous streams, and a price suitable for shared use."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Maya is a tech-savvy professional who values practical features and cost-efficiency in shared subscriptions.",
+      "private_goal": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Offers a wide range of content and offline downloads.",
+          "reason_against": "Only two simultaneous streams limit access for three people."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Supports three simultaneous streams and includes extra Prime benefits, fitting the flat's needs perfectly.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Affordable price and four simultaneous streams are attractive for shared use.",
+          "reason_against": "Content is more niche and may not satisfy all tastes."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Ad-free viewing and current TV shows are nice perks.",
+          "reason_against": "Only two simultaneous streams and higher price make it less suitable for three people."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 1
+      },
+      "background": "Liam is an avid movie and TV show enthusiast who appreciates original content and variety.",
+      "private_goal": "To have access to the most diverse and high-quality content for entertainment.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Wide range of original and licensed content with offline viewing is ideal for variety.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Three simultaneous streams and additional Prime benefits add value.",
+          "reason_against": "Content may not be as fresh or varied as Netflix."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Good price and multiple streams.",
+          "reason_against": "Content focus is too narrow and less appealing for diverse tastes."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Access to current TV episodes soon after airing and ad-free experience.",
+          "reason_against": "Higher price and limited streams reduce group usability."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Zoe enjoys family-friendly and franchise-based content and values affordability and flexibility.",
+      "private_goal": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 24,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Strong content variety and offline downloads.",
+          "reason_against": "Only two streams limit simultaneous use among three flatmates."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Three simultaneous streams and good content balance.",
+          "reason_against": "Content may be less family-oriented than preferred."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Four simultaneous streams, affordable price, and strong family-friendly franchises.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Ad-free and current shows are appealing.",
+          "reason_against": "Limited streams and higher cost reduce suitability."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "monthly_price_usd"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "simultaneous_streams"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "content_genres"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Three simultaneous streams and additional Prime benefits add value."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "offline_downloads"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Three simultaneous streams and good content balance."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "C",
+          "content_genres"
+        ],
+        [
+          "C",
+          "monthly_price_usd"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "simultaneous_streams"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "simultaneous_streams"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Which streaming service should the flat share subscribe to.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Amazon Prime lets all three of us stream at once and includes extra Prime perks, which seems pretty handy.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Supports three simultaneous streams and includes extra Prime benefits, fitting the flat's needs perfectly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Netflix Standard offers a wide range of original and licensed content with offline viewing, which is ideal for variety and flexibility.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wide range of original and licensed content with offline viewing is ideal for variety.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a wide range of original and licensed content with offline viewing."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Disney+ is pretty affordable and lets four people stream at once, plus it has great family-friendly franchises—Option C.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Four simultaneous streams, affordable price, and strong family-friendly franchises.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Supports four simultaneous streams and strong family-friendly content."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Family-friendly content is solid, but it doesn’t cover enough variety for everyone’s tastes here.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Content focus is too narrow and less appealing for diverse tastes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Content focus is narrower, which might not suit all tastes in the flat."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "7.99 a month feels like a fair price for what we get, especially with four streams at once.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly price is 7.99",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_price_usd",
+          "public_value": "7.99"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Affordable price and four streams are great since we all want to watch simultaneously without extra fees.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Affordable price and four simultaneous streams are attractive for shared use.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Supports four simultaneous streams and strong family-friendly content."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Four streams definitely help since we can all watch at the same time without fighting over devices.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the simultaneous streams is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "simultaneous_streams",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The mix of family, animation, Marvel, and Star Wars really covers a lot for us all to enjoy together.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the content genres is family, animation, Marvel, Star Wars",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "content_genres",
+          "public_value": "family, animation, Marvel, Star Wars"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Offline downloads being available is a big plus for me since I like watching on the go without relying on Wi-Fi.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the offline downloads is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "offline_downloads",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "7.99 a month is pretty reasonable, though I’d still prioritize the number of streams for all of us.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly price is 7.99",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_price_usd",
+          "public_value": "7.99"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Having 4 streams instead of 3 means less waiting around, which fits our need for flexibility better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare simultaneous_streams: 4 and 3",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "simultaneous_streams",
+            "public_value": "4"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "simultaneous_streams",
+            "public_value": "3"
+          }
+        ],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Three streams aren’t ideal, but Amazon Prime’s extra benefits and solid variety make it worth considering for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and additional Prime benefits add value.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Three simultaneous streams and additional Prime benefits add value."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Three simultaneous streams and additional Prime benefits add value."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s hear one more concrete point before we narrow this down.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The variety is solid, but three streams might still feel tight for all of us watching at once.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the content genres is movies, TV shows, Amazon originals",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "content_genres",
+          "public_value": "movies, TV shows, Amazon originals"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Three streams cover most times, but it might get tricky during peak hours for us.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the simultaneous streams is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "simultaneous_streams",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Only two streams might get tricky with three of us—do you think we’d manage sharing time okay?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Only two streams limit simultaneous use among three flatmates.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Allows only two simultaneous streams, which may limit usage among three people."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It could work if we coordinate watching times, though it might get frustrating sometimes.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Allows only two simultaneous streams, which may limit usage among three people.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Allows only two simultaneous streams, which may limit usage among three people."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Amazon Prime has the strongest public support so far, but the group is still divided. Liam and Zoe, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 19,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Amazon Prime could fit since three simultaneous streams help with sharing, plus the extra Prime benefits add real value.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and additional Prime benefits add value.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Three simultaneous streams and additional Prime benefits add value."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Three simultaneous streams and additional Prime benefits add value."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Yeah, three streams on Prime Video definitely help with sharing, plus the mix of content feels pretty balanced for all ages.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and good content balance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Three simultaneous streams and good content balance."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Three simultaneous streams and good content balance."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 21,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 22,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Amazon Prime.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Supports three simultaneous streams and includes extra Prime benefits, fitting the flat's needs perfectly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 23,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Amazon Prime.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and additional Prime benefits add value.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Three simultaneous streams and additional Prime benefits add value."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Three simultaneous streams and additional Prime benefits add value."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 24,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I’m voting for Amazon Prime.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and good content balance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Three simultaneous streams and good content balance."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Three simultaneous streams and good content balance."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 25,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We have full agreement on Amazon Prime.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:upside": 1,
+    "B:content_genres": 1,
+    "B:simultaneous_streams": 2,
+    "B:upside": 4,
+    "C:concern": 1,
+    "C:content_genres": 1,
+    "C:monthly_price_usd": 2,
+    "C:offline_downloads": 1,
+    "C:simultaneous_streams": 2,
+    "C:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "upside"
+    ],
+    [
+      "B",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "B",
+    "p3": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "successful",
+    "final_option": "B",
+    "votes": {
+      "p1": "B",
+      "p2": "B",
+      "p3": "B"
+    },
+    "reason": "All participants voted for the same option"
+  },
+  "stats": {
+    "llm_calls": 19,
+    "setup_llm_calls": 3,
+    "repair_calls": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 1,
+    "input_tokens": 12432,
+    "output_tokens": 1957,
+    "moderator_turns": 5,
+    "voluntary_turns": 14,
+    "visible_movements": 4,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 21,
+    "voluntary_turns": 14,
+    "moderator_turns": 5,
+    "moderator_ratio": 0.1923,
+    "avg_words_per_participant_turn": 16.0,
+    "visible_preference_changes": 2,
+    "repair_turns": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 12432,
+    "output_tokens": 1957,
+    "llm_calls": 22,
+    "voluntary_turns_by_persona": {
+      "p2": 4,
+      "p3": 6,
+      "p1": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Supports three simultaneous streams and includes extra Prime benefits, fitting the flat's needs perfectly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Amazon Prime lets all three of us stream at once and includes extra Prime perks, which seems pretty handy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wide range of original and licensed content with offline viewing is ideal for variety.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a wide range of original and licensed content with offline viewing."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Netflix Standard offers a wide range of original and licensed content with offline viewing, which is ideal for variety and flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Four simultaneous streams, affordable price, and strong family-friendly franchises.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Supports four simultaneous streams and strong family-friendly content."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Disney+ lets four people stream at once and has tons of family-friendly franchises, plus it’s pretty affordable—so it could work well for all of us.",
+      "validation_errors": [
+        "focused option is not visible"
+      ],
+      "repair_text": "Disney+ is pretty affordable and lets four people stream at once, plus it has great family-friendly franchises—Option C.",
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Content focus is too narrow and less appealing for diverse tastes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Content focus is narrower, which might not suit all tastes in the flat."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Family-friendly content is solid, but it doesn’t cover enough variety for everyone’s tastes here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly price is 7.99",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_price_usd",
+          "public_value": "7.99"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "7.99 a month feels like a fair price for what we get, especially with four streams at once.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Affordable price and four simultaneous streams are attractive for shared use.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Supports four simultaneous streams and strong family-friendly content."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Affordable price and four streams are great since we all want to watch simultaneously without extra fees.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the simultaneous streams is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "simultaneous_streams",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four streams definitely help since we can all watch at the same time without fighting over devices.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the content genres is family, animation, Marvel, Star Wars",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "content_genres",
+          "public_value": "family, animation, Marvel, Star Wars"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The mix of family, animation, Marvel, and Star Wars really covers a lot for us all to enjoy together.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the offline downloads is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "offline_downloads",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Offline downloads being available is a big plus for me since I like watching on the go without relying on Wi-Fi.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly price is 7.99",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_price_usd",
+          "public_value": "7.99"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "7.99 a month is pretty reasonable, though I’d still prioritize the number of streams for all of us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare simultaneous_streams: 4 and 3",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "simultaneous_streams",
+            "public_value": "4"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "simultaneous_streams",
+            "public_value": "3"
+          }
+        ],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Having 4 streams instead of 3 means less waiting around, which fits our need for flexibility better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and additional Prime benefits add value.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Three simultaneous streams and additional Prime benefits add value."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Three streams aren’t ideal, but Amazon Prime’s extra benefits and solid variety make it worth considering for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the content genres is movies, TV shows, Amazon originals",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "content_genres",
+          "public_value": "movies, TV shows, Amazon originals"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The variety is solid, but three streams might still feel tight for all of us watching at once.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the simultaneous streams is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "simultaneous_streams",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three streams cover most times, but it might get tricky during peak hours for us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Only two streams limit simultaneous use among three flatmates.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Allows only two simultaneous streams, which may limit usage among three people."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Only two streams might get tricky with three of us—do you think we’d manage sharing time okay?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Allows only two simultaneous streams, which may limit usage among three people.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Allows only two simultaneous streams, which may limit usage among three people."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a streaming service that allows all three flatmates to watch simultaneously without extra cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It could work if we coordinate watching times, though it might get frustrating sometimes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and additional Prime benefits add value.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have access to the most diverse and high-quality content for entertainment.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Three simultaneous streams and additional Prime benefits add value."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Amazon Prime could fit since three simultaneous streams help with sharing, plus the extra Prime benefits add real value.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and good content balance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the service supports multiple users simultaneously and offers content everyone can enjoy.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Three simultaneous streams and good content balance."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Yeah, three streams on Prime Video definitely help with sharing, plus the mix of content feels pretty balanced for all ages.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Supports three simultaneous streams and includes extra Prime benefits, fitting the flat's needs perfectly.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Amazon Prime.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and additional Prime benefits add value.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Three simultaneous streams and additional Prime benefits add value."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Amazon Prime.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Three simultaneous streams and good content balance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes three simultaneous streams and access to additional Prime benefits."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Three simultaneous streams and good content balance."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Amazon Prime.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

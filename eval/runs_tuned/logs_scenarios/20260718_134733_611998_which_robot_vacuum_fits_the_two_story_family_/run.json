@@ -1,0 +1,1563 @@
+{
+  "provenance": {
+    "seed": 242118802,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Which robot vacuum fits the two-story family house",
+    "options": [
+      {
+        "id": "A",
+        "name": "Roborock S7 MaxV Ultra",
+        "attrs": {
+          "suction_power": "5100 Pa",
+          "battery_life": "180 minutes",
+          "multi_floor_mapping": "yes",
+          "app_control": "yes",
+          "recharge_and_resume": "yes"
+        },
+        "upside": "Strong suction and advanced mapping handle pet hair and multiple floors efficiently.",
+        "concern": "Higher price point and larger charging dock require more space.",
+        "short_name": "Roborock MaxV",
+        "aliases": [
+          "Roborock MaxV",
+          "MaxV Ultra"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "iRobot Roomba j7+",
+        "attrs": {
+          "suction_power": "2300 Pa",
+          "battery_life": "75 minutes",
+          "multi_floor_mapping": "yes",
+          "app_control": "yes",
+          "recharge_and_resume": "yes"
+        },
+        "upside": "Effective obstacle avoidance and smart mapping for multi-floor homes.",
+        "concern": "Shorter battery life may require multiple charging cycles for large areas.",
+        "short_name": "iRobot Roomba",
+        "aliases": [
+          "iRobot Roomba"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Ecovacs Deebot T10 Omni",
+        "attrs": {
+          "suction_power": "3000 Pa",
+          "battery_life": "180 minutes",
+          "multi_floor_mapping": "yes",
+          "app_control": "yes",
+          "recharge_and_resume": "yes"
+        },
+        "upside": "Balanced suction and long runtime with multi-floor support and mopping feature.",
+        "concern": "Mopping function may require frequent maintenance and water refills.",
+        "short_name": "Ecovacs Deebot",
+        "aliases": [
+          "Ecovacs Deebot"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Neato D10",
+        "attrs": {
+          "suction_power": "3000 Pa",
+          "battery_life": "120 minutes",
+          "multi_floor_mapping": "yes",
+          "app_control": "yes",
+          "recharge_and_resume": "yes"
+        },
+        "upside": "Laser mapping and wide brush design cover large areas on multiple floors.",
+        "concern": "Battery life may be insufficient for very large homes without recharging.",
+        "short_name": "Neato D10",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "A two-story family house requires a robot vacuum with multi-floor mapping, strong suction for pet hair, and a runtime suitable for large areas. The device should support app control and have a recharge-and-resume feature for uninterrupted cleaning."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Maya is a busy mother managing a two-story home with two energetic dogs.",
+      "private_goal": "Find a reliable robot vacuum that handles pet hair well and covers multiple floors efficiently.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Strong suction and advanced mapping meet multi-floor and pet hair needs.",
+          "reason_against": "Higher price and large charging dock take up more space than preferred."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Effective obstacle avoidance and smart mapping fit well for multi-floor family home.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Balanced suction and long runtime with multi-floor support and added mopping feature.",
+          "reason_against": "Mopping requires extra maintenance, which is less appealing for a busy schedule."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Laser mapping and wide brush design cover large multi-floor areas effectively.",
+          "reason_against": "Battery life might be insufficient for very large homes without recharging."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 2,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Liam is a tech-savvy homeowner looking for a versatile and efficient cleaning solution.",
+      "private_goal": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Strong suction and advanced mapping handle pet hair and multiple floors efficiently.",
+          "reason_against": "Higher price and large charging dock may be inconvenient."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Smart mapping and obstacle avoidance are good features.",
+          "reason_against": "Short battery life is a significant drawback for large two-story homes."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Balanced suction, long runtime, and multi-floor support with mopping add versatility.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Laser mapping and wide brush design cover large areas well.",
+          "reason_against": "Battery life may be too short for very large homes without multiple recharges."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "app_control"
+        ],
+        [
+          "B",
+          "suction_power"
+        ],
+        [
+          "C",
+          "suction_power"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "battery_life"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "recharge_and_resume"
+        ],
+        [
+          "C",
+          "app_control"
+        ],
+        [
+          "B",
+          "multi_floor_mapping"
+        ],
+        [
+          "B",
+          "app_control"
+        ],
+        [
+          "B",
+          "suction_power"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "battery_life"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Which robot vacuum fits the two-story family house.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Balanced suction and long runtime are key with Ecovacs Deebot; multi-floor plus mopping adds versatility.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced suction, long runtime, and multi-floor support with mopping add versatility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Balanced suction and long runtime with multi-floor support and mopping feature."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The iRobot Roomba j7+ has smart mapping and avoids obstacles well, which is exactly what a busy multi-floor home with dogs needs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Effective obstacle avoidance and smart mapping fit well for multi-floor family home.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Effective obstacle avoidance and smart mapping for multi-floor homes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a reliable robot vacuum that handles pet hair well and covers multiple floors efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Short battery life is a significant drawback for large two-story homes.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Short battery life is a significant drawback for large two-story homes.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Shorter battery life may require multiple charging cycles for large areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Multi-floor mapping is solid, but runtime must cover both floors fully.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the multi floor mapping is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "multi_floor_mapping",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Yes, app control makes managing cleaning schedules easier, especially when juggling dog messes and busy days across both floors.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the app control is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "app_control",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a reliable robot vacuum that handles pet hair well and covers multiple floors efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "75 minutes won’t cover both floors without a recharge break.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the battery life is 75 minutes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "battery_life",
+          "public_value": "75 minutes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "2300 Pa is decent suction, but runtime limits thorough multi-floor cleaning.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the suction power is 2300 Pa",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "suction_power",
+          "public_value": "2300 Pa"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Both have app control, so no difference there for scheduling.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare app_control: yes and yes",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "app_control",
+            "public_value": "yes"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "app_control",
+            "public_value": "yes"
+          }
+        ],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Recharge and resume helps, but total runtime still restricts full multi-floor cycles.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the recharge and resume is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "recharge_and_resume",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Is there a remaining concern or useful comparison?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "75 minutes isn’t quite enough for both floors and the dogs’ hair, so I’d need a model that can reliably recharge and pick up where it left off without missing spots.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the battery life is 75 minutes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "battery_life",
+          "public_value": "75 minutes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a reliable robot vacuum that handles pet hair well and covers multiple floors efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "2300 Pa suction might struggle with all the dog hair, while 3000 Pa is stronger and better for deep cleaning both floors efficiently.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare suction_power: 2300 Pa and 3000 Pa",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "suction_power",
+            "public_value": "2300 Pa"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "suction_power",
+            "public_value": "3000 Pa"
+          }
+        ],
+        "personal_context": "Find a reliable robot vacuum that handles pet hair well and covers multiple floors efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The strongest common-ground options are tied, so I’ll use iRobot Roomba as the compromise target. Liam, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 14,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Still, the short battery life limits coverage for two floors.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Short battery life is a significant drawback for large two-story homes.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Shorter battery life may require multiple charging cycles for large areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 16,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for iRobot Roomba.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Effective obstacle avoidance and smart mapping fit well for multi-floor family home.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Effective obstacle avoidance and smart mapping for multi-floor homes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 17,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Ecovacs Deebot.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced suction, long runtime, and multi-floor support with mopping add versatility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Balanced suction and long runtime with multi-floor support and mopping feature."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 18,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "No option reached a majority, so the result remains unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "B:app_control": 2,
+    "B:battery_life": 2,
+    "B:concern": 2,
+    "B:multi_floor_mapping": 1,
+    "B:recharge_and_resume": 1,
+    "B:suction_power": 2,
+    "B:upside": 1,
+    "C:app_control": 1,
+    "C:suction_power": 1,
+    "C:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "suction_power"
+    ],
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "B",
+      "p2": "C"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 12,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 1,
+    "input_tokens": 8546,
+    "output_tokens": 1554,
+    "moderator_turns": 5,
+    "voluntary_turns": 9,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 2,
+    "participant_turns": 14,
+    "voluntary_turns": 9,
+    "moderator_turns": 5,
+    "moderator_ratio": 0.2632,
+    "avg_words_per_participant_turn": 14.0,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 8546,
+    "output_tokens": 1554,
+    "llm_calls": 15,
+    "voluntary_turns_by_persona": {
+      "p2": 7,
+      "p1": 2
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced suction, long runtime, and multi-floor support with mopping add versatility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Balanced suction and long runtime with multi-floor support and mopping feature."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Balanced suction and long runtime are key with Ecovacs Deebot; multi-floor plus mopping adds versatility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Effective obstacle avoidance and smart mapping fit well for multi-floor family home.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Effective obstacle avoidance and smart mapping for multi-floor homes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a reliable robot vacuum that handles pet hair well and covers multiple floors efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The iRobot Roomba j7+ has smart mapping and avoids obstacles well, which is exactly what a busy multi-floor home with dogs needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Short battery life is a significant drawback for large two-story homes.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Shorter battery life may require multiple charging cycles for large areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Short battery life is a significant drawback for large two-story homes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the multi floor mapping is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "multi_floor_mapping",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Multi-floor mapping is solid, but runtime must cover both floors fully.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the app control is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "app_control",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a reliable robot vacuum that handles pet hair well and covers multiple floors efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yes, app control makes managing cleaning schedules easier, especially when juggling dog messes and busy days across both floors.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the battery life is 75 minutes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "battery_life",
+          "public_value": "75 minutes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "75 minutes won’t cover both floors without a recharge break.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the suction power is 2300 Pa",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "suction_power",
+          "public_value": "2300 Pa"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2300 Pa is decent suction, but runtime limits thorough multi-floor cleaning.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare app_control: yes and yes",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "app_control",
+            "public_value": "yes"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "app_control",
+            "public_value": "yes"
+          }
+        ],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have app control, so no difference there for scheduling.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the recharge and resume is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "recharge_and_resume",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Recharge and resume helps, but total runtime still restricts full multi-floor cycles.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the battery life is 75 minutes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "battery_life",
+          "public_value": "75 minutes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a reliable robot vacuum that handles pet hair well and covers multiple floors efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "75 minutes isn’t quite enough for both floors and the dogs’ hair, so I’d need a model that can reliably recharge and pick up where it left off without missing spots.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare suction_power: 2300 Pa and 3000 Pa",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "suction_power",
+            "public_value": "2300 Pa"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "suction_power",
+            "public_value": "3000 Pa"
+          }
+        ],
+        "personal_context": "Find a reliable robot vacuum that handles pet hair well and covers multiple floors efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2300 Pa suction might struggle with all the dog hair, while 3000 Pa is stronger and better for deep cleaning both floors efficiently.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Short battery life is a significant drawback for large two-story homes.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Shorter battery life may require multiple charging cycles for large areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a robot vacuum with strong suction and long runtime that supports multi-floor cleaning seamlessly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still, the short battery life limits coverage for two floors.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Effective obstacle avoidance and smart mapping fit well for multi-floor family home.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Effective obstacle avoidance and smart mapping for multi-floor homes."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for iRobot Roomba.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced suction, long runtime, and multi-floor support with mopping add versatility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Balanced suction and long runtime with multi-floor support and mopping feature."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Ecovacs Deebot.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

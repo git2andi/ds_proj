@@ -1,0 +1,2881 @@
+{
+  "provenance": {
+    "seed": 242118762,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick the venue for a small spring wedding reception",
+    "options": [
+      {
+        "id": "A",
+        "name": "Riverside Garden Pavilion",
+        "attrs": {
+          "capacity": "35 guests",
+          "indoor_space_sqft": "1200",
+          "outdoor_garden_acres": "1.5",
+          "distance_from_city_miles": "10",
+          "catering_allowed": "True"
+        },
+        "upside": "Offers a scenic outdoor garden area with a covered pavilion for unpredictable spring weather.",
+        "concern": "Limited parking space may require carpooling or shuttle arrangements.",
+        "short_name": "Riverside Garden",
+        "aliases": [
+          "Riverside Garden",
+          "Garden Pavilion"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Downtown Loft Event Space",
+        "attrs": {
+          "capacity": "40 guests",
+          "indoor_space_sqft": "1500",
+          "outdoor_space_sqft": "300",
+          "distance_from_city_miles": "3",
+          "catering_allowed": "True"
+        },
+        "upside": "Close to city center with modern indoor and small rooftop outdoor area.",
+        "concern": "Outdoor space is limited and exposed to weather without full cover.",
+        "short_name": "Downtown Loft",
+        "aliases": [
+          "Downtown Loft",
+          "Loft Event"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Country Club Banquet Hall",
+        "attrs": {
+          "capacity": "50 guests",
+          "indoor_space_sqft": "2000",
+          "outdoor_terrace_sqft": "500",
+          "distance_from_city_miles": "12",
+          "catering_allowed": "True"
+        },
+        "upside": "Spacious indoor hall with a terrace overlooking landscaped grounds.",
+        "concern": "Rental cost may be higher compared to other options.",
+        "short_name": "Country Club",
+        "aliases": [
+          "Country Club",
+          "Club Banquet"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Botanical Conservatory Room",
+        "attrs": {
+          "capacity": "30 guests",
+          "indoor_space_sqft": "1000",
+          "outdoor_garden_acres": "0.8",
+          "distance_from_city_miles": "8",
+          "catering_allowed": "True"
+        },
+        "upside": "Unique indoor garden setting with adjacent outdoor paths for guests.",
+        "concern": "Indoor space is smaller and may feel cramped if guest count reaches maximum.",
+        "short_name": "Botanical Conservatory",
+        "aliases": [
+          "Botanical Conservatory",
+          "Conservatory Room"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A group of four is selecting a venue for a small spring wedding reception with about 30 guests. The venue must have indoor and outdoor space, accommodate light catering, and be within 15 miles of the city center."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Maya is a project manager who values spacious, well-equipped venues for events.",
+      "private_goal": "Ensure the venue is comfortable and impressive for all guests.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Offers a scenic outdoor garden and covered pavilion, suitable for spring weather.",
+          "reason_against": "Limited parking may inconvenience guests."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Close to city center with modern indoor and rooftop outdoor space.",
+          "reason_against": "Outdoor area is small and exposed to weather."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Spacious indoor hall with a large terrace and ample capacity.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Unique indoor garden setting with outdoor paths.",
+          "reason_against": "Smaller indoor space may feel cramped at full guest count."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Liam is a software developer who prefers practical and convenient event locations.",
+      "private_goal": "Minimize travel and logistical complications for guests.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Scenic garden with covered pavilion and within 15 miles of city center.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Very close to city center with both indoor and rooftop outdoor space.",
+          "reason_against": "Limited outdoor space and lack of full cover outdoors."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Spacious and well-equipped venue.",
+          "reason_against": "Higher cost and farther distance may complicate logistics."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Indoor garden and outdoor paths offer a nice atmosphere.",
+          "reason_against": "Smaller indoor space might be tight for 30 guests."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 1
+      },
+      "background": "Nina is an event planner passionate about unique and memorable settings.",
+      "private_goal": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 41,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Beautiful outdoor garden with covered pavilion perfect for spring events.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Modern space close to city center.",
+          "reason_against": "Outdoor area too small and exposed to weather risks."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Large indoor hall with terrace and landscaped views.",
+          "reason_against": "Cost may be higher than preferred."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Unique indoor garden atmosphere with outdoor paths.",
+          "reason_against": "Indoor space might feel cramped at max capacity."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 1
+      },
+      "background": "Omar is a marketing specialist who appreciates spacious and elegant venues.",
+      "private_goal": "Ensure the venue accommodates all guests comfortably with good amenities.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 37,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Scenic garden and covered pavilion offer flexibility for spring weather.",
+          "reason_against": "Parking constraints could be inconvenient."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Close to city center with modern indoor and rooftop outdoor space.",
+          "reason_against": "Outdoor space is limited and lacks full cover."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Spacious indoor hall with terrace and ample capacity for guests.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Unique indoor garden setting with outdoor paths.",
+          "reason_against": "Smaller indoor space may feel cramped at full capacity."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "capacity"
+        ],
+        [
+          "A",
+          "indoor_space_sqft"
+        ],
+        [
+          "C",
+          "capacity"
+        ],
+        [
+          "C",
+          "catering_allowed"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "catering_allowed"
+        ],
+        [
+          "C",
+          "outdoor_terrace_sqft"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "outdoor_garden_acres"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "indoor_space_sqft"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Large indoor hall with terrace and landscaped views."
+      },
+      "narrowing_acceptance": "C",
+      "used_point_keys": [
+        [
+          "A",
+          "capacity"
+        ],
+        [
+          "C",
+          "distance_from_city_miles"
+        ],
+        [
+          "C",
+          "capacity"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "outdoor_terrace_sqft"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Scenic garden and covered pavilion offer flexibility for spring weather."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "capacity"
+        ],
+        [
+          "C",
+          "distance_from_city_miles"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "capacity"
+        ],
+        [
+          "C",
+          "catering_allowed"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "indoor_space_sqft"
+        ],
+        [
+          "A",
+          "distance_from_city_miles"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Pick the venue for a small spring wedding reception.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The Country Club has a spacious indoor hall with a large terrace and plenty of room.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious indoor hall with a large terrace and ample capacity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Riverside Garden feels right—beautiful outdoor space with a covered pavilion keeps things comfortable if spring weather acts up.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Beautiful outdoor garden with covered pavilion perfect for spring events.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a scenic outdoor garden area with a covered pavilion for unpredictable spring weather."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Country Club has a spacious indoor hall with a terrace and ample guest capacity.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious indoor hall with terrace and ample capacity for guests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Riverside Garden is close and has covered space.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic garden with covered pavilion and within 15 miles of city center.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a scenic outdoor garden area with a covered pavilion for unpredictable spring weather."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Liam, do you know if there’s a plan for parking or shuttles given the limited spaces?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Parking constraints could be inconvenient.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited parking space may require carpooling or shuttle arrangements."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Parking’s tight, so carpooling or shuttles are necessary.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Limited parking space may require carpooling or shuttle arrangements.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited parking space may require carpooling or shuttle arrangements."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The Country Club fits 50 guests, Riverside Garden only 35. More space suits our priority better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare capacity: 50 guests and 35 guests",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "capacity",
+            "public_value": "50 guests"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "capacity",
+            "public_value": "35 guests"
+          }
+        ],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Good that catering is allowed—means guests can eat comfortably without extra hassle.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the catering allowed is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "catering_allowed",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Higher cost and farther distance may complicate logistics.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "Higher cost and farther distance may complicate logistics.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Rental cost may be higher compared to other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Twelve miles is a bit far, which might make it harder for some guests to feel comfortable getting there easily.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the distance from city miles is 12",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "distance_from_city_miles",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Fifty guests is enough for our group, but I worry the extra space might feel less cozy for everyone.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the capacity is 50 guests",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "capacity",
+          "public_value": "50 guests"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Both venues allow catering, so comfort depends more on space and feel.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare catering_allowed: True and True",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "catering_allowed",
+            "public_value": "True"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "catering_allowed",
+            "public_value": "True"
+          }
+        ],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "2000 sqft should be spacious enough for everyone to move comfortably.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the indoor space sqft is 2000",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "indoor_space_sqft",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "The covered pavilion at Riverside Garden adds needed shelter for spring weather, so I can consider it now.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic garden and covered pavilion offer flexibility for spring weather.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a scenic outdoor garden area with a covered pavilion for unpredictable spring weather."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Scenic garden and covered pavilion offer flexibility for spring weather."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Scenic garden and covered pavilion offer flexibility for spring weather."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Country Club holds 50 guests, Riverside Garden only 35, so the Club fits our group better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare capacity: 50 guests and 35 guests",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "capacity",
+            "public_value": "50 guests"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "capacity",
+            "public_value": "35 guests"
+          }
+        ],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "500 sqft outside is decent, but I worry about crowding if everyone wants fresh air at once.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the outdoor terrace sqft is 500",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "outdoor_terrace_sqft",
+          "public_value": "500"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "The large indoor hall with a terrace and landscaped views at Country Club could actually create a comfortable, beautiful setting for everyone.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Large indoor hall with terrace and landscaped views.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Large indoor hall with terrace and landscaped views."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Large indoor hall with terrace and landscaped views."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "2000 sqft is enough, but parking is still tight.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the indoor space sqft is 2000",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "indoor_space_sqft",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "35 guests inside feels tight for comfort, while 50 guests in the banquet hall gives more breathing room for everyone.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare capacity: 35 guests and 50 guests",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "capacity",
+            "public_value": "35 guests"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "capacity",
+            "public_value": "50 guests"
+          }
+        ],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "1200 sqft still feels cramped for 35 inside guests comfortably.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the indoor space sqft is 1200",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "indoor_space_sqft",
+          "public_value": "1200"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "1.5 acres helps outside space but limits indoor comfort.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the outdoor garden acres is 1.5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "outdoor_garden_acres",
+          "public_value": "1.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "12 miles is a bit farther than 10, which might be less convenient for some guests.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare distance_from_city_miles: 12 and 10",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "distance_from_city_miles",
+            "public_value": "12"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "distance_from_city_miles",
+            "public_value": "10"
+          }
+        ],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "500 sqft outdoors won’t offer much extra space for guests.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the outdoor terrace sqft is 500",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "outdoor_terrace_sqft",
+          "public_value": "500"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 24,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "There is no unique leader, so I’m selecting Country Club from the tied options for this compromise check. Liam and Nina, would that choice work for you?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 25,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Country Club could work since its large indoor hall and terrace with landscaped views offer a comfortable setting for everyone.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Large indoor hall with terrace and landscaped views.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Large indoor hall with terrace and landscaped views."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Large indoor hall with terrace and landscaped views."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 26,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Please state your final choice.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 27,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Country Club is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious indoor hall with a large terrace and ample capacity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Riverside Garden is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic garden with covered pavilion and within 15 miles of city center.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a scenic outdoor garden area with a covered pavilion for unpredictable spring weather."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 29,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "My final vote is Country Club.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Large indoor hall with terrace and landscaped views.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Large indoor hall with terrace and landscaped views."
+        },
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Large indoor hall with terrace and landscaped views."
+      },
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 30,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "I choose Country Club.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious indoor hall with terrace and ample capacity for guests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 31,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Country Club.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:capacity": 3,
+    "A:catering_allowed": 1,
+    "A:concern": 2,
+    "A:distance_from_city_miles": 1,
+    "A:indoor_space_sqft": 1,
+    "A:outdoor_garden_acres": 1,
+    "A:upside": 3,
+    "C:capacity": 4,
+    "C:catering_allowed": 2,
+    "C:concern": 1,
+    "C:distance_from_city_miles": 2,
+    "C:indoor_space_sqft": 2,
+    "C:outdoor_terrace_sqft": 2,
+    "C:upside": 4
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "outdoor_terrace_sqft"
+    ],
+    [
+      "C",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "A",
+    "p3": "C",
+    "p4": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "C",
+    "votes": {
+      "p1": "C",
+      "p2": "A",
+      "p3": "C",
+      "p4": "C"
+    },
+    "reason": "3 of 4 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 24,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 15392,
+    "output_tokens": 2257,
+    "moderator_turns": 4,
+    "voluntary_turns": 19,
+    "visible_movements": 3,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 4,
+    "participant_turns": 28,
+    "voluntary_turns": 19,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.125,
+    "avg_words_per_participant_turn": 13.11,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 15392,
+    "output_tokens": 2257,
+    "llm_calls": 27,
+    "voluntary_turns_by_persona": {
+      "p4": 6,
+      "p1": 4,
+      "p2": 3,
+      "p3": 6
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious indoor hall with a large terrace and ample capacity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Country Club has a spacious indoor hall with a large terrace and plenty of room.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Beautiful outdoor garden with covered pavilion perfect for spring events.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a scenic outdoor garden area with a covered pavilion for unpredictable spring weather."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Riverside Garden feels right—beautiful outdoor space with a covered pavilion keeps things comfortable if spring weather acts up.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious indoor hall with terrace and ample capacity for guests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Country Club has a spacious indoor hall with a terrace and ample guest capacity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic garden with covered pavilion and within 15 miles of city center.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a scenic outdoor garden area with a covered pavilion for unpredictable spring weather."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Riverside Garden is close and has covered space.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Parking constraints could be inconvenient.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited parking space may require carpooling or shuttle arrangements."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liam, do you know if there’s a plan for parking or shuttles given the limited spaces?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Limited parking space may require carpooling or shuttle arrangements.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited parking space may require carpooling or shuttle arrangements."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Parking’s tight, so carpooling or shuttles are necessary.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare capacity: 50 guests and 35 guests",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "capacity",
+            "public_value": "50 guests"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "capacity",
+            "public_value": "35 guests"
+          }
+        ],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Country Club fits 50 guests, Riverside Garden only 35. More space suits our priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the catering allowed is True",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "catering_allowed",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Good that catering is allowed—means guests can eat comfortably without extra hassle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "Higher cost and farther distance may complicate logistics.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Rental cost may be higher compared to other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Higher cost and farther distance may complicate logistics.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the distance from city miles is 12",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "distance_from_city_miles",
+          "public_value": "12"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Twelve miles is a bit far, which might make it harder for some guests to feel comfortable getting there easily.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the capacity is 50 guests",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "capacity",
+          "public_value": "50 guests"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fifty guests is enough for our group, but I worry the extra space might feel less cozy for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare catering_allowed: True and True",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "catering_allowed",
+            "public_value": "True"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "catering_allowed",
+            "public_value": "True"
+          }
+        ],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both venues allow catering, so comfort depends more on space and feel.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the indoor space sqft is 2000",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "indoor_space_sqft",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2000 sqft should be spacious enough for everyone to move comfortably.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic garden and covered pavilion offer flexibility for spring weather.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a scenic outdoor garden area with a covered pavilion for unpredictable spring weather."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Scenic garden and covered pavilion offer flexibility for spring weather."
+        },
+        "vote_option": null
+      },
+      "raw_text": "The covered pavilion at Riverside Garden adds needed shelter for spring weather, so I can consider it now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare capacity: 50 guests and 35 guests",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "capacity",
+            "public_value": "50 guests"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "capacity",
+            "public_value": "35 guests"
+          }
+        ],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Country Club holds 50 guests, Riverside Garden only 35, so the Club fits our group better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the outdoor terrace sqft is 500",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "outdoor_terrace_sqft",
+          "public_value": "500"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "500 sqft outside is decent, but I worry about crowding if everyone wants fresh air at once.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Large indoor hall with terrace and landscaped views.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Large indoor hall with terrace and landscaped views."
+        },
+        "vote_option": null
+      },
+      "raw_text": "The large indoor hall with a terrace and landscaped views at Country Club could actually create a comfortable, beautiful setting for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the indoor space sqft is 2000",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "indoor_space_sqft",
+          "public_value": "2000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2000 sqft is enough, but parking is still tight.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare capacity: 35 guests and 50 guests",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "capacity",
+            "public_value": "35 guests"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "capacity",
+            "public_value": "50 guests"
+          }
+        ],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "35 guests inside feels tight for comfort, while 50 guests in the banquet hall gives more breathing room for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the indoor space sqft is 1200",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "indoor_space_sqft",
+          "public_value": "1200"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1200 sqft still feels cramped for 35 inside guests comfortably.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the outdoor garden acres is 1.5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "outdoor_garden_acres",
+          "public_value": "1.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and logistical complications for guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1.5 acres helps outside space but limits indoor comfort.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare distance_from_city_miles: 12 and 10",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "distance_from_city_miles",
+            "public_value": "12"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "distance_from_city_miles",
+            "public_value": "10"
+          }
+        ],
+        "personal_context": "Ensure the venue accommodates all guests comfortably with good amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "12 miles is a bit farther than 10, which might be less convenient for some guests.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the outdoor terrace sqft is 500",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "outdoor_terrace_sqft",
+          "public_value": "500"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the venue is comfortable and impressive for all guests.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "500 sqft outdoors won’t offer much extra space for guests.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Large indoor hall with terrace and landscaped views.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue that creates a beautiful and comfortable experience for everyone.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Large indoor hall with terrace and landscaped views."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Country Club could work since its large indoor hall and terrace with landscaped views offer a comfortable setting for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious indoor hall with a large terrace and ample capacity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Country Club is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic garden with covered pavilion and within 15 miles of city center.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a scenic outdoor garden area with a covered pavilion for unpredictable spring weather."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Riverside Garden is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Large indoor hall with terrace and landscaped views.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Large indoor hall with terrace and landscaped views."
+        },
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Country Club.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious indoor hall with terrace and ample capacity for guests.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious indoor hall with a terrace overlooking landscaped grounds."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Country Club.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

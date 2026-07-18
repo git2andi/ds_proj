@@ -1,0 +1,4216 @@
+{
+  "provenance": {
+    "seed": 242118866,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide how to redesign the office meeting-room booking policy",
+    "options": [
+      {
+        "id": "A",
+        "name": "First-Come, First-Served Booking System",
+        "attrs": {
+          "booking_method": "online portal",
+          "max_booking_duration_hours": "2",
+          "advance_booking_limit_days": "14",
+          "cancellation_policy": "allowed up to 1 hour before"
+        },
+        "upside": "Simple and transparent process encourages quick reservations.",
+        "concern": "High demand may cause popular slots to fill quickly, limiting access.",
+        "short_name": "First-Come Booking",
+        "aliases": [
+          "First-Come Booking",
+          "First-Come First-Served"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Priority-Based Booking with Department Quotas",
+        "attrs": {
+          "booking_method": "online portal with department login",
+          "max_booking_duration_hours": "3",
+          "department_quota_per_week": "5",
+          "priority_levels": "senior staff have booking priority"
+        },
+        "upside": "Ensures fair room access across departments and seniority levels.",
+        "concern": "Complexity may slow down booking and require administrative oversight.",
+        "short_name": "Priority-Based Booking",
+        "aliases": [
+          "Priority-Based Booking",
+          "Department Quotas"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Time-Block Allocation with Rotating Schedule",
+        "attrs": {
+          "booking_method": "weekly schedule published in advance",
+          "time_block_length_minutes": "60",
+          "rotation_frequency": "weekly rotation among teams",
+          "max_bookings_per_user_per_week": "2"
+        },
+        "upside": "Equitable distribution of meeting times reduces booking conflicts.",
+        "concern": "Less flexibility for spontaneous meetings and urgent needs.",
+        "short_name": "Time-Block Allocation",
+        "aliases": [
+          "Time-Block Allocation",
+          "Rotating Schedule"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "On-Demand Booking with Usage Tracking and Limits",
+        "attrs": {
+          "booking_method": "mobile app with real-time availability",
+          "max_booking_duration_hours": "1.5",
+          "weekly_usage_limit_hours": "6",
+          "usage_reporting": "weekly summary sent to users"
+        },
+        "upside": "Encourages efficient room use and self-monitoring by users.",
+        "concern": "Requires users to monitor their usage actively to avoid limits.",
+        "short_name": "On-Demand Booking",
+        "aliases": [
+          "On-Demand Booking",
+          "Usage Tracking"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The office meeting-room booking policy needs redesign to improve fairness and efficiency. Six participants will decide on a policy that balances booking flexibility, room utilization, and ease of use for all employees."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Maya manages a cross-functional team that requires regular collaboration across departments.",
+      "private_goal": "Ensure fair and predictable access to meeting rooms for all teams.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Simple and transparent booking process is easy to understand.",
+          "reason_against": "Popular slots fill quickly, which may frustrate teams needing regular access."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Department quotas ensure fairness across teams and seniority.",
+          "reason_against": "The complexity and administrative overhead might slow down the booking process."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Equitable time-block rotation guarantees fair distribution and reduces conflicts.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Real-time booking with usage tracking encourages efficient use of rooms.",
+          "reason_against": "Users must actively monitor their usage, which could be a burden."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Liam is a senior engineer who values efficiency and quick access to resources.",
+      "private_goal": "Maximize flexibility and ease of booking to support fast-paced work.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Quick, first-come booking fits well with spontaneous meeting needs.",
+          "reason_against": "High demand may cause popular slots to be unavailable."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Department quotas could provide some fairness.",
+          "reason_against": "Complexity and priority rules slow down booking and add overhead."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Fair rotation is good for long-term fairness.",
+          "reason_against": "Rigid schedule limits flexibility needed for urgent meetings."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "On-demand booking with real-time availability supports fast, flexible use.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Zoe is a junior analyst who often books rooms for small team check-ins.",
+      "private_goal": "Keep the booking process simple and accessible without complicated rules.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Simple, transparent first-come system is easy to use and understand.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Department quotas might help fairness.",
+          "reason_against": "Complexity and seniority priority make it harder to book simply."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Fair time-block rotation reduces conflicts.",
+          "reason_against": "Less flexible for spontaneous meetings, which Zoe sometimes needs."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Real-time booking and usage tracking encourage efficient use.",
+          "reason_against": "Monitoring usage actively may be a hassle."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 3
+      },
+      "background": "Eli is a department head who frequently schedules large meetings and presentations.",
+      "private_goal": "Ensure reliable access to rooms for important meetings without delays.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 52,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "First-come system is straightforward and fast for booking important meetings.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Priority and quotas help secure rooms for senior staff like Eli.",
+          "reason_against": "Booking complexity could slow down the process."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Fair time-blocks are equitable.",
+          "reason_against": "Rigid rotation limits ability to book urgent large meetings."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Usage tracking promotes efficiency.",
+          "reason_against": "Shorter max duration and usage limits may restrict longer meetings."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Nina is a project coordinator who organizes frequent quick check-ins and brainstorming sessions.",
+      "private_goal": "Maximize booking flexibility with easy access to rooms for short meetings.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Simple first-come booking is easy and fast for quick meetings.",
+          "reason_against": "Popular slots may be unavailable during peak times."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Department quotas might ensure fairness.",
+          "reason_against": "Complexity and priority rules add friction to booking."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Equitable time-block allocation reduces conflicts.",
+          "reason_against": "Less flexible for spontaneous meetings."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "On-demand mobile booking with usage limits supports efficient, flexible use.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Omar is a senior manager who values structured fairness and clear priority rules.",
+      "private_goal": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 40,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Simple booking is easy to understand.",
+          "reason_against": "First-come system does not guarantee fairness or priority for senior staff."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Priority-based quotas ensure fairness and respect seniority, aligning with Omar’s values.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Rotating schedule fairly distributes room time among teams.",
+          "reason_against": "Less flexible for urgent meetings."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Usage tracking encourages efficient use.",
+          "reason_against": "Limits and self-monitoring may be inconvenient."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Real-time booking with usage tracking encourages efficient use of rooms."
+      },
+      "narrowing_acceptance": "D",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "booking_method"
+        ],
+        [
+          "A",
+          "booking_method"
+        ],
+        [
+          "B",
+          "priority_levels"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "rotation_frequency"
+        ],
+        [
+          "D",
+          "booking_method"
+        ],
+        [
+          "B",
+          "booking_method"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Real-time booking and usage tracking encourage efficient use."
+      },
+      "narrowing_acceptance": "D",
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "max_booking_duration_hours"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "department_quota_per_week"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "booking_method"
+        ],
+        [
+          "D",
+          "booking_method"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Simple first-come booking is easy and fast for quick meetings."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "priority_levels"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "max_booking_duration_hours"
+        ],
+        [
+          "B",
+          "max_booking_duration_hours"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "max_bookings_per_user_per_week"
+        ],
+        [
+          "A",
+          "advance_booking_limit_days"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "booking_method"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "cancellation_policy"
+        ],
+        [
+          "C",
+          "rotation_frequency"
+        ],
+        [
+          "B",
+          "department_quota_per_week"
+        ],
+        [
+          "B",
+          "booking_method"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Decide how to redesign the office meeting-room booking policy.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "On-demand booking with real-time availability supports fast, flexible use—Option D.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "On-demand booking with real-time availability supports fast, flexible use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize flexibility and ease of booking to support fast-paced work.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "On-demand booking with usage limits seems to support flexible, efficient use.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "On-demand mobile booking with usage limits supports efficient, flexible use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Rotating schedules like in Option C might help spread meeting room use more fairly and reduce conflicts.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Equitable time-block rotation guarantees fair distribution and reduces conflicts.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Equitable distribution of meeting times reduces booking conflicts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Priority-Based Booking with Department Quotas ensures fairness by respecting seniority and balancing access.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Priority-based quotas ensure fairness and respect seniority, aligning with Omar’s values.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ensures fair room access across departments and seniority levels."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "First-come booking is straightforward and fast, which helps ensure important meetings get rooms without delay—Option A.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "First-come system is straightforward and fast for booking important meetings.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Simple and transparent process encourages quick reservations."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure reliable access to rooms for important meetings without delays.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Simple, transparent first-come system is easy to use and understand—Option A.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Simple, transparent first-come system is easy to use and understand.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Simple and transparent process encourages quick reservations."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Zoe, do you think high demand might still block key slots often?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "High demand may cause popular slots to be unavailable.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "High demand may cause popular slots to fill quickly, limiting access."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize flexibility and ease of booking to support fast-paced work.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "High demand can fill popular slots quickly though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is High demand may cause popular slots to fill quickly, limiting access.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "High demand may cause popular slots to fill quickly, limiting access."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I get that the online portal is easy to use, but having a weekly schedule published in advance feels fairer for planning.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: weekly schedule published in advance and online portal",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "booking_method",
+            "public_value": "weekly schedule published in advance"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "booking_method",
+            "public_value": "online portal"
+          }
+        ],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "A simple first-come booking could speed quick meetings.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Simple first-come booking is easy and fast for quick meetings.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Simple and transparent process encourages quick reservations."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Simple first-come booking is easy and fast for quick meetings."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Simple first-come booking is easy and fast for quick meetings."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The cancellation policy allows changes up to an hour before, which helps keep bookings flexible but still fair.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the cancellation policy is allowed up to 1 hour before",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cancellation_policy",
+          "public_value": "allowed up to 1 hour before"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Actually, real-time booking with usage tracking might encourage better room use, so Option D could work.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking with usage tracking encourages efficient use of rooms.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Real-time booking with usage tracking encourages efficient use of rooms."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "C",
+        "movement_reason": "Real-time booking with usage tracking encourages efficient use of rooms."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Adding priority rules might slow down booking.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Complexity and priority rules add friction to booking.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Complexity may slow down booking and require administrative oversight."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Priority and quotas might add steps, but they guarantee room access when scheduling critical meetings is non-negotiable.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Priority and quotas help secure rooms for senior staff like Eli.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ensures fair room access across departments and seniority levels."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure reliable access to rooms for important meetings without delays.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I see the weekly schedule published in advance offers predictability, but the online portal’s flexibility could be handy too; I lean toward predictability for fairness.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: weekly schedule published in advance and online portal with department login",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "booking_method",
+            "public_value": "weekly schedule published in advance"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "booking_method",
+            "public_value": "online portal with department login"
+          }
+        ],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Adding complexity and seniority slows booking down.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Complexity and seniority priority make it harder to book simply.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Complexity may slow down booking and require administrative oversight."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Less flexibility makes last-minute check-ins tricky sometimes.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Less flexible for spontaneous meetings, which Zoe sometimes needs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less flexibility for spontaneous meetings and urgent needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The rotating schedule spreads room time fairly but may reduce last-minute flexibility.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Rotating schedule fairly distributes room time among teams.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Equitable distribution of meeting times reduces booking conflicts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Two bookings a week feels tight for quick check-ins.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the max bookings per user per week is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "max_bookings_per_user_per_week",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Weekly rotations do help with fairness, though I sometimes wish we had more flexibility for quick check-ins.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the rotation frequency is weekly rotation among teams",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "rotation_frequency",
+          "public_value": "weekly rotation among teams"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Does relying on users to track their own limits risk unfairly blocking senior staff?",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Limits and self-monitoring may be inconvenient.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Requires users to monitor their usage actively to avoid limits."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "It does mean users must watch their usage closely.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Requires users to monitor their usage actively to avoid limits.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Requires users to monitor their usage actively to avoid limits."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The online portal’s first-come system is simpler but slower to update; the mobile app shows real-time availability, which fits our need to avoid room delays better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: online portal and mobile app with real-time availability",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "booking_method",
+            "public_value": "online portal"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "booking_method",
+            "public_value": "mobile app with real-time availability"
+          }
+        ],
+        "personal_context": "Ensure reliable access to rooms for important meetings without delays.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Fourteen days ahead feels a bit tight for spontaneous quick check-ins.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the advance booking limit days is 14",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "advance_booking_limit_days",
+          "public_value": "14"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Two hours max booking might limit longer brainstorms though.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the max booking duration hours is 2",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "max_booking_duration_hours",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Booking via an online portal with department logins offers clearer priority control than a fixed weekly schedule published in advance.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: online portal with department login and weekly schedule published in advance",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "booking_method",
+            "public_value": "online portal with department login"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "booking_method",
+            "public_value": "weekly schedule published in advance"
+          }
+        ],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Three hours max keeps slots open but feels tight for longer sessions.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the max booking duration hours is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_booking_duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Senior staff having booking priority makes quick access tricky sometimes.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the priority levels is senior staff have booking priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "priority_levels",
+          "public_value": "senior staff have booking priority"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Fair enough, but the department quota of five bookings weekly ensures balanced room access.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the department quota per week is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "department_quota_per_week",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Three hours max is workable, though shorter slots help fit more quick check-ins.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the max booking duration hours is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_booking_duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I get the idea of senior staff priority, though it can feel a bit limiting for my team’s last-minute needs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the priority levels is senior staff have booking priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "priority_levels",
+          "public_value": "senior staff have booking priority"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Five bookings weekly feels fair but tight sometimes.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the department quota per week is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "department_quota_per_week",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Having a weekly schedule published ahead gives predictability, though real-time booking via app feels more flexible for sudden needs. I guess the weekly plan fits my priority for fairness better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: weekly schedule published in advance and mobile app with real-time availability",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "booking_method",
+            "public_value": "weekly schedule published in advance"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "booking_method",
+            "public_value": "mobile app with real-time availability"
+          }
+        ],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Less flexible for spontaneous meetings, which can slow quick check-ins.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Less flexible for spontaneous meetings.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less flexibility for spontaneous meetings and urgent needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The weekly rotation among teams maintains fairness, though it requires planning ahead.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the rotation frequency is weekly rotation among teams",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "rotation_frequency",
+          "public_value": "weekly rotation among teams"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 36,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Public support is tied at the top, so let’s test On-Demand Booking as the option to narrow around. Maya, Zoe, Eli, and Omar, could you accept it for the group?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "On-Demand Booking could fit since usage tracking might encourage fairer, efficient room use.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking with usage tracking encourages efficient use of rooms.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Real-time booking with usage tracking encourages efficient use of rooms."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "C",
+        "movement_reason": "Real-time booking with usage tracking encourages efficient use of rooms."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 38,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "On-Demand Booking works well since real-time tracking helps us use rooms efficiently.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking and usage tracking encourage efficient use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Real-time booking and usage tracking encourage efficient use."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "A",
+        "movement_reason": "Real-time booking and usage tracking encourage efficient use."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "On-Demand Booking is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking with usage tracking encourages efficient use of rooms.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Real-time booking with usage tracking encourages efficient use of rooms."
+        },
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "D",
+        "previous_option_id": "C",
+        "movement_reason": "Real-time booking with usage tracking encourages efficient use of rooms."
+      },
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is On-Demand Booking.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "On-demand booking with real-time availability supports fast, flexible use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I’m voting for On-Demand Booking.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking and usage tracking encourage efficient use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Real-time booking and usage tracking encourage efficient use."
+        },
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "D",
+        "previous_option_id": "A",
+        "movement_reason": "Real-time booking and usage tracking encourage efficient use."
+      },
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "First-Come Booking is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "First-come system is straightforward and fast for booking important meetings.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Simple and transparent process encourages quick reservations."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "My final vote is On-Demand Booking.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "On-demand mobile booking with usage limits supports efficient, flexible use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "My final vote is Priority-Based Booking.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Priority-based quotas ensure fairness and respect seniority, aligning with Omar’s values.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ensures fair room access across departments and seniority levels."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 46,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for On-Demand Booking.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:advance_booking_limit_days": 1,
+    "A:booking_method": 2,
+    "A:cancellation_policy": 1,
+    "A:concern": 2,
+    "A:max_booking_duration_hours": 1,
+    "A:upside": 3,
+    "B:booking_method": 2,
+    "B:concern": 2,
+    "B:department_quota_per_week": 2,
+    "B:max_booking_duration_hours": 2,
+    "B:priority_levels": 2,
+    "B:upside": 2,
+    "C:booking_method": 4,
+    "C:concern": 2,
+    "C:max_bookings_per_user_per_week": 1,
+    "C:rotation_frequency": 2,
+    "C:upside": 2,
+    "D:booking_method": 2,
+    "D:concern": 2,
+    "D:upside": 5
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "upside"
+    ],
+    [
+      "D",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "D",
+    "p3": "D",
+    "p4": "A",
+    "p5": "D",
+    "p6": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "votes": {
+      "p1": "D",
+      "p2": "D",
+      "p3": "D",
+      "p4": "A",
+      "p5": "D",
+      "p6": "B"
+    },
+    "reason": "4 of 6 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 38,
+    "setup_llm_calls": 3,
+    "repair_calls": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 23789,
+    "output_tokens": 3049,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 5,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 43,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0851,
+    "avg_words_per_participant_turn": 12.58,
+    "visible_preference_changes": 2,
+    "repair_turns": 1,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 23789,
+    "output_tokens": 3049,
+    "llm_calls": 41,
+    "voluntary_turns_by_persona": {
+      "p2": 1,
+      "p1": 7,
+      "p5": 8,
+      "p6": 6,
+      "p4": 2,
+      "p3": 6
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "On-demand booking with real-time availability supports fast, flexible use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize flexibility and ease of booking to support fast-paced work.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "On-demand booking with real-time availability supports fast, flexible use—Option D.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "On-demand mobile booking with usage limits supports efficient, flexible use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "On-demand booking with usage limits seems to support flexible, efficient use.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Equitable time-block rotation guarantees fair distribution and reduces conflicts.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Equitable distribution of meeting times reduces booking conflicts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Rotating schedules like in Option C might help spread meeting room use more fairly and reduce conflicts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Priority-based quotas ensure fairness and respect seniority, aligning with Omar’s values.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ensures fair room access across departments and seniority levels."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Priority-Based Booking with Department Quotas ensures fairness by respecting seniority and balancing access.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "First-come system is straightforward and fast for booking important meetings.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Simple and transparent process encourages quick reservations."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure reliable access to rooms for important meetings without delays.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "First-come booking is straightforward and fast, which helps ensure important meetings get rooms without delay—Option A.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Simple, transparent first-come system is easy to use and understand.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Simple and transparent process encourages quick reservations."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A simple, transparent first-come system is easy to use.",
+      "validation_errors": [
+        "focused option is not visible"
+      ],
+      "repair_text": "Simple, transparent first-come system is easy to use and understand—Option A.",
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "High demand may cause popular slots to be unavailable.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "High demand may cause popular slots to fill quickly, limiting access."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize flexibility and ease of booking to support fast-paced work.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Zoe, do you think high demand might still block key slots often?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is High demand may cause popular slots to fill quickly, limiting access.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "High demand may cause popular slots to fill quickly, limiting access."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High demand can fill popular slots quickly though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: weekly schedule published in advance and online portal",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "booking_method",
+            "public_value": "weekly schedule published in advance"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "booking_method",
+            "public_value": "online portal"
+          }
+        ],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I get that the online portal is easy to use, but having a weekly schedule published in advance feels fairer for planning.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Simple first-come booking is easy and fast for quick meetings.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Simple and transparent process encourages quick reservations."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Simple first-come booking is easy and fast for quick meetings."
+        },
+        "vote_option": null
+      },
+      "raw_text": "A simple first-come booking could speed quick meetings.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the cancellation policy is allowed up to 1 hour before",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cancellation_policy",
+          "public_value": "allowed up to 1 hour before"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The cancellation policy allows changes up to an hour before, which helps keep bookings flexible but still fair.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking with usage tracking encourages efficient use of rooms.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Real-time booking with usage tracking encourages efficient use of rooms."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Actually, real-time booking with usage tracking might encourage better room use, so Option D could work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Complexity and priority rules add friction to booking.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Complexity may slow down booking and require administrative oversight."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Adding priority rules might slow down booking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Priority and quotas help secure rooms for senior staff like Eli.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ensures fair room access across departments and seniority levels."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure reliable access to rooms for important meetings without delays.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Priority and quotas might add steps, but they guarantee room access when scheduling critical meetings is non-negotiable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: weekly schedule published in advance and online portal with department login",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "booking_method",
+            "public_value": "weekly schedule published in advance"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "booking_method",
+            "public_value": "online portal with department login"
+          }
+        ],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I see the weekly schedule published in advance offers predictability, but the online portal’s flexibility could be handy too; I lean toward predictability for fairness.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Complexity and seniority priority make it harder to book simply.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Complexity may slow down booking and require administrative oversight."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Adding complexity and seniority slows booking down.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Less flexible for spontaneous meetings, which Zoe sometimes needs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less flexibility for spontaneous meetings and urgent needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Less flexibility makes last-minute check-ins tricky sometimes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "Rotating schedule fairly distributes room time among teams.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Equitable distribution of meeting times reduces booking conflicts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The rotating schedule spreads room time fairly but may reduce last-minute flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the max bookings per user per week is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "max_bookings_per_user_per_week",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two bookings a week feels tight for quick check-ins.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the rotation frequency is weekly rotation among teams",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "rotation_frequency",
+          "public_value": "weekly rotation among teams"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Weekly rotations do help with fairness, though I sometimes wish we had more flexibility for quick check-ins.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Limits and self-monitoring may be inconvenient.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Requires users to monitor their usage actively to avoid limits."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does relying on users to track their own limits risk unfairly blocking senior staff?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Requires users to monitor their usage actively to avoid limits.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Requires users to monitor their usage actively to avoid limits."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It does mean users must watch their usage closely.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: online portal and mobile app with real-time availability",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "booking_method",
+            "public_value": "online portal"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "booking_method",
+            "public_value": "mobile app with real-time availability"
+          }
+        ],
+        "personal_context": "Ensure reliable access to rooms for important meetings without delays.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The online portal’s first-come system is simpler but slower to update; the mobile app shows real-time availability, which fits our need to avoid room delays better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the advance booking limit days is 14",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "advance_booking_limit_days",
+          "public_value": "14"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fourteen days ahead feels a bit tight for spontaneous quick check-ins.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the max booking duration hours is 2",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "max_booking_duration_hours",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two hours max booking might limit longer brainstorms though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: online portal with department login and weekly schedule published in advance",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "booking_method",
+            "public_value": "online portal with department login"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "booking_method",
+            "public_value": "weekly schedule published in advance"
+          }
+        ],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Booking via an online portal with department logins offers clearer priority control than a fixed weekly schedule published in advance.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the max booking duration hours is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_booking_duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three hours max keeps slots open but feels tight for longer sessions.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the priority levels is senior staff have booking priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "priority_levels",
+          "public_value": "senior staff have booking priority"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Senior staff having booking priority makes quick access tricky sometimes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the department quota per week is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "department_quota_per_week",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fair enough, but the department quota of five bookings weekly ensures balanced room access.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the max booking duration hours is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "max_booking_duration_hours",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three hours max is workable, though shorter slots help fit more quick check-ins.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the priority levels is senior staff have booking priority",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "priority_levels",
+          "public_value": "senior staff have booking priority"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I get the idea of senior staff priority, though it can feel a bit limiting for my team’s last-minute needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the department quota per week is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "department_quota_per_week",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Five bookings weekly feels fair but tight sometimes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare booking_method: weekly schedule published in advance and mobile app with real-time availability",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "booking_method",
+            "public_value": "weekly schedule published in advance"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "booking_method",
+            "public_value": "mobile app with real-time availability"
+          }
+        ],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Having a weekly schedule published ahead gives predictability, though real-time booking via app feels more flexible for sudden needs. I guess the weekly plan fits my priority for fairness better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Less flexible for spontaneous meetings.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less flexibility for spontaneous meetings and urgent needs."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize booking flexibility with easy access to rooms for short meetings.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Less flexible for spontaneous meetings, which can slow quick check-ins.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the rotation frequency is weekly rotation among teams",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "rotation_frequency",
+          "public_value": "weekly rotation among teams"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure senior staff and departments have fair and prioritized access to rooms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The weekly rotation among teams maintains fairness, though it requires planning ahead.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking with usage tracking encourages efficient use of rooms.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure fair and predictable access to meeting rooms for all teams.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Real-time booking with usage tracking encourages efficient use of rooms."
+        },
+        "vote_option": null
+      },
+      "raw_text": "On-Demand Booking could fit since usage tracking might encourage fairer, efficient room use.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking and usage tracking encourage efficient use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": "Keep the booking process simple and accessible without complicated rules.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Real-time booking and usage tracking encourage efficient use."
+        },
+        "vote_option": null
+      },
+      "raw_text": "On-Demand Booking works well since real-time tracking helps us use rooms efficiently.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking with usage tracking encourages efficient use of rooms.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Real-time booking with usage tracking encourages efficient use of rooms."
+        },
+        "vote_option": "D"
+      },
+      "raw_text": "On-Demand Booking is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "On-demand booking with real-time availability supports fast, flexible use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is On-Demand Booking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Real-time booking and usage tracking encourage efficient use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Real-time booking and usage tracking encourage efficient use."
+        },
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for On-Demand Booking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "First-come system is straightforward and fast for booking important meetings.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Simple and transparent process encourages quick reservations."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "First-Come Booking is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "On-demand mobile booking with usage limits supports efficient, flexible use.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Encourages efficient room use and self-monitoring by users."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is On-Demand Booking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Priority-based quotas ensure fairness and respect seniority, aligning with Omar’s values.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Ensures fair room access across departments and seniority levels."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Priority-Based Booking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

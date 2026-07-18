@@ -1,0 +1,4338 @@
+{
+  "provenance": {
+    "seed": 242118849,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose the game engine for the student game project",
+    "options": [
+      {
+        "id": "A",
+        "name": "Unity Game Engine",
+        "attrs": {
+          "supported_platforms": "Windows, macOS, Linux, iOS, Android, Web",
+          "graphics_capability": "2D and 3D",
+          "scripting_language": "C#",
+          "learning_resources": "Extensive official tutorials and community forums"
+        },
+        "upside": "Widely used with a large community and many learning materials.",
+        "concern": "Can have a steep learning curve for beginners.",
+        "short_name": "Unity Engine",
+        "aliases": [
+          "Unity Engine",
+          "Unity Game"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Unreal Engine",
+        "attrs": {
+          "supported_platforms": "Windows, macOS, Linux, iOS, Android, Consoles",
+          "graphics_capability": "High-fidelity 3D and VR support",
+          "scripting_language": "C++ and Blueprints visual scripting",
+          "learning_resources": "Comprehensive documentation and video tutorials"
+        },
+        "upside": "Strong for high-quality 3D graphics and visual scripting options.",
+        "concern": "More complex interface and resource-intensive for smaller projects.",
+        "short_name": "Unreal Engine",
+        "aliases": []
+      },
+      {
+        "id": "C",
+        "name": "Godot Engine",
+        "attrs": {
+          "supported_platforms": "Windows, macOS, Linux, iOS, Android, Web",
+          "graphics_capability": "2D and 3D",
+          "scripting_language": "GDScript, C#, VisualScript",
+          "learning_resources": "Growing community with open-source tutorials"
+        },
+        "upside": "Open-source with a lightweight interface and flexible scripting.",
+        "concern": "Smaller community and fewer third-party assets compared to others.",
+        "short_name": "Godot Engine",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "GameMaker Studio 2",
+        "attrs": {
+          "supported_platforms": "Windows, macOS, iOS, Android, Web",
+          "graphics_capability": "Primarily 2D",
+          "scripting_language": "GML (GameMaker Language)",
+          "learning_resources": "Beginner-friendly tutorials and active forums"
+        },
+        "upside": "Simplified 2D development with an easy-to-learn scripting language.",
+        "concern": "Limited 3D capabilities and fewer export options for consoles.",
+        "short_name": "GameMaker Studio",
+        "aliases": [
+          "GameMaker Studio"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A group of seven students must select a game engine for their collaborative project. The engine should support 2D and 3D development, have accessible learning resources, and allow deployment on multiple platforms."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 1,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Maya is a computer science student passionate about versatile game development.",
+      "private_goal": "Choose an engine with strong community support to ease learning.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 20,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Unity supports both 2D and 3D with extensive tutorials and a large community.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Unreal offers high-fidelity 3D and visual scripting, which is appealing.",
+          "reason_against": "Its complexity and resource demands might slow down our project."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Godot is lightweight and open-source with flexible scripting options.",
+          "reason_against": "Smaller community and fewer assets could limit support."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "GameMaker is beginner-friendly for 2D projects.",
+          "reason_against": "Limited 3D support and fewer platform exports reduce versatility."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Liam is an experienced coder focused on high-quality 3D graphics.",
+      "private_goal": "Select the engine best suited for advanced 3D visuals and VR potential.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Unity supports 3D and multiple platforms with a strong community.",
+          "reason_against": "It may not match Unreal’s high-fidelity graphics."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Unreal excels at high-quality 3D and VR with powerful scripting options.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Godot offers 3D support and is lightweight.",
+          "reason_against": "It lacks the polish and resources of Unreal or Unity."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "GameMaker is easy to use for 2D but limited for 3D needs.",
+          "reason_against": "It does not support high-fidelity 3D or consoles well."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Zara is a creative student interested in flexible and open-source tools.",
+      "private_goal": "Find an engine that balances ease of use with scripting flexibility.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 19,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Unity’s extensive resources and 2D/3D support fit our needs well.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Unreal is powerful but too complex and resource-intensive for us.",
+          "reason_against": "Its complexity outweighs benefits for our project scale."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Godot is open-source and flexible with multiple scripting languages.",
+          "reason_against": "Smaller community might limit help and assets."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "GameMaker is beginner-friendly and good for 2D projects.",
+          "reason_against": "Limited 3D support is a drawback."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Noah",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Noah is focused on quick development with beginner-friendly tools.",
+      "private_goal": "Pick an engine that allows easy 2D game creation and fast learning.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 21,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Unity supports both 2D and 3D with many learning resources.",
+          "reason_against": "Steep learning curve may slow us down."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Unreal is powerful but too complex and resource-heavy for quick projects.",
+          "reason_against": "Its complexity is a barrier for beginners."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Godot is lightweight and supports 2D and 3D.",
+          "reason_against": "Smaller community means fewer tutorials."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "GameMaker Studio is easy to learn and great for 2D development.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Eva",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Eva is a graphics enthusiast who values high-end visuals and performance.",
+      "private_goal": "Use the most powerful engine for impressive 3D graphics.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 23,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Unity offers solid 3D capabilities and wide platform support.",
+          "reason_against": "Not as graphically advanced as Unreal."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Unreal Engine’s high-fidelity 3D and VR support are unmatched.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Godot is flexible and open-source.",
+          "reason_against": "Lacks the advanced graphics features of Unreal or Unity."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "GameMaker is easy but limited to 2D and fewer platforms.",
+          "reason_against": "Not suitable for high-end 3D graphics."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Omar is a detail-oriented student who prefers thorough explanations and discussion.",
+      "private_goal": "Ensure the engine is easy to learn and suitable for 2D projects.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 20,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Unity has extensive tutorials and supports both 2D and 3D.",
+          "reason_against": "Learning curve might be steep for some."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Unreal is powerful but complex and resource-intensive.",
+          "reason_against": "Too advanced for our current skill level."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Godot is open-source and flexible.",
+          "reason_against": "Smaller community and fewer resources."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "GameMaker Studio is beginner-friendly with good 2D support.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Nia",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 4,
+        "directness": 4,
+        "stubbornness": 1
+      },
+      "background": "Nia is a pragmatic student who values directness and efficiency in tools.",
+      "private_goal": "Pick an engine that balances ease of use with powerful features.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 18,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Unity supports 2D and 3D with a large community and many tutorials.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Unreal offers great graphics but is complex and resource-heavy.",
+          "reason_against": "Not ideal for smaller or less experienced teams."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Godot is flexible and lightweight with growing community support.",
+          "reason_against": "Fewer assets and tutorials compared to Unity."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "GameMaker is simple and good for 2D projects.",
+          "reason_against": "Limited 3D and fewer export platforms."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "graphics_capability"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "supported_platforms"
+        ],
+        [
+          "B",
+          "supported_platforms"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "learning_resources"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "scripting_language"
+        ],
+        [
+          "D",
+          "scripting_language"
+        ],
+        [
+          "A",
+          "supported_platforms"
+        ],
+        [
+          "A",
+          "graphics_capability"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Unity supports both 2D and 3D with many learning resources."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "B",
+          "learning_resources"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "supported_platforms"
+        ],
+        [
+          "D",
+          "graphics_capability"
+        ],
+        [
+          "A",
+          "graphics_capability"
+        ],
+        [
+          "D",
+          "learning_resources"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "scripting_language"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "learning_resources"
+        ],
+        [
+          "B",
+          "graphics_capability"
+        ],
+        [
+          "D",
+          "learning_resources"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Unity has extensive tutorials and supports both 2D and 3D."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "supported_platforms"
+        ],
+        [
+          "D",
+          "scripting_language"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "scripting_language"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "learning_resources"
+        ],
+        [
+          "D",
+          "supported_platforms"
+        ],
+        [
+          "D",
+          "graphics_capability"
+        ],
+        [
+          "A",
+          "learning_resources"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Choose the game engine for the student game project.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Unity Engine nails both 2D and 3D with tons of tutorials.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports both 2D and 3D with extensive tutorials and a large community.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose an engine with strong community support to ease learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Unreal Engine is hands down the best pick for high-quality 3D and VR—its powerful scripting really sets it apart.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unreal excels at high-quality 3D and VR with powerful scripting options.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Strong for high-quality 3D graphics and visual scripting options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select the engine best suited for advanced 3D visuals and VR potential.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Unity Engine’s huge resources and 2D/3D support seem pretty solid for us.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity’s extensive resources and 2D/3D support fit our needs well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Nia",
+      "text": "Unity Engine covers both 2D and 3D well, plus the big community means tons of tutorials to speed us up.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports 2D and 3D with a large community and many tutorials.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "GameMaker Studio 2 is pretty beginner-friendly and really streamlines 2D projects with its easy-to-learn scripting, which might make things smoother for us.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "GameMaker Studio is beginner-friendly with good 2D support.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Simplified 2D development with an easy-to-learn scripting language."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Noah",
+      "text": "GameMaker Studio is easy to learn and perfect for 2D.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "GameMaker Studio is easy to learn and great for 2D development.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Simplified 2D development with an easy-to-learn scripting language."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Eva",
+      "text": "Unreal Engine’s 3D and VR support feels unmatched to me.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unreal Engine’s high-fidelity 3D and VR support are unmatched.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Strong for high-quality 3D graphics and visual scripting options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Its complexity and resource demands might slow down our project. Unity’s community will keep us moving faster.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "Its complexity and resource demands might slow down our project.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "More complex interface and resource-intensive for smaller projects."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose an engine with strong community support to ease learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "True, though do you think the steeper learning curve might challenge us more than the benefits?",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Learning curve might be steep for some.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can have a steep learning curve for beginners."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eva",
+      "text": "Steeper learning curve can be tough though, especially starting out.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Can have a steep learning curve for beginners.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can have a steep learning curve for beginners."
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Sure, Unity supports Web, but Unreal’s coverage of Consoles is way more crucial for top-tier 3D and VR reach.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare supported_platforms: Windows, macOS, Linux, iOS, Android, Consoles and Windows, macOS, Linux, iOS, Android, Web",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "supported_platforms",
+            "public_value": "Windows, macOS, Linux, iOS, Android, Consoles"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "supported_platforms",
+            "public_value": "Windows, macOS, Linux, iOS, Android, Web"
+          }
+        ],
+        "personal_context": "Select the engine best suited for advanced 3D visuals and VR potential.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "High-fidelity 3D is great, but community support matters more.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the graphics capability is High-fidelity 3D and VR support",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "graphics_capability",
+          "public_value": "High-fidelity 3D and VR support"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose an engine with strong community support to ease learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Community support is key, but the complexity might slow us down more than help with 2D-focused projects.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Too advanced for our current skill level.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "More complex interface and resource-intensive for smaller projects."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The platform support is solid, covering pretty much all bases, which helps if we decide to expand beyond just 2D later on.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the supported platforms is Windows, macOS, Linux, iOS, Android, Consoles",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "supported_platforms",
+          "public_value": "Windows, macOS, Linux, iOS, Android, Consoles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Noah",
+      "text": "Docs and videos help, but they’re still complex for quick 2D learning.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the learning resources is Comprehensive documentation and video tutorials",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "learning_resources",
+          "public_value": "Comprehensive documentation and video tutorials"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Nia",
+      "text": "C++ and Blueprints add power but also a steeper learning curve, which might slow down quick prototyping.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the scripting language is C++ and Blueprints visual scripting",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "scripting_language",
+          "public_value": "C++ and Blueprints visual scripting"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eva",
+      "text": "The visuals are stunning, though that might slow some prototypes.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the graphics capability is High-fidelity 3D and VR support",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "graphics_capability",
+          "public_value": "High-fidelity 3D and VR support"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Noah",
+      "text": "Beginner tutorials and active forums beat complex docs for fast learning.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare learning_resources: Beginner-friendly tutorials and active forums and Comprehensive documentation and video tutorials",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "learning_resources",
+            "public_value": "Beginner-friendly tutorials and active forums"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "learning_resources",
+            "public_value": "Comprehensive documentation and video tutorials"
+          }
+        ],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Nia",
+      "text": "Limited 3D and fewer export platforms seriously restrict scaling and future-proofing projects for me.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Limited 3D and fewer export platforms.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Limited 3D capabilities and fewer export options for consoles."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "GML feels pretty approachable, though I wish it had a bit more scripting depth.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the scripting language is GML (GameMaker Language)",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "scripting_language",
+          "public_value": "GML (GameMaker Language)"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Nia",
+      "text": "Graphics being mostly 2D limits complexity, so it’s fine for quick projects but not for anything ambitious.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the graphics capability is Primarily 2D",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "graphics_capability",
+          "public_value": "Primarily 2D"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Nia",
+      "text": "The broad platform support is a plus, but it doesn’t fix the core limits on depth or future growth.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the supported platforms is Windows, macOS, iOS, Android, Web",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "supported_platforms",
+          "public_value": "Windows, macOS, iOS, Android, Web"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "GML’s simplicity really helps keep the learning curve low, which is great for 2D projects even if it doesn’t push deep scripting boundaries.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the scripting language is GML (GameMaker Language)",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "scripting_language",
+          "public_value": "GML (GameMaker Language)"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Noah",
+      "text": "Graphics being mostly 2D is perfect for quick, simple builds.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the graphics capability is Primarily 2D",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "graphics_capability",
+          "public_value": "Primarily 2D"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Cool for 2D, but limited 3D and exports kill versatility.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Limited 3D support and fewer platform exports reduce versatility.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Limited 3D capabilities and fewer export options for consoles."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose an engine with strong community support to ease learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Noah",
+      "text": "Supporting Windows, macOS, iOS, Android, and Web covers all my quick-test needs.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the supported platforms is Windows, macOS, iOS, Android, Web",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "supported_platforms",
+          "public_value": "Windows, macOS, iOS, Android, Web"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eva",
+      "text": "Forums help, but I prefer deeper, advanced guides.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the learning resources is Beginner-friendly tutorials and active forums",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "learning_resources",
+          "public_value": "Beginner-friendly tutorials and active forums"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "C# in Unity is more complex but way more flexible than GML, which feels simpler—leaning towards Unity for scripting control, though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare scripting_language: C# and GML (GameMaker Language)",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "scripting_language",
+            "public_value": "C#"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "scripting_language",
+            "public_value": "GML (GameMaker Language)"
+          }
+        ],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The tutorials and forums are solid, but for pushing VR and high-end 3D visuals, I need deeper engine-level control.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the learning resources is Extensive official tutorials and community forums",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "learning_resources",
+          "public_value": "Extensive official tutorials and community forums"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select the engine best suited for advanced 3D visuals and VR potential.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "That platform range is solid, though sometimes I wish Linux support felt a bit smoother.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the supported platforms is Windows, macOS, Linux, iOS, Android, Web",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "supported_platforms",
+          "public_value": "Windows, macOS, Linux, iOS, Android, Web"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Noah",
+      "text": "2D and 3D is cool, but I want something simpler to start.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the graphics capability is 2D and 3D",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "graphics_capability",
+          "public_value": "2D and 3D"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eva",
+      "text": "Tutorials are good, but I prefer hands-on engine power.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the learning resources is Extensive official tutorials and community forums",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "learning_resources",
+          "public_value": "Extensive official tutorials and community forums"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Eva",
+      "text": "C# is solid, though I lean toward engines that push visuals harder.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the scripting language is C#",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "scripting_language",
+          "public_value": "C#"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "The 3D part’s cool, but I’m still iffy on how flexible it feels for scripting.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the graphics capability is 2D and 3D",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "graphics_capability",
+          "public_value": "2D and 3D"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Nia",
+      "text": "Unity has extensive official tutorials and big forums, but GameMaker’s beginner-friendly stuff fits my priority better.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare learning_resources: Extensive official tutorials and community forums and Beginner-friendly tutorials and active forums",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "learning_resources",
+            "public_value": "Extensive official tutorials and community forums"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "learning_resources",
+            "public_value": "Beginner-friendly tutorials and active forums"
+          }
+        ],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 36,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Unity Engine currently has 3 of 7 public preferences and the broadest overall support, but not a majority. Liam, Noah, Eva, and Omar, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "p4",
+      "speaker_name": "Noah",
+      "text": "Unity Engine works for me—it’s got solid 2D support plus tons of learning stuff.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports both 2D and 3D with many learning resources.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Unity supports both 2D and 3D with many learning resources."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Unity supports both 2D and 3D with many learning resources."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 38,
+      "phase": "NARROWING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Unity Engine could fit since it has loads of tutorials and handles 2D well, which makes getting started smoother even if scripting flexibility feels a bit different.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity has extensive tutorials and supports both 2D and 3D.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Unity has extensive tutorials and supports both 2D and 3D."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Unity has extensive tutorials and supports both 2D and 3D."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Unity Engine.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports both 2D and 3D with extensive tutorials and a large community.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Unreal Engine is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unreal excels at high-quality 3D and VR with powerful scripting options.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Strong for high-quality 3D graphics and visual scripting options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Unity Engine is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity’s extensive resources and 2D/3D support fit our needs well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Noah",
+      "text": "I choose Unity Engine.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports both 2D and 3D with many learning resources.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Unity supports both 2D and 3D with many learning resources."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Unity supports both 2D and 3D with many learning resources."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Eva",
+      "text": "Unreal Engine is my final choice.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unreal Engine’s high-fidelity 3D and VR support are unmatched.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Strong for high-quality 3D graphics and visual scripting options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Unity Engine is my final choice.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity has extensive tutorials and supports both 2D and 3D.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Unity has extensive tutorials and supports both 2D and 3D."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Unity has extensive tutorials and supports both 2D and 3D."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 46,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Nia",
+      "text": "Unity Engine is my final choice.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports 2D and 3D with a large community and many tutorials.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 47,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Unity Engine.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:graphics_capability": 2,
+    "A:learning_resources": 3,
+    "A:scripting_language": 2,
+    "A:supported_platforms": 2,
+    "A:upside": 5,
+    "B:concern": 2,
+    "B:graphics_capability": 2,
+    "B:learning_resources": 2,
+    "B:scripting_language": 1,
+    "B:supported_platforms": 2,
+    "B:upside": 2,
+    "D:concern": 2,
+    "D:graphics_capability": 2,
+    "D:learning_resources": 3,
+    "D:scripting_language": 3,
+    "D:supported_platforms": 2,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "upside"
+    ],
+    [
+      "A",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "B",
+    "p3": "A",
+    "p4": "A",
+    "p5": "B",
+    "p6": "A",
+    "p7": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "B",
+      "p3": "A",
+      "p4": "A",
+      "p5": "B",
+      "p6": "A",
+      "p7": "A"
+    },
+    "reason": "5 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 38,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 1,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 24140,
+    "output_tokens": 3569,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 4,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 2
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 44,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0833,
+    "avg_words_per_participant_turn": 13.41,
+    "visible_preference_changes": 2,
+    "repair_turns": 0,
+    "dropped_turns": 1,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 24140,
+    "output_tokens": 3569,
+    "llm_calls": 41,
+    "voluntary_turns_by_persona": {
+      "p1": 3,
+      "p6": 5,
+      "p5": 5,
+      "p2": 2,
+      "p4": 6,
+      "p7": 5,
+      "p3": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports both 2D and 3D with extensive tutorials and a large community.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose an engine with strong community support to ease learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unity Engine nails both 2D and 3D with tons of tutorials.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unreal excels at high-quality 3D and VR with powerful scripting options.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Strong for high-quality 3D graphics and visual scripting options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select the engine best suited for advanced 3D visuals and VR potential.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unreal Engine is hands down the best pick for high-quality 3D and VR—its powerful scripting really sets it apart.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity’s extensive resources and 2D/3D support fit our needs well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unity Engine’s huge resources and 2D/3D support seem pretty solid for us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports 2D and 3D with a large community and many tutorials.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unity Engine covers both 2D and 3D well, plus the big community means tons of tutorials to speed us up.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "GameMaker Studio is beginner-friendly with good 2D support.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Simplified 2D development with an easy-to-learn scripting language."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "GameMaker Studio 2 is pretty beginner-friendly and really streamlines 2D projects with its easy-to-learn scripting, which might make things smoother for us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "GameMaker Studio is easy to learn and great for 2D development.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Simplified 2D development with an easy-to-learn scripting language."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "GameMaker Studio is easy to learn and perfect for 2D.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unreal Engine’s high-fidelity 3D and VR support are unmatched.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Strong for high-quality 3D graphics and visual scripting options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unreal Engine’s 3D and VR support feels unmatched to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "Its complexity and resource demands might slow down our project.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "More complex interface and resource-intensive for smaller projects."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose an engine with strong community support to ease learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Its complexity and resource demands might slow down our project. Unity’s community will keep us moving faster.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Learning curve might be steep for some.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can have a steep learning curve for beginners."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, though do you think the steeper learning curve might challenge us more than the benefits?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the concern is Can have a steep learning curve for beginners.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can have a steep learning curve for beginners."
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Steeper learning curve can be tough though, especially starting out.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare supported_platforms: Windows, macOS, Linux, iOS, Android, Consoles and Windows, macOS, Linux, iOS, Android, Web",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "supported_platforms",
+            "public_value": "Windows, macOS, Linux, iOS, Android, Consoles"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "supported_platforms",
+            "public_value": "Windows, macOS, Linux, iOS, Android, Web"
+          }
+        ],
+        "personal_context": "Select the engine best suited for advanced 3D visuals and VR potential.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sure, Unity supports Web, but Unreal’s coverage of Consoles is way more crucial for top-tier 3D and VR reach.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports both 2D and 3D with many learning resources.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Unity supports both 2D and 3D with many learning resources."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Steeper curve’s real, but Unity’s 2D plus tons of learning resources fit me better.",
+      "validation_errors": [
+        "focused option is not visible",
+        "stance movement is not visible"
+      ],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "dropped",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the graphics capability is High-fidelity 3D and VR support",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "graphics_capability",
+          "public_value": "High-fidelity 3D and VR support"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose an engine with strong community support to ease learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High-fidelity 3D is great, but community support matters more.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Too advanced for our current skill level.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "More complex interface and resource-intensive for smaller projects."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Community support is key, but the complexity might slow us down more than help with 2D-focused projects.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the supported platforms is Windows, macOS, Linux, iOS, Android, Consoles",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "supported_platforms",
+          "public_value": "Windows, macOS, Linux, iOS, Android, Consoles"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The platform support is solid, covering pretty much all bases, which helps if we decide to expand beyond just 2D later on.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the learning resources is Comprehensive documentation and video tutorials",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "learning_resources",
+          "public_value": "Comprehensive documentation and video tutorials"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Docs and videos help, but they’re still complex for quick 2D learning.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the scripting language is C++ and Blueprints visual scripting",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "scripting_language",
+          "public_value": "C++ and Blueprints visual scripting"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "C++ and Blueprints add power but also a steeper learning curve, which might slow down quick prototyping.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the graphics capability is High-fidelity 3D and VR support",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "graphics_capability",
+          "public_value": "High-fidelity 3D and VR support"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The visuals are stunning, though that might slow some prototypes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare learning_resources: Beginner-friendly tutorials and active forums and Comprehensive documentation and video tutorials",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "learning_resources",
+            "public_value": "Beginner-friendly tutorials and active forums"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "learning_resources",
+            "public_value": "Comprehensive documentation and video tutorials"
+          }
+        ],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Beginner tutorials and active forums beat complex docs for fast learning.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Limited 3D and fewer export platforms.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Limited 3D capabilities and fewer export options for consoles."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Limited 3D and fewer export platforms seriously restrict scaling and future-proofing projects for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the scripting language is GML (GameMaker Language)",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "scripting_language",
+          "public_value": "GML (GameMaker Language)"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "GML feels pretty approachable, though I wish it had a bit more scripting depth.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the graphics capability is Primarily 2D",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "graphics_capability",
+          "public_value": "Primarily 2D"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Graphics being mostly 2D limits complexity, so it’s fine for quick projects but not for anything ambitious.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the supported platforms is Windows, macOS, iOS, Android, Web",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "supported_platforms",
+          "public_value": "Windows, macOS, iOS, Android, Web"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The broad platform support is a plus, but it doesn’t fix the core limits on depth or future growth.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the scripting language is GML (GameMaker Language)",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "scripting_language",
+          "public_value": "GML (GameMaker Language)"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "GML’s simplicity really helps keep the learning curve low, which is great for 2D projects even if it doesn’t push deep scripting boundaries.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the graphics capability is Primarily 2D",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "graphics_capability",
+          "public_value": "Primarily 2D"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Graphics being mostly 2D is perfect for quick, simple builds.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Limited 3D support and fewer platform exports reduce versatility.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Limited 3D capabilities and fewer export options for consoles."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose an engine with strong community support to ease learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cool for 2D, but limited 3D and exports kill versatility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the supported platforms is Windows, macOS, iOS, Android, Web",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "supported_platforms",
+          "public_value": "Windows, macOS, iOS, Android, Web"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Supporting Windows, macOS, iOS, Android, and Web covers all my quick-test needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the learning resources is Beginner-friendly tutorials and active forums",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "learning_resources",
+          "public_value": "Beginner-friendly tutorials and active forums"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Forums help, but I prefer deeper, advanced guides.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare scripting_language: C# and GML (GameMaker Language)",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "scripting_language",
+            "public_value": "C#"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "scripting_language",
+            "public_value": "GML (GameMaker Language)"
+          }
+        ],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "C# in Unity is more complex but way more flexible than GML, which feels simpler—leaning towards Unity for scripting control, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the learning resources is Extensive official tutorials and community forums",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "learning_resources",
+          "public_value": "Extensive official tutorials and community forums"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select the engine best suited for advanced 3D visuals and VR potential.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The tutorials and forums are solid, but for pushing VR and high-end 3D visuals, I need deeper engine-level control.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the supported platforms is Windows, macOS, Linux, iOS, Android, Web",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "supported_platforms",
+          "public_value": "Windows, macOS, Linux, iOS, Android, Web"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That platform range is solid, though sometimes I wish Linux support felt a bit smoother.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the graphics capability is 2D and 3D",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "graphics_capability",
+          "public_value": "2D and 3D"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2D and 3D is cool, but I want something simpler to start.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the learning resources is Extensive official tutorials and community forums",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "learning_resources",
+          "public_value": "Extensive official tutorials and community forums"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Tutorials are good, but I prefer hands-on engine power.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the scripting language is C#",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "scripting_language",
+          "public_value": "C#"
+        },
+        "comparison_sources": [],
+        "personal_context": "Use the most powerful engine for impressive 3D graphics.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "C# is solid, though I lean toward engines that push visuals harder.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the graphics capability is 2D and 3D",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "graphics_capability",
+          "public_value": "2D and 3D"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find an engine that balances ease of use with scripting flexibility.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 3D part’s cool, but I’m still iffy on how flexible it feels for scripting.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare learning_resources: Extensive official tutorials and community forums and Beginner-friendly tutorials and active forums",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "learning_resources",
+            "public_value": "Extensive official tutorials and community forums"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "learning_resources",
+            "public_value": "Beginner-friendly tutorials and active forums"
+          }
+        ],
+        "personal_context": "Pick an engine that balances ease of use with powerful features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unity has extensive official tutorials and big forums, but GameMaker’s beginner-friendly stuff fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports both 2D and 3D with many learning resources.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick an engine that allows easy 2D game creation and fast learning.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Unity supports both 2D and 3D with many learning resources."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Unity Engine works for me—it’s got solid 2D support plus tons of learning stuff.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity has extensive tutorials and supports both 2D and 3D.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the engine is easy to learn and suitable for 2D projects.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Unity has extensive tutorials and supports both 2D and 3D."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Unity Engine could fit since it has loads of tutorials and handles 2D well, which makes getting started smoother even if scripting flexibility feels a bit different.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports both 2D and 3D with extensive tutorials and a large community.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Unity Engine.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unreal excels at high-quality 3D and VR with powerful scripting options.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Strong for high-quality 3D graphics and visual scripting options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Unreal Engine is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity’s extensive resources and 2D/3D support fit our needs well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Unity Engine is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports both 2D and 3D with many learning resources.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Unity supports both 2D and 3D with many learning resources."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Unity Engine.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Unreal Engine’s high-fidelity 3D and VR support are unmatched.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Strong for high-quality 3D graphics and visual scripting options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Unreal Engine is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity has extensive tutorials and supports both 2D and 3D.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Unity has extensive tutorials and supports both 2D and 3D."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "Unity Engine is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unity supports 2D and 3D with a large community and many tutorials.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Widely used with a large community and many learning materials."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Unity Engine is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {
+    "focused option is not visible": 1,
+    "stance movement is not visible": 1
+  },
+  "protocol_errors": [],
+  "quality_flags": [
+    "dropped_turns:1"
+  ],
+  "needs_review": true
+}

@@ -1,0 +1,3784 @@
+{
+  "provenance": {
+    "seed": 242118769,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick a karaoke bar for the birthday celebration",
+    "options": [
+      {
+        "id": "A",
+        "name": "Melody Lounge Karaoke",
+        "attrs": {
+          "capacity": "50",
+          "song_library_size": "10000",
+          "location": "Downtown",
+          "cover_charge": "No",
+          "hours": "6pm-2am"
+        },
+        "upside": "Large song library and no cover charge.",
+        "concern": "Can get crowded on weekends.",
+        "short_name": "Melody Lounge",
+        "aliases": [
+          "Melody Lounge",
+          "Lounge Karaoke"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Echo Chamber",
+        "attrs": {
+          "capacity": "30",
+          "song_library_size": "8000",
+          "location": "Midtown",
+          "cover_charge": "$5",
+          "hours": "5pm-1am"
+        },
+        "upside": "Intimate setting with good sound quality.",
+        "concern": "Small cover charge and limited late hours.",
+        "short_name": "Echo Chamber",
+        "aliases": []
+      },
+      {
+        "id": "C",
+        "name": "SingStar Bar",
+        "attrs": {
+          "capacity": "40",
+          "song_library_size": "9000",
+          "location": "Uptown",
+          "cover_charge": "No",
+          "hours": "7pm-3am"
+        },
+        "upside": "Late closing time and no cover charge.",
+        "concern": "Location is farther from public transit.",
+        "short_name": "SingStar Bar",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "Harmony Hub",
+        "attrs": {
+          "capacity": "60",
+          "song_library_size": "7000",
+          "location": "Downtown",
+          "cover_charge": "$3",
+          "hours": "6pm-12am"
+        },
+        "upside": "Spacious venue in downtown area.",
+        "concern": "Closes earlier than other options.",
+        "short_name": "Harmony Hub",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "Five friends are choosing a karaoke bar to celebrate a birthday. The venue should accommodate a group of five, offer a variety of song selections, and have a lively atmosphere suitable for a celebration."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Maya is a music enthusiast who loves exploring new venues with friends.",
+      "private_goal": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Large song library and no cover charge fit the celebration vibe.",
+          "reason_against": "Can get crowded on weekends, which might be distracting."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Good sound quality and intimate setting.",
+          "reason_against": "Has a cover charge and closes earlier than preferred."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "No cover charge and late closing time allow for extended fun.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Spacious venue downtown is appealing.",
+          "reason_against": "Closes early and has a cover charge, limiting celebration time."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 4,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Liam prefers straightforward plans and values sound quality highly.",
+      "private_goal": "Choose a venue with excellent acoustics and a manageable crowd.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 32,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "No cover charge and large song library offer good value.",
+          "reason_against": "Can get crowded, which may affect sound quality."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Intimate setting with good sound quality is ideal.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "No cover charge and late hours are positives.",
+          "reason_against": "Farther location and potentially less intimate sound experience."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Spacious downtown location is convenient.",
+          "reason_against": "Early closing and cover charge reduce appeal."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Zoe enjoys lively atmospheres but prefers to avoid crowds.",
+      "private_goal": "Find a venue with a large song selection and no cover charge.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 24,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Large song library and no cover charge are perfect for variety and budget.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Good sound quality and intimate setting.",
+          "reason_against": "Cover charge and shorter hours are less ideal."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "No cover charge and late hours are positives.",
+          "reason_against": "Location farther from transit is inconvenient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Spacious and downtown location.",
+          "reason_against": "Early closing and cover charge reduce appeal."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Eli is social and enjoys venues that can accommodate larger groups comfortably.",
+      "private_goal": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Spacious with a large song library and no cover charge.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Intimate setting with good sound quality.",
+          "reason_against": "Smaller capacity and cover charge limit group comfort."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Late hours and no cover charge are beneficial.",
+          "reason_against": "Farther location reduces convenience."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Spacious and downtown location.",
+          "reason_against": "Early closing and cover charge are drawbacks."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nia",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 4,
+        "stubbornness": 5
+      },
+      "background": "Nia is very particular and insists on a venue that meets all group needs without compromise.",
+      "private_goal": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 1,
+          "reason_for": "Spacious and no cover charge.",
+          "reason_against": "Can get crowded, which is unacceptable for group comfort."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 1,
+          "reason_for": "Good sound quality.",
+          "reason_against": "Too small and has a cover charge, not suitable for the group."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 1,
+          "reason_for": "No cover charge and late hours.",
+          "reason_against": "Far from public transit and not downtown, violating location preference."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Spacious venue downtown that perfectly fits the group size.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": true
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Large song library and no cover charge fit the celebration vibe."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "hours"
+        ],
+        [
+          "D",
+          "hours"
+        ],
+        [
+          "A",
+          "location"
+        ],
+        [
+          "D",
+          "location"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "hours"
+        ],
+        [
+          "C",
+          "hours"
+        ],
+        [
+          "A",
+          "song_library_size"
+        ],
+        [
+          "A",
+          "cover_charge"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "hours"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "hours"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "capacity"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "song_library_size"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "cover_charge"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "capacity"
+        ],
+        [
+          "D",
+          "hours"
+        ],
+        [
+          "D",
+          "capacity"
+        ],
+        [
+          "A",
+          "hours"
+        ],
+        [
+          "D",
+          "location"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "hours"
+        ],
+        [
+          "D",
+          "cover_charge"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 1,
+        "B": 1,
+        "C": 1,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D"
+      ],
+      "hard_rejected_options": [
+        "C",
+        "B",
+        "A"
+      ],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "cover_charge"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "location"
+        ],
+        [
+          "D",
+          "capacity"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "cover_charge"
+        ],
+        [
+          "D",
+          "cover_charge"
+        ],
+        [
+          "D",
+          "song_library_size"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Pick a karaoke bar for the birthday celebration.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "Harmony Hub works best. Spacious downtown spot fits us perfectly.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious venue downtown that perfectly fits the group size.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Spacious venue in downtown area."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Large song library and no cover charge at Melody Lounge sound great.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large song library and no cover charge are perfect for variety and budget.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 1,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "An intimate setting with good sound quality is ideal, so Echo Chamber seems the best choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Intimate setting with good sound quality is ideal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Intimate setting with good sound quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue with excellent acoustics and a manageable crowd.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "SingStar Bar has no cover charge and stays open late, so we can keep the celebration going without rushing.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "No cover charge and late closing time allow for extended fun.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Late closing time and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Melody Lounge is spacious, has a large song library, and no cover charge, which suits a big group like ours.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious with a large song library and no cover charge.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Cover charge and shorter hours feel a bit limiting though?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Cover charge and shorter hours are less ideal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Small cover charge and limited late hours."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The small cover charge and shorter hours are a trade-off for better sound and crowd control.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Small cover charge and limited late hours.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Small cover charge and limited late hours."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue with excellent acoustics and a manageable crowd.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Echo Chamber closes at 1am while SingStar Bar stays open until 3am. The later hours fit my priority better for a relaxed celebration.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 7pm-3am and 5pm-1am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "hours",
+            "public_value": "7pm-3am"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "hours",
+            "public_value": "5pm-1am"
+          }
+        ],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "Zoe, do you think the crowd will ruin our comfort there?",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Can get crowded, which is unacceptable for group comfort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can get crowded on weekends."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "It can get crowded on weekends, so maybe a weekday?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the concern is Can get crowded on weekends.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can get crowded on weekends."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Closing at 1am means less late noise and crowd buildup, which suits my priority better than staying open until 2am.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 5pm-1am and 6pm-2am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "hours",
+            "public_value": "5pm-1am"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "hours",
+            "public_value": "6pm-2am"
+          }
+        ],
+        "personal_context": "Choose a venue with excellent acoustics and a manageable crowd.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The large song library and no cover charge at Melody Lounge fit the celebration vibe better than SingStar Bar for me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large song library and no cover charge fit the celebration vibe.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Large song library and no cover charge fit the celebration vibe."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Large song library and no cover charge fit the celebration vibe."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Closing earlier and charging cover fees don’t really work for a group looking to stay out late and relaxed.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Early closing and cover charge are drawbacks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Closes earlier than other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Closing at 2am instead of midnight definitely suits staying out late better, which matches my priority for a relaxed celebration.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 6pm-2am and 6pm-12am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "hours",
+            "public_value": "6pm-2am"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "hours",
+            "public_value": "6pm-12am"
+          }
+        ],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Closing earlier and having a cover fee still lowers the vibe for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Early closing and cover charge reduce appeal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Closes earlier than other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "$3 cover isn’t much, but with a big group it adds up and could limit how long we stay.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the cover charge is $3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cover_charge",
+          "public_value": "$3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Downtown works well since it’s easy for everyone to get to, but the cover fee might still cut into how relaxed we feel staying late.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the location is Downtown",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "location",
+          "public_value": "Downtown"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "60 capacity is enough, but it has to fit our entire group comfortably.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the capacity is 60",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "capacity",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "6pm to midnight is decent, but I’d want enough time to really enjoy the karaoke without feeling rushed.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the hours is 6pm-12am",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "hours",
+          "public_value": "6pm-12am"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "$3 cover’s low, but still adds up fast.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the cover charge is $3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cover_charge",
+          "public_value": "$3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Downtown’s convenient, so Harmony Hub works, but the space has to feel open enough for a big group to move around comfortably.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the location is Downtown",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "location",
+          "public_value": "Downtown"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "60 sounds okay, but it still needs to feel roomy enough so people aren’t cramped or stuck in one spot.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the capacity is 60",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "capacity",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "7000 songs are solid, but cramped space kills the vibe.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the song library size is 7000",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "song_library_size",
+          "public_value": "7000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Melody Lounge is open until 2am, while Harmony Hub closes at midnight. Later hours fit my priority better for a relaxed celebration.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 6pm-2am and 6pm-12am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "hours",
+            "public_value": "6pm-2am"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "hours",
+            "public_value": "6pm-12am"
+          }
+        ],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "No cover charge helps keep costs down, which I like.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cover charge is No",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cover_charge",
+          "public_value": "No"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "50 is okay, but it might feel tight once everyone starts moving around and singing.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the capacity is 50",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "capacity",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "That’s a huge song list, which is great, but I worry the space still feels a bit tight.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the song library size is 10000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "song_library_size",
+          "public_value": "10000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "No cover charge is a big plus since it makes it easier to invite more people without worrying about extra costs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the cover charge is No",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cover_charge",
+          "public_value": "No"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "Downtown is good. Space still needs to fit us all comfortably.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the location is Downtown",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "location",
+          "public_value": "Downtown"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "A big song list is great, but if the space feels tight, it might not be the most comfortable spot for everyone.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the song library size is 10000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "song_library_size",
+          "public_value": "10000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The Lounge Karaoke stays open until 2am while Echo Chamber closes at 1am, so the longer hours fit better for a late night hangout.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 6pm-2am and 5pm-1am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "hours",
+            "public_value": "6pm-2am"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "hours",
+            "public_value": "5pm-1am"
+          }
+        ],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "50 sounds cozy, but might get tight quickly.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the capacity is 50",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "capacity",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Downtown is ideal for getting everyone together, but we should double-check if the space really feels cramped before deciding.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the location is Downtown",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "location",
+          "public_value": "Downtown"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "Cover charge is $3 at Harmony Hub, $5 at Echo Chamber. The cheaper option fits better.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cover_charge: $3 and $5",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cover_charge",
+            "public_value": "$3"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cover_charge",
+            "public_value": "$5"
+          }
+        ],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Melody Lounge is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large song library and no cover charge fit the celebration vibe.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Echo Chamber.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Intimate setting with good sound quality is ideal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Intimate setting with good sound quality."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I choose Melody Lounge.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large song library and no cover charge are perfect for variety and budget.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "My final vote is Melody Lounge.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious with a large song library and no cover charge.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "I’m voting for Harmony Hub.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious venue downtown that perfectly fits the group size.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Spacious venue in downtown area."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Melody Lounge.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:capacity": 2,
+    "A:concern": 2,
+    "A:cover_charge": 2,
+    "A:hours": 4,
+    "A:location": 2,
+    "A:song_library_size": 2,
+    "A:upside": 3,
+    "B:concern": 2,
+    "B:cover_charge": 1,
+    "B:hours": 3,
+    "B:upside": 1,
+    "C:hours": 1,
+    "C:upside": 1,
+    "D:capacity": 2,
+    "D:concern": 2,
+    "D:cover_charge": 3,
+    "D:hours": 3,
+    "D:location": 2,
+    "D:song_library_size": 1,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "cover_charge"
+    ],
+    [
+      "B",
+      "cover_charge"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "B",
+    "p3": "A",
+    "p4": "A",
+    "p5": "D"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "B",
+      "p3": "A",
+      "p4": "A",
+      "p5": "D"
+    },
+    "reason": "3 of 5 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 36,
+    "setup_llm_calls": 3,
+    "repair_calls": 1,
+    "dropped_turns": 1,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 21988,
+    "output_tokens": 2745,
+    "moderator_turns": 3,
+    "voluntary_turns": 28,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 5,
+    "participant_turns": 39,
+    "voluntary_turns": 28,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0714,
+    "avg_words_per_participant_turn": 15.03,
+    "visible_preference_changes": 1,
+    "repair_turns": 1,
+    "dropped_turns": 1,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 21988,
+    "output_tokens": 2745,
+    "llm_calls": 39,
+    "voluntary_turns_by_persona": {
+      "p3": 5,
+      "p2": 2,
+      "p1": 8,
+      "p5": 6,
+      "p4": 7
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious venue downtown that perfectly fits the group size.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Spacious venue in downtown area."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Harmony Hub works best. Spacious downtown spot fits us perfectly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large song library and no cover charge are perfect for variety and budget.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Large song library and no cover charge sound perfect for variety and budget.",
+      "validation_errors": [
+        "focused option is not visible"
+      ],
+      "repair_text": "Large song library and no cover charge at Melody Lounge sound great.",
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Intimate setting with good sound quality is ideal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Intimate setting with good sound quality."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue with excellent acoustics and a manageable crowd.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "An intimate setting with good sound quality is ideal, so Echo Chamber seems the best choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "No cover charge and late closing time allow for extended fun.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Late closing time and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "SingStar Bar has no cover charge and stays open late, so we can keep the celebration going without rushing.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious with a large song library and no cover charge.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Melody Lounge is spacious, has a large song library, and no cover charge, which suits a big group like ours.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Cover charge and shorter hours are less ideal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Small cover charge and limited late hours."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cover charge and shorter hours feel a bit limiting though?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Small cover charge and limited late hours.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Small cover charge and limited late hours."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a venue with excellent acoustics and a manageable crowd.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The small cover charge and shorter hours are a trade-off for better sound and crowd control.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 7pm-3am and 5pm-1am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "hours",
+            "public_value": "7pm-3am"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "hours",
+            "public_value": "5pm-1am"
+          }
+        ],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Echo Chamber closes at 1am while SingStar Bar stays open until 3am. The later hours fit my priority better for a relaxed celebration.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Can get crowded, which is unacceptable for group comfort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can get crowded on weekends."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Zoe, do you think the crowd will ruin our comfort there?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the concern is Can get crowded on weekends.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can get crowded on weekends."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It can get crowded on weekends, so maybe a weekday?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 5pm-1am and 6pm-2am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "hours",
+            "public_value": "5pm-1am"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "hours",
+            "public_value": "6pm-2am"
+          }
+        ],
+        "personal_context": "Choose a venue with excellent acoustics and a manageable crowd.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Closing at 1am means less late noise and crowd buildup, which suits my priority better than staying open until 2am.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large song library and no cover charge fit the celebration vibe.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Large song library and no cover charge fit the celebration vibe."
+        },
+        "vote_option": null
+      },
+      "raw_text": "The large song library and no cover charge at Melody Lounge fit the celebration vibe better than SingStar Bar for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Early closing and cover charge are drawbacks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Closes earlier than other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Closing earlier and charging cover fees don’t really work for a group looking to stay out late and relaxed.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 6pm-2am and 6pm-12am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "hours",
+            "public_value": "6pm-2am"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "hours",
+            "public_value": "6pm-12am"
+          }
+        ],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Closing at 2am instead of midnight definitely suits staying out late better, which matches my priority for a relaxed celebration.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Early closing and cover charge reduce appeal.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Closes earlier than other options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Closing earlier and having a cover fee still lowers the vibe for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the cover charge is $3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cover_charge",
+          "public_value": "$3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$3 cover isn’t much, but with a big group it adds up and could limit how long we stay.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the location is Downtown",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "location",
+          "public_value": "Downtown"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Downtown works well since it’s easy for everyone to get to, but the cover fee might still cut into how relaxed we feel staying late.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the capacity is 60",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "capacity",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "60 capacity is enough, but it has to fit our entire group comfortably.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the hours is 6pm-12am",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "hours",
+          "public_value": "6pm-12am"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "6pm to midnight is decent, but I’d want enough time to really enjoy the karaoke without feeling rushed.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare song_library_size: 10000 and 7000",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "song_library_size",
+            "public_value": "10000"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "song_library_size",
+            "public_value": "7000"
+          }
+        ],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "10,000 songs vs 7,000 is a big jump; that’s more my vibe for variety.",
+      "validation_errors": [
+        "unsupported numeric claim: 10,000 songs",
+        "unsupported numeric claim: 7,000 is"
+      ],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "dropped",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the cover charge is $3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cover_charge",
+          "public_value": "$3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "$3 cover’s low, but still adds up fast.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the location is Downtown",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "location",
+          "public_value": "Downtown"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Downtown’s convenient, so Harmony Hub works, but the space has to feel open enough for a big group to move around comfortably.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the capacity is 60",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "capacity",
+          "public_value": "60"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "60 sounds okay, but it still needs to feel roomy enough so people aren’t cramped or stuck in one spot.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the song library size is 7000",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "song_library_size",
+          "public_value": "7000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "7000 songs are solid, but cramped space kills the vibe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 6pm-2am and 6pm-12am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "hours",
+            "public_value": "6pm-2am"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "hours",
+            "public_value": "6pm-12am"
+          }
+        ],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Melody Lounge is open until 2am, while Harmony Hub closes at midnight. Later hours fit my priority better for a relaxed celebration.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cover charge is No",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cover_charge",
+          "public_value": "No"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "No cover charge helps keep costs down, which I like.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the capacity is 50",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "capacity",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "50 is okay, but it might feel tight once everyone starts moving around and singing.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the song library size is 10000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "song_library_size",
+          "public_value": "10000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s a huge song list, which is great, but I worry the space still feels a bit tight.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the cover charge is No",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cover_charge",
+          "public_value": "No"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "No cover charge is a big plus since it makes it easier to invite more people without worrying about extra costs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the location is Downtown",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "location",
+          "public_value": "Downtown"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Downtown is good. Space still needs to fit us all comfortably.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the song library size is 10000",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "song_library_size",
+          "public_value": "10000"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A big song list is great, but if the space feels tight, it might not be the most comfortable spot for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare hours: 6pm-2am and 5pm-1am",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "hours",
+            "public_value": "6pm-2am"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "hours",
+            "public_value": "5pm-1am"
+          }
+        ],
+        "personal_context": "Select a spacious karaoke bar downtown with a lively atmosphere.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Lounge Karaoke stays open until 2am while Echo Chamber closes at 1am, so the longer hours fit better for a late night hangout.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the capacity is 50",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "capacity",
+          "public_value": "50"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a venue with a large song selection and no cover charge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "50 sounds cozy, but might get tight quickly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the location is Downtown",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "location",
+          "public_value": "Downtown"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a karaoke bar with late hours and no cover charge for a relaxed celebration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Downtown is ideal for getting everyone together, but we should double-check if the space really feels cramped before deciding.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare cover_charge: $3 and $5",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "cover_charge",
+            "public_value": "$3"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "cover_charge",
+            "public_value": "$5"
+          }
+        ],
+        "personal_context": "Ensure the chosen karaoke bar is spacious, downtown, and fits the group perfectly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cover charge is $3 at Harmony Hub, $5 at Echo Chamber. The cheaper option fits better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large song library and no cover charge fit the celebration vibe.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Melody Lounge is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Intimate setting with good sound quality is ideal.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Intimate setting with good sound quality."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Echo Chamber.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large song library and no cover charge are perfect for variety and budget.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Melody Lounge.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious with a large song library and no cover charge.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Large song library and no cover charge."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Melody Lounge.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious venue downtown that perfectly fits the group size.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Spacious venue in downtown area."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for Harmony Hub.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {
+    "unsupported numeric claim: 10,000 songs": 1,
+    "unsupported numeric claim: 7,000 is": 1
+  },
+  "protocol_errors": [],
+  "quality_flags": [
+    "dropped_turns:1"
+  ],
+  "needs_review": true
+}

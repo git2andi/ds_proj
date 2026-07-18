@@ -1,0 +1,2865 @@
+{
+  "provenance": {
+    "seed": 242118864,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide which project management tool the research lab should adopt",
+    "options": [
+      {
+        "id": "A",
+        "name": "Asana",
+        "attrs": {
+          "task_management": "comprehensive",
+          "timeline_feature": "Gantt chart",
+          "integration": "Google Drive, Slack, Zoom",
+          "user_limit": "unlimited"
+        },
+        "upside": "Offers flexible task views and strong collaboration features.",
+        "concern": "Some advanced features require paid plans.",
+        "short_name": "Asana",
+        "aliases": []
+      },
+      {
+        "id": "B",
+        "name": "Trello",
+        "attrs": {
+          "task_management": "kanban boards",
+          "timeline_feature": "calendar view",
+          "integration": "Dropbox, Slack, GitHub",
+          "user_limit": "unlimited"
+        },
+        "upside": "Simple interface with visual task tracking.",
+        "concern": "Limited native timeline features without add-ons.",
+        "short_name": "Trello",
+        "aliases": []
+      },
+      {
+        "id": "C",
+        "name": "Microsoft Project",
+        "attrs": {
+          "task_management": "detailed task lists",
+          "timeline_feature": "advanced Gantt charts",
+          "integration": "Microsoft Office Suite",
+          "user_limit": "up to 250 users"
+        },
+        "upside": "Robust timeline and resource management tools.",
+        "concern": "Steeper learning curve and higher cost.",
+        "short_name": "Microsoft Project",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "ClickUp",
+        "attrs": {
+          "task_management": "customizable workflows",
+          "timeline_feature": "timeline and workload views",
+          "integration": "Google Drive, Slack, Zoom",
+          "user_limit": "unlimited"
+        },
+        "upside": "Highly customizable with multiple view options.",
+        "concern": "Interface may be overwhelming for new users.",
+        "short_name": "ClickUp",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "The research lab needs to select a project management tool to improve collaboration and track progress. The tool must support task assignment, timeline visualization, and integration with common research software."
+    ],
+    "setup_notes": [
+      "alias_generation_returned_no_usable_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Maya is a senior researcher focused on interdisciplinary projects requiring strong collaboration.",
+      "private_goal": "To select a tool that balances flexibility and ease of use without excessive cost.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Comprehensive task management and strong collaboration features fit the lab's needs well.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Simple interface and visual task tracking could help with quick adoption.",
+          "reason_against": "Limited native timeline features may hinder detailed project tracking."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Robust timeline and resource management are valuable for complex projects.",
+          "reason_against": "Steep learning curve and higher cost make it less appealing for the whole team."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Highly customizable workflows and multiple views support diverse project needs.",
+          "reason_against": "Interface might be overwhelming, potentially slowing initial adoption."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Liam is a data analyst who values detailed tracking and integration with research software.",
+      "private_goal": "To find a tool that supports customization and integrates well with existing communication platforms.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Good integration with Google Drive, Slack, and Zoom supports communication.",
+          "reason_against": "Paid plans needed for advanced features may limit access."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Visual kanban boards simplify task tracking.",
+          "reason_against": "Calendar view is less effective than a full timeline for planning."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Advanced Gantt charts and Office Suite integration are strong points.",
+          "reason_against": "Higher cost and complexity reduce usability for the whole lab."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Customizable workflows and integration with key tools match personal preferences.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Nina is a project manager experienced in detailed planning and resource allocation.",
+      "private_goal": "To adopt a tool with robust timeline and resource management capabilities.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Flexible task views and collaboration features support project management.",
+          "reason_against": "Paid plans for advanced features could limit full utilization."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Simple interface is easy to use.",
+          "reason_against": "Limited timeline features make it unsuitable for detailed planning."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Advanced Gantt charts and resource management are ideal for complex projects.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Customizable workflows offer flexibility.",
+          "reason_against": "Interface complexity may reduce efficiency initially."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Omar is a lab technician who prefers straightforward tools with clear timelines.",
+      "private_goal": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 33,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Strong collaboration and timeline features help keep tasks clear.",
+          "reason_against": "Some features require paid plans, which might complicate access."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Visual task tracking is intuitive.",
+          "reason_against": "Calendar view is less effective than full timeline visualization."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Robust tools are good for detailed management.",
+          "reason_against": "High cost and complexity make it less practical for everyday use."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Timeline and workload views provide clear task and resource visibility.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Highly customizable workflows and multiple views support diverse project needs."
+      },
+      "narrowing_acceptance": "D",
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "user_limit"
+        ],
+        [
+          "A",
+          "task_management"
+        ],
+        [
+          "D",
+          "timeline_feature"
+        ],
+        [
+          "D",
+          "user_limit"
+        ],
+        [
+          "C",
+          "task_management"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "integration"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "task_management"
+        ],
+        [
+          "D",
+          "task_management"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Flexible task views and collaboration features support project management."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "D",
+          "timeline_feature"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "integration"
+        ],
+        [
+          "C",
+          "timeline_feature"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "D",
+          "task_management"
+        ],
+        [
+          "D",
+          "user_limit"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Decide which project management tool the research lab should adopt.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Timeline and workload views give clear visibility, so ClickUp fits.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Timeline and workload views provide clear task and resource visibility.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The customizable workflows and key tool integrations in ClickUp really fit what I’m looking for in tracking and analysis.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Customizable workflows and integration with key tools match personal preferences.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a tool that supports customization and integrates well with existing communication platforms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Advanced Gantt charts and resource management make Microsoft Project ideal.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Advanced Gantt charts and resource management are ideal for complex projects.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Robust timeline and resource management tools."
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Asana offers comprehensive task management and strong collaboration features, which fit the lab’s needs well.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Comprehensive task management and strong collaboration features fit the lab's needs well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers flexible task views and strong collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "High cost and complexity slow us down daily, right?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "High cost and complexity make it less practical for everyday use.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Steeper learning curve and higher cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "It’s true the steeper learning curve and cost slow progress.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Steeper learning curve and higher cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Steeper learning curve and higher cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Detailed task lists in Microsoft Project add complexity, while comprehensive management suits our needs better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare task_management: comprehensive and detailed task lists",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "task_management",
+            "public_value": "comprehensive"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "task_management",
+            "public_value": "detailed task lists"
+          }
+        ],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "ClickUp’s customizable workflows and multiple views could suit our diverse needs well.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highly customizable workflows and multiple views support diverse project needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Highly customizable workflows and multiple views support diverse project needs."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "A",
+        "movement_reason": "Highly customizable workflows and multiple views support diverse project needs."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Unlimited users mean no one’s left out. That keeps workload management simpler.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the user limit is unlimited",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "user_limit",
+          "public_value": "unlimited"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The timeline and workload views help balance visibility with managing team capacity effectively.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the timeline feature is timeline and workload views",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "timeline_feature",
+          "public_value": "timeline and workload views"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Liam, do you think the complexity of the interface might slow our team’s initial use?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Interface might be overwhelming, potentially slowing initial adoption.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Interface may be overwhelming for new users."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The interface could feel overwhelming at first, which might slow initial adoption.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Interface may be overwhelming for new users.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Interface may be overwhelming for new users."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a tool that supports customization and integrates well with existing communication platforms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Advanced Gantt charts offer deeper timeline control. Timeline and workload views improve resource balance. For my priority, the former fits better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare timeline_feature: advanced Gantt charts and timeline and workload views",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "timeline_feature",
+            "public_value": "advanced Gantt charts"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "timeline_feature",
+            "public_value": "timeline and workload views"
+          }
+        ],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Maya, do the paid features block key workload tools?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Some features require paid plans, which might complicate access.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Some advanced features require paid plans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Some key workload tools are available, but advanced features need paid plans.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Some advanced features require paid plans.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Some advanced features require paid plans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Flexible task views and collaboration in Asana could work for us.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible task views and collaboration features support project management.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers flexible task views and strong collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Flexible task views and collaboration features support project management."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Flexible task views and collaboration features support project management."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The comprehensive task management in Asana covers a lot, but ClickUp’s customizable workflows better match my need for tailored tracking setups.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare task_management: customizable workflows and comprehensive",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "task_management",
+            "public_value": "customizable workflows"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "task_management",
+            "public_value": "comprehensive"
+          }
+        ],
+        "personal_context": "To find a tool that supports customization and integrates well with existing communication platforms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The unlimited user limit is a big plus, keeps us flexible without extra cost.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the user limit is unlimited",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "user_limit",
+          "public_value": "unlimited"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Customizable workflows help us set clear steps and deadlines.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the task management is customizable workflows",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "task_management",
+          "public_value": "customizable workflows"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The integration with Google Drive, Slack, and Zoom definitely supports smoother communication, though I’d still want to ensure the workflows themselves can be finely tuned to our specific needs.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the integration is Google Drive, Slack, Zoom",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "integration",
+          "public_value": "Google Drive, Slack, Zoom"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a tool that supports customization and integrates well with existing communication platforms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Both have unlimited users, so neither limits our team size or adds cost there.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare user_limit: unlimited and unlimited",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "user_limit",
+            "public_value": "unlimited"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "user_limit",
+            "public_value": "unlimited"
+          }
+        ],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "The integrations support communication, but resource tracking remains key.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the integration is Google Drive, Slack, Zoom",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "integration",
+          "public_value": "Google Drive, Slack, Zoom"
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 23,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "ClickUp currently has 2 of 4 public preferences and the broadest overall support, but not a majority. Maya and Nina, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 24,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "ClickUp could fit since its customizable workflows and views support diverse needs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highly customizable workflows and multiple views support diverse project needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Highly customizable workflows and multiple views support diverse project needs."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "A",
+        "movement_reason": "Highly customizable workflows and multiple views support diverse project needs."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 25,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Interface complexity may slow our efficiency at first.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Interface complexity may reduce efficiency initially.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Interface may be overwhelming for new users."
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 26,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Please state your final choice.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 27,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is ClickUp.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highly customizable workflows and multiple views support diverse project needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Highly customizable workflows and multiple views support diverse project needs."
+        },
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "D",
+        "previous_option_id": "A",
+        "movement_reason": "Highly customizable workflows and multiple views support diverse project needs."
+      },
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "ClickUp is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Customizable workflows and integration with key tools match personal preferences.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 29,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "My final vote is Microsoft Project.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Advanced Gantt charts and resource management are ideal for complex projects.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Robust timeline and resource management tools."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 30,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "I choose ClickUp.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Timeline and workload views provide clear task and resource visibility.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 31,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose ClickUp.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:integration": 1,
+    "A:task_management": 2,
+    "A:upside": 2,
+    "A:user_limit": 1,
+    "C:concern": 2,
+    "C:task_management": 1,
+    "C:timeline_feature": 1,
+    "C:upside": 1,
+    "D:concern": 3,
+    "D:integration": 1,
+    "D:task_management": 2,
+    "D:timeline_feature": 2,
+    "D:upside": 4,
+    "D:user_limit": 3
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "upside"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "D",
+    "p3": "C",
+    "p4": "D"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "votes": {
+      "p1": "D",
+      "p2": "D",
+      "p3": "C",
+      "p4": "D"
+    },
+    "reason": "3 of 4 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 24,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 14369,
+    "output_tokens": 2119,
+    "moderator_turns": 4,
+    "voluntary_turns": 18,
+    "visible_movements": 3,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 4,
+    "participant_turns": 28,
+    "voluntary_turns": 18,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.125,
+    "avg_words_per_participant_turn": 12.14,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 14369,
+    "output_tokens": 2119,
+    "llm_calls": 27,
+    "voluntary_turns_by_persona": {
+      "p4": 4,
+      "p3": 5,
+      "p1": 7,
+      "p2": 2
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Timeline and workload views provide clear task and resource visibility.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Timeline and workload views give clear visibility, so ClickUp fits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Customizable workflows and integration with key tools match personal preferences.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a tool that supports customization and integrates well with existing communication platforms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The customizable workflows and key tool integrations in ClickUp really fit what I’m looking for in tracking and analysis.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Advanced Gantt charts and resource management are ideal for complex projects.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Robust timeline and resource management tools."
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Advanced Gantt charts and resource management make Microsoft Project ideal.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Comprehensive task management and strong collaboration features fit the lab's needs well.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers flexible task views and strong collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Asana offers comprehensive task management and strong collaboration features, which fit the lab’s needs well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "High cost and complexity make it less practical for everyday use.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Steeper learning curve and higher cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High cost and complexity slow us down daily, right?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Steeper learning curve and higher cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Steeper learning curve and higher cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s true the steeper learning curve and cost slow progress.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare task_management: comprehensive and detailed task lists",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "task_management",
+            "public_value": "comprehensive"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "task_management",
+            "public_value": "detailed task lists"
+          }
+        ],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Detailed task lists in Microsoft Project add complexity, while comprehensive management suits our needs better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highly customizable workflows and multiple views support diverse project needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Highly customizable workflows and multiple views support diverse project needs."
+        },
+        "vote_option": null
+      },
+      "raw_text": "ClickUp’s customizable workflows and multiple views could suit our diverse needs well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the user limit is unlimited",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "user_limit",
+          "public_value": "unlimited"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unlimited users mean no one’s left out. That keeps workload management simpler.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the timeline feature is timeline and workload views",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "timeline_feature",
+          "public_value": "timeline and workload views"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The timeline and workload views help balance visibility with managing team capacity effectively.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Interface might be overwhelming, potentially slowing initial adoption.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Interface may be overwhelming for new users."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liam, do you think the complexity of the interface might slow our team’s initial use?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Interface may be overwhelming for new users.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Interface may be overwhelming for new users."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a tool that supports customization and integrates well with existing communication platforms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The interface could feel overwhelming at first, which might slow initial adoption.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare timeline_feature: advanced Gantt charts and timeline and workload views",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "timeline_feature",
+            "public_value": "advanced Gantt charts"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "timeline_feature",
+            "public_value": "timeline and workload views"
+          }
+        ],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Advanced Gantt charts offer deeper timeline control. Timeline and workload views improve resource balance. For my priority, the former fits better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Some features require paid plans, which might complicate access.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Some advanced features require paid plans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, do the paid features block key workload tools?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Some advanced features require paid plans.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Some advanced features require paid plans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Some key workload tools are available, but advanced features need paid plans.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible task views and collaboration features support project management.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers flexible task views and strong collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Flexible task views and collaboration features support project management."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Flexible task views and collaboration in Asana could work for us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare task_management: customizable workflows and comprehensive",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "task_management",
+            "public_value": "customizable workflows"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "task_management",
+            "public_value": "comprehensive"
+          }
+        ],
+        "personal_context": "To find a tool that supports customization and integrates well with existing communication platforms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The comprehensive task management in Asana covers a lot, but ClickUp’s customizable workflows better match my need for tailored tracking setups.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the user limit is unlimited",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "user_limit",
+          "public_value": "unlimited"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The unlimited user limit is a big plus, keeps us flexible without extra cost.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the task management is customizable workflows",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "task_management",
+          "public_value": "customizable workflows"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team adopts a tool that is easy to learn and supports workload management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Customizable workflows help us set clear steps and deadlines.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the integration is Google Drive, Slack, Zoom",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "integration",
+          "public_value": "Google Drive, Slack, Zoom"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a tool that supports customization and integrates well with existing communication platforms.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The integration with Google Drive, Slack, and Zoom definitely supports smoother communication, though I’d still want to ensure the workflows themselves can be finely tuned to our specific needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare user_limit: unlimited and unlimited",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "user_limit",
+            "public_value": "unlimited"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "user_limit",
+            "public_value": "unlimited"
+          }
+        ],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have unlimited users, so neither limits our team size or adds cost there.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the integration is Google Drive, Slack, Zoom",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "integration",
+          "public_value": "Google Drive, Slack, Zoom"
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The integrations support communication, but resource tracking remains key.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highly customizable workflows and multiple views support diverse project needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a tool that balances flexibility and ease of use without excessive cost.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Highly customizable workflows and multiple views support diverse project needs."
+        },
+        "vote_option": null
+      },
+      "raw_text": "ClickUp could fit since its customizable workflows and views support diverse needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Interface complexity may reduce efficiency initially.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Interface may be overwhelming for new users."
+        },
+        "comparison_sources": [],
+        "personal_context": "To adopt a tool with robust timeline and resource management capabilities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Interface complexity may slow our efficiency at first.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highly customizable workflows and multiple views support diverse project needs.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Highly customizable workflows and multiple views support diverse project needs."
+        },
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is ClickUp.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Customizable workflows and integration with key tools match personal preferences.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "ClickUp is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Advanced Gantt charts and resource management are ideal for complex projects.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Robust timeline and resource management tools."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Microsoft Project.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Timeline and workload views provide clear task and resource visibility.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Highly customizable with multiple view options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose ClickUp.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

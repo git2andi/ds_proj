@@ -1,0 +1,3540 @@
+{
+  "provenance": {
+    "seed": 242118853,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide on the mascot for the youth football club",
+    "options": [
+      {
+        "id": "A",
+        "name": "Thunder Hawk",
+        "attrs": {
+          "animal": "bird of prey",
+          "color_scheme": "blue and silver",
+          "merchandise_compatibility": "high",
+          "community_recognition": "moderate"
+        },
+        "upside": "Strong and dynamic image that can energize the team and fans.",
+        "concern": "Design complexity may increase production costs for merchandise.",
+        "short_name": "Thunder Hawk",
+        "aliases": []
+      },
+      {
+        "id": "B",
+        "name": "Iron Rhino",
+        "attrs": {
+          "animal": "rhino",
+          "color_scheme": "gray and black",
+          "merchandise_compatibility": "moderate",
+          "community_recognition": "high"
+        },
+        "upside": "Represents strength and resilience, popular in local sports culture.",
+        "concern": "Mascot costume may be bulky and less comfortable for performers.",
+        "short_name": "Iron Rhino",
+        "aliases": []
+      },
+      {
+        "id": "C",
+        "name": "Blazing Fox",
+        "attrs": {
+          "animal": "fox",
+          "color_scheme": "orange and white",
+          "merchandise_compatibility": "high",
+          "community_recognition": "low"
+        },
+        "upside": "Agile and clever image that appeals to younger children.",
+        "concern": "Less recognized in the community, requiring more promotion.",
+        "short_name": "Blazing Fox",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "Storm Wolf",
+        "attrs": {
+          "animal": "wolf",
+          "color_scheme": "black and red",
+          "merchandise_compatibility": "moderate",
+          "community_recognition": "moderate"
+        },
+        "upside": "Symbolizes teamwork and determination, fitting for football.",
+        "concern": "Color scheme may be less visible in some outdoor settings.",
+        "short_name": "Storm Wolf",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "The youth football club needs to select a mascot that appeals to children aged 8-12 and can be easily represented on merchandise and uniforms. The mascot should reflect the team's spirit and be suitable for community events."
+    ],
+    "setup_notes": [
+      "alias_generation_returned_no_usable_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Maya is a youth sports coach passionate about energizing young players.",
+      "private_goal": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Strong and dynamic image that can energize the team and fans, with high merchandise compatibility.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Represents strength and resilience, popular locally.",
+          "reason_against": "Costume may be bulky and merchandise compatibility is only moderate."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Appeals to younger children with an agile and clever image.",
+          "reason_against": "Low community recognition and requires more promotion."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Symbolizes teamwork and determination, fitting for football.",
+          "reason_against": "Moderate merchandise compatibility and color scheme visibility concerns."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 4,
+        "stubbornness": 5
+      },
+      "background": "Liam is a local sports culture enthusiast and parent of a club player.",
+      "private_goal": "To ensure the mascot is easy to promote and comfortable for performers at events.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Design complexity increases costs and may not be comfortable for performers."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Costume may be bulky and uncomfortable, which is unacceptable."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "High merchandise compatibility and appealing agile image suitable for children.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 1,
+          "reason_for": "",
+          "reason_against": "Moderate merchandise compatibility and visibility issues make it less suitable."
+        }
+      },
+      "hard_blocker": true
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Zoe is a graphic designer volunteering to create club merchandise.",
+      "private_goal": "To pick a mascot that balances community recognition and ease of merchandising.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Strong image and high merchandise compatibility.",
+          "reason_against": "Design complexity could raise production costs."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Popular locally with high community recognition and a strong image.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Appealing to children and high merchandise compatibility.",
+          "reason_against": "Low community recognition requiring extra promotion."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Symbolizes teamwork well.",
+          "reason_against": "Moderate merchandise compatibility and color visibility issues."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Eli is a community event organizer focused on youth engagement.",
+      "private_goal": "To choose a mascot that is recognizable and effective at community events.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Energetic and dynamic image with good merchandise potential.",
+          "reason_against": "Production cost concerns due to design complexity."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "High community recognition and represents resilience well.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Appeals to younger kids and is merchandise friendly.",
+          "reason_against": "Low community recognition limits event impact."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Good symbolism for teamwork.",
+          "reason_against": "Color scheme visibility may be problematic outdoors."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nia",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 5,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Nia is a parent and volunteer focused on youth appeal and fun.",
+      "private_goal": "To ensure the mascot is fun and attractive to children aged 8-12.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Strong and exciting image that can energize kids.",
+          "reason_against": "Higher production costs might limit merchandise variety."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Strong and resilient image.",
+          "reason_against": "Bulky costume and moderate merchandise compatibility reduce appeal."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Agile and clever image that resonates well with children and is merchandise friendly.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Represents teamwork well.",
+          "reason_against": "Moderate merchandise compatibility and less visible colors."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "community_recognition"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "merchandise_compatibility"
+        ],
+        [
+          "B",
+          "animal"
+        ],
+        [
+          "C",
+          "color_scheme"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 1,
+        "B": 1,
+        "C": 5,
+        "D": 1
+      },
+      "acceptable_options": [
+        "C"
+      ],
+      "hard_rejected_options": [
+        "A",
+        "D",
+        "B"
+      ],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "C",
+          "animal"
+        ],
+        [
+          "A",
+          "animal"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Strong image and high merchandise compatibility."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "B",
+          "color_scheme"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "community_recognition"
+        ],
+        [
+          "C",
+          "merchandise_compatibility"
+        ],
+        [
+          "B",
+          "merchandise_compatibility"
+        ],
+        [
+          "B",
+          "animal"
+        ],
+        [
+          "C",
+          "color_scheme"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Energetic and dynamic image with good merchandise potential."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "community_recognition"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "community_recognition"
+        ],
+        [
+          "C",
+          "animal"
+        ],
+        [
+          "B",
+          "animal"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Strong and exciting image that can energize kids."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "merchandise_compatibility"
+        ],
+        [
+          "C",
+          "animal"
+        ],
+        [
+          "B",
+          "animal"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Decide on the mascot for the youth football club.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "The Blazing Fox feels like a good fit—its agile and clever image seems like it would really click with kids and be easy to use for merchandise.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Agile and clever image that resonates well with children and is merchandise friendly.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Agile and clever image that appeals to younger children."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is fun and attractive to children aged 8-12.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Blazing Fox works well—easy to promote and comfy for performers.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "High merchandise compatibility and appealing agile image suitable for children.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Agile and clever image that appeals to younger children."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is easy to promote and comfortable for performers at events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m leaning toward Thunder Hawk because it has a strong, dynamic image that could really energize both the team and fans, plus it seems great for merchandise.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong and dynamic image that can energize the team and fans, with high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Iron Rhino is popular locally with high community recognition, which makes it a strong choice for merchandise.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Popular locally with high community recognition and a strong image.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Represents strength and resilience, popular in local sports culture."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Iron Rhino stands out with strong community recognition and really captures resilience well.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High community recognition and represents resilience well.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Represents strength and resilience, popular in local sports culture."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Gray and black is a solid base, but it might limit how bold the mascot can look on merch.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the color scheme is gray and black",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "color_scheme",
+          "public_value": "gray and black"
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Could the lower recognition mean more effort needed to get people excited at events?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Low community recognition limits event impact.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less recognized in the community, requiring more promotion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Less recognition means more work to build excitement.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Less recognized in the community, requiring more promotion.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less recognized in the community, requiring more promotion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is easy to promote and comfortable for performers at events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Liam’s right, more excitement effort is needed with lower recognition, but higher merchandise compatibility makes the Blazing Fox easier to work with.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare merchandise_compatibility: moderate and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "merchandise_compatibility",
+            "public_value": "moderate"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "merchandise_compatibility",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Maya, do you think the design complexity might push production costs too high for this mascot?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Production cost concerns due to design complexity.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Design complexity may increase production costs for merchandise."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It might, but I’m not totally convinced the extra cost outweighs the impact it could have.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Design complexity may increase production costs for merchandise.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Design complexity may increase production costs for merchandise."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The strong, dynamic image of Thunder Hawk feels worth the extra cost since it’s really easy to merchandise.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong image and high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Strong image and high merchandise compatibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Strong image and high merchandise compatibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "A fox feels more relatable and easier for performers to stay comfortable in than a bird of prey.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare animal: fox and bird of prey",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "animal",
+            "public_value": "fox"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "animal",
+            "public_value": "bird of prey"
+          }
+        ],
+        "personal_context": "To ensure the mascot is easy to promote and comfortable for performers at events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "That costume looks bulky and uncomfortable, which won’t work for us.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Costume may be bulky and uncomfortable, which is unacceptable.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Mascot costume may be bulky and less comfortable for performers."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is easy to promote and comfortable for performers at events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The high community recognition does help, though I worry about comfort for our volunteers during long events.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the community recognition is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "community_recognition",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The rhino’s bold image fits well with easy merchandise designs, so it balances recognition and practicality for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the animal is rhino",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "animal",
+          "public_value": "rhino"
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The rhino’s gray and black colors are simpler for merchandise than the fox’s bright orange and white, which fits my priority better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare color_scheme: gray and black and orange and white",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "color_scheme",
+            "public_value": "gray and black"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "color_scheme",
+            "public_value": "orange and white"
+          }
+        ],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I see the appeal, but bulky costumes might limit how much energy the kids feel from the mascot, which is important to me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "Costume may be bulky and merchandise compatibility is only moderate.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Mascot costume may be bulky and less comfortable for performers."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The gray and black colors do make merchandising easier, though I wonder if the rhino’s less lively look might miss sparking excitement among the kids.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the animal is rhino",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "animal",
+          "public_value": "rhino"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "Merchandise might work okay, but I’m a bit worried it won’t catch the kids’ attention enough to keep them really excited.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the merchandise compatibility is moderate",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "merchandise_compatibility",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is fun and attractive to children aged 8-12.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The community seems to really know it, which is a big plus, though I wonder if that alone will keep the kids fully pumped up.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the community recognition is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "community_recognition",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "A fox is usually seen as quick and clever, which might feel more fun and relatable for kids than a rhino, even if the rhino is strong and sturdy.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare animal: fox and rhino",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "animal",
+            "public_value": "fox"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "animal",
+            "public_value": "rhino"
+          }
+        ],
+        "personal_context": "To ensure the mascot is fun and attractive to children aged 8-12.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Orange and white definitely stand out more, which could really help the mascot pop on gear, though I’m not sure if it’ll feel bold enough to keep everyone fired up long-term.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the color scheme is orange and white",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "color_scheme",
+          "public_value": "orange and white"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The community recognition is pretty low, so it might not build that immediate connection we need for merch to really catch on.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the community recognition is low",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "community_recognition",
+          "public_value": "low"
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That’s true, but the way it looks on merch could actually help build that connection over time, which feels important to me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the merchandise compatibility is high",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "merchandise_compatibility",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Actually, Thunder Hawk’s energetic and dynamic image could work well, especially for merch.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Energetic and dynamic image with good merchandise potential.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Energetic and dynamic image with good merchandise potential."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Energetic and dynamic image with good merchandise potential."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "A rhino is definitely more distinctive and sturdy-looking, which fits events better than a fox’s sly vibe.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare animal: rhino and fox",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "animal",
+            "public_value": "rhino"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "animal",
+            "public_value": "fox"
+          }
+        ],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "That’s a fair point, but the lower recognition means it might take longer to feel familiar at events.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the community recognition is low",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "community_recognition",
+          "public_value": "low"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 29,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Thunder Hawk is currently the leading option, though it is still short of a majority. Liam, Zoe, Eli, and Nia, could you accept it for the group?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 30,
+      "phase": "NARROWING",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "Thunder Hawk could fit well since its strong and exciting image might really energize kids, which feels important to me.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong and exciting image that can energize kids.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is fun and attractive to children aged 8-12.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Strong and exciting image that can energize kids."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Strong and exciting image that can energize kids."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 31,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Thunder Hawk has a strong image and works well for merchandise, which fits what we need.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong image and high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Strong image and high merchandise compatibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Strong image and high merchandise compatibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Thunder Hawk.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong and dynamic image that can energize the team and fans, with high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 34,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Blazing Fox.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "High merchandise compatibility and appealing agile image suitable for children.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Agile and clever image that appeals to younger children."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Thunder Hawk is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong image and high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Strong image and high merchandise compatibility."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Strong image and high merchandise compatibility."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Thunder Hawk is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Energetic and dynamic image with good merchandise potential.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Energetic and dynamic image with good merchandise potential."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Energetic and dynamic image with good merchandise potential."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "I’m voting for Thunder Hawk.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong and exciting image that can energize kids.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Strong and exciting image that can energize kids."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Strong and exciting image that can energize kids."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The decision closes with a majority for Thunder Hawk.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:animal": 1,
+    "A:concern": 2,
+    "A:upside": 5,
+    "B:animal": 4,
+    "B:color_scheme": 2,
+    "B:community_recognition": 2,
+    "B:concern": 2,
+    "B:merchandise_compatibility": 2,
+    "B:upside": 2,
+    "C:animal": 3,
+    "C:color_scheme": 2,
+    "C:community_recognition": 2,
+    "C:concern": 2,
+    "C:merchandise_compatibility": 2,
+    "C:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "upside"
+    ],
+    [
+      "A",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "C",
+    "p3": "A",
+    "p4": "A",
+    "p5": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "C",
+      "p3": "A",
+      "p4": "A",
+      "p5": "A"
+    },
+    "reason": "4 of 5 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 30,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 18828,
+    "output_tokens": 2678,
+    "moderator_turns": 4,
+    "voluntary_turns": 24,
+    "visible_movements": 6,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 5,
+    "participant_turns": 35,
+    "voluntary_turns": 24,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1026,
+    "avg_words_per_participant_turn": 17.23,
+    "visible_preference_changes": 3,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 18828,
+    "output_tokens": 2678,
+    "llm_calls": 33,
+    "voluntary_turns_by_persona": {
+      "p3": 7,
+      "p4": 6,
+      "p2": 3,
+      "p1": 5,
+      "p5": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Agile and clever image that resonates well with children and is merchandise friendly.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Agile and clever image that appeals to younger children."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is fun and attractive to children aged 8-12.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Blazing Fox feels like a good fit—its agile and clever image seems like it would really click with kids and be easy to use for merchandise.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "High merchandise compatibility and appealing agile image suitable for children.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Agile and clever image that appeals to younger children."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is easy to promote and comfortable for performers at events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Blazing Fox works well—easy to promote and comfy for performers.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong and dynamic image that can energize the team and fans, with high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I’m leaning toward Thunder Hawk because it has a strong, dynamic image that could really energize both the team and fans, plus it seems great for merchandise.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Popular locally with high community recognition and a strong image.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Represents strength and resilience, popular in local sports culture."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Iron Rhino is popular locally with high community recognition, which makes it a strong choice for merchandise.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "High community recognition and represents resilience well.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Represents strength and resilience, popular in local sports culture."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Iron Rhino stands out with strong community recognition and really captures resilience well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the color scheme is gray and black",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "color_scheme",
+          "public_value": "gray and black"
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Gray and black is a solid base, but it might limit how bold the mascot can look on merch.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Low community recognition limits event impact.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less recognized in the community, requiring more promotion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Could the lower recognition mean more effort needed to get people excited at events?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Less recognized in the community, requiring more promotion.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Less recognized in the community, requiring more promotion."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is easy to promote and comfortable for performers at events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Less recognition means more work to build excitement.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare merchandise_compatibility: moderate and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "merchandise_compatibility",
+            "public_value": "moderate"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "merchandise_compatibility",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liam’s right, more excitement effort is needed with lower recognition, but higher merchandise compatibility makes the Blazing Fox easier to work with.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Production cost concerns due to design complexity.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Design complexity may increase production costs for merchandise."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, do you think the design complexity might push production costs too high for this mascot?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Design complexity may increase production costs for merchandise.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Design complexity may increase production costs for merchandise."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It might, but I’m not totally convinced the extra cost outweighs the impact it could have.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong image and high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Strong image and high merchandise compatibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "The strong, dynamic image of Thunder Hawk feels worth the extra cost since it’s really easy to merchandise.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare animal: fox and bird of prey",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "animal",
+            "public_value": "fox"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "animal",
+            "public_value": "bird of prey"
+          }
+        ],
+        "personal_context": "To ensure the mascot is easy to promote and comfortable for performers at events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A fox feels more relatable and easier for performers to stay comfortable in than a bird of prey.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Costume may be bulky and uncomfortable, which is unacceptable.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Mascot costume may be bulky and less comfortable for performers."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is easy to promote and comfortable for performers at events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That costume looks bulky and uncomfortable, which won’t work for us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the community recognition is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "community_recognition",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The high community recognition does help, though I worry about comfort for our volunteers during long events.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the animal is rhino",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "animal",
+          "public_value": "rhino"
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The rhino’s bold image fits well with easy merchandise designs, so it balances recognition and practicality for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare color_scheme: gray and black and orange and white",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "color_scheme",
+            "public_value": "gray and black"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "color_scheme",
+            "public_value": "orange and white"
+          }
+        ],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The rhino’s gray and black colors are simpler for merchandise than the fox’s bright orange and white, which fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "Costume may be bulky and merchandise compatibility is only moderate.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Mascot costume may be bulky and less comfortable for performers."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I see the appeal, but bulky costumes might limit how much energy the kids feel from the mascot, which is important to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the animal is rhino",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "animal",
+          "public_value": "rhino"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The gray and black colors do make merchandising easier, though I wonder if the rhino’s less lively look might miss sparking excitement among the kids.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the merchandise compatibility is moderate",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "merchandise_compatibility",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is fun and attractive to children aged 8-12.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Merchandise might work okay, but I’m a bit worried it won’t catch the kids’ attention enough to keep them really excited.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the community recognition is high",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "community_recognition",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The community seems to really know it, which is a big plus, though I wonder if that alone will keep the kids fully pumped up.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare animal: fox and rhino",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "animal",
+            "public_value": "fox"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "animal",
+            "public_value": "rhino"
+          }
+        ],
+        "personal_context": "To ensure the mascot is fun and attractive to children aged 8-12.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A fox is usually seen as quick and clever, which might feel more fun and relatable for kids than a rhino, even if the rhino is strong and sturdy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the color scheme is orange and white",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "color_scheme",
+          "public_value": "orange and white"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Orange and white definitely stand out more, which could really help the mascot pop on gear, though I’m not sure if it’ll feel bold enough to keep everyone fired up long-term.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the community recognition is low",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "community_recognition",
+          "public_value": "low"
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The community recognition is pretty low, so it might not build that immediate connection we need for merch to really catch on.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the merchandise compatibility is high",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "merchandise_compatibility",
+          "public_value": "high"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a mascot that inspires team spirit and is visually striking on merchandise.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s true, but the way it looks on merch could actually help build that connection over time, which feels important to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Energetic and dynamic image with good merchandise potential.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Energetic and dynamic image with good merchandise potential."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Actually, Thunder Hawk’s energetic and dynamic image could work well, especially for merch.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare animal: rhino and fox",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "animal",
+            "public_value": "rhino"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "animal",
+            "public_value": "fox"
+          }
+        ],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A rhino is definitely more distinctive and sturdy-looking, which fits events better than a fox’s sly vibe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the community recognition is low",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "community_recognition",
+          "public_value": "low"
+        },
+        "comparison_sources": [],
+        "personal_context": "To choose a mascot that is recognizable and effective at community events.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That’s a fair point, but the lower recognition means it might take longer to feel familiar at events.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong and exciting image that can energize kids.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the mascot is fun and attractive to children aged 8-12.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Strong and exciting image that can energize kids."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Thunder Hawk could fit well since its strong and exciting image might really energize kids, which feels important to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong image and high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": "To pick a mascot that balances community recognition and ease of merchandising.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Strong image and high merchandise compatibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Thunder Hawk has a strong image and works well for merchandise, which fits what we need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong and dynamic image that can energize the team and fans, with high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Thunder Hawk.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "High merchandise compatibility and appealing agile image suitable for children.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Agile and clever image that appeals to younger children."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Blazing Fox.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong image and high merchandise compatibility.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Strong image and high merchandise compatibility."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "Thunder Hawk is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Energetic and dynamic image with good merchandise potential.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Energetic and dynamic image with good merchandise potential."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "Thunder Hawk is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Strong and exciting image that can energize kids.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Strong and dynamic image that can energize the team and fans."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Strong and exciting image that can energize kids."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Thunder Hawk.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

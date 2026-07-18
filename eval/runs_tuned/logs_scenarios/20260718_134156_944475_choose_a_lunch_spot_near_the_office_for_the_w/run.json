@@ -1,0 +1,4252 @@
+{
+  "provenance": {
+    "seed": 242118789,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose a lunch spot near the office for the weekly team lunch",
+    "options": [
+      {
+        "id": "A",
+        "name": "Green Garden Vegetarian Bistro",
+        "attrs": {
+          "cuisine": "Vegetarian",
+          "distance_minutes": "7",
+          "seating_capacity": "20",
+          "price_range": "moderate"
+        },
+        "upside": "Offers healthy vegetarian dishes with ample seating for the group.",
+        "concern": "Limited menu options for non-vegetarian preferences.",
+        "short_name": "Green Garden",
+        "aliases": [
+          "Green Garden",
+          "Vegetarian Bistro"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Downtown Deli & Sandwiches",
+        "attrs": {
+          "cuisine": "Deli/Sandwiches",
+          "distance_minutes": "5",
+          "seating_capacity": "15",
+          "price_range": "affordable"
+        },
+        "upside": "Quick service with a variety of sandwich options and casual seating.",
+        "concern": "Smaller indoor space may feel crowded during peak lunch hours.",
+        "short_name": "Downtown Deli",
+        "aliases": [
+          "Downtown Deli",
+          "Deli & Sandwiches"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Pasta House Italian Eatery",
+        "attrs": {
+          "cuisine": "Italian",
+          "distance_minutes": "9",
+          "seating_capacity": "25",
+          "price_range": "moderate"
+        },
+        "upside": "Spacious seating with a diverse menu including pasta and salads.",
+        "concern": "Longer wait times possible during busy lunch periods.",
+        "short_name": "Pasta House",
+        "aliases": [
+          "Pasta House",
+          "Italian Eatery"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Sushi Express",
+        "attrs": {
+          "cuisine": "Japanese",
+          "distance_minutes": "8",
+          "seating_capacity": "18",
+          "price_range": "moderate"
+        },
+        "upside": "Fresh sushi options and quick service suitable for group dining.",
+        "concern": "Limited hot meal options beyond sushi and sashimi.",
+        "short_name": "Sushi Express",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "The team of seven plans a weekly lunch near the office. Each option must accommodate seven people and be within a 10-minute walk from the office building."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Maya is a project manager who values quick and fresh meal options to keep the team energized.",
+      "private_goal": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Healthy vegetarian dishes with ample seating are good for the group.",
+          "reason_against": "Limited options for non-vegetarians may not satisfy everyone."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Affordable prices and quick service are appealing.",
+          "reason_against": "Smaller space might feel crowded during peak hours."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Spacious seating and diverse menu offer good group accommodation.",
+          "reason_against": "Possible long wait times could reduce lunch efficiency."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Fresh sushi and quick service fit my preference perfectly.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Liam is a software developer who enjoys diverse and filling meals during lunch.",
+      "private_goal": "Choose a spot with a varied menu and enough space to relax during lunch.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 28,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Healthy vegetarian options are nice but limited for meat-eaters.",
+          "reason_against": "Menu may not offer enough variety for my appetite."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Affordable and quick, good for busy days.",
+          "reason_against": "Seating might be cramped for a group of seven."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Diverse menu and spacious seating ideal for group and personal preference.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Fresh and quick sushi is appealing.",
+          "reason_against": "Limited hot food options reduce variety."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 4,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Nina is a UX designer who prefers straightforward, efficient lunch options.",
+      "private_goal": "Pick a place with quick service and fresh food to minimize downtime.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Healthy and ample seating is good for the team.",
+          "reason_against": "Vegetarian focus limits choices for others."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Quick service and affordable prices fit my needs.",
+          "reason_against": "Seating might be tight for the full team."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Spacious and varied menu is a plus.",
+          "reason_against": "Potentially long wait times are a downside."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Fresh sushi and fast service align with my priorities.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Omar is a data analyst who values efficiency and variety in lunch options.",
+      "private_goal": "Select a spot with diverse meals and enough space to avoid crowding.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 40,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Healthy options and good seating capacity.",
+          "reason_against": "Vegetarian menu limits choices for many."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Affordable and quick service.",
+          "reason_against": "Seating may feel cramped for seven people."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Spacious seating and diverse Italian menu suit group needs.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Fresh sushi and quick service are appealing.",
+          "reason_against": "Limited hot meal options reduce variety."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Zoe is a marketing specialist who enjoys flavorful and fresh meals with friends.",
+      "private_goal": "Find a lunch spot with fresh food and a relaxed atmosphere for socializing.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Healthy and ample seating is good for the group.",
+          "reason_against": "Limited vegetarian menu might not satisfy all."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Affordable and quick, good for casual lunches.",
+          "reason_against": "Seating might be crowded during peak times."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Spacious with a diverse menu for varied tastes.",
+          "reason_against": "Possible long waits could disrupt lunch flow."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Fresh sushi and quick service fit my preferences well.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Eli is a systems engineer who prefers quick, affordable, and convenient lunch spots.",
+      "private_goal": "Choose the fastest and most affordable option to save time and money.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 36,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Healthy options and good seating capacity.",
+          "reason_against": "Vegetarian focus limits choices for meat-eaters."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Affordable prices and quick service are ideal for busy days.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Diverse menu with spacious seating.",
+          "reason_against": "Long wait times reduce convenience."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Quick sushi service is appealing.",
+          "reason_against": "Limited hot meals reduce variety."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Tara",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 4,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Tara is a business analyst who values variety and a comfortable dining environment.",
+      "private_goal": "Find a lunch spot with affordable prices and enough space for the team to relax.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Healthy and ample seating is good for the group.",
+          "reason_against": "Limited vegetarian menu may not satisfy all."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Affordable and quick with a variety of sandwiches.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Spacious seating and diverse menu options.",
+          "reason_against": "Long wait times could be inconvenient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Fresh sushi and quick service are appealing.",
+          "reason_against": "Limited hot meal options reduce variety."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 4,
+        "D": 5
+      },
+      "acceptable_options": [
+        "C",
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "cuisine"
+        ],
+        [
+          "B",
+          "price_range"
+        ],
+        [
+          "C",
+          "price_range"
+        ],
+        [
+          "B",
+          "distance_minutes"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "distance_minutes"
+        ],
+        [
+          "D",
+          "cuisine"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "seating_capacity"
+        ],
+        [
+          "D",
+          "price_range"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "C",
+        "B",
+        "D"
+      ],
+      "acceptance_reasons": {
+        "B": "Affordable and quick, good for busy days.",
+        "D": "Fresh and quick sushi is appealing.",
+        "C": "Diverse menu and spacious seating ideal for group and personal preference."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "price_range"
+        ],
+        [
+          "D",
+          "seating_capacity"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "seating_capacity"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "cuisine"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 4,
+        "D": 5
+      },
+      "acceptable_options": [
+        "C",
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "seating_capacity"
+        ],
+        [
+          "D",
+          "price_range"
+        ],
+        [
+          "B",
+          "cuisine"
+        ],
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 3,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Fresh sushi and quick service are appealing."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "cuisine"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "seating_capacity"
+        ],
+        [
+          "B",
+          "distance_minutes"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "distance_minutes"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 4,
+        "D": 5
+      },
+      "acceptable_options": [
+        "C",
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "price_range"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "seating_capacity"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "seating_capacity"
+        ],
+        [
+          "C",
+          "distance_minutes"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "distance_minutes"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Choose a lunch spot near the office for the weekly team lunch.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Spacious seating and diverse Italian menu at Pasta House fit our needs.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious seating and diverse Italian menu suit group needs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious seating with a diverse menu including pasta and salads."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Fresh sushi and fast service align with my priorities, so Option D works well for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and fast service align with my priorities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a place with quick service and fresh food to minimize downtime.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Pasta House seems good—spacious seating and a varied menu let everyone relax and choose what they like.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Diverse menu and spacious seating ideal for group and personal preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious seating with a diverse menu including pasta and salads."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Zoe",
+      "text": "Fresh sushi and quick service fit my preferences well, so I’m leaning toward Option D.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service fit my preferences well.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh food and a relaxed atmosphere for socializing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Fresh sushi and quick service fit my preference perfectly, so Sushi Express works best for maximizing our lunch break.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service fit my preference perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Downtown Deli’s affordable prices and quick service work best for busy days.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable prices and quick service are ideal for busy days.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the fastest and most affordable option to save time and money.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Tara",
+      "text": "Downtown Deli is affordable and quick, with enough variety in sandwiches to keep things interesting.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable and quick with a variety of sandwiches.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with affordable prices and enough space for the team to relax.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Affordable is great, though I’d want to make sure there’s enough seating to actually relax during lunch.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the price range is affordable",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_range",
+          "public_value": "affordable"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Five minutes is reasonable, but if seating is tight, that cuts into our break too much for me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the distance minutes is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "distance_minutes",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Varied sandwiches sound good, but if seating’s tight, I might not get the relaxed break I need.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cuisine is Deli/Sandwiches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cuisine",
+          "public_value": "Deli/Sandwiches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zoe",
+      "text": "If seating might be crowded, should we consider an earlier or later lunch time?",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Seating might be crowded during peak times.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Smaller indoor space may feel crowded during peak lunch hours."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh food and a relaxed atmosphere for socializing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Smaller indoor space gets crowded at peak times, so an earlier lunch works better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the concern is Smaller indoor space may feel crowded during peak lunch hours.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Smaller indoor space may feel crowded during peak lunch hours."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Downtown Deli’s quick service and affordable prices could work well on busy days, especially if we go a bit earlier to avoid the crowd.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable and quick, good for busy days.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Affordable and quick, good for busy days."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Affordable and quick, good for busy days."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Downtown Deli’s 5-minute walk beats Pasta House’s 9 for quick access.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare distance_minutes: 9 and 5",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "distance_minutes",
+            "public_value": "9"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "distance_minutes",
+            "public_value": "5"
+          }
+        ],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "The 25-seat limit means it could get cramped, so I’d prefer somewhere less likely to slow us down.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the seating capacity is 25",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "seating_capacity",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a place with quick service and fresh food to minimize downtime.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Moderate pricing fits our budget, but I’d still prioritize speed and fresh options to keep us energized through the afternoon.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price range is moderate",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_range",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Long waits might slow us down too much.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Long wait times reduce convenience.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer wait times possible during busy lunch periods."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the fastest and most affordable option to save time and money.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "25 seats might work if we move fast, but crowding could slow us down and hurt our lunch break efficiency.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the seating capacity is 25",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "seating_capacity",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Italian food usually means a slower meal, so it might not keep us as energized or quick as fresh sushi would.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cuisine is Italian",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cuisine",
+          "public_value": "Italian"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Zoe, does the limited hot meal variety here concern you for lunch?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "Limited hot meal options reduce variety.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Limited hot meal options beyond sushi and sashimi."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zoe",
+      "text": "The limited hot options beyond sushi and sashimi do make me a bit hesitant.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Limited hot meal options beyond sushi and sashimi.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Limited hot meal options beyond sushi and sashimi."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh food and a relaxed atmosphere for socializing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Fresh and quick sushi from Sushi Express sounds good to me—it’s a nice mix and the pace suits lunch breaks.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh and quick sushi is appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Fresh and quick sushi is appealing."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "D",
+        "previous_option_id": "C",
+        "movement_reason": "Fresh and quick sushi is appealing."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Seating is 15 at Deli, 18 at Sushi—more space could mean faster seating, which fits my priority better.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare seating_capacity: 15 and 18",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "seating_capacity",
+            "public_value": "15"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "seating_capacity",
+            "public_value": "18"
+          }
+        ],
+        "personal_context": "Choose the fastest and most affordable option to save time and money.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Deli sandwiches are quick but seating is tight, which could slow things down during peak lunch.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cuisine is Deli/Sandwiches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cuisine",
+          "public_value": "Deli/Sandwiches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a place with quick service and fresh food to minimize downtime.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Fifteen seats still feels cramped for a quick lunch rush.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the seating capacity is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "seating_capacity",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Actually, Pasta House could work well—it has a diverse menu and enough space to spread out, which fits both group and personal needs.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Diverse menu and spacious seating ideal for group and personal preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious seating with a diverse menu including pasta and salads."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "D",
+          "movement_reason": "Diverse menu and spacious seating ideal for group and personal preference."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "D",
+        "movement_reason": "Diverse menu and spacious seating ideal for group and personal preference."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Italian works if the menu is truly varied enough for everyone.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cuisine is Italian",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cuisine",
+          "public_value": "Italian"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zoe",
+      "text": "The moderate prices are a plus, though I hope the menu variety really includes some fresh, flavorful choices we can all enjoy.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the price range is moderate",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_range",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh food and a relaxed atmosphere for socializing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Nine minutes feels a bit long when lunch time’s tight.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the distance minutes is 9",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "distance_minutes",
+          "public_value": "9"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the fastest and most affordable option to save time and money.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Sushi Express has 18 seats while Downtown Deli only has 15, so the sushi spot might give us a bit more room to relax.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare seating_capacity: 18 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "seating_capacity",
+            "public_value": "18"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "seating_capacity",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Eight minutes is still a bit long for lunch, so quick service is a must to keep us on schedule.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the distance minutes is 8",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "distance_minutes",
+          "public_value": "8"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Quick service is key, and Sushi Express has fresh sushi plus more seats.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service are appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Fresh sushi and quick service are appealing."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "D",
+        "previous_option_id": "C",
+        "movement_reason": "Fresh sushi and quick service are appealing."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Moderate price works if the service stays quick; otherwise, it cuts into our break too much.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the price range is moderate",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "price_range",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a place with quick service and fresh food to minimize downtime.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Japanese cuisine fits well if the sushi is fresh and served quickly; anything slower will eat into our break too much.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the cuisine is Japanese",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cuisine",
+          "public_value": "Japanese"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tara",
+      "text": "Eight minutes isn’t ideal, but if the seating is spacious, it could still work for the team to relax.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the distance minutes is 8",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "distance_minutes",
+          "public_value": "8"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with affordable prices and enough space for the team to relax.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 36,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Affordable prices at the deli help stretch the budget, but moderate pricing at Sushi Express is okay if the sushi and speed are solid.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare price_range: moderate and affordable",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "price_range",
+            "public_value": "moderate"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "price_range",
+            "public_value": "affordable"
+          }
+        ],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Please state your final choice.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Sushi Express.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service fit my preference perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for Sushi Express.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh and quick sushi is appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Sushi Express is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and fast service align with my priorities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "I choose Sushi Express.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service are appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Zoe",
+      "text": "My final vote is Sushi Express.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service fit my preferences well.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "I choose Downtown Deli.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable prices and quick service are ideal for busy days.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Tara",
+      "text": "I’m voting for Downtown Deli.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable and quick with a variety of sandwiches.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Sushi Express.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "B:concern": 2,
+    "B:cuisine": 2,
+    "B:distance_minutes": 2,
+    "B:price_range": 2,
+    "B:seating_capacity": 3,
+    "B:upside": 3,
+    "C:concern": 1,
+    "C:cuisine": 2,
+    "C:distance_minutes": 2,
+    "C:price_range": 2,
+    "C:seating_capacity": 2,
+    "C:upside": 3,
+    "D:concern": 2,
+    "D:cuisine": 1,
+    "D:distance_minutes": 2,
+    "D:price_range": 2,
+    "D:seating_capacity": 2,
+    "D:upside": 5
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "price_range"
+    ],
+    [
+      "B",
+      "price_range"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "D",
+    "p3": "D",
+    "p4": "D",
+    "p5": "D",
+    "p6": "B",
+    "p7": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "votes": {
+      "p1": "D",
+      "p2": "D",
+      "p3": "D",
+      "p4": "D",
+      "p5": "D",
+      "p6": "B",
+      "p7": "B"
+    },
+    "reason": "5 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 37,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 1,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 22983,
+    "output_tokens": 3341,
+    "moderator_turns": 3,
+    "voluntary_turns": 28,
+    "visible_movements": 4,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 43,
+    "voluntary_turns": 28,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0652,
+    "avg_words_per_participant_turn": 14.81,
+    "visible_preference_changes": 2,
+    "repair_turns": 0,
+    "dropped_turns": 1,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 22983,
+    "output_tokens": 3341,
+    "llm_calls": 40,
+    "voluntary_turns_by_persona": {
+      "p2": 6,
+      "p1": 8,
+      "p5": 2,
+      "p4": 5,
+      "p3": 3,
+      "p6": 3,
+      "p7": 1
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Spacious seating and diverse Italian menu suit group needs.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious seating with a diverse menu including pasta and salads."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Spacious seating and diverse Italian menu at Pasta House fit our needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and fast service align with my priorities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a place with quick service and fresh food to minimize downtime.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fresh sushi and fast service align with my priorities, so Option D works well for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Diverse menu and spacious seating ideal for group and personal preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious seating with a diverse menu including pasta and salads."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Pasta House seems good—spacious seating and a varied menu let everyone relax and choose what they like.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service fit my preferences well.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh food and a relaxed atmosphere for socializing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fresh sushi and quick service fit my preferences well, so I’m leaning toward Option D.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service fit my preference perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fresh sushi and quick service fit my preference perfectly, so Sushi Express works best for maximizing our lunch break.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable prices and quick service are ideal for busy days.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the fastest and most affordable option to save time and money.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Downtown Deli’s affordable prices and quick service work best for busy days.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable and quick with a variety of sandwiches.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with affordable prices and enough space for the team to relax.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Downtown Deli is affordable and quick, with enough variety in sandwiches to keep things interesting.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the price range is affordable",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "price_range",
+          "public_value": "affordable"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Affordable is great, though I’d want to make sure there’s enough seating to actually relax during lunch.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the distance minutes is 5",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "distance_minutes",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Five minutes is reasonable, but if seating is tight, that cuts into our break too much for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cuisine is Deli/Sandwiches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cuisine",
+          "public_value": "Deli/Sandwiches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Varied sandwiches sound good, but if seating’s tight, I might not get the relaxed break I need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Seating might be crowded during peak times.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Smaller indoor space may feel crowded during peak lunch hours."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh food and a relaxed atmosphere for socializing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "If seating might be crowded, should we consider an earlier or later lunch time?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the concern is Smaller indoor space may feel crowded during peak lunch hours.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Smaller indoor space may feel crowded during peak lunch hours."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Smaller indoor space gets crowded at peak times, so an earlier lunch works better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable and quick, good for busy days.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Affordable and quick, good for busy days."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Downtown Deli’s quick service and affordable prices could work well on busy days, especially if we go a bit earlier to avoid the crowd.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare distance_minutes: 9 and 5",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "distance_minutes",
+            "public_value": "9"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "distance_minutes",
+            "public_value": "5"
+          }
+        ],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Downtown Deli’s 5-minute walk beats Pasta House’s 9 for quick access.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the seating capacity is 25",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "seating_capacity",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a place with quick service and fresh food to minimize downtime.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 25-seat limit means it could get cramped, so I’d prefer somewhere less likely to slow us down.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the price range is moderate",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_range",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Moderate pricing fits our budget, but I’d still prioritize speed and fresh options to keep us energized through the afternoon.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Long wait times reduce convenience.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Longer wait times possible during busy lunch periods."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the fastest and most affordable option to save time and money.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Long waits might slow us down too much.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the seating capacity is 25",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "seating_capacity",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "25 seats might work if we move fast, but crowding could slow us down and hurt our lunch break efficiency.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cuisine is Italian",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cuisine",
+          "public_value": "Italian"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Italian food usually means a slower meal, so it might not keep us as energized or quick as fresh sushi would.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "Limited hot meal options reduce variety.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Limited hot meal options beyond sushi and sashimi."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Zoe, does the limited hot meal variety here concern you for lunch?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Limited hot meal options beyond sushi and sashimi.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Limited hot meal options beyond sushi and sashimi."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh food and a relaxed atmosphere for socializing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The limited hot options beyond sushi and sashimi do make me a bit hesitant.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh and quick sushi is appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Fresh and quick sushi is appealing."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Fresh and quick sushi from Sushi Express sounds good to me—it’s a nice mix and the pace suits lunch breaks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare seating_capacity: 15 and 18",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "seating_capacity",
+            "public_value": "15"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "seating_capacity",
+            "public_value": "18"
+          }
+        ],
+        "personal_context": "Choose the fastest and most affordable option to save time and money.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Seating is 15 at Deli, 18 at Sushi—more space could mean faster seating, which fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cuisine is Deli/Sandwiches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "cuisine",
+          "public_value": "Deli/Sandwiches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a place with quick service and fresh food to minimize downtime.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Deli sandwiches are quick but seating is tight, which could slow things down during peak lunch.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the seating capacity is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "seating_capacity",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fifteen seats still feels cramped for a quick lunch rush.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare distance_minutes: 8 and 5",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "distance_minutes",
+            "public_value": "8"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "distance_minutes",
+            "public_value": "5"
+          }
+        ],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Downtown Deli is closer by about 3 minutes, which helps save time, but I’m still leaning toward more space to relax during lunch.",
+      "validation_errors": [
+        "unsupported numeric claim: 3 minutes"
+      ],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "dropped",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Diverse menu and spacious seating ideal for group and personal preference.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Spacious seating with a diverse menu including pasta and salads."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "D",
+          "movement_reason": "Diverse menu and spacious seating ideal for group and personal preference."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Actually, Pasta House could work well—it has a diverse menu and enough space to spread out, which fits both group and personal needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cuisine is Italian",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cuisine",
+          "public_value": "Italian"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Italian works if the menu is truly varied enough for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the price range is moderate",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_range",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh food and a relaxed atmosphere for socializing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The moderate prices are a plus, though I hope the menu variety really includes some fresh, flavorful choices we can all enjoy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the distance minutes is 9",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "distance_minutes",
+          "public_value": "9"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the fastest and most affordable option to save time and money.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Nine minutes feels a bit long when lunch time’s tight.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare seating_capacity: 18 and 15",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "seating_capacity",
+            "public_value": "18"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "seating_capacity",
+            "public_value": "15"
+          }
+        ],
+        "personal_context": "Choose a spot with a varied menu and enough space to relax during lunch.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sushi Express has 18 seats while Downtown Deli only has 15, so the sushi spot might give us a bit more room to relax.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the distance minutes is 8",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "distance_minutes",
+          "public_value": "8"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Eight minutes is still a bit long for lunch, so quick service is a must to keep us on schedule.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service are appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a spot with diverse meals and enough space to avoid crowding.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Fresh sushi and quick service are appealing."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Quick service is key, and Sushi Express has fresh sushi plus more seats.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the price range is moderate",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "price_range",
+          "public_value": "moderate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a place with quick service and fresh food to minimize downtime.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Moderate price works if the service stays quick; otherwise, it cuts into our break too much.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the cuisine is Japanese",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "cuisine",
+          "public_value": "Japanese"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Japanese cuisine fits well if the sushi is fresh and served quickly; anything slower will eat into our break too much.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the distance minutes is 8",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "distance_minutes",
+          "public_value": "8"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a lunch spot with affordable prices and enough space for the team to relax.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Eight minutes isn’t ideal, but if the seating is spacious, it could still work for the team to relax.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare price_range: moderate and affordable",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "price_range",
+            "public_value": "moderate"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "price_range",
+            "public_value": "affordable"
+          }
+        ],
+        "personal_context": "Find a lunch spot with fresh sushi and quick service to maximize lunch break time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Affordable prices at the deli help stretch the budget, but moderate pricing at Sushi Express is okay if the sushi and speed are solid.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service fit my preference perfectly.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Sushi Express.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh and quick sushi is appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for Sushi Express.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and fast service align with my priorities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Sushi Express is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service are appealing.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose Sushi Express.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Fresh sushi and quick service fit my preferences well.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Fresh sushi options and quick service suitable for group dining."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Sushi Express.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable prices and quick service are ideal for busy days.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Downtown Deli.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Affordable and quick with a variety of sandwiches.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quick service with a variety of sandwich options and casual seating."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Downtown Deli.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {
+    "unsupported numeric claim: 3 minutes": 1
+  },
+  "protocol_errors": [],
+  "quality_flags": [
+    "dropped_turns:1"
+  ],
+  "needs_review": true
+}

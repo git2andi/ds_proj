@@ -1,0 +1,3493 @@
+{
+  "provenance": {
+    "seed": 242118903,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide how a fictional investment committee should diversify its portfolio",
+    "options": [
+      {
+        "id": "A",
+        "name": "Balanced Equity and Bond Mix",
+        "attrs": {
+          "equity_allocation_percent": "50",
+          "bond_allocation_percent": "40",
+          "liquidity_days": "3"
+        },
+        "upside": "Provides steady income with moderate growth potential.",
+        "concern": "Equity exposure may increase volatility during market downturns.",
+        "short_name": "Balanced Equity",
+        "aliases": [
+          "Balanced Equity",
+          "Bond Mix"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Real Estate and Infrastructure Focus",
+        "attrs": {
+          "real_estate_percent": "40",
+          "infrastructure_percent": "30",
+          "expected_annual_return_percent": "6",
+          "liquidity_days": "30"
+        },
+        "upside": "Offers stable cash flows and inflation protection.",
+        "concern": "Longer liquidity period limits quick portfolio adjustments.",
+        "short_name": "Real Estate",
+        "aliases": [
+          "Real Estate",
+          "Infrastructure Focus"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "High-Dividend Equity and Corporate Bonds",
+        "attrs": {
+          "high_dividend_equity_percent": "45",
+          "corporate_bonds_percent": "45",
+          "average_credit_rating": "A",
+          "liquidity_days": "5"
+        },
+        "upside": "Combines income generation with credit quality focus.",
+        "concern": "Dividend stocks may be sensitive to interest rate changes.",
+        "short_name": "High-Dividend Equity",
+        "aliases": [
+          "High-Dividend Equity",
+          "Corporate Bonds"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Alternative Assets and Emerging Market Equities",
+        "attrs": {
+          "alternative_assets_percent": "35",
+          "emerging_market_equities_percent": "40",
+          "volatility_index": "0.8",
+          "liquidity_days": "10"
+        },
+        "upside": "Potential for diversification and higher returns.",
+        "concern": "Higher volatility and less predictable liquidity.",
+        "short_name": "Alternative Assets",
+        "aliases": [
+          "Alternative Assets",
+          "Emerging Market Equities"
+        ]
+      }
+    ],
+    "shared_context": [
+      "An investment committee of seven members must diversify a portfolio across asset classes to balance risk and return. The portfolio should include a mix of equities, bonds, real estate, and alternative investments with moderate liquidity constraints."
+    ],
+    "setup_notes": [
+      "scenario_regenerated_after_validation_error",
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Maya is a seasoned portfolio manager focused on stable income and moderate growth.",
+      "private_goal": "Ensure the portfolio balances steady returns with manageable risk.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Provides steady income with moderate growth, matching my risk tolerance.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Stable cash flows and inflation protection are valuable.",
+          "reason_against": "Long liquidity period limits flexibility."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Good income generation with credit quality focus.",
+          "reason_against": "Dividend stocks can be sensitive to interest rate changes."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Potential for higher returns and diversification.",
+          "reason_against": "Higher volatility and unpredictable liquidity are concerns."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Liam is an infrastructure analyst who prioritizes long-term stable assets.",
+      "private_goal": "Maximize inflation protection and stable cash flows in the portfolio.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 52,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Balanced exposure offers moderate growth and income.",
+          "reason_against": "Equity volatility is a concern but manageable."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Stable cash flows and inflation protection align with my priorities.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Good income potential with credit quality.",
+          "reason_against": "Interest rate sensitivity of dividends is a risk."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Diversification potential is attractive.",
+          "reason_against": "Volatility and liquidity unpredictability are drawbacks."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Zoe is a credit analyst focused on income and credit quality.",
+      "private_goal": "Prioritize credit quality and consistent income streams.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Moderate growth and steady income are appealing.",
+          "reason_against": "Equity volatility could be problematic."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Stable cash flows are beneficial.",
+          "reason_against": "Liquidity constraints reduce flexibility."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Combines income generation with strong credit quality focus.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Potential for higher returns.",
+          "reason_against": "Higher volatility and liquidity unpredictability are concerns."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Eli is a risk manager who values clear, direct investment strategies.",
+      "private_goal": "Maintain a balanced portfolio that limits downside risk.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 47,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Balanced equity and bond mix reduces risk while allowing growth.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Stable cash flows and inflation protection are good risk mitigators.",
+          "reason_against": "Liquidity delay is a drawback."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Income and credit quality are positive.",
+          "reason_against": "Interest rate sensitivity of dividends adds risk."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Diversification potential is noted.",
+          "reason_against": "Volatility and liquidity unpredictability are too high."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Nina is an alternative investments specialist seeking higher returns.",
+      "private_goal": "Maximize portfolio returns through diversification into alternatives.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Moderate growth and income are acceptable.",
+          "reason_against": "Less upside compared to alternatives."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Stable cash flows are good but liquidity limits are restrictive.",
+          "reason_against": "Long liquidity period reduces agility."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Good income and credit quality balance.",
+          "reason_against": "Interest rate sensitivity is a moderate concern."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Potential for higher returns and diversification fits my goals.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Omar is a fixed income strategist focused on risk-adjusted returns.",
+      "private_goal": "Ensure portfolio stability with a strong bond component.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 50,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Balanced equity and bond mix provides steady income and moderate growth.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Stable cash flows and inflation protection are positives.",
+          "reason_against": "Liquidity constraints are a drawback."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Income generation with good credit quality is appealing.",
+          "reason_against": "Dividend stocks' interest rate sensitivity is a concern."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Diversification potential is noted.",
+          "reason_against": "Higher volatility and liquidity unpredictability are risks."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Ivy",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 1
+      },
+      "background": "Ivy is a decisive investment director focused on clear, direct portfolio choices.",
+      "private_goal": "Drive portfolio decisions that balance risk and return efficiently.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 44,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Balanced equity and bonds provide steady income and growth potential.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Stable cash flows and inflation protection are useful.",
+          "reason_against": "Liquidity delays reduce responsiveness."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Good income and credit quality balance.",
+          "reason_against": "Dividend sensitivity to rates is a moderate risk."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Potential for higher returns is attractive.",
+          "reason_against": "Volatility and liquidity unpredictability are concerns."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "expected_annual_return_percent"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "liquidity_days"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "liquidity_days"
+        ],
+        [
+          "D",
+          "alternative_assets_percent"
+        ],
+        [
+          "B",
+          "infrastructure_percent"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "real_estate_percent"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 2,
+        "C": 4,
+        "D": 5
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "liquidity_days"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "liquidity_days"
+        ],
+        [
+          "B",
+          "liquidity_days"
+        ],
+        [
+          "B",
+          "expected_annual_return_percent"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Good income and credit quality balance."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "liquidity_days"
+        ],
+        [
+          "B",
+          "liquidity_days"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "real_estate_percent"
+        ],
+        [
+          "A",
+          "liquidity_days"
+        ],
+        [
+          "B",
+          "infrastructure_percent"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Decide how a fictional investment committee should diversify its portfolio.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "A balanced equity and bond mix reduces risk while allowing growth.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bond mix reduces risk while allowing growth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maintain a balanced portfolio that limits downside risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "High-Dividend Equity seems to combine income generation with a strong credit quality focus, which I find appealing.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines income generation with strong credit quality focus.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines income generation with credit quality focus."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Balanced equity and bond mix provides steady income and moderate growth.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bond mix provides steady income and moderate growth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure portfolio stability with a strong bond component.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Balanced Equity provides steady income with moderate growth. It matches my risk tolerance.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides steady income with moderate growth, matching my risk tolerance.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the portfolio balances steady returns with manageable risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Alternative Assets offer potential for higher returns and diversification.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Potential for higher returns and diversification fits my goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Potential for diversification and higher returns."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize portfolio returns through diversification into alternatives.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Balanced Equity offers steady income and growth potential through a mix of stocks and bonds.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bonds provide steady income and growth potential.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Stable cash flows and inflation protection in Option B align well with my priorities.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Stable cash flows and inflation protection align with my priorities.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers stable cash flows and inflation protection."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize inflation protection and stable cash flows in the portfolio.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Still, the higher volatility and less predictable liquidity give me pause on that choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Higher volatility and liquidity unpredictability are concerns.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Higher volatility and less predictable liquidity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Liquidity takes 3 days in the balanced mix but 10 for alternatives—faster access fits my risk balance better.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare liquidity_days: 3 and 10",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "liquidity_days",
+            "public_value": "3"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "liquidity_days",
+            "public_value": "10"
+          }
+        ],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Higher volatility and liquidity unpredictability increase risk exposure.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Higher volatility and liquidity unpredictability are risks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Higher volatility and less predictable liquidity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure portfolio stability with a strong bond component.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The alternative assets percent is 35, which might stretch credit quality concerns more than I’d prefer.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the alternative assets percent is 35",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "alternative_assets_percent",
+          "public_value": "35"
+        },
+        "comparison_sources": [],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Liquidity is 5 days for high-dividend equities but 10 for alternatives, so quicker access fits my preference for consistent income.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare liquidity_days: 5 and 10",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "liquidity_days",
+            "public_value": "5"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "liquidity_days",
+            "public_value": "10"
+          }
+        ],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Does the longer liquidity for real estate and infrastructure limit how quickly we can adjust risk exposure?",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Liquidity delays reduce responsiveness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer liquidity period limits quick portfolio adjustments."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Longer liquidity does limit quick risk adjustments.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the concern is Longer liquidity period limits quick portfolio adjustments.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer liquidity period limits quick portfolio adjustments."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the portfolio balances steady returns with manageable risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Liquidity’s 10 days beats 30 for faster risk moves.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare liquidity_days: 10 and 30",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "liquidity_days",
+            "public_value": "10"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "liquidity_days",
+            "public_value": "30"
+          }
+        ],
+        "personal_context": "Maximize portfolio returns through diversification into alternatives.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Stable cash flows and inflation protection justify accepting some liquidity trade-offs for risk control.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Stable cash flows and inflation protection are good risk mitigators.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers stable cash flows and inflation protection."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maintain a balanced portfolio that limits downside risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Infrastructure’s 30% share means we must accept slower rebalancing for those steady returns.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the infrastructure percent is 30",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "infrastructure_percent",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "6% return matches my target for moderate growth.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the expected annual return percent is 6",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_annual_return_percent",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the portfolio balances steady returns with manageable risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Real estate’s 40% weighting adds solid diversification but limits agility on quick shifts.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the real estate percent is 40",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "real_estate_percent",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "That 30% infrastructure share provides steady income, though it might slow flexibility more than I’d like.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the infrastructure percent is 30",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "infrastructure_percent",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Good income with credit quality balance means I can accept High-Dividend Equity now.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Good income and credit quality balance.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines income generation with credit quality focus."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Good income and credit quality balance."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Good income and credit quality balance."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Liquidity at 30 days is workable, though it still constrains quick portfolio moves.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the liquidity days is 30",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "liquidity_days",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The 40% real estate allocation boosts stability but restricts downside risk control.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the real estate percent is 40",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "real_estate_percent",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maintain a balanced portfolio that limits downside risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "6% return is modest; I need stronger growth for real impact.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the expected annual return percent is 6",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_annual_return_percent",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize portfolio returns through diversification into alternatives.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Considering the interest rate sensitivity of dividends, how might we best balance yield with inflation protection?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interest rate sensitivity of dividends is a risk.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Dividend stocks may be sensitive to interest rate changes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize inflation protection and stable cash flows in the portfolio.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Dividend stocks react to rates, so lean more on corporate bonds.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Dividend stocks may be sensitive to interest rate changes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Dividend stocks may be sensitive to interest rate changes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure portfolio stability with a strong bond component.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Liquidity of 10 days slows moves more than 5 does—still better fits my growth focus.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare liquidity_days: 10 and 5",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "liquidity_days",
+            "public_value": "10"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "liquidity_days",
+            "public_value": "5"
+          }
+        ],
+        "personal_context": "Maximize portfolio returns through diversification into alternatives.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 29,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Balanced Equity is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides steady income with moderate growth, matching my risk tolerance.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 30,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for Real Estate.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Stable cash flows and inflation protection align with my priorities.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers stable cash flows and inflation protection."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 31,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "My final vote is High-Dividend Equity.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines income generation with strong credit quality focus.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines income generation with credit quality focus."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I’m voting for Balanced Equity.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bond mix reduces risk while allowing growth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "My final vote is Alternative Assets.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Potential for higher returns and diversification fits my goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Potential for diversification and higher returns."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 34,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Balanced Equity is my final choice.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bond mix provides steady income and moderate growth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "I choose Balanced Equity.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bonds provide steady income and growth potential.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 36,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Balanced Equity.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:liquidity_days": 1,
+    "A:upside": 4,
+    "B:concern": 2,
+    "B:expected_annual_return_percent": 2,
+    "B:infrastructure_percent": 2,
+    "B:liquidity_days": 2,
+    "B:real_estate_percent": 2,
+    "B:upside": 2,
+    "C:concern": 2,
+    "C:liquidity_days": 2,
+    "C:upside": 2,
+    "D:alternative_assets_percent": 1,
+    "D:concern": 2,
+    "D:liquidity_days": 4,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "liquidity_days"
+    ],
+    [
+      "C",
+      "liquidity_days"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "B",
+    "p3": "C",
+    "p4": "A",
+    "p5": "D",
+    "p6": "A",
+    "p7": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "B",
+      "p3": "C",
+      "p4": "A",
+      "p5": "D",
+      "p6": "A",
+      "p7": "A"
+    },
+    "reason": "4 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 27,
+    "setup_llm_calls": 4,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 16970,
+    "output_tokens": 3544,
+    "moderator_turns": 3,
+    "voluntary_turns": 20,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 34,
+    "voluntary_turns": 20,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0811,
+    "avg_words_per_participant_turn": 11.53,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 16970,
+    "output_tokens": 3544,
+    "llm_calls": 31,
+    "voluntary_turns_by_persona": {
+      "p3": 4,
+      "p7": 6,
+      "p6": 2,
+      "p1": 2,
+      "p5": 3,
+      "p4": 2,
+      "p2": 1
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bond mix reduces risk while allowing growth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maintain a balanced portfolio that limits downside risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A balanced equity and bond mix reduces risk while allowing growth.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines income generation with strong credit quality focus.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines income generation with credit quality focus."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High-Dividend Equity seems to combine income generation with a strong credit quality focus, which I find appealing.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bond mix provides steady income and moderate growth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure portfolio stability with a strong bond component.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Balanced equity and bond mix provides steady income and moderate growth.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides steady income with moderate growth, matching my risk tolerance.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the portfolio balances steady returns with manageable risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Balanced Equity provides steady income with moderate growth. It matches my risk tolerance.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Potential for higher returns and diversification fits my goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Potential for diversification and higher returns."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize portfolio returns through diversification into alternatives.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Alternative Assets offer potential for higher returns and diversification.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bonds provide steady income and growth potential.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Balanced Equity offers steady income and growth potential through a mix of stocks and bonds.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Stable cash flows and inflation protection align with my priorities.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers stable cash flows and inflation protection."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize inflation protection and stable cash flows in the portfolio.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Stable cash flows and inflation protection in Option B align well with my priorities.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Higher volatility and liquidity unpredictability are concerns.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Higher volatility and less predictable liquidity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still, the higher volatility and less predictable liquidity give me pause on that choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare liquidity_days: 3 and 10",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "liquidity_days",
+            "public_value": "3"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "liquidity_days",
+            "public_value": "10"
+          }
+        ],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liquidity takes 3 days in the balanced mix but 10 for alternatives—faster access fits my risk balance better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Higher volatility and liquidity unpredictability are risks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Higher volatility and less predictable liquidity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure portfolio stability with a strong bond component.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Higher volatility and liquidity unpredictability increase risk exposure.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the alternative assets percent is 35",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "alternative_assets_percent",
+          "public_value": "35"
+        },
+        "comparison_sources": [],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The alternative assets percent is 35, which might stretch credit quality concerns more than I’d prefer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare liquidity_days: 5 and 10",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "liquidity_days",
+            "public_value": "5"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "liquidity_days",
+            "public_value": "10"
+          }
+        ],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liquidity is 5 days for high-dividend equities but 10 for alternatives, so quicker access fits my preference for consistent income.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Liquidity delays reduce responsiveness.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer liquidity period limits quick portfolio adjustments."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does the longer liquidity for real estate and infrastructure limit how quickly we can adjust risk exposure?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the concern is Longer liquidity period limits quick portfolio adjustments.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Longer liquidity period limits quick portfolio adjustments."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the portfolio balances steady returns with manageable risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Longer liquidity does limit quick risk adjustments.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare liquidity_days: 10 and 30",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "liquidity_days",
+            "public_value": "10"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "liquidity_days",
+            "public_value": "30"
+          }
+        ],
+        "personal_context": "Maximize portfolio returns through diversification into alternatives.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liquidity’s 10 days beats 30 for faster risk moves.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Stable cash flows and inflation protection are good risk mitigators.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers stable cash flows and inflation protection."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maintain a balanced portfolio that limits downside risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Stable cash flows and inflation protection justify accepting some liquidity trade-offs for risk control.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the infrastructure percent is 30",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "infrastructure_percent",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Infrastructure’s 30% share means we must accept slower rebalancing for those steady returns.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the expected annual return percent is 6",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_annual_return_percent",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the portfolio balances steady returns with manageable risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "6% return matches my target for moderate growth.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the real estate percent is 40",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "real_estate_percent",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Real estate’s 40% weighting adds solid diversification but limits agility on quick shifts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the infrastructure percent is 30",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "infrastructure_percent",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Prioritize credit quality and consistent income streams.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That 30% infrastructure share provides steady income, though it might slow flexibility more than I’d like.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Good income and credit quality balance.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines income generation with credit quality focus."
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Good income and credit quality balance."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Good income with credit quality balance means I can accept High-Dividend Equity now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the liquidity days is 30",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "liquidity_days",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Drive portfolio decisions that balance risk and return efficiently.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liquidity at 30 days is workable, though it still constrains quick portfolio moves.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the real estate percent is 40",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "real_estate_percent",
+          "public_value": "40"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maintain a balanced portfolio that limits downside risk.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 40% real estate allocation boosts stability but restricts downside risk control.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the expected annual return percent is 6",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expected_annual_return_percent",
+          "public_value": "6"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize portfolio returns through diversification into alternatives.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "6% return is modest; I need stronger growth for real impact.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Interest rate sensitivity of dividends is a risk.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Dividend stocks may be sensitive to interest rate changes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize inflation protection and stable cash flows in the portfolio.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Considering the interest rate sensitivity of dividends, how might we best balance yield with inflation protection?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Dividend stocks may be sensitive to interest rate changes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Dividend stocks may be sensitive to interest rate changes."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure portfolio stability with a strong bond component.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Dividend stocks react to rates, so lean more on corporate bonds.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare liquidity_days: 10 and 5",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "liquidity_days",
+            "public_value": "10"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "liquidity_days",
+            "public_value": "5"
+          }
+        ],
+        "personal_context": "Maximize portfolio returns through diversification into alternatives.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liquidity of 10 days slows moves more than 5 does—still better fits my growth focus.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Provides steady income with moderate growth, matching my risk tolerance.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Balanced Equity is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Stable cash flows and inflation protection align with my priorities.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers stable cash flows and inflation protection."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Real Estate.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines income generation with strong credit quality focus.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines income generation with credit quality focus."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is High-Dividend Equity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bond mix reduces risk while allowing growth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Balanced Equity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Potential for higher returns and diversification fits my goals.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Potential for diversification and higher returns."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Alternative Assets.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bond mix provides steady income and moderate growth.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Balanced Equity is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Balanced equity and bonds provide steady income and growth potential.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Provides steady income with moderate growth potential."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Balanced Equity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

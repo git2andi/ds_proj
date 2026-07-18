@@ -131,18 +131,32 @@ def validate_unique_aliases(scenario: "Scenario") -> None:
 
 def _patterns(scenario: "Scenario") -> list[tuple[re.Pattern[str], str]]:
     result: list[tuple[re.Pattern[str], str]] = []
+
     for option in scenario.options:
         for alias in option_aliases(scenario, option.id):
-            words = re.findall(r"[A-Za-z0-9]+", alias)
+            words = normalize_option_text(alias).split()
             if not words:
                 continue
-            body = r"[\W_]+".join(re.escape(word) for word in words)
-            result.append((re.compile(rf"(?<!\w){body}(?!\w)", re.IGNORECASE), option.id))
+
+            body = r"\s+".join(re.escape(word) for word in words)
+            result.append(
+                (
+                    re.compile(rf"(?<!\w){body}(?!\w)"),
+                    option.id,
+                )
+            )
+
     return result
 
 
 def resolve_option_mentions(text: str, scenario: "Scenario") -> set[str]:
-    return {option_id for pattern, option_id in _patterns(scenario) if pattern.search(text)}
+    normalized = normalize_option_text(text)
+
+    return {
+        option_id
+        for pattern, option_id in _patterns(scenario)
+        if pattern.search(normalized)
+    }
 
 
 def resolve_visible_vote(text: str, scenario: "Scenario") -> str | None:

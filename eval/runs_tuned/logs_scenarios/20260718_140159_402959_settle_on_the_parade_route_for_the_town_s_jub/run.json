@@ -1,0 +1,3950 @@
+{
+  "provenance": {
+    "seed": 242118836,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Settle on the parade route for the town's jubilee celebration",
+    "options": [
+      {
+        "id": "A",
+        "name": "Main Street Loop",
+        "attrs": {
+          "length_miles": "2.5",
+          "estimated_duration_minutes": "90",
+          "street_type": "commercial",
+          "accessibility": "wheelchair accessible",
+          "public_transport_stops": "4"
+        },
+        "upside": "Passes through central commercial district with multiple viewing points.",
+        "concern": "May cause significant traffic delays on main roads during the event.",
+        "short_name": "Main Street",
+        "aliases": [
+          "Main Street",
+          "Street Loop"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Riverfront Avenue Route",
+        "attrs": {
+          "length_miles": "3.0",
+          "estimated_duration_minutes": "110",
+          "street_type": "scenic waterfront",
+          "accessibility": "partially wheelchair accessible",
+          "public_transport_stops": "2"
+        },
+        "upside": "Offers scenic views along the river, enhancing the parade experience.",
+        "concern": "Limited public transport access and some uneven pavement sections.",
+        "short_name": "Riverfront Avenue",
+        "aliases": [
+          "Riverfront Avenue",
+          "Avenue Route"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Historic District Path",
+        "attrs": {
+          "length_miles": "1.8",
+          "estimated_duration_minutes": "80",
+          "street_type": "residential and historic",
+          "accessibility": "wheelchair accessible",
+          "public_transport_stops": "3"
+        },
+        "upside": "Showcases historic landmarks and quieter streets for spectators.",
+        "concern": "Narrow streets may limit crowd size and parade float dimensions.",
+        "short_name": "Historic District",
+        "aliases": [
+          "Historic District",
+          "District Path"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Parkside Boulevard Route",
+        "attrs": {
+          "length_miles": "2.2",
+          "estimated_duration_minutes": "85",
+          "street_type": "park adjacent",
+          "accessibility": "wheelchair accessible",
+          "public_transport_stops": "3"
+        },
+        "upside": "Runs alongside the town park, providing open spaces for families.",
+        "concern": "Fewer commercial areas may reduce vendor participation along the route.",
+        "short_name": "Parkside Boulevard",
+        "aliases": [
+          "Parkside Boulevard",
+          "Boulevard Route"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The town's jubilee celebration parade requires a route that accommodates six participants and allows for public viewing along main streets. The route must be accessible, safe, and manageable within a two-hour timeframe."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 4,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Maya is a local business owner who values community engagement and accessibility.",
+      "private_goal": "Ensure the parade route maximizes foot traffic to support local shops.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Passes through central commercial district with multiple viewing points, boosting local business.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Offers scenic views enhancing the parade experience.",
+          "reason_against": "Limited public transport access and some uneven pavement sections reduce accessibility."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Wheelchair accessible and showcases historic landmarks.",
+          "reason_against": "Narrow streets may limit crowd size and float dimensions."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Wheelchair accessible and provides open spaces for families.",
+          "reason_against": "Fewer commercial areas may reduce vendor participation."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Liam is a town planner focused on scenic and cultural experiences.",
+      "private_goal": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Central commercial district offers multiple viewing points.",
+          "reason_against": "Traffic delays could disrupt the flow and experience."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Scenic waterfront route enhances the parade experience.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Historic landmarks add cultural value.",
+          "reason_against": "Narrow streets might restrict crowd size."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Runs alongside the park, offering open spaces.",
+          "reason_against": "Less commercial activity may reduce vendor presence."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Noah",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Noah is a community volunteer passionate about accessibility and efficiency.",
+      "private_goal": "Ensure the parade is accessible and completed within the allotted time.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Wheelchair accessible and fits within time limits.",
+          "reason_against": "Traffic delays may cause inconvenience."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Scenic and fits the timeframe, though only partially accessible.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Fully accessible and shorter duration.",
+          "reason_against": "Narrow streets limit crowd and float size."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Accessible and family-friendly open spaces.",
+          "reason_against": "Less commercial activity may reduce overall engagement."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Emma",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 1,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Emma is a safety officer prioritizing secure and manageable events.",
+      "private_goal": "Guarantee the parade route is safe and manageable within two hours.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 51,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Route is wheelchair accessible and manageable within 90 minutes.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Scenic route is appealing.",
+          "reason_against": "Uneven pavement and longer duration may affect safety."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Accessible and shorter route enhances safety.",
+          "reason_against": "Narrow streets may complicate crowd control."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Accessible and provides open spaces for crowd management.",
+          "reason_against": "Fewer commercial areas might reduce overall participation."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Ava",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Ava is a local artist interested in community spaces and family engagement.",
+      "private_goal": "Promote family-friendly spaces and community involvement along the route.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Central commercial area attracts crowds and vendors.",
+          "reason_against": "Traffic delays may disrupt the event flow."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Beautiful scenic views.",
+          "reason_against": "Limited transport and uneven pavement reduce accessibility."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Historic landmarks add charm.",
+          "reason_against": "Narrow streets limit space for floats and crowds."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Open park spaces are ideal for families and community gatherings.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Eli is a retired teacher who values accessibility and tradition.",
+      "private_goal": "Support an accessible route that honors town traditions and is easy to navigate.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Wheelchair accessible and passes through the heart of town.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Scenic route is pleasant.",
+          "reason_against": "Partial accessibility and uneven pavement are problematic."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Accessible and highlights historic landmarks.",
+          "reason_against": "Narrow streets limit crowd size."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Accessible and family-friendly parkside route.",
+          "reason_against": "Fewer commercial areas may reduce event vibrancy."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "public_transport_stops"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "accessibility"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "public_transport_stops"
+        ],
+        [
+          "A",
+          "street_type"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "accessibility"
+        ],
+        [
+          "B",
+          "accessibility"
+        ],
+        [
+          "D",
+          "length_miles"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "A",
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Accessible and family-friendly open spaces.",
+        "A": "Wheelchair accessible and fits within time limits."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "street_type"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "length_miles"
+        ],
+        [
+          "A",
+          "length_miles"
+        ],
+        [
+          "A",
+          "estimated_duration_minutes"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "street_type"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "street_type"
+        ],
+        [
+          "D",
+          "public_transport_stops"
+        ],
+        [
+          "B",
+          "estimated_duration_minutes"
+        ],
+        [
+          "A",
+          "estimated_duration_minutes"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Central commercial area attracts crowds and vendors."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "street_type"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "length_miles"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "public_transport_stops"
+        ],
+        [
+          "A",
+          "accessibility"
+        ],
+        [
+          "D",
+          "estimated_duration_minutes"
+        ],
+        [
+          "D",
+          "accessibility"
+        ],
+        [
+          "A",
+          "length_miles"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Settle on the parade route for the town's jubilee celebration.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Main Street Loop is best since it goes through the central commercial district with multiple viewing points, which will really boost local business.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Passes through central commercial district with multiple viewing points, boosting local business.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade route maximizes foot traffic to support local shops.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Riverfront Avenue offers a scenic waterfront route that really enhances the parade experience for everyone.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic waterfront route enhances the parade experience.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers scenic views along the river, enhancing the parade experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Riverfront Avenue fits the timeframe well and looks scenic, but its partial accessibility is a concern we need to address.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic and fits the timeframe, though only partially accessible.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers scenic views along the river, enhancing the parade experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "The Main Street Loop seems fitting since it is wheelchair accessible and passes right through the heart of town, keeping tradition in view.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wheelchair accessible and passes through the heart of town.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Ava",
+      "text": "Parkside Boulevard runs alongside the town park, and open park spaces are ideal for families and community gatherings.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Open park spaces are ideal for families and community gatherings.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Runs alongside the town park, providing open spaces for families."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Emma",
+      "text": "Main Street is wheelchair accessible and manageable within 90 minutes.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Route is wheelchair accessible and manageable within 90 minutes.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Traffic delays could definitely break the natural rhythm of enjoying the town’s beauty, which is a real drawback.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "Traffic delays could disrupt the flow and experience.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May cause significant traffic delays on main roads during the event."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Four stops keep things simple and encourage more walking to soak in the natural sights along the way.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the public transport stops is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "public_transport_stops",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Emma",
+      "text": "Ninety minutes fits my safety window exactly.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the estimated duration minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "estimated_duration_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Two and a half miles is a reasonable length, though ensuring clear signage along the way would help keep it accessible for everyone.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the length miles is 2.5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "length_miles",
+          "public_value": "2.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Partially wheelchair accessible Riverfront Avenue limits who can enjoy the outdoors compared to fully accessible Main Street, which fits better with promoting natural beauty for all.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare accessibility: partially wheelchair accessible and wheelchair accessible",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "accessibility",
+            "public_value": "partially wheelchair accessible"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "accessibility",
+            "public_value": "wheelchair accessible"
+          }
+        ],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Ava",
+      "text": "Limited transport and uneven pavement make it tough for families with strollers or mobility needs to fully enjoy the route, which really conflicts with promoting inclusive community spaces.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Limited transport and uneven pavement reduce accessibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited public transport access and some uneven pavement sections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "The scenic waterfront adds appeal but means we must prioritize smooth paths and timing to keep it accessible.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the street type is scenic waterfront",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "street_type",
+          "public_value": "scenic waterfront"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Emma",
+      "text": "110 minutes exceeds my safety threshold.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the estimated duration minutes is 110",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "estimated_duration_minutes",
+          "public_value": "110"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Ava, do you think fewer commercial spots on Parkside Boulevard will really cut down vendor interest?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "Fewer commercial areas may reduce vendor participation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer commercial areas may reduce vendor participation along the route."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade route maximizes foot traffic to support local shops.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Ava",
+      "text": "Fewer commercial areas will likely reduce vendor participation, which could hurt community engagement.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Fewer commercial areas may reduce vendor participation along the route.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer commercial areas may reduce vendor participation along the route."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Parkside Boulevard offers accessible, family-friendly open spaces, so I can accept it despite fewer vendors.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Accessible and family-friendly open spaces.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Runs alongside the town park, providing open spaces for families."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Accessible and family-friendly open spaces."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Accessible and family-friendly open spaces."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Both routes are wheelchair accessible, which meets a key accessibility need, but the Main Street Loop better preserves our traditional town feel, which I find important.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare accessibility: wheelchair accessible and wheelchair accessible",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "accessibility",
+            "public_value": "wheelchair accessible"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "accessibility",
+            "public_value": "wheelchair accessible"
+          }
+        ],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Eighty-five minutes seems reasonable, though a slightly shorter route might better encourage regular use among all ages.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the estimated duration minutes is 85",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "estimated_duration_minutes",
+          "public_value": "85"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Emma",
+      "text": "Three stops reduce crowding risks and improve flow.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the public transport stops is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "public_transport_stops",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The 2.2-mile length is manageable for a scenic walk, encouraging people to enjoy the outdoors without feeling rushed.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the length miles is 2.2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "length_miles",
+          "public_value": "2.2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Emma",
+      "text": "Park adjacency means potential crowd control challenges near green spaces.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the street type is park adjacent",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "street_type",
+          "public_value": "park adjacent"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Partial accessibility and uneven pavement along Riverfront Avenue may present difficulties for some, which could limit how inclusive the route truly is.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Partial accessibility and uneven pavement are problematic.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited public transport access and some uneven pavement sections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Only two stops means less foot traffic passing local shops, which weakens the support businesses need.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the public transport stops is 2",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "public_transport_stops",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade route maximizes foot traffic to support local shops.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Main Street fits the time limits and is wheelchair accessible, so I can support that route now.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wheelchair accessible and fits within time limits.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Wheelchair accessible and fits within time limits."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "B",
+        "movement_reason": "Wheelchair accessible and fits within time limits."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Ava",
+      "text": "Since it’s a commercial street, there’s a real chance to boost family-friendly spots and community engagement along the route, which is crucial for me.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the street type is commercial",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "street_type",
+          "public_value": "commercial"
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "The route is 2.5 miles, which fits our time constraints well and keeps it manageable for all participants.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the length miles is 2.5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "length_miles",
+          "public_value": "2.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Four stops offer a better balance between accessibility and honoring our community’s layout, which feels important for ease of use.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the public transport stops is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "public_transport_stops",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Commercial streets mean more noise and traffic, which can detract from enjoying the town’s natural beauty outdoors.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the street type is commercial",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "street_type",
+          "public_value": "commercial"
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "Ninety minutes fits our schedule tight but doable; any longer risks delays and accessibility issues.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the estimated duration minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "estimated_duration_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Ava",
+      "text": "Central commercial areas bring crowds and vendors, which actually creates more lively, family-friendly spots along the Main Street Loop.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central commercial area attracts crowds and vendors.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Central commercial area attracts crowds and vendors."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Central commercial area attracts crowds and vendors."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "The Riverfront Avenue Route is 3.0 miles, longer than Main Street’s 2.5 miles, which risks going over our time limit.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare length_miles: 3.0 and 2.5",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "length_miles",
+            "public_value": "3.0"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "length_miles",
+            "public_value": "2.5"
+          }
+        ],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Emma",
+      "text": "Scenic waterfront adds beauty but increases management complexity.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the street type is scenic waterfront",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "street_type",
+          "public_value": "scenic waterfront"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Ava",
+      "text": "Three miles is definitely on the longer side, which might limit time for family activities along the way—something we need to keep in mind.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the length miles is 3.0",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "length_miles",
+          "public_value": "3.0"
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Accessibility is only partial, which could exclude some visitors and hurt local shops relying on diverse foot traffic.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the accessibility is partially wheelchair accessible",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "accessibility",
+          "public_value": "partially wheelchair accessible"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade route maximizes foot traffic to support local shops.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Main Street.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Passes through central commercial district with multiple viewing points, boosting local business.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Riverfront Avenue.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic waterfront route enhances the parade experience.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers scenic views along the river, enhancing the parade experience."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Noah",
+      "text": "I’m voting for Riverfront Avenue.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic and fits the timeframe, though only partially accessible.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers scenic views along the river, enhancing the parade experience."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Emma",
+      "text": "My final vote is Main Street.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Route is wheelchair accessible and manageable within 90 minutes.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Ava",
+      "text": "I’m voting for Main Street.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central commercial area attracts crowds and vendors.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "My final vote is Main Street.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wheelchair accessible and passes through the heart of town.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The decision closes with a majority for Main Street.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:accessibility": 2,
+    "A:concern": 1,
+    "A:estimated_duration_minutes": 2,
+    "A:length_miles": 3,
+    "A:public_transport_stops": 2,
+    "A:street_type": 2,
+    "A:upside": 5,
+    "B:accessibility": 2,
+    "B:concern": 2,
+    "B:estimated_duration_minutes": 1,
+    "B:length_miles": 2,
+    "B:public_transport_stops": 1,
+    "B:street_type": 2,
+    "B:upside": 2,
+    "D:accessibility": 1,
+    "D:concern": 2,
+    "D:estimated_duration_minutes": 1,
+    "D:length_miles": 1,
+    "D:public_transport_stops": 1,
+    "D:street_type": 1,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "length_miles"
+    ],
+    [
+      "B",
+      "accessibility"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "B",
+    "p3": "B",
+    "p4": "A",
+    "p5": "A",
+    "p6": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "B",
+      "p3": "B",
+      "p4": "A",
+      "p5": "A",
+      "p6": "A"
+    },
+    "reason": "4 of 6 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 35,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 21912,
+    "output_tokens": 3030,
+    "moderator_turns": 3,
+    "voluntary_turns": 28,
+    "visible_movements": 3,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 41,
+    "voluntary_turns": 28,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0682,
+    "avg_words_per_participant_turn": 15.76,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 21912,
+    "output_tokens": 3030,
+    "llm_calls": 38,
+    "voluntary_turns_by_persona": {
+      "p2": 5,
+      "p4": 5,
+      "p6": 5,
+      "p5": 4,
+      "p3": 6,
+      "p1": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Passes through central commercial district with multiple viewing points, boosting local business.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade route maximizes foot traffic to support local shops.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Main Street Loop is best since it goes through the central commercial district with multiple viewing points, which will really boost local business.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic waterfront route enhances the parade experience.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers scenic views along the river, enhancing the parade experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Riverfront Avenue offers a scenic waterfront route that really enhances the parade experience for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic and fits the timeframe, though only partially accessible.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers scenic views along the river, enhancing the parade experience."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Riverfront Avenue fits the timeframe well and looks scenic, but its partial accessibility is a concern we need to address.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wheelchair accessible and passes through the heart of town.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Main Street Loop seems fitting since it is wheelchair accessible and passes right through the heart of town, keeping tradition in view.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Open park spaces are ideal for families and community gatherings.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Runs alongside the town park, providing open spaces for families."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Parkside Boulevard runs alongside the town park, and open park spaces are ideal for families and community gatherings.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Route is wheelchair accessible and manageable within 90 minutes.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Main Street is wheelchair accessible and manageable within 90 minutes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "Traffic delays could disrupt the flow and experience.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May cause significant traffic delays on main roads during the event."
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Traffic delays could definitely break the natural rhythm of enjoying the town’s beauty, which is a real drawback.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the public transport stops is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "public_transport_stops",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four stops keep things simple and encourage more walking to soak in the natural sights along the way.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the estimated duration minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "estimated_duration_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ninety minutes fits my safety window exactly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the length miles is 2.5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "length_miles",
+          "public_value": "2.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two and a half miles is a reasonable length, though ensuring clear signage along the way would help keep it accessible for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare accessibility: partially wheelchair accessible and wheelchair accessible",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "accessibility",
+            "public_value": "partially wheelchair accessible"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "accessibility",
+            "public_value": "wheelchair accessible"
+          }
+        ],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Partially wheelchair accessible Riverfront Avenue limits who can enjoy the outdoors compared to fully accessible Main Street, which fits better with promoting natural beauty for all.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Limited transport and uneven pavement reduce accessibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited public transport access and some uneven pavement sections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Limited transport and uneven pavement make it tough for families with strollers or mobility needs to fully enjoy the route, which really conflicts with promoting inclusive community spaces.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the street type is scenic waterfront",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "street_type",
+          "public_value": "scenic waterfront"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The scenic waterfront adds appeal but means we must prioritize smooth paths and timing to keep it accessible.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the estimated duration minutes is 110",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "estimated_duration_minutes",
+          "public_value": "110"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "110 minutes exceeds my safety threshold.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "Fewer commercial areas may reduce vendor participation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer commercial areas may reduce vendor participation along the route."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade route maximizes foot traffic to support local shops.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ava, do you think fewer commercial spots on Parkside Boulevard will really cut down vendor interest?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Fewer commercial areas may reduce vendor participation along the route.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Fewer commercial areas may reduce vendor participation along the route."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fewer commercial areas will likely reduce vendor participation, which could hurt community engagement.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Accessible and family-friendly open spaces.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Runs alongside the town park, providing open spaces for families."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Accessible and family-friendly open spaces."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Parkside Boulevard offers accessible, family-friendly open spaces, so I can accept it despite fewer vendors.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare accessibility: wheelchair accessible and wheelchair accessible",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "accessibility",
+            "public_value": "wheelchair accessible"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "accessibility",
+            "public_value": "wheelchair accessible"
+          }
+        ],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both routes are wheelchair accessible, which meets a key accessibility need, but the Main Street Loop better preserves our traditional town feel, which I find important.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the estimated duration minutes is 85",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "estimated_duration_minutes",
+          "public_value": "85"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Eighty-five minutes seems reasonable, though a slightly shorter route might better encourage regular use among all ages.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the public transport stops is 3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "public_transport_stops",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three stops reduce crowding risks and improve flow.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the length miles is 2.2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "length_miles",
+          "public_value": "2.2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 2.2-mile length is manageable for a scenic walk, encouraging people to enjoy the outdoors without feeling rushed.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the street type is park adjacent",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "street_type",
+          "public_value": "park adjacent"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Park adjacency means potential crowd control challenges near green spaces.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Partial accessibility and uneven pavement are problematic.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited public transport access and some uneven pavement sections."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Partial accessibility and uneven pavement along Riverfront Avenue may present difficulties for some, which could limit how inclusive the route truly is.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the public transport stops is 2",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "public_transport_stops",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade route maximizes foot traffic to support local shops.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Only two stops means less foot traffic passing local shops, which weakens the support businesses need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wheelchair accessible and fits within time limits.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "B",
+          "movement_reason": "Wheelchair accessible and fits within time limits."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Main Street fits the time limits and is wheelchair accessible, so I can support that route now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the street type is commercial",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "street_type",
+          "public_value": "commercial"
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Since it’s a commercial street, there’s a real chance to boost family-friendly spots and community engagement along the route, which is crucial for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the length miles is 2.5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "length_miles",
+          "public_value": "2.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The route is 2.5 miles, which fits our time constraints well and keeps it manageable for all participants.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the public transport stops is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "public_transport_stops",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support an accessible route that honors town traditions and is easy to navigate.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four stops offer a better balance between accessibility and honoring our community’s layout, which feels important for ease of use.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the street type is commercial",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "street_type",
+          "public_value": "commercial"
+        },
+        "comparison_sources": [],
+        "personal_context": "Highlight the town’s natural beauty and encourage outdoor enjoyment.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Commercial streets mean more noise and traffic, which can detract from enjoying the town’s natural beauty outdoors.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the estimated duration minutes is 90",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "estimated_duration_minutes",
+          "public_value": "90"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ninety minutes fits our schedule tight but doable; any longer risks delays and accessibility issues.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central commercial area attracts crowds and vendors.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Central commercial area attracts crowds and vendors."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Central commercial areas bring crowds and vendors, which actually creates more lively, family-friendly spots along the Main Street Loop.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare length_miles: 3.0 and 2.5",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "length_miles",
+            "public_value": "3.0"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "length_miles",
+            "public_value": "2.5"
+          }
+        ],
+        "personal_context": "Ensure the parade is accessible and completed within the allotted time.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Riverfront Avenue Route is 3.0 miles, longer than Main Street’s 2.5 miles, which risks going over our time limit.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the street type is scenic waterfront",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "street_type",
+          "public_value": "scenic waterfront"
+        },
+        "comparison_sources": [],
+        "personal_context": "Guarantee the parade route is safe and manageable within two hours.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Scenic waterfront adds beauty but increases management complexity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the length miles is 3.0",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "length_miles",
+          "public_value": "3.0"
+        },
+        "comparison_sources": [],
+        "personal_context": "Promote family-friendly spaces and community involvement along the route.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three miles is definitely on the longer side, which might limit time for family activities along the way—something we need to keep in mind.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the accessibility is partially wheelchair accessible",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "accessibility",
+          "public_value": "partially wheelchair accessible"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the parade route maximizes foot traffic to support local shops.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Accessibility is only partial, which could exclude some visitors and hurt local shops relying on diverse foot traffic.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Passes through central commercial district with multiple viewing points, boosting local business.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Main Street.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic waterfront route enhances the parade experience.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers scenic views along the river, enhancing the parade experience."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Riverfront Avenue.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Scenic and fits the timeframe, though only partially accessible.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Offers scenic views along the river, enhancing the parade experience."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Riverfront Avenue.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Route is wheelchair accessible and manageable within 90 minutes.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Main Street.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Central commercial area attracts crowds and vendors.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Main Street.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wheelchair accessible and passes through the heart of town.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Passes through central commercial district with multiple viewing points."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Main Street.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

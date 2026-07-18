@@ -1,0 +1,3299 @@
+{
+  "provenance": {
+    "seed": 242118768,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide on the menu for a vegetarian holiday dinner",
+    "options": [
+      {
+        "id": "A",
+        "name": "Roasted Vegetable Wellington with Quinoa Salad and Steamed Green Beans",
+        "attrs": {
+          "main_dish": "Vegetable Wellington",
+          "side_1": "Quinoa Salad",
+          "side_2": "Steamed Green Beans",
+          "gluten_free": "No",
+          "nut_free": "Yes"
+        },
+        "upside": "Offers a hearty main dish with a variety of vegetables and a protein-rich side.",
+        "concern": "Contains gluten in the Wellington pastry, limiting options for gluten-sensitive guests.",
+        "short_name": "Roasted Vegetable Wellington",
+        "aliases": [
+          "Roasted Vegetable Wellington",
+          "Quinoa Salad"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Stuffed Acorn Squash with Lentil Stew and Roasted Brussels Sprouts",
+        "attrs": {
+          "main_dish": "Stuffed Acorn Squash",
+          "side_1": "Lentil Stew",
+          "side_2": "Roasted Brussels Sprouts",
+          "gluten_free": "Yes",
+          "nut_free": "Yes"
+        },
+        "upside": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal.",
+        "concern": "Preparation requires longer cooking time and some dishes need careful seasoning.",
+        "short_name": "Stuffed Acorn Squash",
+        "aliases": [
+          "Stuffed Acorn Squash",
+          "Lentil Stew"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Mushroom Risotto with Garlic Roasted Asparagus and Mixed Green Salad",
+        "attrs": {
+          "main_dish": "Mushroom Risotto",
+          "side_1": "Garlic Roasted Asparagus",
+          "side_2": "Mixed Green Salad",
+          "gluten_free": "Yes",
+          "nut_free": "Yes"
+        },
+        "upside": "Creamy and comforting main dish with light, fresh sides that accommodate most diets.",
+        "concern": "Risotto requires attentive cooking to maintain texture and can be time-consuming.",
+        "short_name": "Mushroom Risotto",
+        "aliases": [
+          "Mushroom Risotto",
+          "Garlic Roasted Asparagus"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Eggplant Parmesan with Herb Roasted Potatoes and Steamed Broccoli",
+        "attrs": {
+          "main_dish": "Eggplant Parmesan",
+          "side_1": "Herb Roasted Potatoes",
+          "side_2": "Steamed Broccoli",
+          "gluten_free": "No",
+          "nut_free": "Yes"
+        },
+        "upside": "Familiar and flavorful dishes that are widely enjoyed during holiday meals.",
+        "concern": "Contains gluten due to breading in the eggplant parmesan, not suitable for gluten-free diets.",
+        "short_name": "Eggplant Parmesan",
+        "aliases": [
+          "Eggplant Parmesan",
+          "Herb Roasted Potatoes"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A group of four is choosing a vegetarian menu for a holiday dinner. The meal should be suitable for a festive occasion, include a main dish and at least two sides, and accommodate common dietary preferences like gluten-free and nut-free options."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Maya is a 34-year-old nutritionist who values balanced, allergy-friendly meals.",
+      "private_goal": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Nut-free and offers a hearty vegetable main dish.",
+          "reason_against": "Contains gluten, which is a concern for gluten-sensitive guests."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Gluten-free and nut-free with warm, seasonal flavors perfect for holidays.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Gluten-free and nut-free with comforting and fresh sides.",
+          "reason_against": "Risotto needs attentive cooking which might be time-consuming."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Nut-free and familiar holiday flavors.",
+          "reason_against": "Contains gluten, making it unsuitable for gluten-free guests."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Liam is a 29-year-old chef who enjoys creative vegetarian dishes with rich flavors.",
+      "private_goal": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Offers a hearty main and protein-rich side.",
+          "reason_against": "Gluten in the Wellington pastry limits options for gluten-sensitive guests."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Gluten- and nut-free with seasonal flavors.",
+          "reason_against": "Longer cooking time and seasoning can be tricky."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Creamy, comforting main with fresh sides, all gluten- and nut-free.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Familiar holiday dishes.",
+          "reason_against": "Contains gluten, limiting dietary accommodation."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Zoe is a 42-year-old food enthusiast who prefers classic, well-loved dishes.",
+      "private_goal": "Choose a menu that feels traditional and satisfying for everyone.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Hearty and vegetable-rich main dish.",
+          "reason_against": "Contains gluten, but not a major concern personally."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Gluten- and nut-free with seasonal ingredients.",
+          "reason_against": "Long cooking time and seasoning concerns reduce appeal."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Comforting and fresh dishes that fit most diets.",
+          "reason_against": "Risotto requires care and time to prepare."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Familiar, flavorful, and widely enjoyed holiday dishes.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Eli is a 26-year-old environmentalist who prioritizes wholesome, plant-based meals.",
+      "private_goal": "Support a festive menu that is nut-free and includes diverse vegetables.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Nut-free with a hearty vegetable Wellington and fresh sides.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Gluten- and nut-free with seasonal, wholesome ingredients.",
+          "reason_against": "Longer cooking time and seasoning complexity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Gluten- and nut-free with comforting and fresh dishes.",
+          "reason_against": "Risotto requires careful preparation."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Nut-free and flavorful dishes.",
+          "reason_against": "Contains gluten, which is less preferred."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "nut_free"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "side_1"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Gluten- and nut-free with seasonal flavors."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "side_2"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "side_2"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "side_1"
+        ],
+        [
+          "A",
+          "main_dish"
+        ],
+        [
+          "C",
+          "nut_free"
+        ],
+        [
+          "A",
+          "gluten_free"
+        ],
+        [
+          "B",
+          "nut_free"
+        ],
+        [
+          "D",
+          "side_2"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 11,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Gluten- and nut-free with seasonal, wholesome ingredients."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "nut_free"
+        ],
+        [
+          "C",
+          "side_2"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "side_2"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "side_1"
+        ],
+        [
+          "C",
+          "nut_free"
+        ],
+        [
+          "B",
+          "nut_free"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Decide on the menu for a vegetarian holiday dinner.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "A hearty, nut-free choice is the Roasted Vegetable Wellington with quinoa salad and green beans.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Nut-free with a hearty vegetable Wellington and fresh sides.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a hearty main dish with a variety of vegetables and a protein-rich side."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Stuffed Acorn Squash sounds great—gluten-free and nut-free with warm, seasonal flavors perfect for holidays.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten-free and nut-free with warm, seasonal flavors perfect for holidays.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Eggplant Parmesan feels familiar and flavorful, like a classic holiday dish.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Familiar, flavorful, and widely enjoyed holiday dishes.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Familiar and flavorful dishes that are widely enjoyed during holiday meals."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a menu that feels traditional and satisfying for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Mushroom Risotto with Garlic Roasted Asparagus is creamy and comforting, plus gluten- and nut-free.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Creamy, comforting main with fresh sides, all gluten- and nut-free.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Creamy and comforting main dish with light, fresh sides that accommodate most diets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Yes, it’s nut-free, which is key, but I still want more veggie variety for the menu.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the nut free is Yes",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "nut_free",
+          "public_value": "Yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The breading has gluten, which I want to avoid for this menu.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Contains gluten, which is less preferred.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Contains gluten due to breading in the eggplant parmesan, not suitable for gluten-free diets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Mixed Green Salad adds fresh crunch that’s easier and lighter than steamed broccoli for this menu.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare side_2: Mixed Green Salad and Steamed Broccoli",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "side_2",
+            "public_value": "Mixed Green Salad"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "side_2",
+            "public_value": "Steamed Broccoli"
+          }
+        ],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Gluten in the breading rules this out for me—too risky for a shared menu.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Contains gluten, limiting dietary accommodation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Contains gluten due to breading in the eggplant parmesan, not suitable for gluten-free diets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Liam, do you think the risotto’s cooking time might be too much for the menu’s pace?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Risotto needs attentive cooking which might be time-consuming.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Risotto requires attentive cooking to maintain texture and can be time-consuming."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Risotto needs close attention to keep the texture right, so it could slow us down.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Risotto requires attentive cooking to maintain texture and can be time-consuming.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Risotto requires attentive cooking to maintain texture and can be time-consuming."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Risotto’s pace is tricky but the fresh sides keep the meal balanced and safe.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with comforting and fresh dishes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Creamy and comforting main dish with light, fresh sides that accommodate most diets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Garlic roasted asparagus is a solid side—simple, veggie-forward, and nut-free, which fits well.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the side 1 is Garlic Roasted Asparagus",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "side_1",
+          "public_value": "Garlic Roasted Asparagus"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Both are nut-free, so that’s not a deciding factor for me—I'll focus more on ease and flavor balance instead.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare nut_free: Yes and Yes",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "nut_free",
+            "public_value": "Yes"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "nut_free",
+            "public_value": "Yes"
+          }
+        ],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "It’s simple and flavorful, so it won’t add extra hassle while cooking.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the side 1 is Garlic Roasted Asparagus",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "side_1",
+          "public_value": "Garlic Roasted Asparagus"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That pastry has gluten, so it might be tricky for anyone sensitive to it, just something to keep in mind.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Contains gluten, which is a concern for gluten-sensitive guests.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Contains gluten in the Wellington pastry, limiting options for gluten-sensitive guests."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Steamed green beans are straightforward but less fresh-tasting than the mixed green salad, which suits my preference better.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare side_2: Mixed Green Salad and Steamed Green Beans",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "side_2",
+            "public_value": "Mixed Green Salad"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "side_2",
+            "public_value": "Steamed Green Beans"
+          }
+        ],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The green beans are simple, but I prefer something more filling still.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Hearty and vegetable-rich main dish.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a hearty main dish with a variety of vegetables and a protein-rich side."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a menu that feels traditional and satisfying for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Gluten in the pastry definitely limits who can enjoy it, so that’s a drawback for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Gluten in the Wellington pastry limits options for gluten-sensitive guests.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Contains gluten in the Wellington pastry, limiting options for gluten-sensitive guests."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "It’s hearty enough as is, but I’d swap green beans for something with more texture to balance the pastry.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the main dish is Vegetable Wellington",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "main_dish",
+          "public_value": "Vegetable Wellington"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Steamed green beans are simpler and less fresh than the mixed green salad, so the salad fits my priority better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare side_2: Steamed Green Beans and Mixed Green Salad",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "side_2",
+            "public_value": "Steamed Green Beans"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "side_2",
+            "public_value": "Mixed Green Salad"
+          }
+        ],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Gluten-free is a no, which rules it out for anyone with sensitivities—can’t overlook that.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the gluten free is No",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "gluten_free",
+          "public_value": "No"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The nut-free part is definitely a plus, so that helps with guests who have allergies.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the nut free is Yes",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "nut_free",
+          "public_value": "Yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Quinoa salad is a safe gluten-free option, which definitely helps keep the menu inclusive.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the side 1 is Quinoa Salad",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "side_1",
+          "public_value": "Quinoa Salad"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Stuffed Acorn Squash works better for me now since it’s gluten- and nut-free with seasonal flavors.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal flavors.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Gluten- and nut-free with seasonal flavors."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Gluten- and nut-free with seasonal flavors."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Maya, do you think the longer cooking time and seasoning challenges are worth it here?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Longer cooking time and seasoning can be tricky.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Preparation requires longer cooking time and some dishes need careful seasoning."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The longer cooking time could be manageable if we’re careful with seasoning to keep flavors balanced.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Preparation requires longer cooking time and some dishes need careful seasoning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Preparation requires longer cooking time and some dishes need careful seasoning."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Both are nut-free, but the Wellington’s simpler sides fit my priority for less tricky seasoning.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare nut_free: Yes and Yes",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "nut_free",
+            "public_value": "Yes"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "nut_free",
+            "public_value": "Yes"
+          }
+        ],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 28,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Stuffed Acorn Squash has the strongest public support so far, but the group is still divided. Liam, Zoe, and Eli, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 29,
+      "phase": "NARROWING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Stuffed Acorn Squash fits since it’s gluten- and nut-free with seasonal veggies.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal, wholesome ingredients.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Gluten- and nut-free with seasonal, wholesome ingredients."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Gluten- and nut-free with seasonal, wholesome ingredients."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 30,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "It’s gluten- and nut-free with strong seasonal flavors, so Stuffed Acorn Squash fits my needs without too much fuss.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal flavors.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Gluten- and nut-free with seasonal flavors."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Gluten- and nut-free with seasonal flavors."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 31,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Stuffed Acorn Squash.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten-free and nut-free with warm, seasonal flavors perfect for holidays.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Stuffed Acorn Squash is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal flavors.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Gluten- and nut-free with seasonal flavors."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Gluten- and nut-free with seasonal flavors."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 34,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Eggplant Parmesan is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Familiar, flavorful, and widely enjoyed holiday dishes.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Familiar and flavorful dishes that are widely enjoyed during holiday meals."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "My final vote is Stuffed Acorn Squash.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal, wholesome ingredients.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Gluten- and nut-free with seasonal, wholesome ingredients."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Gluten- and nut-free with seasonal, wholesome ingredients."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 36,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The decision closes with a majority for Stuffed Acorn Squash.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:gluten_free": 1,
+    "A:main_dish": 1,
+    "A:nut_free": 2,
+    "A:side_1": 1,
+    "A:side_2": 2,
+    "A:upside": 2,
+    "B:concern": 2,
+    "B:nut_free": 2,
+    "B:upside": 4,
+    "C:concern": 2,
+    "C:nut_free": 2,
+    "C:side_1": 2,
+    "C:side_2": 3,
+    "C:upside": 2,
+    "D:concern": 2,
+    "D:side_2": 1,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "upside"
+    ],
+    [
+      "B",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "B",
+    "p3": "D",
+    "p4": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "B",
+      "p2": "B",
+      "p3": "D",
+      "p4": "B"
+    },
+    "reason": "3 of 4 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 29,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 19667,
+    "output_tokens": 2542,
+    "moderator_turns": 4,
+    "voluntary_turns": 23,
+    "visible_movements": 4,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 4,
+    "participant_turns": 33,
+    "voluntary_turns": 23,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1081,
+    "avg_words_per_participant_turn": 14.18,
+    "visible_preference_changes": 2,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 19667,
+    "output_tokens": 2542,
+    "llm_calls": 32,
+    "voluntary_turns_by_persona": {
+      "p4": 7,
+      "p2": 11,
+      "p1": 4,
+      "p3": 1
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Nut-free with a hearty vegetable Wellington and fresh sides.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a hearty main dish with a variety of vegetables and a protein-rich side."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A hearty, nut-free choice is the Roasted Vegetable Wellington with quinoa salad and green beans.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten-free and nut-free with warm, seasonal flavors perfect for holidays.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Stuffed Acorn Squash sounds great—gluten-free and nut-free with warm, seasonal flavors perfect for holidays.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Familiar, flavorful, and widely enjoyed holiday dishes.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Familiar and flavorful dishes that are widely enjoyed during holiday meals."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a menu that feels traditional and satisfying for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Eggplant Parmesan feels familiar and flavorful, like a classic holiday dish.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Creamy, comforting main with fresh sides, all gluten- and nut-free.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Creamy and comforting main dish with light, fresh sides that accommodate most diets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Mushroom Risotto with Garlic Roasted Asparagus is creamy and comforting, plus gluten- and nut-free.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the nut free is Yes",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "nut_free",
+          "public_value": "Yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yes, it’s nut-free, which is key, but I still want more veggie variety for the menu.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Contains gluten, which is less preferred.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Contains gluten due to breading in the eggplant parmesan, not suitable for gluten-free diets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The breading has gluten, which I want to avoid for this menu.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare side_2: Mixed Green Salad and Steamed Broccoli",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "side_2",
+            "public_value": "Mixed Green Salad"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "side_2",
+            "public_value": "Steamed Broccoli"
+          }
+        ],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Mixed Green Salad adds fresh crunch that’s easier and lighter than steamed broccoli for this menu.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Contains gluten, limiting dietary accommodation.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Contains gluten due to breading in the eggplant parmesan, not suitable for gluten-free diets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Gluten in the breading rules this out for me—too risky for a shared menu.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Risotto needs attentive cooking which might be time-consuming.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Risotto requires attentive cooking to maintain texture and can be time-consuming."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liam, do you think the risotto’s cooking time might be too much for the menu’s pace?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Risotto requires attentive cooking to maintain texture and can be time-consuming.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Risotto requires attentive cooking to maintain texture and can be time-consuming."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Risotto needs close attention to keep the texture right, so it could slow us down.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with comforting and fresh dishes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Creamy and comforting main dish with light, fresh sides that accommodate most diets."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Risotto’s pace is tricky but the fresh sides keep the meal balanced and safe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the side 1 is Garlic Roasted Asparagus",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "side_1",
+          "public_value": "Garlic Roasted Asparagus"
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Garlic roasted asparagus is a solid side—simple, veggie-forward, and nut-free, which fits well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare nut_free: Yes and Yes",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "nut_free",
+            "public_value": "Yes"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "nut_free",
+            "public_value": "Yes"
+          }
+        ],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both are nut-free, so that’s not a deciding factor for me—I'll focus more on ease and flavor balance instead.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the side 1 is Garlic Roasted Asparagus",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "side_1",
+          "public_value": "Garlic Roasted Asparagus"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s simple and flavorful, so it won’t add extra hassle while cooking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Contains gluten, which is a concern for gluten-sensitive guests.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Contains gluten in the Wellington pastry, limiting options for gluten-sensitive guests."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That pastry has gluten, so it might be tricky for anyone sensitive to it, just something to keep in mind.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare side_2: Mixed Green Salad and Steamed Green Beans",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "side_2",
+            "public_value": "Mixed Green Salad"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "side_2",
+            "public_value": "Steamed Green Beans"
+          }
+        ],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Steamed green beans are straightforward but less fresh-tasting than the mixed green salad, which suits my preference better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Hearty and vegetable-rich main dish.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a hearty main dish with a variety of vegetables and a protein-rich side."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a menu that feels traditional and satisfying for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The green beans are simple, but I prefer something more filling still.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Gluten in the Wellington pastry limits options for gluten-sensitive guests.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Contains gluten in the Wellington pastry, limiting options for gluten-sensitive guests."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Gluten in the pastry definitely limits who can enjoy it, so that’s a drawback for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the main dish is Vegetable Wellington",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "main_dish",
+          "public_value": "Vegetable Wellington"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s hearty enough as is, but I’d swap green beans for something with more texture to balance the pastry.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare side_2: Steamed Green Beans and Mixed Green Salad",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "side_2",
+            "public_value": "Steamed Green Beans"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "side_2",
+            "public_value": "Mixed Green Salad"
+          }
+        ],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Steamed green beans are simpler and less fresh than the mixed green salad, so the salad fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the gluten free is No",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "gluten_free",
+          "public_value": "No"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Gluten-free is a no, which rules it out for anyone with sensitivities—can’t overlook that.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the nut free is Yes",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "nut_free",
+          "public_value": "Yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The nut-free part is definitely a plus, so that helps with guests who have allergies.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the side 1 is Quinoa Salad",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "side_1",
+          "public_value": "Quinoa Salad"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Quinoa salad is a safe gluten-free option, which definitely helps keep the menu inclusive.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal flavors.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Gluten- and nut-free with seasonal flavors."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Stuffed Acorn Squash works better for me now since it’s gluten- and nut-free with seasonal flavors.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "Longer cooking time and seasoning can be tricky.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Preparation requires longer cooking time and some dishes need careful seasoning."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, do you think the longer cooking time and seasoning challenges are worth it here?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Preparation requires longer cooking time and some dishes need careful seasoning.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Preparation requires longer cooking time and some dishes need careful seasoning."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the menu is gluten-free and nut-free to accommodate all guests safely.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The longer cooking time could be manageable if we’re careful with seasoning to keep flavors balanced.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare nut_free: Yes and Yes",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "nut_free",
+            "public_value": "Yes"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "nut_free",
+            "public_value": "Yes"
+          }
+        ],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both are nut-free, but the Wellington’s simpler sides fit my priority for less tricky seasoning.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal, wholesome ingredients.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": "Support a festive menu that is nut-free and includes diverse vegetables.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Gluten- and nut-free with seasonal, wholesome ingredients."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Stuffed Acorn Squash fits since it’s gluten- and nut-free with seasonal veggies.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal flavors.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a menu that is flavorful and manageable to prepare without too much fuss.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Gluten- and nut-free with seasonal flavors."
+        },
+        "vote_option": null
+      },
+      "raw_text": "It’s gluten- and nut-free with strong seasonal flavors, so Stuffed Acorn Squash fits my needs without too much fuss.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten-free and nut-free with warm, seasonal flavors perfect for holidays.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Stuffed Acorn Squash.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal flavors.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Gluten- and nut-free with seasonal flavors."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "Stuffed Acorn Squash is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Familiar, flavorful, and widely enjoyed holiday dishes.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Familiar and flavorful dishes that are widely enjoyed during holiday meals."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Eggplant Parmesan is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Gluten- and nut-free with seasonal, wholesome ingredients.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Gluten-free and nut-free, with warm, seasonal flavors suitable for a holiday meal."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Gluten- and nut-free with seasonal, wholesome ingredients."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Stuffed Acorn Squash.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

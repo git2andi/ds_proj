@@ -1,0 +1,3597 @@
+{
+  "provenance": {
+    "seed": 242118908,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick the game modes for a community esports league",
+    "options": [
+      {
+        "id": "A",
+        "name": "5v5 Classic Team Deathmatch",
+        "attrs": {
+          "players_per_team": "5",
+          "match_duration_minutes": "20",
+          "team_based": "True",
+          "competitive_focus": "objective control"
+        },
+        "upside": "Supports full teams and emphasizes strategic objectives.",
+        "concern": "Requires all players to be available for each match.",
+        "short_name": "Classic Team Deathmatch",
+        "aliases": [
+          "Classic Team Deathmatch",
+          "Team Deathmatch"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "3v3 Capture the Flag",
+        "attrs": {
+          "players_per_team": "3",
+          "match_duration_minutes": "15",
+          "team_based": "True",
+          "competitive_focus": "flag captures"
+        },
+        "upside": "Smaller teams allow flexible scheduling and fast-paced matches.",
+        "concern": "Less player involvement per match compared to larger teams.",
+        "short_name": "Capture the Flag",
+        "aliases": [
+          "Capture the Flag"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "6-Player Free-for-All",
+        "attrs": {
+          "players_per_team": "1",
+          "match_duration_minutes": "10",
+          "team_based": "False",
+          "competitive_focus": "individual kills"
+        },
+        "upside": "All participants play simultaneously without team dependency.",
+        "concern": "Lacks team strategy and coordination elements.",
+        "short_name": "Free-for-All",
+        "aliases": [
+          "Free-for-All",
+          "-Player Free-for-All"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "4v4 King of the Hill",
+        "attrs": {
+          "players_per_team": "4",
+          "match_duration_minutes": "18",
+          "team_based": "True",
+          "competitive_focus": "territory control"
+        },
+        "upside": "Balanced team size with focus on map control tactics.",
+        "concern": "May require more coordination to maintain hill control.",
+        "short_name": "King of the Hill",
+        "aliases": [
+          "King of the Hill"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A community esports league with 6 participants must select game modes for the upcoming season. Each mode should accommodate all players and support competitive team play with balanced match durations."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 4,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Maya is a community college student who enjoys fast-paced, flexible gaming sessions.",
+      "private_goal": "To find game modes that fit into a busy schedule and keep matches engaging.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Supports full teams and strategic objectives, which is appealing.",
+          "reason_against": "Requires all players to be available, which can be hard with a busy schedule."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Smaller teams allow flexible scheduling and fast-paced matches that fit my availability.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "All players participate simultaneously without team dependency, making scheduling easy.",
+          "reason_against": "Lacks team strategy, which I enjoy somewhat."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Balanced team size and tactical focus are appealing and manageable.",
+          "reason_against": "May require more coordination, which could be challenging sometimes."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Liam is a software developer who values competitive, strategic gameplay with moderate time commitments.",
+      "private_goal": "To engage in team-based modes that balance strategy and manageable match length.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Supports full teams and emphasizes objectives, which is strategic.",
+          "reason_against": "Longer matches and full team requirement can be restrictive."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Smaller teams and shorter matches allow for flexible, competitive play.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Easy to schedule since all play simultaneously.",
+          "reason_against": "Lacks team play, which I prefer."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Good balance of team size and tactical gameplay.",
+          "reason_against": "Coordination demands might be a slight drawback."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Zoe is a competitive gamer who thrives on full-team strategic objectives and longer matches.",
+      "private_goal": "To maximize team coordination and strategic depth in the league.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Supports full teams and emphasizes strategic objectives, ideal for competitive play.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Smaller teams allow for faster matches and some strategy.",
+          "reason_against": "Less strategic depth than 5v5 modes."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "All players participate simultaneously, which is inclusive.",
+          "reason_against": "Lacks team strategy and coordination, which I highly value."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Balanced team size with tactical focus fits my competitive style.",
+          "reason_against": "Coordination demands could be challenging but acceptable."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Eli is a casual player who prefers quick, straightforward matches without heavy coordination.",
+      "private_goal": "To enjoy the league without complex team obligations or long matches.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Supports full teams and objectives.",
+          "reason_against": "Requires all players present and longer matches, which I find restrictive."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Smaller teams and shorter matches fit my casual play style and schedule.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "All players play simultaneously, making it simple and quick.",
+          "reason_against": "Lacks team strategy, which I don't mind."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Balanced team size and tactical gameplay.",
+          "reason_against": "May require more coordination than I prefer."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nia",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Nia is a solo-focused gamer who enjoys individual skill challenges over team coordination.",
+      "private_goal": "To participate in modes that highlight personal performance and quick matches.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 24,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Supports full teams and strategic objectives.",
+          "reason_against": "Requires full team availability and longer matches, which I dislike."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Smaller teams and fast matches are somewhat appealing.",
+          "reason_against": "Less focus on individual skill than I prefer."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "All participants play simultaneously, emphasizing individual kills and skill.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Balanced team size and tactical gameplay.",
+          "reason_against": "Requires coordination, which I find less appealing."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 1,
+        "directness": 4,
+        "stubbornness": 1
+      },
+      "background": "Omar is a highly engaged esports enthusiast who values direct, competitive team play with strategic depth.",
+      "private_goal": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Supports full teams and strategic objectives, perfect for competitive play.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Smaller teams and faster matches offer good competition and scheduling flexibility.",
+          "reason_against": "Less strategic depth than 5v5 modes."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "All players participate simultaneously, which is inclusive.",
+          "reason_against": "Lacks team strategy and coordination, which I prioritize."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Balanced team size with tactical focus suits competitive play.",
+          "reason_against": "Coordination demands may be challenging but acceptable."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "match_duration_minutes"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "team_based"
+        ],
+        [
+          "B",
+          "competitive_focus"
+        ],
+        [
+          "A",
+          "competitive_focus"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "match_duration_minutes"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "team_based"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "players_per_team"
+        ],
+        [
+          "B",
+          "match_duration_minutes"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "team_based"
+        ],
+        [
+          "B",
+          "players_per_team"
+        ],
+        [
+          "A",
+          "players_per_team"
+        ],
+        [
+          "C",
+          "competitive_focus"
+        ],
+        [
+          "A",
+          "competitive_focus"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "match_duration_minutes"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "players_per_team"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 2,
+        "B": 4,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "team_based"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "competitive_focus"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "competitive_focus"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Pick the game modes for a community esports league.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "Free-for-All seems cool since everyone plays at once, so it’s all about individual skill and quick kills.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "All participants play simultaneously, emphasizing individual kills and skill.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All participants play simultaneously without team dependency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Smaller teams and shorter matches in 3v3 Capture the Flag make it easier to fit in competitive games without long time commitments.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and shorter matches allow for flexible, competitive play.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Smaller teams in 3v3 Capture the Flag let me jump in quick and keep matches fast, which fits my schedule better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams allow flexible scheduling and fast-paced matches that fit my availability.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find game modes that fit into a busy schedule and keep matches engaging.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Classic Team Deathmatch supports full teams and emphasizes strategic objectives, which feels better for longer, coordinated matches.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports full teams and emphasizes strategic objectives, ideal for competitive play.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports full teams and emphasizes strategic objectives."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Smaller teams and shorter matches in 3v3 Capture the Flag fit my casual play style and schedule.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and shorter matches fit my casual play style and schedule.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy the league without complex team obligations or long matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Full teams and strategic objectives make Option A best.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports full teams and strategic objectives, perfect for competitive play.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports full teams and emphasizes strategic objectives."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Longer matches with full teams can drag if someone’s missing, which kills the pace for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "Longer matches and full team requirement can be restrictive.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires all players to be available for each match."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Nia, do you mind the lack of team strategy here?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "Lacks team strategy, which I don't mind.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Lacks team strategy and coordination elements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy the league without complex team obligations or long matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "I actually don’t mind much since I prefer quick matches that test individual skills anyway.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Lacks team strategy and coordination elements.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Lacks team strategy and coordination elements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I get the appeal of quick individual kills, but the focus on objective control in 5v5 fits my priority for teamwork and longer strategic plays better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare competitive_focus: objective control and individual kills",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "competitive_focus",
+            "public_value": "objective control"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "competitive_focus",
+            "public_value": "individual kills"
+          }
+        ],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "Longer matches needing full squads kinda kill the vibe for me since I’m more about quick, solo runs.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Requires full team availability and longer matches, which I dislike.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires all players to be available for each match."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "20 minutes is kinda long for my breaks, so I’d probably skip it unless matches moved faster.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the match duration minutes is 20",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "match_duration_minutes",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find game modes that fit into a busy schedule and keep matches engaging.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Objective control keeps teams focused and coordinated.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the competitive focus is objective control",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "competitive_focus",
+          "public_value": "objective control"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Teams of five keep the gameplay strategic without dragging on too long, which suits my style.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the players per team is 5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "players_per_team",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "Yeah, the team aspect definitely adds strategy, but I’m more into modes where I can just jump in and focus on my own play.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the team based is True",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "team_based",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Smaller teams in 3v3 Capture the Flag speed matches up well.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and faster matches offer good competition and scheduling flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Smaller teams do speed things up, but I find 3v3 still lets you coordinate without feeling rushed.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the team based is True",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "team_based",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Three per team works, keeps matches quick enough.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the players per team is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "players_per_team",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy the league without complex team obligations or long matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Fifteen minutes is a good balance—long enough for strategy but short enough to keep it from dragging.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the match duration minutes is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "match_duration_minutes",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "But does 3v3 really let you shine solo, or is it still kinda team-heavy?",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Less focus on individual skill than I prefer.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less player involvement per match compared to larger teams."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "It’s still team-heavy since fewer players means less individual spotlight.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the concern is Less player involvement per match compared to larger teams.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less player involvement per match compared to larger teams."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Five players per team in Classic Team Deathmatch really boost coordination and strategic depth, while three per team in Capture the Flag feels a bit tighter but less room for complex plays—so the five fits my style better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare players_per_team: 5 and 3",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players_per_team",
+            "public_value": "5"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "players_per_team",
+            "public_value": "3"
+          }
+        ],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "True, five per team ups the strategy, but it can drag if we don’t keep matches quick and sharp.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the team based is True",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "team_based",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find game modes that fit into a busy schedule and keep matches engaging.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Twenty minutes feels a bit long for me; I prefer tighter matches to keep strategy sharp without dragging.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the match duration minutes is 20",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "match_duration_minutes",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Flag captures focus more on quick, clear wins, while objective control leans into longer team plays—flag captures fit my busy schedule better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare competitive_focus: flag captures and objective control",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "competitive_focus",
+            "public_value": "flag captures"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "competitive_focus",
+            "public_value": "objective control"
+          }
+        ],
+        "personal_context": "To find game modes that fit into a busy schedule and keep matches engaging.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The team aspect is definitely true, though I find longer matches help us fully leverage that strategy rather than quick flag grabs.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the team based is True",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "team_based",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "I get the flag capture focus, but I’m more about fast matches where I can just jump in and test my own skills quickly.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the competitive focus is flag captures",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "competitive_focus",
+          "public_value": "flag captures"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Fifteen minutes is okay, but I prefer even quicker.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the match duration minutes is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "match_duration_minutes",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy the league without complex team obligations or long matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 29,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Capture the Flag has the strongest public support so far, but the group is still divided. Zoe, Nia, and Omar, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 30,
+      "phase": "NARROWING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Smaller teams and faster matches in Option B fit well.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and faster matches offer good competition and scheduling flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 31,
+      "phase": "NARROWING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Smaller teams mean less strategic depth overall, so it’s still not quite what I’m looking for.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Less strategic depth than 5v5 modes.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less player involvement per match compared to larger teams."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 33,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Capture the Flag.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams allow flexible scheduling and fast-paced matches that fit my availability.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 34,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Capture the Flag is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and shorter matches allow for flexible, competitive play.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 35,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "I choose Classic Team Deathmatch.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports full teams and emphasizes strategic objectives, ideal for competitive play.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports full teams and emphasizes strategic objectives."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 36,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I choose Capture the Flag.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and shorter matches fit my casual play style and schedule.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nia",
+      "text": "My final vote is Free-for-All.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "All participants play simultaneously, emphasizing individual kills and skill.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All participants play simultaneously without team dependency."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "My final vote is Capture the Flag.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and faster matches offer good competition and scheduling flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Capture the Flag.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:competitive_focus": 3,
+    "A:concern": 2,
+    "A:match_duration_minutes": 2,
+    "A:players_per_team": 2,
+    "A:team_based": 2,
+    "A:upside": 2,
+    "B:competitive_focus": 2,
+    "B:concern": 3,
+    "B:match_duration_minutes": 2,
+    "B:players_per_team": 2,
+    "B:team_based": 2,
+    "B:upside": 5,
+    "C:competitive_focus": 1,
+    "C:concern": 2,
+    "C:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "upside"
+    ],
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "B",
+    "p3": "A",
+    "p4": "B",
+    "p5": "C",
+    "p6": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "B",
+    "votes": {
+      "p1": "B",
+      "p2": "B",
+      "p3": "A",
+      "p4": "B",
+      "p5": "C",
+      "p6": "B"
+    },
+    "reason": "4 of 6 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 30,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 19158,
+    "output_tokens": 2995,
+    "moderator_turns": 4,
+    "voluntary_turns": 23,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 36,
+    "voluntary_turns": 23,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1,
+    "avg_words_per_participant_turn": 15.03,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 19158,
+    "output_tokens": 2995,
+    "llm_calls": 33,
+    "voluntary_turns_by_persona": {
+      "p2": 5,
+      "p4": 3,
+      "p3": 4,
+      "p5": 4,
+      "p1": 3,
+      "p6": 4
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "All participants play simultaneously, emphasizing individual kills and skill.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All participants play simultaneously without team dependency."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Free-for-All seems cool since everyone plays at once, so it’s all about individual skill and quick kills.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and shorter matches allow for flexible, competitive play.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Smaller teams and shorter matches in 3v3 Capture the Flag make it easier to fit in competitive games without long time commitments.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams allow flexible scheduling and fast-paced matches that fit my availability.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find game modes that fit into a busy schedule and keep matches engaging.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Smaller teams in 3v3 Capture the Flag let me jump in quick and keep matches fast, which fits my schedule better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports full teams and emphasizes strategic objectives, ideal for competitive play.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports full teams and emphasizes strategic objectives."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Classic Team Deathmatch supports full teams and emphasizes strategic objectives, which feels better for longer, coordinated matches.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and shorter matches fit my casual play style and schedule.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy the league without complex team obligations or long matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Smaller teams and shorter matches in 3v3 Capture the Flag fit my casual play style and schedule.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports full teams and strategic objectives, perfect for competitive play.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports full teams and emphasizes strategic objectives."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Full teams and strategic objectives make Option A best.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "Longer matches and full team requirement can be restrictive.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires all players to be available for each match."
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Longer matches with full teams can drag if someone’s missing, which kills the pace for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "Lacks team strategy, which I don't mind.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Lacks team strategy and coordination elements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy the league without complex team obligations or long matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Nia, do you mind the lack of team strategy here?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Lacks team strategy and coordination elements.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Lacks team strategy and coordination elements."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I actually don’t mind much since I prefer quick matches that test individual skills anyway.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare competitive_focus: objective control and individual kills",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "competitive_focus",
+            "public_value": "objective control"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "competitive_focus",
+            "public_value": "individual kills"
+          }
+        ],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I get the appeal of quick individual kills, but the focus on objective control in 5v5 fits my priority for teamwork and longer strategic plays better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Requires full team availability and longer matches, which I dislike.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires all players to be available for each match."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Longer matches needing full squads kinda kill the vibe for me since I’m more about quick, solo runs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the match duration minutes is 20",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "match_duration_minutes",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find game modes that fit into a busy schedule and keep matches engaging.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "20 minutes is kinda long for my breaks, so I’d probably skip it unless matches moved faster.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the competitive focus is objective control",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "competitive_focus",
+          "public_value": "objective control"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Objective control keeps teams focused and coordinated.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the players per team is 5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "players_per_team",
+          "public_value": "5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Teams of five keep the gameplay strategic without dragging on too long, which suits my style.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the team based is True",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "team_based",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yeah, the team aspect definitely adds strategy, but I’m more into modes where I can just jump in and focus on my own play.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and faster matches offer good competition and scheduling flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Smaller teams in 3v3 Capture the Flag speed matches up well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the team based is True",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "team_based",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Smaller teams do speed things up, but I find 3v3 still lets you coordinate without feeling rushed.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the players per team is 3",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "players_per_team",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy the league without complex team obligations or long matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three per team works, keeps matches quick enough.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the match duration minutes is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "match_duration_minutes",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fifteen minutes is a good balance—long enough for strategy but short enough to keep it from dragging.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Less focus on individual skill than I prefer.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less player involvement per match compared to larger teams."
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "But does 3v3 really let you shine solo, or is it still kinda team-heavy?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the concern is Less player involvement per match compared to larger teams.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less player involvement per match compared to larger teams."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s still team-heavy since fewer players means less individual spotlight.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare players_per_team: 5 and 3",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players_per_team",
+            "public_value": "5"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "players_per_team",
+            "public_value": "3"
+          }
+        ],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Five players per team in Classic Team Deathmatch really boost coordination and strategic depth, while three per team in Capture the Flag feels a bit tighter but less room for complex plays—so the five fits my style better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the team based is True",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "team_based",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find game modes that fit into a busy schedule and keep matches engaging.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, five per team ups the strategy, but it can drag if we don’t keep matches quick and sharp.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the match duration minutes is 20",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "match_duration_minutes",
+          "public_value": "20"
+        },
+        "comparison_sources": [],
+        "personal_context": "To engage in team-based modes that balance strategy and manageable match length.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Twenty minutes feels a bit long for me; I prefer tighter matches to keep strategy sharp without dragging.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare competitive_focus: flag captures and objective control",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "competitive_focus",
+            "public_value": "flag captures"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "competitive_focus",
+            "public_value": "objective control"
+          }
+        ],
+        "personal_context": "To find game modes that fit into a busy schedule and keep matches engaging.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Flag captures focus more on quick, clear wins, while objective control leans into longer team plays—flag captures fit my busy schedule better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the team based is True",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "team_based",
+          "public_value": "True"
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The team aspect is definitely true, though I find longer matches help us fully leverage that strategy rather than quick flag grabs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the competitive focus is flag captures",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "competitive_focus",
+          "public_value": "flag captures"
+        },
+        "comparison_sources": [],
+        "personal_context": "To participate in modes that highlight personal performance and quick matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I get the flag capture focus, but I’m more about fast matches where I can just jump in and test my own skills quickly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the match duration minutes is 15",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "match_duration_minutes",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "To enjoy the league without complex team obligations or long matches.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fifteen minutes is okay, but I prefer even quicker.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and faster matches offer good competition and scheduling flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the league features modes that maximize teamwork and competitive challenge.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Smaller teams and faster matches in Option B fit well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Less strategic depth than 5v5 modes.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less player involvement per match compared to larger teams."
+        },
+        "comparison_sources": [],
+        "personal_context": "To maximize team coordination and strategic depth in the league.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Smaller teams mean less strategic depth overall, so it’s still not quite what I’m looking for.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams allow flexible scheduling and fast-paced matches that fit my availability.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Capture the Flag.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and shorter matches allow for flexible, competitive play.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Capture the Flag is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Supports full teams and emphasizes strategic objectives, ideal for competitive play.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Supports full teams and emphasizes strategic objectives."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Classic Team Deathmatch.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and shorter matches fit my casual play style and schedule.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Capture the Flag.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "All participants play simultaneously, emphasizing individual kills and skill.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "All participants play simultaneously without team dependency."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Free-for-All.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller teams and faster matches offer good competition and scheduling flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Smaller teams allow flexible scheduling and fast-paced matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Smaller teams and faster matches offer good competition and scheduling flexibility."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Capture the Flag.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

@@ -1,0 +1,2797 @@
+{
+  "provenance": {
+    "seed": 242118756,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Plan the destination for this year's team offsite",
+    "options": [
+      {
+        "id": "A",
+        "name": "Lakeside Cabin Retreat",
+        "attrs": {
+          "travel_time_hours": "3.5",
+          "accommodation_type": "cabin",
+          "activities": "kayaking, hiking, campfire",
+          "group_capacity": "4"
+        },
+        "upside": "Offers outdoor activities and a quiet natural setting.",
+        "concern": "Limited indoor meeting space for presentations.",
+        "short_name": "Lakeside Cabin",
+        "aliases": [
+          "Lakeside Cabin",
+          "Cabin Retreat"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Downtown Boutique Hotel",
+        "attrs": {
+          "travel_time_hours": "1",
+          "accommodation_type": "hotel",
+          "activities": "city tours, dining, escape room",
+          "group_capacity": "4"
+        },
+        "upside": "Central location with easy access to urban amenities.",
+        "concern": "Less opportunity for outdoor team-building activities.",
+        "short_name": "Downtown Boutique",
+        "aliases": [
+          "Downtown Boutique",
+          "Boutique Hotel"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Mountain Resort Lodge",
+        "attrs": {
+          "travel_time_hours": "4",
+          "accommodation_type": "lodge",
+          "activities": "zip-lining, hiking, spa",
+          "group_capacity": "4"
+        },
+        "upside": "Combines adventure activities with relaxation options.",
+        "concern": "Travel time is at the upper limit of the requirement.",
+        "short_name": "Mountain Resort",
+        "aliases": [
+          "Mountain Resort",
+          "Resort Lodge"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Beachside Bungalow",
+        "attrs": {
+          "travel_time_hours": "3",
+          "accommodation_type": "bungalow",
+          "activities": "swimming, beach volleyball, bonfire",
+          "group_capacity": "4"
+        },
+        "upside": "Provides a relaxed atmosphere with water-based activities.",
+        "concern": "Weather-dependent activities may be affected by rain.",
+        "short_name": "Beachside Bungalow",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "The team of four will spend three days offsite this year. The destination should offer team-building activities, accessible travel within 4 hours from the city, and accommodate a group of four comfortably."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Maya is a mid-level project manager who enjoys outdoor activities and values a relaxed team environment.",
+      "private_goal": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Offers outdoor activities and a quiet natural setting, which Maya enjoys.",
+          "reason_against": "Limited indoor meeting space might restrict some team activities."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Central location is convenient.",
+          "reason_against": "Less opportunity for outdoor team-building, which Maya prefers."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Combines adventure and relaxation, providing variety.",
+          "reason_against": "Travel time is at the upper limit, which might be tiring."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Provides a relaxed atmosphere with water-based activities, aligning perfectly with Maya’s preferences.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 1
+      },
+      "background": "Liam is a senior developer who values both adventure and relaxation during team events.",
+      "private_goal": "To find a destination that balances team-building with opportunities to unwind.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Good outdoor activities and natural setting.",
+          "reason_against": "Limited indoor meeting space might be a drawback for some team needs."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Easy access and urban amenities.",
+          "reason_against": "Lacks outdoor team-building activities, which Liam prefers."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Adventure activities combined with spa relaxation fit Liam’s ideal offsite.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Relaxed atmosphere with water activities is appealing.",
+          "reason_against": "Weather dependency could disrupt plans."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Nina is a quiet analyst who prefers convenient, urban settings with structured activities.",
+      "private_goal": "To minimize travel time and have easy access to amenities during the offsite.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Outdoor activities are nice but not a priority.",
+          "reason_against": "Travel time is longer and setting is less convenient."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Central location with easy access to urban amenities suits Nina’s preferences.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Adventure and relaxation options are interesting.",
+          "reason_against": "Travel time is at the limit and less convenient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Accessible travel time and relaxed atmosphere.",
+          "reason_against": "Weather dependency is a minor concern."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Omar is a pragmatic team lead who values straightforward, comfortable accommodations and moderate activities.",
+      "private_goal": "To have a comfortable stay with some outdoor activities without excessive travel.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 41,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Comfortable cabin with outdoor activities fits Omar’s preference for moderate adventure and comfort.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Convenient location and amenities.",
+          "reason_against": "Lacks outdoor team-building which Omar prefers."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Good activities but travel time is too long.",
+          "reason_against": "Travel time at the limit is a concern."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Relaxed atmosphere and water activities are appealing.",
+          "reason_against": "Weather dependency could be a risk."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "travel_time_hours"
+        ],
+        [
+          "B",
+          "travel_time_hours"
+        ],
+        [
+          "A",
+          "accommodation_type"
+        ],
+        [
+          "C",
+          "travel_time_hours"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 2,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "group_capacity"
+        ],
+        [
+          "A",
+          "group_capacity"
+        ],
+        [
+          "A",
+          "travel_time_hours"
+        ],
+        [
+          "C",
+          "activities"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "activities"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "group_capacity"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Plan the destination for this year's team offsite.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "The Downtown Boutique’s central location with easy access to amenities feels like a good fit for minimizing travel time.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Central location with easy access to urban amenities suits Nina’s preferences.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Central location with easy access to urban amenities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and have easy access to amenities during the offsite.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Lakeside Cabin seems comfortable with some outdoor options.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Comfortable cabin with outdoor activities fits Omar’s preference for moderate adventure and comfort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a comfortable stay with some outdoor activities without excessive travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Beachside Bungalow sounds good since it offers water-based activities and a relaxed vibe.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Provides a relaxed atmosphere with water-based activities, aligning perfectly with Maya’s preferences.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Provides a relaxed atmosphere with water-based activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Mountain Resort offers the right mix of adventure and spa time, which fits well with what I’m looking for in a team offsite.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Adventure activities combined with spa relaxation fit Liam’s ideal offsite.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines adventure activities with relaxation options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Travel time that long could drain energy before we even start activities.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Travel time is at the upper limit, which might be tiring.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Travel time is at the upper limit of the requirement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "That spot downtown feels too locked indoors and misses the outdoor team-building I value for breaking up the day.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Lacks outdoor team-building activities, which Liam prefers.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less opportunity for outdoor team-building activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Downtown Boutique has a shorter 1-hour travel time versus 3 hours for the beach, but longer travel limits time for the water activities I want.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare travel_time_hours: 3 and 1",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "travel_time_hours",
+            "public_value": "3"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "travel_time_hours",
+            "public_value": "1"
+          }
+        ],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Are we okay if some activities get rained out?",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Weather dependency could be a risk.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Weather-dependent activities may be affected by rain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a comfortable stay with some outdoor activities without excessive travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "We need backup plans since rain could easily cancel key outdoor activities.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Weather-dependent activities may be affected by rain.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Weather-dependent activities may be affected by rain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Travel time feels a bit long for comfort still.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Travel time at the limit is a concern.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Travel time is at the upper limit of the requirement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a comfortable stay with some outdoor activities without excessive travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Zip-lining and hiking are great for team-building, but the spa is key for real downtime—I need that balance or it won’t work for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the activities is zip-lining, hiking, spa",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "activities",
+          "public_value": "zip-lining, hiking, spa"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Lakeside Cabin’s quiet setting and outdoor options actually fit my idea of a relaxed offsite.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Four hours is a bit long, so we’ll need to plan some good breaks during travel.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the travel time hours is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "travel_time_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Four people is tight for activities and downtime; we’ll need to be strategic about scheduling both to keep everyone engaged and relaxed.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the group capacity is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "group_capacity",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The downtown spot limits outdoor team-building, which I think helps keep things relaxed.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Less opportunity for outdoor team-building, which Maya prefers.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less opportunity for outdoor team-building activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Limited indoor meeting space might make some presentations tricky—how important is that for us?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Limited indoor meeting space might be a drawback for some team needs.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited indoor meeting space for presentations."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Presentations are important, but we can adapt if it means more time outdoors and less stress.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Limited indoor meeting space for presentations.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited indoor meeting space for presentations."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Four feels manageable if we keep activities simple.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the group capacity is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "group_capacity",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a comfortable stay with some outdoor activities without excessive travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Cabins work well for easy access to water activities, which I want us to prioritize.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the accommodation type is cabin",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "accommodation_type",
+          "public_value": "cabin"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Kayaking and hiking sound nice, but I’d prefer if amenities were close by to keep things easy.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the activities is kayaking, hiking, campfire",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "activities",
+          "public_value": "kayaking, hiking, campfire"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and have easy access to amenities during the offsite.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Four people max is doable but means we need to keep group activities simple and make sure downtime feels relaxing, not cramped.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the group capacity is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "group_capacity",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "3.5 hours is a solid middle ground—not too long to tire us out, but enough to feel like a real getaway.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the travel time hours is 3.5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel_time_hours",
+          "public_value": "3.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 23,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Lakeside Cabin has the strongest public support so far, but the group is still divided. Maya, Liam, and Nina, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 24,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Lakeside Cabin fits since it offers outdoor activities and a peaceful setting I like.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 25,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Still worried the limited indoor space won’t work well for some team presentations.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Limited indoor meeting space might be a drawback for some team needs.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited indoor meeting space for presentations."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 26,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 27,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Lakeside Cabin.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Mountain Resort.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Adventure activities combined with spa relaxation fit Liam’s ideal offsite.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines adventure activities with relaxation options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 29,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "I choose Downtown Boutique.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Central location with easy access to urban amenities suits Nina’s preferences.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Central location with easy access to urban amenities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 30,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "I choose Lakeside Cabin.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Comfortable cabin with outdoor activities fits Omar’s preference for moderate adventure and comfort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 31,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The group remains split and no final option was selected.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:accommodation_type": 1,
+    "A:activities": 1,
+    "A:concern": 3,
+    "A:group_capacity": 2,
+    "A:travel_time_hours": 1,
+    "A:upside": 3,
+    "B:concern": 2,
+    "B:travel_time_hours": 1,
+    "B:upside": 1,
+    "C:activities": 1,
+    "C:concern": 2,
+    "C:group_capacity": 1,
+    "C:travel_time_hours": 1,
+    "C:upside": 1,
+    "D:concern": 2,
+    "D:travel_time_hours": 1,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "upside"
+    ],
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "C",
+    "p3": "B",
+    "p4": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "A",
+      "p2": "C",
+      "p3": "B",
+      "p4": "A"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 24,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 1,
+    "input_tokens": 14930,
+    "output_tokens": 2224,
+    "moderator_turns": 4,
+    "voluntary_turns": 19,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 4,
+    "participant_turns": 28,
+    "voluntary_turns": 19,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.125,
+    "avg_words_per_participant_turn": 14.18,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 14930,
+    "output_tokens": 2224,
+    "llm_calls": 27,
+    "voluntary_turns_by_persona": {
+      "p1": 7,
+      "p2": 8,
+      "p4": 3,
+      "p3": 1
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Central location with easy access to urban amenities suits Nina’s preferences.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Central location with easy access to urban amenities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and have easy access to amenities during the offsite.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Downtown Boutique’s central location with easy access to amenities feels like a good fit for minimizing travel time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Comfortable cabin with outdoor activities fits Omar’s preference for moderate adventure and comfort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a comfortable stay with some outdoor activities without excessive travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Lakeside Cabin seems comfortable with some outdoor options.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Provides a relaxed atmosphere with water-based activities, aligning perfectly with Maya’s preferences.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Provides a relaxed atmosphere with water-based activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Beachside Bungalow sounds good since it offers water-based activities and a relaxed vibe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Adventure activities combined with spa relaxation fit Liam’s ideal offsite.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines adventure activities with relaxation options."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Mountain Resort offers the right mix of adventure and spa time, which fits well with what I’m looking for in a team offsite.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Travel time is at the upper limit, which might be tiring.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Travel time is at the upper limit of the requirement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Travel time that long could drain energy before we even start activities.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Lacks outdoor team-building activities, which Liam prefers.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less opportunity for outdoor team-building activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That spot downtown feels too locked indoors and misses the outdoor team-building I value for breaking up the day.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare travel_time_hours: 3 and 1",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "travel_time_hours",
+            "public_value": "3"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "travel_time_hours",
+            "public_value": "1"
+          }
+        ],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Downtown Boutique has a shorter 1-hour travel time versus 3 hours for the beach, but longer travel limits time for the water activities I want.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Weather dependency could be a risk.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Weather-dependent activities may be affected by rain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a comfortable stay with some outdoor activities without excessive travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Are we okay if some activities get rained out?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the concern is Weather-dependent activities may be affected by rain.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Weather-dependent activities may be affected by rain."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "We need backup plans since rain could easily cancel key outdoor activities.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Travel time at the limit is a concern.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Travel time is at the upper limit of the requirement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a comfortable stay with some outdoor activities without excessive travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Travel time feels a bit long for comfort still.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p4",
+        "reason": "the activities is zip-lining, hiking, spa",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "activities",
+          "public_value": "zip-lining, hiking, spa"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Zip-lining and hiking are great for team-building, but the spa is key for real downtime—I need that balance or it won’t work for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Lakeside Cabin’s quiet setting and outdoor options actually fit my idea of a relaxed offsite.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the travel time hours is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "travel_time_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four hours is a bit long, so we’ll need to plan some good breaks during travel.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the group capacity is 4",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "group_capacity",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four people is tight for activities and downtime; we’ll need to be strategic about scheduling both to keep everyone engaged and relaxed.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Less opportunity for outdoor team-building, which Maya prefers.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Less opportunity for outdoor team-building activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The downtown spot limits outdoor team-building, which I think helps keep things relaxed.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Limited indoor meeting space might be a drawback for some team needs.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited indoor meeting space for presentations."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Limited indoor meeting space might make some presentations tricky—how important is that for us?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Limited indoor meeting space for presentations.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited indoor meeting space for presentations."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Presentations are important, but we can adapt if it means more time outdoors and less stress.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the group capacity is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "group_capacity",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a comfortable stay with some outdoor activities without excessive travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four feels manageable if we keep activities simple.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the accommodation type is cabin",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "accommodation_type",
+          "public_value": "cabin"
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cabins work well for easy access to water activities, which I want us to prioritize.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the activities is kayaking, hiking, campfire",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "activities",
+          "public_value": "kayaking, hiking, campfire"
+        },
+        "comparison_sources": [],
+        "personal_context": "To minimize travel time and have easy access to amenities during the offsite.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Kayaking and hiking sound nice, but I’d prefer if amenities were close by to keep things easy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the group capacity is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "group_capacity",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four people max is doable but means we need to keep group activities simple and make sure downtime feels relaxing, not cramped.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the travel time hours is 3.5",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "travel_time_hours",
+          "public_value": "3.5"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "3.5 hours is a solid middle ground—not too long to tire us out, but enough to feel like a real getaway.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure the team has a fun, stress-free offsite with plenty of water-based activities.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Lakeside Cabin fits since it offers outdoor activities and a peaceful setting I like.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Limited indoor meeting space might be a drawback for some team needs.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Limited indoor meeting space for presentations."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a destination that balances team-building with opportunities to unwind.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still worried the limited indoor space won’t work well for some team presentations.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Offers outdoor activities and a quiet natural setting, which Maya enjoys."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Lakeside Cabin.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Adventure activities combined with spa relaxation fit Liam’s ideal offsite.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Combines adventure activities with relaxation options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Mountain Resort.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Central location with easy access to urban amenities suits Nina’s preferences.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Central location with easy access to urban amenities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Downtown Boutique.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Comfortable cabin with outdoor activities fits Omar’s preference for moderate adventure and comfort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers outdoor activities and a quiet natural setting."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Lakeside Cabin.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

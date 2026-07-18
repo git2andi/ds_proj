@@ -1,0 +1,2208 @@
+{
+  "provenance": {
+    "seed": 242118809,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Decide which food delivery platform the restaurant should join",
+    "options": [
+      {
+        "id": "A",
+        "name": "QuickEats Delivery Service",
+        "attrs": {
+          "commission_rate": "25%",
+          "delivery_coverage": "city-wide",
+          "integration": "POS system compatible",
+          "customer_base": "2 million users"
+        },
+        "upside": "Offers broad delivery coverage and integrates with existing POS systems.",
+        "concern": "Higher commission rate may reduce profit margins.",
+        "short_name": "QuickEats Delivery",
+        "aliases": [
+          "QuickEats Delivery",
+          "QuickEats Service"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "GreenBite Platform",
+        "attrs": {
+          "commission_rate": "20%",
+          "delivery_coverage": "urban areas",
+          "integration": "manual order entry",
+          "customer_base": "1.2 million users"
+        },
+        "upside": "Lower commission rate and focuses on environmentally friendly packaging.",
+        "concern": "Limited delivery coverage and lacks POS integration.",
+        "short_name": "GreenBite Platform",
+        "aliases": []
+      },
+      {
+        "id": "C",
+        "name": "DineDirect Network",
+        "attrs": {
+          "commission_rate": "22%",
+          "delivery_coverage": "suburban and urban",
+          "integration": "custom API available",
+          "customer_base": "1.5 million users"
+        },
+        "upside": "Offers custom API for flexible integration and moderate commission.",
+        "concern": "Delivery coverage excludes some rural areas.",
+        "short_name": "DineDirect Network",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "FastPlate Express",
+        "attrs": {
+          "commission_rate": "18%",
+          "delivery_coverage": "selected neighborhoods",
+          "integration": "app-based order management",
+          "customer_base": "900,000 users"
+        },
+        "upside": "Lowest commission rate and simple app-based order management.",
+        "concern": "Smaller customer base and limited delivery zones.",
+        "short_name": "FastPlate Express",
+        "aliases": []
+      }
+    ],
+    "shared_context": [
+      "The restaurant is deciding which food delivery platform to join to expand its customer base. The platforms differ in commission rates, delivery coverage, and integration features."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Maya manages the restaurant's technology integration and values seamless system compatibility.",
+      "private_goal": "To find a platform that balances integration flexibility with reasonable commission costs.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Offers broad city-wide delivery and POS system compatibility.",
+          "reason_against": "High 25% commission rate reduces profit margins."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Lower 20% commission and eco-friendly packaging aligns with some values.",
+          "reason_against": "Manual order entry complicates integration and limits efficiency."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Custom API allows flexible integration and moderate 22% commission rate.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Lowest commission rate and simple app-based order management.",
+          "reason_against": "Limited delivery zones and small customer base limit growth."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Liam is the restaurant owner focused on maximizing customer reach and revenue.",
+      "private_goal": "To join the platform with the largest customer base and widest delivery coverage.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Largest customer base (2 million) and city-wide delivery coverage maximize sales.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Lower commission rate helps profitability.",
+          "reason_against": "Smaller customer base and limited urban delivery reduce reach."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Moderate commission and decent coverage in suburban and urban areas.",
+          "reason_against": "Excludes some rural areas and smaller user base than QuickEats."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Lowest commission rate.",
+          "reason_against": "Smallest customer base and limited delivery zones restrict growth."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 5,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Zara handles marketing and values platforms that enhance brand image and customer experience.",
+      "private_goal": "To partner with a platform that supports brand values and offers good exposure.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Broad delivery coverage and POS integration improve customer experience and operational ease.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Eco-friendly packaging aligns with brand values and lower commission rate is attractive.",
+          "reason_against": "Limited delivery coverage and manual order entry reduce convenience."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Custom API integration offers flexibility and moderate commission rate balances cost and features.",
+          "reason_against": "Coverage excludes some rural areas, limiting reach."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Lowest commission rate and simple app management.",
+          "reason_against": "Small customer base and limited delivery zones reduce exposure."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "commission_rate"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "delivery_coverage"
+        ],
+        [
+          "A",
+          "customer_base"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Moderate commission and decent coverage in suburban and urban areas."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "commission_rate"
+        ],
+        [
+          "C",
+          "delivery_coverage"
+        ],
+        [
+          "C",
+          "integration"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "delivery_coverage"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "integration"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "commission_rate"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "customer_base"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Decide which food delivery platform the restaurant should join.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "QuickEats Delivery offers the largest customer base—2 million—and full city coverage, which maximizes sales potential.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Largest customer base (2 million) and city-wide delivery coverage maximize sales.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers broad delivery coverage and integrates with existing POS systems."
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Broad delivery coverage and POS integration with QuickEats Delivery could really smooth out operations and boost how customers experience our brand.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Broad delivery coverage and POS integration improve customer experience and operational ease.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers broad delivery coverage and integrates with existing POS systems."
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "DineDirect Network’s custom API seems helpful for integration, and the 22% commission feels more reasonable to me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Custom API allows flexible integration and moderate 22% commission rate.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers custom API for flexible integration and moderate commission."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Suburban and urban coverage is decent but still less comprehensive than full city coverage, limiting potential reach.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the delivery coverage is suburban and urban",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "delivery_coverage",
+          "public_value": "suburban and urban"
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "22% commission does feel a bit high for us, especially if integration doesn’t fully cover all systems yet.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the commission rate is 22%",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "commission_rate",
+          "public_value": "22%"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Moderate commission is reasonable, but without broader city coverage, the platform won’t maximize our customer reach.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Moderate commission and decent coverage in suburban and urban areas.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers custom API for flexible integration and moderate commission."
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Zara, do you think the 25% commission might outweigh QuickEats’ benefits for us?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "High 25% commission rate reduces profit margins.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher commission rate may reduce profit margins."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "The higher commission could cut into profits more than the extra exposure benefits.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Higher commission rate may reduce profit margins.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher commission rate may reduce profit margins."
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s hear one more concrete point before we narrow this down.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "25% commission is definitely on the higher side, which means we’ll need to see clear value in customer experience to justify it.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the commission rate is 25%",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "commission_rate",
+          "public_value": "25%"
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "City-wide delivery coverage ensures maximum market reach, which is essential despite the commission rate.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the delivery coverage is city-wide",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "delivery_coverage",
+          "public_value": "city-wide"
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "2 million users is impressive, but I’d want to ensure those customers align well with our brand’s values and expectations first.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the customer base is 2 million users",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "customer_base",
+          "public_value": "2 million users"
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Given its moderate commission and decent suburban coverage, DineDirect Network now seems a viable option.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Moderate commission and decent coverage in suburban and urban areas.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers custom API for flexible integration and moderate commission."
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Moderate commission and decent coverage in suburban and urban areas."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Moderate commission and decent coverage in suburban and urban areas."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "25% is steep but acceptable if the platform delivers unmatched reach and consistent order volume.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the commission rate is 25%",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "commission_rate",
+          "public_value": "25%"
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "2 million users is solid, though I’m still cautious if that volume justifies higher commission costs on our end.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the customer base is 2 million users",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "customer_base",
+          "public_value": "2 million users"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The POS compatibility simplifies operations, which is crucial if we scale orders quickly despite higher fees.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the integration is POS system compatible",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "integration",
+          "public_value": "POS system compatible"
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "City-wide coverage definitely helps, though I wonder if the integration flexibility balances well with those commission fees.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the delivery coverage is city-wide",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "delivery_coverage",
+          "public_value": "city-wide"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "Maya, do you think missing rural coverage could affect how well the platform fits our brand’s growth goals?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Coverage excludes some rural areas, limiting reach.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Delivery coverage excludes some rural areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Missing rural coverage might limit growth in some areas, though it depends how much we want to expand there.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Delivery coverage excludes some rural areas.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Delivery coverage excludes some rural areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Custom API integration offers more flexibility than POS compatibility, but for quick scaling, the POS fit suits our immediate needs better.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare integration: POS system compatible and custom API available",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "integration",
+            "public_value": "POS system compatible"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "integration",
+            "public_value": "custom API available"
+          }
+        ],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 21,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 22,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose DineDirect Network.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Custom API allows flexible integration and moderate 22% commission rate.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers custom API for flexible integration and moderate commission."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 23,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "QuickEats Delivery is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Largest customer base (2 million) and city-wide delivery coverage maximize sales.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers broad delivery coverage and integrates with existing POS systems."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 24,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zara",
+      "text": "My final vote is QuickEats Delivery.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Broad delivery coverage and POS integration improve customer experience and operational ease.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers broad delivery coverage and integrates with existing POS systems."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 25,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose QuickEats Delivery.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:commission_rate": 2,
+    "A:concern": 2,
+    "A:customer_base": 2,
+    "A:delivery_coverage": 2,
+    "A:integration": 2,
+    "A:upside": 2,
+    "C:commission_rate": 1,
+    "C:concern": 2,
+    "C:delivery_coverage": 1,
+    "C:integration": 1,
+    "C:upside": 3
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "integration"
+    ],
+    [
+      "C",
+      "integration"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "A",
+    "p3": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "C",
+      "p2": "A",
+      "p3": "A"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 19,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 1,
+    "input_tokens": 12318,
+    "output_tokens": 1867,
+    "moderator_turns": 4,
+    "voluntary_turns": 13,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 22,
+    "voluntary_turns": 13,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1538,
+    "avg_words_per_participant_turn": 15.59,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 12318,
+    "output_tokens": 1867,
+    "llm_calls": 22,
+    "voluntary_turns_by_persona": {
+      "p2": 7,
+      "p1": 4,
+      "p3": 2
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Largest customer base (2 million) and city-wide delivery coverage maximize sales.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers broad delivery coverage and integrates with existing POS systems."
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "QuickEats Delivery offers the largest customer base—2 million—and full city coverage, which maximizes sales potential.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Broad delivery coverage and POS integration improve customer experience and operational ease.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers broad delivery coverage and integrates with existing POS systems."
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Broad delivery coverage and POS integration with QuickEats Delivery could really smooth out operations and boost how customers experience our brand.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Custom API allows flexible integration and moderate 22% commission rate.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers custom API for flexible integration and moderate commission."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "DineDirect Network’s custom API seems helpful for integration, and the 22% commission feels more reasonable to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the delivery coverage is suburban and urban",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "delivery_coverage",
+          "public_value": "suburban and urban"
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Suburban and urban coverage is decent but still less comprehensive than full city coverage, limiting potential reach.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the commission rate is 22%",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "commission_rate",
+          "public_value": "22%"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "22% commission does feel a bit high for us, especially if integration doesn’t fully cover all systems yet.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Moderate commission and decent coverage in suburban and urban areas.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers custom API for flexible integration and moderate commission."
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Moderate commission is reasonable, but without broader city coverage, the platform won’t maximize our customer reach.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "High 25% commission rate reduces profit margins.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher commission rate may reduce profit margins."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Zara, do you think the 25% commission might outweigh QuickEats’ benefits for us?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Higher commission rate may reduce profit margins.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Higher commission rate may reduce profit margins."
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The higher commission could cut into profits more than the extra exposure benefits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the commission rate is 25%",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "commission_rate",
+          "public_value": "25%"
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "25% commission is definitely on the higher side, which means we’ll need to see clear value in customer experience to justify it.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the delivery coverage is city-wide",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "delivery_coverage",
+          "public_value": "city-wide"
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "City-wide delivery coverage ensures maximum market reach, which is essential despite the commission rate.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the customer base is 2 million users",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "customer_base",
+          "public_value": "2 million users"
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2 million users is impressive, but I’d want to ensure those customers align well with our brand’s values and expectations first.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Moderate commission and decent coverage in suburban and urban areas.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers custom API for flexible integration and moderate commission."
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Moderate commission and decent coverage in suburban and urban areas."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Given its moderate commission and decent suburban coverage, DineDirect Network now seems a viable option.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the commission rate is 25%",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "commission_rate",
+          "public_value": "25%"
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "25% is steep but acceptable if the platform delivers unmatched reach and consistent order volume.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the customer base is 2 million users",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "customer_base",
+          "public_value": "2 million users"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2 million users is solid, though I’m still cautious if that volume justifies higher commission costs on our end.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the integration is POS system compatible",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "integration",
+          "public_value": "POS system compatible"
+        },
+        "comparison_sources": [],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The POS compatibility simplifies operations, which is crucial if we scale orders quickly despite higher fees.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the delivery coverage is city-wide",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "delivery_coverage",
+          "public_value": "city-wide"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "City-wide coverage definitely helps, though I wonder if the integration flexibility balances well with those commission fees.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Coverage excludes some rural areas, limiting reach.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Delivery coverage excludes some rural areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "To partner with a platform that supports brand values and offers good exposure.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Maya, do you think missing rural coverage could affect how well the platform fits our brand’s growth goals?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Delivery coverage excludes some rural areas.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Delivery coverage excludes some rural areas."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a platform that balances integration flexibility with reasonable commission costs.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Missing rural coverage might limit growth in some areas, though it depends how much we want to expand there.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare integration: POS system compatible and custom API available",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "integration",
+            "public_value": "POS system compatible"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "integration",
+            "public_value": "custom API available"
+          }
+        ],
+        "personal_context": "To join the platform with the largest customer base and widest delivery coverage.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Custom API integration offers more flexibility than POS compatibility, but for quick scaling, the POS fit suits our immediate needs better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Custom API allows flexible integration and moderate 22% commission rate.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Offers custom API for flexible integration and moderate commission."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose DineDirect Network.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Largest customer base (2 million) and city-wide delivery coverage maximize sales.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers broad delivery coverage and integrates with existing POS systems."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "QuickEats Delivery is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Broad delivery coverage and POS integration improve customer experience and operational ease.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers broad delivery coverage and integrates with existing POS systems."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is QuickEats Delivery.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

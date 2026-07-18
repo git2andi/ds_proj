@@ -1,0 +1,2551 @@
+{
+  "provenance": {
+    "seed": 242118899,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick a backup service for a small photography business",
+    "options": [
+      {
+        "id": "A",
+        "name": "Backblaze Personal Backup",
+        "attrs": {
+          "storage_limit": "unlimited",
+          "backup_type": "continuous",
+          "platforms_supported": "Windows, macOS",
+          "monthly_cost_usd": "7"
+        },
+        "upside": "Offers unlimited storage with continuous automatic backups.",
+        "concern": "No native file sharing or collaboration features.",
+        "short_name": "Backblaze Backup",
+        "aliases": [
+          "Backblaze Backup",
+          "Personal Backup"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Google Drive for Business",
+        "attrs": {
+          "storage_limit": "2TB",
+          "backup_type": "scheduled",
+          "platforms_supported": "Windows, macOS, Android, iOS",
+          "monthly_cost_usd": "12"
+        },
+        "upside": "Includes file sharing and collaboration tools integrated with Google Workspace.",
+        "concern": "Scheduled backups require manual setup and management.",
+        "short_name": "Google Drive",
+        "aliases": [
+          "Google Drive",
+          "Drive for Business"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Dropbox Plus",
+        "attrs": {
+          "storage_limit": "2TB",
+          "backup_type": "continuous",
+          "platforms_supported": "Windows, macOS, Linux, Android, iOS",
+          "monthly_cost_usd": "10"
+        },
+        "upside": "Supports continuous backup with easy file recovery and sharing.",
+        "concern": "Limited to 2TB storage which may fill quickly with large photo files.",
+        "short_name": "Dropbox Plus",
+        "aliases": []
+      },
+      {
+        "id": "D",
+        "name": "Amazon S3 Standard Storage",
+        "attrs": {
+          "storage_limit": "scalable",
+          "backup_type": "manual or automated via third-party tools",
+          "platforms_supported": "Windows, macOS, Linux",
+          "monthly_cost_usd": "variable, pay-as-you-go"
+        },
+        "upside": "Highly scalable storage with flexible pricing and strong security.",
+        "concern": "Requires technical setup and management for automated backups.",
+        "short_name": "Standard Storage",
+        "aliases": [
+          "Standard Storage"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A small photography business needs a reliable backup service to store and protect image files. The service must support at least 2TB of storage, offer automated backups, and provide easy file recovery options."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Maya manages the business operations of a small photography studio focused on client satisfaction.",
+      "private_goal": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Unlimited storage and continuous backup provide strong data protection.",
+          "reason_against": "Lacks collaboration features important for team workflow."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Includes file sharing and collaboration integrated with Google Workspace, fitting business needs.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Continuous backup and easy file sharing are useful for quick access and recovery.",
+          "reason_against": "Storage limit of 2TB might be restrictive as photo files accumulate."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Highly scalable and secure storage could be beneficial long term.",
+          "reason_against": "Requires technical setup and management, which is impractical for current team skills."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Liam is the lead photographer who prioritizes ease of use and reliable file recovery.",
+      "private_goal": "Find a backup solution that requires minimal setup and supports continuous backups.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 28,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Unlimited storage and continuous automatic backups reduce manual effort.",
+          "reason_against": "No native sharing features limit collaboration possibilities."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Good collaboration tools and 2TB storage meet basic needs.",
+          "reason_against": "Scheduled backups need manual management, which is inconvenient."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Continuous backup with easy file recovery and sharing fits his workflow perfectly.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Scalable and secure storage is attractive for future growth.",
+          "reason_against": "Technical setup and management are barriers for ease of use."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 1,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Zoe handles IT and data security for the photography business, focusing on reliability and cost-efficiency.",
+      "private_goal": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 40,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Unlimited storage with continuous automatic backups ensures data safety and cost predictability.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Collaboration tools are useful but less important than backup reliability and cost.",
+          "reason_against": "Limited to 2TB and scheduled backups require manual setup."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Continuous backup and sharing are positives, but 2TB limit and cost are concerns.",
+          "reason_against": "Storage may be insufficient for large photo archives."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Highly scalable and secure with pay-as-you-go pricing suits long-term needs.",
+          "reason_against": "Requires technical setup, but Zoe is comfortable managing this complexity."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "monthly_cost_usd"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "backup_type"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "storage_limit"
+        ],
+        [
+          "A",
+          "platforms_supported"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Unlimited storage and continuous automatic backups reduce manual effort."
+      },
+      "narrowing_acceptance": "A",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "backup_type"
+        ],
+        [
+          "A",
+          "monthly_cost_usd"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "backup_type"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "storage_limit"
+        ],
+        [
+          "A",
+          "storage_limit"
+        ],
+        [
+          "A",
+          "platforms_supported"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Pick a backup service for a small photography business.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Unlimited storage and automatic backups in Backblaze Backup keep costs steady and data safe.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage with continuous automatic backups ensures data safety and cost predictability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Google Drive fits well since it includes file sharing and collaboration integrated with Google Workspace, which we need for smooth teamwork.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes file sharing and collaboration integrated with Google Workspace, fitting business needs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes file sharing and collaboration tools integrated with Google Workspace."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Dropbox Plus works best—continuous backup with easy file recovery fits my workflow perfectly.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Continuous backup with easy file recovery and sharing fits his workflow perfectly.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Supports continuous backup with easy file recovery and sharing."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Liam, does 2TB cover our archives long-term?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Storage may be insufficient for large photo archives.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Limited to 2TB storage which may fill quickly with large photo files."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "2TB won’t last long with large photo files; we’ll need more storage soon.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Limited to 2TB storage which may fill quickly with large photo files.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Limited to 2TB storage which may fill quickly with large photo files."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Continuous backup and easy file sharing definitely speed things up, but we still need to confirm if the storage size can handle our growing archives long-term.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Continuous backup and easy file sharing are useful for quick access and recovery.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Supports continuous backup with easy file recovery and sharing."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The $10 monthly cost is reasonable, but we need to make sure it also integrates smoothly with our collaboration tools.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly cost is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_cost_usd",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "2TB is tight and backups need manual setup.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Limited to 2TB and scheduled backups require manual setup.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Scheduled backups require manual setup and management."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "2TB might work for now, though I worry it won’t support smooth collaboration as archives grow.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the storage limit is 2TB",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "storage_limit",
+          "public_value": "2TB"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Scheduled backups work but need regular checks.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the backup type is scheduled",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "backup_type",
+          "public_value": "scheduled"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "If Backblaze lacks collaboration features, Zoe, how do you see it fitting with our team’s workflow?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Lacks collaboration features important for team workflow.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No native file sharing or collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "No native sharing means it won’t support collaboration directly.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is No native file sharing or collaboration features.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No native file sharing or collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "It supports Windows and macOS, which covers our main systems.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the platforms supported is Windows, macOS",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "platforms_supported",
+          "public_value": "Windows, macOS"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Unlimited storage with automatic backups means I don’t have to micromanage files constantly.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Unlimited storage and continuous automatic backups reduce manual effort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Seven bucks a month is affordable and predictable.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly cost is 7",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "monthly_cost_usd",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Windows and macOS support covers our devices, but without better collaboration, it won’t fully streamline our workflow.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the platforms supported is Windows, macOS",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "platforms_supported",
+          "public_value": "Windows, macOS"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Storage is unlimited, which fits our scaling needs.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the storage limit is unlimited",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "storage_limit",
+          "public_value": "unlimited"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Backblaze Backup’s continuous automatic backups mean less manual effort, so I can accept it.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage and continuous automatic backups reduce manual effort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Unlimited storage and continuous automatic backups reduce manual effort."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Unlimited storage and continuous automatic backups reduce manual effort."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Continuous backup is definitely convenient, but I still need to confirm it works smoothly with our team’s collaboration tools to avoid workflow hiccups.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the backup type is continuous",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "backup_type",
+          "public_value": "continuous"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "2TB feels tight for growing storage needs, unlimited suits better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare storage_limit: unlimited and 2TB",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "storage_limit",
+            "public_value": "unlimited"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "storage_limit",
+            "public_value": "2TB"
+          }
+        ],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Continuous backup reduces risk of lost files, still need compatibility check.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the backup type is continuous",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "backup_type",
+          "public_value": "continuous"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 22,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Backblaze Backup is currently the leading option, though it is still short of a majority. Maya and Liam, could you accept it for the group?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 23,
+      "phase": "NARROWING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Backblaze Backup could fit since unlimited storage and continuous automatic backups cut down manual work.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage and continuous automatic backups reduce manual effort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Unlimited storage and continuous automatic backups reduce manual effort."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Unlimited storage and continuous automatic backups reduce manual effort."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 24,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It’s good for backups, but missing collaboration features we really need for team workflow.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lacks collaboration features important for team workflow.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No native file sharing or collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 25,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 26,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Google Drive.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes file sharing and collaboration integrated with Google Workspace, fitting business needs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes file sharing and collaboration tools integrated with Google Workspace."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 27,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for Backblaze Backup.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage and continuous automatic backups reduce manual effort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Unlimited storage and continuous automatic backups reduce manual effort."
+        },
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Unlimited storage and continuous automatic backups reduce manual effort."
+      },
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Backblaze Backup is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage with continuous automatic backups ensures data safety and cost predictability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 29,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The decision closes with a majority for Backblaze Backup.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:backup_type": 2,
+    "A:concern": 3,
+    "A:monthly_cost_usd": 1,
+    "A:platforms_supported": 2,
+    "A:storage_limit": 2,
+    "A:upside": 4,
+    "B:backup_type": 1,
+    "B:concern": 1,
+    "B:storage_limit": 2,
+    "B:upside": 1,
+    "C:concern": 2,
+    "C:monthly_cost_usd": 1,
+    "C:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "upside"
+    ],
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "B",
+    "p2": "A",
+    "p3": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "B",
+      "p2": "A",
+      "p3": "A"
+    },
+    "reason": "2 of 3 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 23,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 14340,
+    "output_tokens": 1703,
+    "moderator_turns": 4,
+    "voluntary_turns": 18,
+    "visible_movements": 2,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 3,
+    "participant_turns": 26,
+    "voluntary_turns": 18,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1333,
+    "avg_words_per_participant_turn": 12.69,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 14340,
+    "output_tokens": 1703,
+    "llm_calls": 26,
+    "voluntary_turns_by_persona": {
+      "p3": 8,
+      "p1": 7,
+      "p2": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage with continuous automatic backups ensures data safety and cost predictability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unlimited storage and automatic backups in Backblaze Backup keep costs steady and data safe.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes file sharing and collaboration integrated with Google Workspace, fitting business needs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes file sharing and collaboration tools integrated with Google Workspace."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Google Drive fits well since it includes file sharing and collaboration integrated with Google Workspace, which we need for smooth teamwork.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Continuous backup with easy file recovery and sharing fits his workflow perfectly.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Supports continuous backup with easy file recovery and sharing."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Dropbox Plus works best—continuous backup with easy file recovery fits my workflow perfectly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "Storage may be insufficient for large photo archives.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Limited to 2TB storage which may fill quickly with large photo files."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Liam, does 2TB cover our archives long-term?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Limited to 2TB storage which may fill quickly with large photo files.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Limited to 2TB storage which may fill quickly with large photo files."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2TB won’t last long with large photo files; we’ll need more storage soon.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Continuous backup and easy file sharing are useful for quick access and recovery.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Supports continuous backup with easy file recovery and sharing."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Continuous backup and easy file sharing definitely speed things up, but we still need to confirm if the storage size can handle our growing archives long-term.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly cost is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "monthly_cost_usd",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The $10 monthly cost is reasonable, but we need to make sure it also integrates smoothly with our collaboration tools.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Limited to 2TB and scheduled backups require manual setup.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Scheduled backups require manual setup and management."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2TB is tight and backups need manual setup.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "the storage limit is 2TB",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "storage_limit",
+          "public_value": "2TB"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2TB might work for now, though I worry it won’t support smooth collaboration as archives grow.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the backup type is scheduled",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "backup_type",
+          "public_value": "scheduled"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Scheduled backups work but need regular checks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Lacks collaboration features important for team workflow.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No native file sharing or collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "If Backblaze lacks collaboration features, Zoe, how do you see it fitting with our team’s workflow?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is No native file sharing or collaboration features.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No native file sharing or collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "No native sharing means it won’t support collaboration directly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the platforms supported is Windows, macOS",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "platforms_supported",
+          "public_value": "Windows, macOS"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It supports Windows and macOS, which covers our main systems.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "Unlimited storage and continuous automatic backups reduce manual effort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unlimited storage with automatic backups means I don’t have to micromanage files constantly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the monthly cost is 7",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "monthly_cost_usd",
+          "public_value": "7"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Seven bucks a month is affordable and predictable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the platforms supported is Windows, macOS",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "platforms_supported",
+          "public_value": "Windows, macOS"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Windows and macOS support covers our devices, but without better collaboration, it won’t fully streamline our workflow.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the storage limit is unlimited",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "storage_limit",
+          "public_value": "unlimited"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Storage is unlimited, which fits our scaling needs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage and continuous automatic backups reduce manual effort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Unlimited storage and continuous automatic backups reduce manual effort."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Backblaze Backup’s continuous automatic backups mean less manual effort, so I can accept it.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the backup type is continuous",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "backup_type",
+          "public_value": "continuous"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Continuous backup is definitely convenient, but I still need to confirm it works smoothly with our team’s collaboration tools to avoid workflow hiccups.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare storage_limit: unlimited and 2TB",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "storage_limit",
+            "public_value": "unlimited"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "storage_limit",
+            "public_value": "2TB"
+          }
+        ],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "2TB feels tight for growing storage needs, unlimited suits better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the backup type is continuous",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "backup_type",
+          "public_value": "continuous"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a cost-effective backup with unlimited or scalable storage and automated backups.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Continuous backup reduces risk of lost files, still need compatibility check.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage and continuous automatic backups reduce manual effort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a backup solution that requires minimal setup and supports continuous backups.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Unlimited storage and continuous automatic backups reduce manual effort."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Backblaze Backup could fit since unlimited storage and continuous automatic backups cut down manual work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Lacks collaboration features important for team workflow.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "No native file sharing or collaboration features."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backup service integrates well with collaboration tools to streamline workflow.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s good for backups, but missing collaboration features we really need for team workflow.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Includes file sharing and collaboration integrated with Google Workspace, fitting business needs.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Includes file sharing and collaboration tools integrated with Google Workspace."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Google Drive.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage and continuous automatic backups reduce manual effort.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Unlimited storage and continuous automatic backups reduce manual effort."
+        },
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Backblaze Backup.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Unlimited storage with continuous automatic backups ensures data safety and cost predictability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers unlimited storage with continuous automatic backups."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Backblaze Backup is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

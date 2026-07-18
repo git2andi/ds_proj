@@ -98,7 +98,7 @@ class Config(Section):
 
     def _validate(self) -> None:
         for key in (
-            "llm.dialogue", "llm.models", "llm.sampling",
+            "llm.dialogue", "llm.models",
             "simulation.num_participants", "simulation.min_participants", "simulation.max_participants",
             "scenario.option_labels", "personas.trait_ranges",
             "personas.preference_distribution", "conversation.thread_turn_cap",
@@ -124,9 +124,6 @@ class Config(Section):
             raise ValueError(f"missing model for provider {provider}")
         if provider == "uni" and not str(self.llm.endpoints.get("uni") or "").strip():
             raise ValueError("llm.dialogue='uni' requires llm.endpoints.uni")
-        for profile in ("setup", "dialogue", "repair"):
-            if profile not in self.llm.sampling:
-                raise ValueError(f"llm.sampling.{profile} is required")
 
     def _validate_group_and_traits(self) -> None:
         n = int(self.simulation.num_participants)

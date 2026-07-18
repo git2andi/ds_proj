@@ -1,0 +1,1448 @@
+{
+  "provenance": {
+    "seed": 242118778,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Which espresso machine should the startup buy for its kitchen",
+    "options": [
+      {
+        "id": "A",
+        "name": "Breville Barista Express BES870XL",
+        "attrs": {
+          "price_usd": "700",
+          "capacity_cups": "2",
+          "dimensions_inch": "13 x 12 x 14",
+          "cleaning_method": "automatic cleaning cycle"
+        },
+        "upside": "Integrated grinder and user-friendly interface.",
+        "concern": "Slightly below budget range, may lack some advanced features.",
+        "short_name": "Breville Barista",
+        "aliases": [
+          "Breville Barista",
+          "Barista Express"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "DeLonghi La Specialista Prestigio EC9355M",
+        "attrs": {
+          "price_usd": "1200",
+          "capacity_cups": "2",
+          "dimensions_inch": "14 x 12 x 15",
+          "cleaning_method": "removable drip tray and steam wand"
+        },
+        "upside": "Offers precise temperature control and steam wand for milk frothing.",
+        "concern": "Requires manual cleaning of some parts.",
+        "short_name": "DeLonghi Specialista",
+        "aliases": [
+          "DeLonghi Specialista",
+          "La Specialista"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Gaggia Classic Pro",
+        "attrs": {
+          "price_usd": "450",
+          "capacity_cups": "2",
+          "dimensions_inch": "9 x 8 x 14",
+          "cleaning_method": "manual cleaning recommended"
+        },
+        "upside": "Compact design and durable build.",
+        "concern": "Below budget range and requires more manual maintenance.",
+        "short_name": "Gaggia Classic",
+        "aliases": [
+          "Gaggia Classic",
+          "Classic Pro"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Rancilio Silvia Espresso Machine",
+        "attrs": {
+          "price_usd": "735",
+          "capacity_cups": "1",
+          "dimensions_inch": "9 x 8 x 14",
+          "cleaning_method": "manual cleaning with backflush capability"
+        },
+        "upside": "Professional-grade components and consistent espresso quality.",
+        "concern": "Single cup capacity may slow service during simultaneous use.",
+        "short_name": "Rancilio Silvia",
+        "aliases": [
+          "Rancilio Silvia",
+          "Silvia Espresso"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The startup needs an espresso machine for its kitchen that can handle moderate daily use by two people. The machine should be compact, easy to clean, and fit within a budget of $800 to $1500."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 3,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Maya is a startup operations manager focused on cost-efficiency and durability.",
+      "private_goal": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Affordable price and integrated grinder with automatic cleaning.",
+          "reason_against": "Slightly below budget and may lack advanced features Maya values."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Has advanced features like precise temperature control.",
+          "reason_against": "Higher price and requires manual cleaning, which Maya wants to avoid."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Compact design, durable build, and well within budget.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Professional-grade components and consistent quality.",
+          "reason_against": "Single cup capacity may slow down usage for two people."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Liam is a software engineer who values ease of use and convenience in office appliances.",
+      "private_goal": "To have a user-friendly espresso machine with automatic cleaning and integrated grinder.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Integrated grinder and automatic cleaning cycle make it convenient and easy to use.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Offers precise temperature control and milk frothing capabilities.",
+          "reason_against": "Requires manual cleaning of some parts, reducing convenience."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Compact and durable, but lacks automatic cleaning and integrated grinder.",
+          "reason_against": "Below budget but requires more manual maintenance, which Liam dislikes."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Professional quality espresso.",
+          "reason_against": "Single cup capacity and manual cleaning reduce ease of use."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 2,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "dimensions_inch"
+        ],
+        [
+          "C",
+          "cleaning_method"
+        ],
+        [
+          "C",
+          "price_usd"
+        ],
+        [
+          "C",
+          "capacity_cups"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "A",
+          "capacity_cups"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "price_usd"
+        ],
+        [
+          "C",
+          "capacity_cups"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Which espresso machine should the startup buy for its kitchen.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Breville Barista’s integrated grinder and automatic cleaning cycle seem pretty convenient and easy to use.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Integrated grinder and automatic cleaning cycle make it convenient and easy to use.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Integrated grinder and user-friendly interface."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a user-friendly espresso machine with automatic cleaning and integrated grinder.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The Gaggia Classic fits well—compact design, durable build, and budget-friendly.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Compact design, durable build, and well within budget.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Compact design and durable build."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It’s a bit under budget and might miss some features I’d prefer for easy upkeep.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Slightly below budget and may lack advanced features Maya values.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Slightly below budget range, may lack some advanced features."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "It’s below budget, but the extra manual cleaning might get annoying over time.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Below budget but requires more manual maintenance, which Liam dislikes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Below budget range and requires more manual maintenance."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a user-friendly espresso machine with automatic cleaning and integrated grinder.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "450 is reasonable, though the upkeep could add hidden time costs I’d prefer to avoid.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price is 450",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_usd",
+          "public_value": "450"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Both hold 2 cups, so capacity won’t affect my choice much here.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare capacity_cups: 2 and 2",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "capacity_cups",
+            "public_value": "2"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "capacity_cups",
+            "public_value": "2"
+          }
+        ],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "450 seems fair, though I’d rather avoid extra cleaning tasks if possible.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the price is 450",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_usd",
+          "public_value": "450"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a user-friendly espresso machine with automatic cleaning and integrated grinder.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "The 9 x 8 x 14 size is compact enough for my space, which helps a lot.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the dimensions inch is 9 x 8 x 14",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "dimensions_inch",
+          "public_value": "9 x 8 x 14"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Two cups is okay, though I’d prefer something that cleans itself automatically.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the capacity cups is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "capacity_cups",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a user-friendly espresso machine with automatic cleaning and integrated grinder.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Cleaning is manual here, which means more hands-on time but less risk of costly repairs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cleaning method is manual cleaning recommended",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cleaning_method",
+          "public_value": "manual cleaning recommended"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The leading options remain tied. Let’s use Breville Barista as the bounded tie-break target. Maya, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 12,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "It’s a bit below my budget and seems to miss some features I’d prefer.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Slightly below budget and may lack advanced features Maya values.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Slightly below budget range, may lack some advanced features."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 14,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "My final vote is Gaggia Classic.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Compact design, durable build, and well within budget.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Compact design and durable build."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 15,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Breville Barista.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Integrated grinder and automatic cleaning cycle make it convenient and easy to use.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Integrated grinder and user-friendly interface."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 16,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final vote remained split, so the decision is unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "C",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:capacity_cups": 1,
+    "A:concern": 2,
+    "A:upside": 1,
+    "C:capacity_cups": 2,
+    "C:cleaning_method": 1,
+    "C:concern": 1,
+    "C:dimensions_inch": 1,
+    "C:price_usd": 2,
+    "C:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "cleaning_method"
+    ],
+    [
+      "A",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "C",
+      "p2": "A"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 11,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 7722,
+    "output_tokens": 1430,
+    "moderator_turns": 4,
+    "voluntary_turns": 9,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 2,
+    "participant_turns": 13,
+    "voluntary_turns": 9,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.2353,
+    "avg_words_per_participant_turn": 12.54,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 7722,
+    "output_tokens": 1430,
+    "llm_calls": 14,
+    "voluntary_turns_by_persona": {
+      "p1": 6,
+      "p2": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Integrated grinder and automatic cleaning cycle make it convenient and easy to use.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Integrated grinder and user-friendly interface."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a user-friendly espresso machine with automatic cleaning and integrated grinder.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Breville Barista’s integrated grinder and automatic cleaning cycle seem pretty convenient and easy to use.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Compact design, durable build, and well within budget.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Compact design and durable build."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Gaggia Classic fits well—compact design, durable build, and budget-friendly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Slightly below budget and may lack advanced features Maya values.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Slightly below budget range, may lack some advanced features."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s a bit under budget and might miss some features I’d prefer for easy upkeep.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Below budget but requires more manual maintenance, which Liam dislikes.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Below budget range and requires more manual maintenance."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a user-friendly espresso machine with automatic cleaning and integrated grinder.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s below budget, but the extra manual cleaning might get annoying over time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the price is 450",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_usd",
+          "public_value": "450"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "450 is reasonable, though the upkeep could add hidden time costs I’d prefer to avoid.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare capacity_cups: 2 and 2",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "capacity_cups",
+            "public_value": "2"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "capacity_cups",
+            "public_value": "2"
+          }
+        ],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both hold 2 cups, so capacity won’t affect my choice much here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the price is 450",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "price_usd",
+          "public_value": "450"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a user-friendly espresso machine with automatic cleaning and integrated grinder.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "450 seems fair, though I’d rather avoid extra cleaning tasks if possible.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the dimensions inch is 9 x 8 x 14",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "dimensions_inch",
+          "public_value": "9 x 8 x 14"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The 9 x 8 x 14 size is compact enough for my space, which helps a lot.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "the capacity cups is 2",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "capacity_cups",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a user-friendly espresso machine with automatic cleaning and integrated grinder.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two cups is okay, though I’d prefer something that cleans itself automatically.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the cleaning method is manual cleaning recommended",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cleaning_method",
+          "public_value": "manual cleaning recommended"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cleaning is manual here, which means more hands-on time but less risk of costly repairs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Slightly below budget and may lack advanced features Maya values.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Slightly below budget range, may lack some advanced features."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a compact and budget-friendly espresso machine that requires minimal maintenance.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It’s a bit below my budget and seems to miss some features I’d prefer.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Compact design, durable build, and well within budget.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Compact design and durable build."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Gaggia Classic.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Integrated grinder and automatic cleaning cycle make it convenient and easy to use.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Integrated grinder and user-friendly interface."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Breville Barista.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

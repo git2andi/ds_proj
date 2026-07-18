@@ -1,0 +1,1591 @@
+{
+  "provenance": {
+    "seed": 242118910,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose a camera lens for wildlife photography on an upcoming trip",
+    "options": [
+      {
+        "id": "A",
+        "name": "Canon EF 100-400mm f/4.5-5.6L IS II USM",
+        "attrs": {
+          "focal_length_mm": "100-400",
+          "aperture_range": "f/4.5-5.6",
+          "weight_g": "1570",
+          "image_stabilization": "Yes",
+          "mount_type": "Canon EF"
+        },
+        "upside": "Offers flexible zoom range with image stabilization for handheld shots.",
+        "concern": "Relatively heavy, which may cause fatigue during long shoots.",
+        "short_name": "Canon IS II",
+        "aliases": [
+          "Canon IS II",
+          "Canon EF"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Nikon AF-S NIKKOR 200-500mm f/5.6E ED VR",
+        "attrs": {
+          "focal_length_mm": "200-500",
+          "aperture_range": "f/5.6",
+          "weight_g": "2300",
+          "image_stabilization": "Yes",
+          "mount_type": "Nikon F"
+        },
+        "upside": "Long zoom range suitable for distant wildlife subjects with vibration reduction.",
+        "concern": "Heavier and bulkier, which may limit mobility.",
+        "short_name": "Nikon AF-S NIKKOR",
+        "aliases": [
+          "Nikon AF-S NIKKOR",
+          "Nikon ED VR"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Sony FE 100-400mm f/4.5-5.6 GM OSS",
+        "attrs": {
+          "focal_length_mm": "100-400",
+          "aperture_range": "f/4.5-5.6",
+          "weight_g": "1395",
+          "image_stabilization": "Yes",
+          "mount_type": "Sony E"
+        },
+        "upside": "Compact design with optical stabilization for clear images on the move.",
+        "concern": "Higher cost may be a consideration for budget-conscious users.",
+        "short_name": "Sony GM OSS",
+        "aliases": [
+          "Sony GM OSS",
+          "Sony FE"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Tamron SP 150-600mm f/5-6.3 Di VC USD G2",
+        "attrs": {
+          "focal_length_mm": "150-600",
+          "aperture_range": "f/5-6.3",
+          "weight_g": "1950",
+          "image_stabilization": "Yes",
+          "mount_type": "Canon EF / Nikon F"
+        },
+        "upside": "Extended zoom range with vibration compensation for detailed distant shots.",
+        "concern": "Slower aperture may challenge low-light performance.",
+        "short_name": "Tamron VC USD",
+        "aliases": [
+          "Tamron VC USD",
+          "Tamron SP"
+        ]
+      }
+    ],
+    "shared_context": [
+      "Two photographers are selecting a camera lens suitable for wildlife photography on a trip requiring portability and versatility. The lens should perform well in various lighting conditions and allow capturing distant subjects clearly."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Maya is an experienced wildlife photographer who values portability and image stabilization for handheld shooting.",
+      "private_goal": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Flexible zoom range with image stabilization fits portability and versatility needs.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Long zoom range good for distant subjects.",
+          "reason_against": "Too heavy and bulky, limiting mobility on the trip."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Compact design with optical stabilization supports portability and clear images.",
+          "reason_against": "Higher cost might be a budget concern."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Extended zoom range with vibration compensation is useful for distant shots.",
+          "reason_against": "Slower aperture may reduce performance in low light."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 2
+      },
+      "background": "Liam is a patient wildlife photographer who prioritizes maximum zoom to capture distant animals clearly.",
+      "private_goal": "To select a lens that maximizes reach and detail, even if it means extra weight.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Good zoom range and image stabilization offer versatility.",
+          "reason_against": "Zoom range may be insufficient for very distant subjects."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Long zoom and vibration reduction help capture distant wildlife clearly.",
+          "reason_against": "Heavier and bulkier, which might reduce mobility but acceptable for reach."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Extended zoom range with vibration compensation for detailed distant shots.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "C"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "weight_g"
+        ],
+        [
+          "D",
+          "focal_length_mm"
+        ],
+        [
+          "D",
+          "mount_type"
+        ],
+        [
+          "A",
+          "focal_length_mm"
+        ],
+        [
+          "D",
+          "image_stabilization"
+        ],
+        [
+          "D",
+          "aperture_range"
+        ],
+        [
+          "A",
+          "image_stabilization"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "aperture_range"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "mount_type"
+        ],
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Choose a camera lens for wildlife photography on an upcoming trip.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Flexible zoom range with image stabilization fits my portability and versatility needs—Canon IS II.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible zoom range with image stabilization fits portability and versatility needs.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers flexible zoom range with image stabilization for handheld shots."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Tamron VC USD offers extended zoom with vibration compensation, which I find handy for distant wildlife shots.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Extended zoom range with vibration compensation for detailed distant shots.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Extended zoom range with vibration compensation for detailed distant shots."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a lens that maximizes reach and detail, even if it means extra weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 3,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Slower aperture means I’d struggle in dim light handheld.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Slower aperture may reduce performance in low light.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Slower aperture may challenge low-light performance."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Canon EF / Nikon F mounts limit my mirrorless options.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the mount type is Canon EF / Nikon F",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "mount_type",
+          "public_value": "Canon EF / Nikon F"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Good stabilization helps, but weight still tires me on long hikes.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the image stabilization is Yes",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "image_stabilization",
+          "public_value": "Yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "150-600mm is great reach, but that zoom range adds weight I can’t carry all day.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the focal length mm is 150-600",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "focal_length_mm",
+          "public_value": "150-600"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "1950 grams is still too heavy for long handheld shoots.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the weight g is 1950",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "weight_g",
+          "public_value": "1950"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "f/5-6.3 is workable but won’t help much in low light.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the aperture range is f/5-6.3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "aperture_range",
+          "public_value": "f/5-6.3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s hear one more concrete point before we narrow this down.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The Canon EF / Nikon F mount works fine for me since I use Canon, so that’s a plus.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the mount type is Canon EF / Nikon F",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "mount_type",
+          "public_value": "Canon EF / Nikon F"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a lens that maximizes reach and detail, even if it means extra weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Both have image stabilization, but the Canon IS II is lighter and fits handheld better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare image_stabilization: Yes and Yes",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "image_stabilization",
+            "public_value": "Yes"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "image_stabilization",
+            "public_value": "Yes"
+          }
+        ],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Lighter is nice, but I worry the zoom might not reach far enough for some shots I want.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Zoom range may be insufficient for very distant subjects.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Relatively heavy, which may cause fatigue during long shoots."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a lens that maximizes reach and detail, even if it means extra weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The aperture range seems a bit narrow, which might limit low-light shots during dawn or dusk.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the aperture range is f/4.5-5.6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "aperture_range",
+          "public_value": "f/4.5-5.6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a lens that maximizes reach and detail, even if it means extra weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "100-400mm covers most wildlife needs without extra bulk.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the focal length mm is 100-400",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "focal_length_mm",
+          "public_value": "100-400"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The strongest common-ground options are tied, so I’ll use Canon IS II as the compromise target. Liam, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 16,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Canon IS II is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible zoom range with image stabilization fits portability and versatility needs.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers flexible zoom range with image stabilization for handheld shots."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 17,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is Tamron VC USD.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Extended zoom range with vibration compensation for detailed distant shots.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Extended zoom range with vibration compensation for detailed distant shots."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "A"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 18,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final vote remained split, so the decision is unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [],
+  "public_point_counts": {
+    "A:aperture_range": 1,
+    "A:concern": 1,
+    "A:focal_length_mm": 1,
+    "A:image_stabilization": 1,
+    "A:upside": 1,
+    "D:aperture_range": 1,
+    "D:concern": 1,
+    "D:focal_length_mm": 1,
+    "D:image_stabilization": 2,
+    "D:mount_type": 2,
+    "D:upside": 1,
+    "D:weight_g": 1
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "aperture_range"
+    ],
+    [
+      "A",
+      "focal_length_mm"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "D"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "A",
+      "p2": "D"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 13,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 1,
+    "input_tokens": 9652,
+    "output_tokens": 1596,
+    "moderator_turns": 4,
+    "voluntary_turns": 10,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 2,
+    "participant_turns": 15,
+    "voluntary_turns": 10,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.2105,
+    "avg_words_per_participant_turn": 12.47,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 9652,
+    "output_tokens": 1596,
+    "llm_calls": 16,
+    "voluntary_turns_by_persona": {
+      "p1": 8,
+      "p2": 2
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible zoom range with image stabilization fits portability and versatility needs.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers flexible zoom range with image stabilization for handheld shots."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Flexible zoom range with image stabilization fits my portability and versatility needs—Canon IS II.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Extended zoom range with vibration compensation for detailed distant shots.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Extended zoom range with vibration compensation for detailed distant shots."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a lens that maximizes reach and detail, even if it means extra weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Tamron VC USD offers extended zoom with vibration compensation, which I find handy for distant wildlife shots.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "Slower aperture may reduce performance in low light.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Slower aperture may challenge low-light performance."
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Slower aperture means I’d struggle in dim light handheld.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the mount type is Canon EF / Nikon F",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "mount_type",
+          "public_value": "Canon EF / Nikon F"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Canon EF / Nikon F mounts limit my mirrorless options.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the image stabilization is Yes",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "image_stabilization",
+          "public_value": "Yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Good stabilization helps, but weight still tires me on long hikes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the focal length mm is 150-600",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "focal_length_mm",
+          "public_value": "150-600"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "150-600mm is great reach, but that zoom range adds weight I can’t carry all day.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the weight g is 1950",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "weight_g",
+          "public_value": "1950"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "1950 grams is still too heavy for long handheld shoots.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the aperture range is f/5-6.3",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "aperture_range",
+          "public_value": "f/5-6.3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "f/5-6.3 is workable but won’t help much in low light.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the mount type is Canon EF / Nikon F",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "mount_type",
+          "public_value": "Canon EF / Nikon F"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a lens that maximizes reach and detail, even if it means extra weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Canon EF / Nikon F mount works fine for me since I use Canon, so that’s a plus.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare image_stabilization: Yes and Yes",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "image_stabilization",
+            "public_value": "Yes"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "image_stabilization",
+            "public_value": "Yes"
+          }
+        ],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have image stabilization, but the Canon IS II is lighter and fits handheld better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "Zoom range may be insufficient for very distant subjects.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Relatively heavy, which may cause fatigue during long shoots."
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a lens that maximizes reach and detail, even if it means extra weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Lighter is nice, but I worry the zoom might not reach far enough for some shots I want.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the aperture range is f/4.5-5.6",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "aperture_range",
+          "public_value": "f/4.5-5.6"
+        },
+        "comparison_sources": [],
+        "personal_context": "To select a lens that maximizes reach and detail, even if it means extra weight.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The aperture range seems a bit narrow, which might limit low-light shots during dawn or dusk.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the focal length mm is 100-400",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "focal_length_mm",
+          "public_value": "100-400"
+        },
+        "comparison_sources": [],
+        "personal_context": "To find a versatile lens that balances zoom range and manageable weight for long outdoor sessions.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "100-400mm covers most wildlife needs without extra bulk.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Flexible zoom range with image stabilization fits portability and versatility needs.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers flexible zoom range with image stabilization for handheld shots."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Canon IS II is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Extended zoom range with vibration compensation for detailed distant shots.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Extended zoom range with vibration compensation for detailed distant shots."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Tamron VC USD.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

@@ -14,7 +14,7 @@ from models import (
 )
 
 
-_NUMBER_RE = re.compile(r"(?<!\w)(?:[$€£]\s*)?\d+(?:[.,]\d+)?(?:\s*%|\s*[a-zA-Z]+)?")
+_NUMBER_RE = re.compile(r"(?<!\w)(?:[$€£]\s*)?\d+(?:[.,]\d+)?(?:\s*%)?")
 _PERSONAL_ACCEPTANCE_PATTERNS = (
     "works for me",
     "works better for me",

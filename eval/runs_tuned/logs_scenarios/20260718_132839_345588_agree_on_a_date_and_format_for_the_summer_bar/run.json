@@ -1,0 +1,4212 @@
+{
+  "provenance": {
+    "seed": 242118759,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Agree on a date and format for the summer barbecue",
+    "options": [
+      {
+        "id": "A",
+        "name": "Saturday July 13th - Traditional Grill Format",
+        "attrs": {
+          "date": "2024-07-13",
+          "format": "grill",
+          "location": "public park",
+          "duration_hours": "4",
+          "cost_per_person_usd": "15"
+        },
+        "upside": "Familiar setup with grilled meats and sides in a public park.",
+        "concern": "Weather-dependent and may require backup plans if it rains.",
+        "short_name": "Saturday Grill",
+        "aliases": [
+          "Saturday Grill",
+          "Traditional Grill"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Sunday July 21st - Potluck Picnic Style",
+        "attrs": {
+          "date": "2024-07-21",
+          "format": "potluck",
+          "location": "community garden",
+          "duration_hours": "3",
+          "cost_per_person_usd": "5"
+        },
+        "upside": "Everyone contributes a dish, reducing individual costs and effort.",
+        "concern": "Requires coordination to avoid duplicate dishes and dietary conflicts.",
+        "short_name": "Sunday Potluck",
+        "aliases": [
+          "Sunday Potluck",
+          "Potluck Picnic"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Saturday August 3rd - Catered Buffet",
+        "attrs": {
+          "date": "2024-08-03",
+          "format": "catered buffet",
+          "location": "private backyard",
+          "duration_hours": "5",
+          "cost_per_person_usd": "30"
+        },
+        "upside": "Professional catering reduces preparation and cleanup time.",
+        "concern": "Higher cost and less flexibility in menu choices.",
+        "short_name": "Saturday Buffet",
+        "aliases": [
+          "Saturday Buffet",
+          "Catered Buffet"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Friday July 19th - BBQ and Games Evening",
+        "attrs": {
+          "date": "2024-07-19",
+          "format": "grill with games",
+          "location": "local recreation area",
+          "duration_hours": "4",
+          "cost_per_person_usd": "20"
+        },
+        "upside": "Includes organized games for added group interaction.",
+        "concern": "Evening timing may conflict with some participants' schedules.",
+        "short_name": "Friday BBQ",
+        "aliases": [
+          "Friday BBQ",
+          "Games Evening"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The group of 7 needs to decide on the date and format for the summer barbecue. The event will be held outdoors and should accommodate all participants' availability and preferences."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 1
+      },
+      "background": "Maya enjoys active social events and values group interaction.",
+      "private_goal": "Wants a fun evening with games to engage everyone.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Familiar and comfortable traditional grill format.",
+          "reason_against": "Weather dependency could disrupt plans."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Lower cost and relaxed picnic atmosphere.",
+          "reason_against": "Coordination of dishes may be complicated."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Less effort required due to catering.",
+          "reason_against": "Higher cost and less interactive format."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Includes games which enhance group bonding.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Liam prefers straightforward, no-fuss events with clear plans.",
+      "private_goal": "Wants a reliable and familiar setup with minimal surprises.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Traditional grill is familiar and well-organized.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Cost-effective and casual.",
+          "reason_against": "Potluck coordination seems cumbersome."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Catering reduces effort but is costly.",
+          "reason_against": "Less control over menu and higher price."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Fun games add value to the event.",
+          "reason_against": "Evening timing might be inconvenient."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Nina is highly engaged and values direct, clear plans.",
+      "private_goal": "Wants an event that maximizes social interaction and fun.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Traditional grill is straightforward and social.",
+          "reason_against": "Weather dependency is a concern."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Potluck lowers costs and encourages sharing.",
+          "reason_against": "Dish coordination could be tricky."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Catering is convenient but less interactive.",
+          "reason_against": "High cost and less flexibility."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Games and grilling create a lively atmosphere.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 4,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Omar is talkative and direct, preferring cost-effective group efforts.",
+      "private_goal": "Wants to minimize costs while ensuring everyone contributes.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 41,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Traditional grill is familiar and enjoyable.",
+          "reason_against": "Costs more than potluck and weather risk."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Potluck reduces costs and promotes group involvement.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Catering is convenient but expensive.",
+          "reason_against": "Less group participation and higher cost."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Games add fun, though cost is higher than potluck.",
+          "reason_against": "Evening timing may be inconvenient."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 5,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Zara enjoys luxury and convenience in social events.",
+      "private_goal": "Wants a hassle-free, high-quality food experience.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 36,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Traditional grill is classic and familiar.",
+          "reason_against": "Weather risk and moderate cost."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Potluck is affordable but less refined.",
+          "reason_against": "Coordination and dish variety concerns."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Catering offers professional quality and convenience.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Games add fun, though cost is somewhat high.",
+          "reason_against": "Evening timing might be less ideal."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 2,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Eli is less engaged but appreciates straightforward plans.",
+      "private_goal": "Wants an affordable event with minimal hassle.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 22,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Traditional grill is familiar and reasonably priced.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Potluck is low cost and casual.",
+          "reason_against": "Dish coordination might be tricky."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Catering is convenient but expensive.",
+          "reason_against": "Less control and higher cost."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Games add fun but timing may conflict.",
+          "reason_against": "Evening event may be inconvenient."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Tia",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Tia is moderately engaged and prefers balanced, social events.",
+      "private_goal": "Wants a fun event that fits well with her schedule.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Traditional grill is enjoyable and familiar.",
+          "reason_against": "Weather dependency is a concern."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Potluck is affordable and communal.",
+          "reason_against": "Coordination may be challenging."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Catering reduces effort but is costly.",
+          "reason_against": "Less interactive and expensive."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Games and grilling create a lively atmosphere.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Familiar and comfortable traditional grill format."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "duration_hours"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "cost_per_person_usd"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "date"
+        ],
+        [
+          "A",
+          "location"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "format"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "date"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Traditional grill is straightforward and social."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "cost_per_person_usd"
+        ],
+        [
+          "D",
+          "location"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "date"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "location"
+        ],
+        [
+          "B",
+          "location"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 2,
+        "C": 5,
+        "D": 4
+      },
+      "acceptable_options": [
+        "C",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Games add fun, though cost is somewhat high."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "format"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "date"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "C",
+          "location"
+        ],
+        [
+          "D",
+          "duration_hours"
+        ],
+        [
+          "A",
+          "date"
+        ],
+        [
+          "A",
+          "cost_per_person_usd"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "date"
+        ],
+        [
+          "A",
+          "location"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "A",
+          "duration_hours"
+        ],
+        [
+          "D",
+          "duration_hours"
+        ],
+        [
+          "B",
+          "duration_hours"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Agree on a date and format for the summer barbecue.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Friday BBQ is best—games make everyone connect better.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Includes games which enhance group bonding.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Tia",
+      "text": "Friday BBQ sounds nice since games and grilling create a lively atmosphere without being too intense.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games and grilling create a lively atmosphere.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Games and grilling create a lively atmosphere, so Friday BBQ is the best choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games and grilling create a lively atmosphere.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Saturday Grill seems straightforward and familiar.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is familiar and well-organized.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "The Saturday Buffet with catering feels like a smooth choice—professional quality without the usual prep hassle.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Catering offers professional quality and convenience.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Professional catering reduces preparation and cleanup time."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Saturday Grill works—traditional, familiar, and affordable.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is familiar and reasonably priced.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Sunday Potluck keeps costs down since everyone brings something, plus it gets us all involved.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Potluck reduces costs and promotes group involvement.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone contributes a dish, reducing individual costs and effort."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to minimize costs while ensuring everyone contributes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "It sounds fun to all pitch in, though it could get tricky keeping track of dishes and making sure there’s enough variety for everyone.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Coordination and dish variety concerns.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires coordination to avoid duplicate dishes and dietary conflicts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tia",
+      "text": "Four hours for the Friday BBQ is a bit longer than the Sunday Potluck’s three, which fits my schedule better since I prefer something not too long.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_hours: 4 and 3",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "duration_hours",
+            "public_value": "4"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "duration_hours",
+            "public_value": "3"
+          }
+        ],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Dish coordination could get messy and limit the fun if people bring too similar or incompatible foods.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dish coordination could be tricky.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires coordination to avoid duplicate dishes and dietary conflicts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "That buffet’s pricier and won’t get us moving much.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Higher cost and less interactive format.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and less flexibility in menu choices."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "July 13th is earlier and clearer. August 3rd feels a bit late for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare date: 2024-07-13 and 2024-08-03",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "date",
+            "public_value": "2024-07-13"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "date",
+            "public_value": "2024-08-03"
+          }
+        ],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "The high cost cuts into what we could spend on activities, and the menu limits mixing things up.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "High cost and less flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and less flexibility in menu choices."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Backyard’s chill and private, but that buffet price still bugs me.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the location is private backyard",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "location",
+          "public_value": "private backyard"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "30 each is steep enough to limit our budget for anything else fun or social.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cost per person is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Nina, do you think the evening timing might be tricky?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "Evening timing might be inconvenient.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Evening timing may conflict with some participants' schedules."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Evening might be tricky since it could conflict with some people’s schedules, limiting who can join.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Evening timing may conflict with some participants' schedules.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Evening timing may conflict with some participants' schedules."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Saturday’s earlier date fits better with my budget and schedule.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare date: 2024-07-13 and 2024-07-19",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "date",
+            "public_value": "2024-07-13"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "date",
+            "public_value": "2024-07-19"
+          }
+        ],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "I see the budget point, though the Friday BBQ and Games Evening might be more engaging with the games adding some extra fun to the night.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games add fun, though cost is somewhat high.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Games add fun, though cost is somewhat high."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "D",
+        "previous_option_id": "C",
+        "movement_reason": "Games add fun, though cost is somewhat high."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Local recreation area means space for games and mingling, so that boosts social chances.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the location is local recreation area",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "location",
+          "public_value": "local recreation area"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Four hours is decent, but that might still feel long and tiring.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the duration hours is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "duration_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Four hours might be tiring, but spreading costs evenly keeps it fair and affordable for everyone.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the date is 2024-07-19",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "date",
+          "public_value": "2024-07-19"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to minimize costs while ensuring everyone contributes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "The community garden spot means lower costs with shared food, while the local rec area might need more spending. For keeping things affordable, the garden works better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare location: community garden and local recreation area",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "location",
+            "public_value": "community garden"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "location",
+            "public_value": "local recreation area"
+          }
+        ],
+        "personal_context": "Wants to minimize costs while ensuring everyone contributes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tia",
+      "text": "That date works well for me, and keeping costs low helps, though I hope we can still have enough variety in the food to keep things fun.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the date is 2024-07-21",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "date",
+          "public_value": "2024-07-21"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Saturday Grill feels more relaxed and familiar for games.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Familiar and comfortable traditional grill format.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Familiar and comfortable traditional grill format."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Familiar and comfortable traditional grill format."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "15 bucks is fair, but I want to avoid extra hassle.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cost per person is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tia",
+      "text": "Four hours seems reasonable to keep things relaxed without dragging too long, which fits better for me.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the duration hours is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "It costs more than a potluck and still risks rain messing things up, so it’s not worth it for me.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "Costs more than potluck and weather risk.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Weather-dependent and may require backup plans if it rains."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to minimize costs while ensuring everyone contributes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "15 each isn’t bad if it means we actually get to play and hang out.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the cost per person is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Sounds good, though I prefer things straightforward and set.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the format is grill",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "format",
+          "public_value": "grill"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "I get wanting things set, but with the chance of rain, having a backup could save us last-minute stress.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Weather risk and moderate cost.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Weather-dependent and may require backup plans if it rains."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tia",
+      "text": "Public parks are nice for space, though weather could still affect comfort and timing.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the location is public park",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "location",
+          "public_value": "public park"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Grill format works well for variety, though I’d appreciate if the setup stays smooth so no one’s stuck waiting too long for food.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the format is grill",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "format",
+          "public_value": "grill"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Four hours is enough time for games and catching up.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration hours is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Public park’s fine, but rain could cut time short.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the location is public park",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "location",
+          "public_value": "public park"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 36,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Rain’s a risk, but Saturday Grill’s straightforward setup means more social time overall.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is straightforward and social.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Traditional grill is straightforward and social."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "D",
+        "movement_reason": "Traditional grill is straightforward and social."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 37,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 38,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Friday BBQ.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Includes games which enhance group bonding.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I’m voting for Saturday Grill.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is familiar and well-organized.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "My final vote is Friday BBQ.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games and grilling create a lively atmosphere.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "I’m voting for Sunday Potluck.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Potluck reduces costs and promotes group involvement.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone contributes a dish, reducing individual costs and effort."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "I choose Friday BBQ.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games add fun, though cost is somewhat high.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "I’m voting for Saturday Grill.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is familiar and reasonably priced.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Tia",
+      "text": "I choose Friday BBQ.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games and grilling create a lively atmosphere.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Friday BBQ.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:cost_per_person_usd": 2,
+    "A:date": 2,
+    "A:duration_hours": 2,
+    "A:format": 2,
+    "A:location": 2,
+    "A:upside": 4,
+    "B:concern": 2,
+    "B:date": 1,
+    "B:duration_hours": 1,
+    "B:location": 1,
+    "B:upside": 1,
+    "C:concern": 2,
+    "C:cost_per_person_usd": 1,
+    "C:date": 1,
+    "C:location": 1,
+    "C:upside": 1,
+    "D:concern": 2,
+    "D:date": 2,
+    "D:duration_hours": 2,
+    "D:location": 2,
+    "D:upside": 4
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "location"
+    ],
+    [
+      "A",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "A",
+    "p3": "D",
+    "p4": "B",
+    "p5": "D",
+    "p6": "A",
+    "p7": "D"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "votes": {
+      "p1": "D",
+      "p2": "A",
+      "p3": "D",
+      "p4": "B",
+      "p5": "D",
+      "p6": "A",
+      "p7": "D"
+    },
+    "reason": "4 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 36,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 22485,
+    "output_tokens": 3156,
+    "moderator_turns": 3,
+    "voluntary_turns": 28,
+    "visible_movements": 3,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 43,
+    "voluntary_turns": 28,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.0652,
+    "avg_words_per_participant_turn": 13.42,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 22485,
+    "output_tokens": 3156,
+    "llm_calls": 39,
+    "voluntary_turns_by_persona": {
+      "p5": 4,
+      "p7": 4,
+      "p3": 5,
+      "p1": 4,
+      "p2": 4,
+      "p6": 4,
+      "p4": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Includes games which enhance group bonding.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Friday BBQ is best—games make everyone connect better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games and grilling create a lively atmosphere.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Friday BBQ sounds nice since games and grilling create a lively atmosphere without being too intense.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games and grilling create a lively atmosphere.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Games and grilling create a lively atmosphere, so Friday BBQ is the best choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is familiar and well-organized.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Saturday Grill seems straightforward and familiar.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Catering offers professional quality and convenience.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Professional catering reduces preparation and cleanup time."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The Saturday Buffet with catering feels like a smooth choice—professional quality without the usual prep hassle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is familiar and reasonably priced.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Saturday Grill works—traditional, familiar, and affordable.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Potluck reduces costs and promotes group involvement.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone contributes a dish, reducing individual costs and effort."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to minimize costs while ensuring everyone contributes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sunday Potluck keeps costs down since everyone brings something, plus it gets us all involved.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Coordination and dish variety concerns.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires coordination to avoid duplicate dishes and dietary conflicts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It sounds fun to all pitch in, though it could get tricky keeping track of dishes and making sure there’s enough variety for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare duration_hours: 4 and 3",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "duration_hours",
+            "public_value": "4"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "duration_hours",
+            "public_value": "3"
+          }
+        ],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four hours for the Friday BBQ is a bit longer than the Sunday Potluck’s three, which fits my schedule better since I prefer something not too long.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Dish coordination could be tricky.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires coordination to avoid duplicate dishes and dietary conflicts."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Dish coordination could get messy and limit the fun if people bring too similar or incompatible foods.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Higher cost and less interactive format.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and less flexibility in menu choices."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That buffet’s pricier and won’t get us moving much.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare date: 2024-07-13 and 2024-08-03",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "date",
+            "public_value": "2024-07-13"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "date",
+            "public_value": "2024-08-03"
+          }
+        ],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "July 13th is earlier and clearer. August 3rd feels a bit late for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "High cost and less flexibility.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and less flexibility in menu choices."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The high cost cuts into what we could spend on activities, and the menu limits mixing things up.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the location is private backyard",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "location",
+          "public_value": "private backyard"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Backyard’s chill and private, but that buffet price still bugs me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cost per person is 30",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "30 each is steep enough to limit our budget for anything else fun or social.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "Evening timing might be inconvenient.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Evening timing may conflict with some participants' schedules."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Nina, do you think the evening timing might be tricky?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Evening timing may conflict with some participants' schedules.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Evening timing may conflict with some participants' schedules."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Evening might be tricky since it could conflict with some people’s schedules, limiting who can join.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare date: 2024-07-13 and 2024-07-19",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "date",
+            "public_value": "2024-07-13"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "date",
+            "public_value": "2024-07-19"
+          }
+        ],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Saturday’s earlier date fits better with my budget and schedule.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games add fun, though cost is somewhat high.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "C",
+          "movement_reason": "Games add fun, though cost is somewhat high."
+        },
+        "vote_option": null
+      },
+      "raw_text": "I see the budget point, though the Friday BBQ and Games Evening might be more engaging with the games adding some extra fun to the night.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the location is local recreation area",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "location",
+          "public_value": "local recreation area"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Local recreation area means space for games and mingling, so that boosts social chances.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the duration hours is 4",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "duration_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four hours is decent, but that might still feel long and tiring.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the date is 2024-07-19",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "date",
+          "public_value": "2024-07-19"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to minimize costs while ensuring everyone contributes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four hours might be tiring, but spreading costs evenly keeps it fair and affordable for everyone.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare location: community garden and local recreation area",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "location",
+            "public_value": "community garden"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "location",
+            "public_value": "local recreation area"
+          }
+        ],
+        "personal_context": "Wants to minimize costs while ensuring everyone contributes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The community garden spot means lower costs with shared food, while the local rec area might need more spending. For keeping things affordable, the garden works better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the date is 2024-07-21",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "date",
+          "public_value": "2024-07-21"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That date works well for me, and keeping costs low helps, though I hope we can still have enough variety in the food to keep things fun.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Familiar and comfortable traditional grill format.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Familiar and comfortable traditional grill format."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Saturday Grill feels more relaxed and familiar for games.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the cost per person is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an affordable event with minimal hassle.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "15 bucks is fair, but I want to avoid extra hassle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "the duration hours is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four hours seems reasonable to keep things relaxed without dragging too long, which fits better for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "Costs more than potluck and weather risk.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Weather-dependent and may require backup plans if it rains."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to minimize costs while ensuring everyone contributes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It costs more than a potluck and still risks rain messing things up, so it’s not worth it for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the cost per person is 15",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "cost_per_person_usd",
+          "public_value": "15"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "15 each isn’t bad if it means we actually get to play and hang out.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the format is grill",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "format",
+          "public_value": "grill"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sounds good, though I prefer things straightforward and set.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "Weather risk and moderate cost.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Weather-dependent and may require backup plans if it rains."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I get wanting things set, but with the chance of rain, having a backup could save us last-minute stress.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the location is public park",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "location",
+          "public_value": "public park"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun event that fits well with her schedule.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Public parks are nice for space, though weather could still affect comfort and timing.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p7",
+        "reason": "the format is grill",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "format",
+          "public_value": "grill"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a hassle-free, high-quality food experience.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Grill format works well for variety, though I’d appreciate if the setup stays smooth so no one’s stuck waiting too long for food.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the duration hours is 4",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_hours",
+          "public_value": "4"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a fun evening with games to engage everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Four hours is enough time for games and catching up.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the location is public park",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "location",
+          "public_value": "public park"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a reliable and familiar setup with minimal surprises.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Public park’s fine, but rain could cut time short.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is straightforward and social.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants an event that maximizes social interaction and fun.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "D",
+          "movement_reason": "Traditional grill is straightforward and social."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Rain’s a risk, but Saturday Grill’s straightforward setup means more social time overall.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Includes games which enhance group bonding.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for Friday BBQ.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is familiar and well-organized.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Saturday Grill.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games and grilling create a lively atmosphere.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Friday BBQ.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Potluck reduces costs and promotes group involvement.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Everyone contributes a dish, reducing individual costs and effort."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Sunday Potluck.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games add fun, though cost is somewhat high.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose Friday BBQ.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Traditional grill is familiar and reasonably priced.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Familiar setup with grilled meats and sides in a public park."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Saturday Grill.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Games and grilling create a lively atmosphere.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes organized games for added group interaction."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose Friday BBQ.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

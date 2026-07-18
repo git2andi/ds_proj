@@ -1,0 +1,2684 @@
+{
+  "provenance": {
+    "seed": 242118828,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick the tournament format for the tennis club championship",
+    "options": [
+      {
+        "id": "A",
+        "name": "Single Elimination Tournament",
+        "attrs": {
+          "players": "4",
+          "matches": "3",
+          "duration_days": "1",
+          "elimination_style": "single"
+        },
+        "upside": "Quickly determines a winner with minimal matches.",
+        "concern": "Each player is eliminated after one loss, limiting playtime.",
+        "short_name": "Single Elimination",
+        "aliases": [
+          "Single Elimination"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Double Elimination Tournament",
+        "attrs": {
+          "players": "4",
+          "matches": "6",
+          "duration_days": "2",
+          "elimination_style": "double"
+        },
+        "upside": "Allows players a second chance after one loss.",
+        "concern": "Takes longer to complete than single elimination.",
+        "short_name": "Double Elimination",
+        "aliases": [
+          "Double Elimination",
+          "Double Tournament"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Round Robin Tournament",
+        "attrs": {
+          "players": "4",
+          "matches": "6",
+          "duration_days": "2",
+          "matches_per_player": "3"
+        },
+        "upside": "All players compete against each other for fairness.",
+        "concern": "Requires more matches and time to complete.",
+        "short_name": "Round Robin",
+        "aliases": [
+          "Round Robin",
+          "Robin Tournament"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Group Stage + Final",
+        "attrs": {
+          "players": "4",
+          "group_size": "2",
+          "matches_in_group": "2",
+          "final_matches": "1"
+        },
+        "upside": "Combines group play with a final match for excitement.",
+        "concern": "Some players may play fewer matches depending on group results.",
+        "short_name": "Group Stage",
+        "aliases": [
+          "Group Stage",
+          "Group Final"
+        ]
+      }
+    ],
+    "shared_context": [
+      "The tennis club championship will be decided by four participants. The group must select a tournament format that fits four players and allows fair competition within a reasonable timeframe."
+    ],
+    "setup_notes": [
+      "scenario_regenerated_after_validation_error",
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 3,
+        "stubbornness": 2
+      },
+      "background": "Maya is a competitive player who values efficiency and clear outcomes.",
+      "private_goal": "To finish the tournament quickly while ensuring a decisive winner.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Quickly determines a winner with minimal matches, fitting my preference for efficiency.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Allows a second chance, which feels fairer than single elimination.",
+          "reason_against": "Takes longer to complete, which is less efficient."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Fair since all players compete against each other.",
+          "reason_against": "Requires more matches and time, which I find less practical."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Combines group play with a final, adding excitement.",
+          "reason_against": "Some players may play fewer matches, which feels unfair."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Liam prefers formats that balance fairness with some variety in matches.",
+      "private_goal": "To ensure everyone gets to play multiple matches but without dragging the event.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "Quick and simple format.",
+          "reason_against": "Eliminates players after one loss, limiting playtime."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Gives players a second chance, increasing fairness.",
+          "reason_against": "Takes longer to finish than I prefer."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Everyone plays each other, which is fair.",
+          "reason_against": "More matches and longer duration than I want."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Combines group play with a final, ensuring some variety and excitement.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 2
+      },
+      "background": "Zoe enjoys discussing details and values straightforward, quick competition.",
+      "private_goal": "To support a format that balances fairness with a swift conclusion.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Minimal matches and quick determination of a winner.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Second chance after a loss adds fairness.",
+          "reason_against": "Longer duration and more matches than I prefer."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Fair competition with all players meeting each other.",
+          "reason_against": "Too many matches and takes too long."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Group play plus final adds excitement and some fairness.",
+          "reason_against": "Unequal number of matches for some players."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Eli is highly competitive and values directness and quick results.",
+      "private_goal": "To have a clear and fast tournament with minimal fuss.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 50,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Fast and straightforward, quickly producing a winner.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Offers a second chance, which is fairer than single elimination.",
+          "reason_against": "Takes longer to complete, which I dislike."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Fair since everyone plays each other.",
+          "reason_against": "Too many matches and longer duration, not efficient."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Group stage and final add excitement.",
+          "reason_against": "Unequal matches for some players, which feels unfair."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "matches"
+        ],
+        [
+          "D",
+          "matches_in_group"
+        ],
+        [
+          "A",
+          "elimination_style"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 2,
+        "B": 3,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Group play plus final adds excitement and some fairness."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "group_size"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "duration_days"
+        ],
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "A",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "players"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "matches"
+        ],
+        [
+          "D",
+          "final_matches"
+        ],
+        [
+          "D",
+          "matches_in_group"
+        ],
+        [
+          "A",
+          "players"
+        ],
+        [
+          "A",
+          "duration_days"
+        ],
+        [
+          "D",
+          "group_size"
+        ],
+        [
+          "A",
+          "elimination_style"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 11,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Pick the tournament format for the tennis club championship.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Single Elimination keeps things moving with minimal matches, so we get a clear winner pretty fast.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Minimal matches and quick determination of a winner.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To support a format that balances fairness with a swift conclusion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Single Elimination is best—fast, straightforward, finds a clear winner quickly.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Fast and straightforward, quickly producing a winner.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Group Stage + Final seems fairer, mixes variety and excitement.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Combines group play with a final, ensuring some variety and excitement.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines group play with a final match for excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone gets to play multiple matches but without dragging the event.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Single Elimination cuts matches, so we finish quickly.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Quickly determines a winner with minimal matches, fitting my preference for efficiency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "One day works, no downtime needed.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the duration days is 1",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_days",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Some players may end up playing fewer matches, which feels unfair.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Some players may play fewer matches, which feels unfair.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Some players may play fewer matches depending on group results."
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Both have 4 players, but single elimination ends faster.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare players: 4 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players",
+            "public_value": "4"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "players",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Unequal matches slow progress and reduce focus.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Unequal matches for some players, which feels unfair.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Some players may play fewer matches depending on group results."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Matches per group are fixed at two, limiting fairness adjustments.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the matches in group is 2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "matches_in_group",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Both have 4 players, but single elimination finishes quicker and keeps focus sharp.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare players: 4 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players",
+            "public_value": "4"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "players",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Quicker finish is good, but no room for second chances.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the elimination style is single",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "elimination_style",
+          "public_value": "single"
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Matches total three. Keeps pace steady and clear.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the matches is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "matches",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "True, but it might leave some playing too little.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "Eliminates players after one loss, limiting playtime.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Each player is eliminated after one loss, limiting playtime."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone gets to play multiple matches but without dragging the event.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "It does wrap up in one day, which is great for moving on quickly, though some might wish for a bit more playtime.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration days is 1",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_days",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To support a format that balances fairness with a swift conclusion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Single elimination cuts downtime sharply. That’s priority.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the elimination style is single",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "elimination_style",
+          "public_value": "single"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Both handle 4 players, but single elimination ends faster.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare players: 4 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players",
+            "public_value": "4"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "players",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Three matches means it’s quick and clear who wins.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the matches is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "matches",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Adding a group stage with a final could strike a nice balance—more fairness and some extra excitement.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Group play plus final adds excitement and some fairness.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines group play with a final match for excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To support a format that balances fairness with a swift conclusion.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Group play plus final adds excitement and some fairness."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "A",
+        "movement_reason": "Group play plus final adds excitement and some fairness."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Group size is 2, so group stage adds unnecessary matches.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the group size is 2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "group_size",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Matches in the group are just two, so extra rounds slow us down.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the matches in group is 2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "matches_in_group",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Final matches should be just one for clarity.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the final matches is 1",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "final_matches",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "True, with just two players, a group stage feels a bit stretched—but it does give a clearer overall picture before the final.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the group size is 2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "group_size",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To support a format that balances fairness with a swift conclusion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Both have 4 players, but single elimination gets results faster.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare players: 4 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players",
+            "public_value": "4"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "players",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 24,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 25,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Single Elimination.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Quickly determines a winner with minimal matches, fitting my preference for efficiency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 26,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Group Stage.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Combines group play with a final, ensuring some variety and excitement.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines group play with a final match for excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 27,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "My final vote is Single Elimination.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Minimal matches and quick determination of a winner.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 28,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I choose Single Elimination.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Fast and straightforward, quickly producing a winner.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 29,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Single Elimination.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 1,
+    "A:duration_days": 2,
+    "A:elimination_style": 2,
+    "A:matches": 2,
+    "A:players": 4,
+    "A:upside": 3,
+    "D:concern": 2,
+    "D:final_matches": 1,
+    "D:group_size": 2,
+    "D:matches_in_group": 2,
+    "D:players": 4,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "A",
+      "players"
+    ],
+    [
+      "D",
+      "players"
+    ]
+  ],
+  "votes": {
+    "p1": "A",
+    "p2": "D",
+    "p3": "A",
+    "p4": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "A",
+    "votes": {
+      "p1": "A",
+      "p2": "D",
+      "p3": "A",
+      "p4": "A"
+    },
+    "reason": "3 of 4 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 23,
+    "setup_llm_calls": 4,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 14319,
+    "output_tokens": 2485,
+    "moderator_turns": 3,
+    "voluntary_turns": 19,
+    "visible_movements": 1,
+    "response_failures": 0,
+    "compromise_attempts": 0,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 4,
+    "participant_turns": 27,
+    "voluntary_turns": 19,
+    "moderator_turns": 3,
+    "moderator_ratio": 0.1,
+    "avg_words_per_participant_turn": 10.15,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 14319,
+    "output_tokens": 2485,
+    "llm_calls": 27,
+    "voluntary_turns_by_persona": {
+      "p4": 11,
+      "p1": 4,
+      "p2": 1,
+      "p3": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Minimal matches and quick determination of a winner.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To support a format that balances fairness with a swift conclusion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Single Elimination keeps things moving with minimal matches, so we get a clear winner pretty fast.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Fast and straightforward, quickly producing a winner.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Single Elimination is best—fast, straightforward, finds a clear winner quickly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Combines group play with a final, ensuring some variety and excitement.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines group play with a final match for excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone gets to play multiple matches but without dragging the event.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Group Stage + Final seems fairer, mixes variety and excitement.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Quickly determines a winner with minimal matches, fitting my preference for efficiency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Single Elimination cuts matches, so we finish quickly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the duration days is 1",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_days",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One day works, no downtime needed.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Some players may play fewer matches, which feels unfair.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Some players may play fewer matches depending on group results."
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Some players may end up playing fewer matches, which feels unfair.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare players: 4 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players",
+            "public_value": "4"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "players",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have 4 players, but single elimination ends faster.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "Unequal matches for some players, which feels unfair.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Some players may play fewer matches depending on group results."
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Unequal matches slow progress and reduce focus.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the matches in group is 2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "matches_in_group",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Matches per group are fixed at two, limiting fairness adjustments.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare players: 4 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players",
+            "public_value": "4"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "players",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have 4 players, but single elimination finishes quicker and keeps focus sharp.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the elimination style is single",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "elimination_style",
+          "public_value": "single"
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Quicker finish is good, but no room for second chances.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the matches is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "matches",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Matches total three. Keeps pace steady and clear.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "Eliminates players after one loss, limiting playtime.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Each player is eliminated after one loss, limiting playtime."
+        },
+        "comparison_sources": [],
+        "personal_context": "To ensure everyone gets to play multiple matches but without dragging the event.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, but it might leave some playing too little.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the duration days is 1",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "duration_days",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To support a format that balances fairness with a swift conclusion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It does wrap up in one day, which is great for moving on quickly, though some might wish for a bit more playtime.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the elimination style is single",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "elimination_style",
+          "public_value": "single"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Single elimination cuts downtime sharply. That’s priority.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare players: 4 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players",
+            "public_value": "4"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "players",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both handle 4 players, but single elimination ends faster.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the matches is 3",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "matches",
+          "public_value": "3"
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three matches means it’s quick and clear who wins.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Group play plus final adds excitement and some fairness.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines group play with a final match for excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": "To support a format that balances fairness with a swift conclusion.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "A",
+          "movement_reason": "Group play plus final adds excitement and some fairness."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Adding a group stage with a final could strike a nice balance—more fairness and some extra excitement.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the group size is 2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "group_size",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Group size is 2, so group stage adds unnecessary matches.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the matches in group is 2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "matches_in_group",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To finish the tournament quickly while ensuring a decisive winner.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Matches in the group are just two, so extra rounds slow us down.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the final matches is 1",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "final_matches",
+          "public_value": "1"
+        },
+        "comparison_sources": [],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Final matches should be just one for clarity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the group size is 2",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "group_size",
+          "public_value": "2"
+        },
+        "comparison_sources": [],
+        "personal_context": "To support a format that balances fairness with a swift conclusion.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, with just two players, a group stage feels a bit stretched—but it does give a clearer overall picture before the final.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare players: 4 and 4",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "players",
+            "public_value": "4"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "players",
+            "public_value": "4"
+          }
+        ],
+        "personal_context": "To have a clear and fast tournament with minimal fuss.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both have 4 players, but single elimination gets results faster.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Quickly determines a winner with minimal matches, fitting my preference for efficiency.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I’m voting for Single Elimination.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Combines group play with a final, ensuring some variety and excitement.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Combines group play with a final match for excitement."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I choose Group Stage.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Minimal matches and quick determination of a winner.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is Single Elimination.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Fast and straightforward, quickly producing a winner.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Quickly determines a winner with minimal matches."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "I choose Single Elimination.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

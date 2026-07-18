@@ -1,0 +1,2934 @@
+{
+  "provenance": {
+    "seed": 242118792,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick a ski resort for the January trip",
+    "options": [
+      {
+        "id": "A",
+        "name": "Snowridge Mountain Resort",
+        "attrs": {
+          "location": "Colorado",
+          "lodging_type": "hotel and condos",
+          "ski_lessons_available": "yes",
+          "slope_variety": "intermediate and advanced",
+          "average_january_snowfall": "45 inches"
+        },
+        "upside": "Offers a wide range of intermediate slopes and on-site lodging options.",
+        "concern": "Can be crowded on weekends, which may affect lift wait times.",
+        "short_name": "Snowridge Resort",
+        "aliases": [
+          "Snowridge Resort",
+          "Snowridge Mountain"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Pine Valley Ski Park",
+        "attrs": {
+          "location": "Utah",
+          "lodging_type": "cabins and lodge",
+          "ski_lessons_available": "yes",
+          "slope_variety": "beginner to intermediate",
+          "average_january_snowfall": "40 inches"
+        },
+        "upside": "Quieter atmosphere with good options for intermediate skiers and ski lessons.",
+        "concern": "Limited advanced slopes for more experienced skiers.",
+        "short_name": "Pine Valley",
+        "aliases": [
+          "Pine Valley",
+          "Pine Valley Ski"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Crystal Peak Resort",
+        "attrs": {
+          "location": "Vermont",
+          "lodging_type": "hotel and chalets",
+          "ski_lessons_available": "yes",
+          "slope_variety": "intermediate and beginner",
+          "average_january_snowfall": "35 inches"
+        },
+        "upside": "Offers cozy lodging and ski lessons with a family-friendly environment.",
+        "concern": "Snowfall is lower compared to western resorts, which may affect conditions.",
+        "short_name": "Crystal Peak",
+        "aliases": [
+          "Crystal Peak",
+          "Peak Resort"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Alpine Ridge Ski Area",
+        "attrs": {
+          "location": "Montana",
+          "lodging_type": "resort hotel",
+          "ski_lessons_available": "yes",
+          "slope_variety": "intermediate and advanced",
+          "average_january_snowfall": "50 inches"
+        },
+        "upside": "Higher snowfall and varied slopes suitable for intermediate skiers.",
+        "concern": "Resort is more remote, requiring longer travel times.",
+        "short_name": "Alpine Ridge",
+        "aliases": [
+          "Alpine Ridge",
+          "Alpine Ridge Ski"
+        ]
+      }
+    ],
+    "shared_context": [
+      "Four participants are choosing a ski resort for a January trip. Each resort must offer lodging, ski lessons, and a variety of slopes suitable for intermediate skiers."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 3
+      },
+      "background": "Maya is an outdoor enthusiast who values challenging slopes and fresh snow.",
+      "private_goal": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Offers a wide range of intermediate and advanced slopes with good lodging options.",
+          "reason_against": "Can be crowded on weekends, which may slow down skiing."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Quiet atmosphere and suitable slopes for intermediate skiers.",
+          "reason_against": "Limited advanced slopes and lower snowfall than preferred."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Cozy lodging and family-friendly environment.",
+          "reason_against": "Lower snowfall and fewer advanced slopes than desired."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Highest snowfall and varied slopes ideal for intermediate skiers.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Liam prefers a quieter ski trip with comfortable lodging and easy slopes.",
+      "private_goal": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 28,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Good lodging and ski lessons available.",
+          "reason_against": "Crowded weekends and more advanced slopes than needed."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Quiet atmosphere with good intermediate slopes and ski lessons.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Family-friendly and cozy lodging with ski lessons.",
+          "reason_against": "Lower snowfall and less slope variety."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Good snowfall and slopes.",
+          "reason_against": "Remote location and travel time are inconvenient."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Zoe is an experienced skier focused on intermediate slopes and a peaceful environment.",
+      "private_goal": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 40,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Varied slopes and lodging options.",
+          "reason_against": "Crowds may reduce enjoyment."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Quiet atmosphere and suitable slopes for intermediate skiers with lessons.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Family-friendly and cozy with ski lessons.",
+          "reason_against": "Lower snowfall but acceptable."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Good snowfall and slopes.",
+          "reason_against": "Remote location and longer travel are drawbacks."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 4
+      },
+      "background": "Eli enjoys ski trips with convenient lodging and a variety of slopes for intermediate and advanced skiing.",
+      "private_goal": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 45,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Wide range of intermediate and advanced slopes plus hotel and condos on site.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Quiet and good for intermediate skiing.",
+          "reason_against": "Limited advanced slopes and cabins instead of hotel."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Cozy lodging and ski lessons.",
+          "reason_against": "Lower snowfall and fewer advanced slopes."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "High snowfall and varied slopes suitable for intermediate and advanced skiers.",
+          "reason_against": "Remote location means longer travel time."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "lodging_type"
+        ],
+        [
+          "B",
+          "lodging_type"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "ski_lessons_available"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "average_january_snowfall"
+        ],
+        [
+          "B",
+          "average_january_snowfall"
+        ],
+        [
+          "D",
+          "slope_variety"
+        ],
+        [
+          "A",
+          "average_january_snowfall"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "location"
+        ],
+        [
+          "D",
+          "lodging_type"
+        ],
+        [
+          "B",
+          "lodging_type"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "D",
+          "average_january_snowfall"
+        ],
+        [
+          "D",
+          "ski_lessons_available"
+        ],
+        [
+          "D",
+          "slope_variety"
+        ],
+        [
+          "B",
+          "slope_variety"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "B",
+          "location"
+        ],
+        [
+          "B",
+          "average_january_snowfall"
+        ],
+        [
+          "B",
+          "ski_lessons_available"
+        ],
+        [
+          "B",
+          "slope_variety"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Today we need to decide: Pick a ski resort for the January trip.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Snowridge Resort offers both hotel and condos on site with a solid mix of intermediate and advanced slopes.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wide range of intermediate and advanced slopes plus hotel and condos on site.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a wide range of intermediate slopes and on-site lodging options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Pine Valley feels quieter and has good lessons for intermediates.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Quiet atmosphere and suitable slopes for intermediate skiers with lessons.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quieter atmosphere with good options for intermediate skiers and ski lessons."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Pine Valley has a quiet atmosphere and good lessons.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Quiet atmosphere with good intermediate slopes and ski lessons.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quieter atmosphere with good options for intermediate skiers and ski lessons."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Alpine Ridge has the highest snowfall and varied slopes.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highest snowfall and varied slopes ideal for intermediate skiers.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Higher snowfall and varied slopes suitable for intermediate skiers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 5,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Crowds on weekends might make lessons less relaxing though?",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Crowds may reduce enjoyment.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can be crowded on weekends, which may affect lift wait times."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Yeah, it can get crowded and lifts slow on weekends.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Can be crowded on weekends, which may affect lift wait times.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can be crowded on weekends, which may affect lift wait times."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "45 inches is decent but might still feel light.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average january snowfall is 45 inches",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_january_snowfall",
+          "public_value": "45 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Travel time feels too long for a calm trip.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Remote location and travel time are inconvenient.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Resort is more remote, requiring longer travel times."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Cabins and lodge feel cozier and quieter than a resort hotel, which suits my need for calm better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare lodging_type: cabins and lodge and resort hotel",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "lodging_type",
+            "public_value": "cabins and lodge"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "lodging_type",
+            "public_value": "resort hotel"
+          }
+        ],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Cozy is nice, but I need more challenging runs and fresh snow.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "Limited advanced slopes and lower snowfall than preferred.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited advanced slopes for more experienced skiers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Travel time feels a bit much for a peaceful weekend trip though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Remote location and longer travel are drawbacks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Resort is more remote, requiring longer travel times."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Intermediate and advanced slopes don’t help my calm focus.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the slope variety is intermediate and advanced",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "slope_variety",
+          "public_value": "intermediate and advanced"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The ski lessons are available, which helps with steady progress.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the ski lessons available is yes",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "ski_lessons_available",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "50 inches is decent, but quiet spots still matter most to me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the average january snowfall is 50 inches",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "average_january_snowfall",
+          "public_value": "50 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Is there a remaining concern or useful comparison?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Resort hotels are fine, but I need heavy snowfall and tougher runs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the lodging type is resort hotel",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "lodging_type",
+          "public_value": "resort hotel"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": true,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "The advanced runs might be a bit much for steady progress though.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the slope variety is intermediate and advanced",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "slope_variety",
+          "public_value": "intermediate and advanced"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "50 inches snow sounds better, but 40 is plenty for easy slopes.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_january_snowfall: 40 inches and 50 inches",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "average_january_snowfall",
+            "public_value": "40 inches"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "average_january_snowfall",
+            "public_value": "50 inches"
+          }
+        ],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Limited advanced slopes reduce appeal, and cabins won’t offer the convenience I need.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Limited advanced slopes and cabins instead of hotel.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited advanced slopes for more experienced skiers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Utah’s location works well, but the slope variety remains a key deciding factor.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the location is Utah",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "location",
+          "public_value": "Utah"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Ski lessons help, but slope variety still matters most to me.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the ski lessons available is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "ski_lessons_available",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Cabins are cozy but less convenient for quick slope access.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the lodging type is cabins and lodge",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "lodging_type",
+          "public_value": "cabins and lodge"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The slope variety stops at intermediate, which limits options for more advanced runs.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the slope variety is beginner to intermediate",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "slope_variety",
+          "public_value": "beginner to intermediate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Ski lessons are available, which supports skill improvement, but slope difficulty is still my priority.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the ski lessons available is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "ski_lessons_available",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "40 inches of snow in January is decent, but lodging convenience matters more for me.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average january snowfall is 40 inches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "average_january_snowfall",
+          "public_value": "40 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "One has slopes from beginner to intermediate, the other from intermediate to advanced. The first fits my quiet, steady learning better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare slope_variety: beginner to intermediate and intermediate and advanced",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "slope_variety",
+            "public_value": "beginner to intermediate"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "slope_variety",
+            "public_value": "intermediate and advanced"
+          }
+        ],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Utah’s quiet spots are nice, though snow depth can vary.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the location is Utah",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "location",
+          "public_value": "Utah"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 28,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Pine Valley currently has 2 of 4 public preferences and the broadest overall support, but not a majority. Maya and Eli, would it fit your requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 29,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I’m voting for Alpine Ridge.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highest snowfall and varied slopes ideal for intermediate skiers.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Higher snowfall and varied slopes suitable for intermediate skiers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 30,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Pine Valley.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Quiet atmosphere with good intermediate slopes and ski lessons.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quieter atmosphere with good options for intermediate skiers and ski lessons."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 31,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Pine Valley is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Quiet atmosphere and suitable slopes for intermediate skiers with lessons.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quieter atmosphere with good options for intermediate skiers and ski lessons."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 32,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Snowridge Resort is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wide range of intermediate and advanced slopes plus hotel and condos on site.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a wide range of intermediate slopes and on-site lodging options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 33,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final vote remained split, so the decision is unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:average_january_snowfall": 1,
+    "A:concern": 2,
+    "A:upside": 1,
+    "B:average_january_snowfall": 2,
+    "B:concern": 2,
+    "B:location": 2,
+    "B:lodging_type": 2,
+    "B:ski_lessons_available": 2,
+    "B:slope_variety": 2,
+    "B:upside": 2,
+    "D:average_january_snowfall": 2,
+    "D:concern": 2,
+    "D:lodging_type": 2,
+    "D:ski_lessons_available": 1,
+    "D:slope_variety": 3,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "slope_variety"
+    ],
+    [
+      "B",
+      "location"
+    ]
+  ],
+  "votes": {
+    "p1": "D",
+    "p2": "B",
+    "p3": "B",
+    "p4": "A"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "D",
+      "p2": "B",
+      "p3": "B",
+      "p4": "A"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 26,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 1,
+    "input_tokens": 15911,
+    "output_tokens": 2207,
+    "moderator_turns": 4,
+    "voluntary_turns": 21,
+    "visible_movements": 0,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 4,
+    "participant_turns": 30,
+    "voluntary_turns": 21,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.1176,
+    "avg_words_per_participant_turn": 11.13,
+    "visible_preference_changes": 0,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 15911,
+    "output_tokens": 2207,
+    "llm_calls": 29,
+    "voluntary_turns_by_persona": {
+      "p3": 8,
+      "p1": 4,
+      "p2": 4,
+      "p4": 5
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wide range of intermediate and advanced slopes plus hotel and condos on site.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a wide range of intermediate slopes and on-site lodging options."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Snowridge Resort offers both hotel and condos on site with a solid mix of intermediate and advanced slopes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Quiet atmosphere and suitable slopes for intermediate skiers with lessons.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quieter atmosphere with good options for intermediate skiers and ski lessons."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Pine Valley feels quieter and has good lessons for intermediates.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Quiet atmosphere with good intermediate slopes and ski lessons.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quieter atmosphere with good options for intermediate skiers and ski lessons."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Pine Valley has a quiet atmosphere and good lessons.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highest snowfall and varied slopes ideal for intermediate skiers.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Higher snowfall and varied slopes suitable for intermediate skiers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Alpine Ridge has the highest snowfall and varied slopes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Crowds may reduce enjoyment.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can be crowded on weekends, which may affect lift wait times."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Crowds on weekends might make lessons less relaxing though?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the concern is Can be crowded on weekends, which may affect lift wait times.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Can be crowded on weekends, which may affect lift wait times."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Yeah, it can get crowded and lifts slow on weekends.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average january snowfall is 45 inches",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "average_january_snowfall",
+          "public_value": "45 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "45 inches is decent but might still feel light.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Remote location and travel time are inconvenient.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Resort is more remote, requiring longer travel times."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Travel time feels too long for a calm trip.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare lodging_type: cabins and lodge and resort hotel",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "lodging_type",
+            "public_value": "cabins and lodge"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "lodging_type",
+            "public_value": "resort hotel"
+          }
+        ],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cabins and lodge feel cozier and quieter than a resort hotel, which suits my need for calm better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "Limited advanced slopes and lower snowfall than preferred.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited advanced slopes for more experienced skiers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cozy is nice, but I need more challenging runs and fresh snow.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Remote location and longer travel are drawbacks.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Resort is more remote, requiring longer travel times."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Travel time feels a bit much for a peaceful weekend trip though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the slope variety is intermediate and advanced",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "slope_variety",
+          "public_value": "intermediate and advanced"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Intermediate and advanced slopes don’t help my calm focus.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the ski lessons available is yes",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "ski_lessons_available",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The ski lessons are available, which helps with steady progress.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the average january snowfall is 50 inches",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "average_january_snowfall",
+          "public_value": "50 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "50 inches is decent, but quiet spots still matter most to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the lodging type is resort hotel",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "lodging_type",
+          "public_value": "resort hotel"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Resort hotels are fine, but I need heavy snowfall and tougher runs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the slope variety is intermediate and advanced",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "slope_variety",
+          "public_value": "intermediate and advanced"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The advanced runs might be a bit much for steady progress though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare average_january_snowfall: 40 inches and 50 inches",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "average_january_snowfall",
+            "public_value": "40 inches"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "average_january_snowfall",
+            "public_value": "50 inches"
+          }
+        ],
+        "personal_context": "Choose a resort with a calm atmosphere and good ski lessons for intermediate level.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "50 inches snow sounds better, but 40 is plenty for easy slopes.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "Limited advanced slopes and cabins instead of hotel.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Limited advanced slopes for more experienced skiers."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Limited advanced slopes reduce appeal, and cabins won’t offer the convenience I need.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the location is Utah",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "location",
+          "public_value": "Utah"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Utah’s location works well, but the slope variety remains a key deciding factor.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the ski lessons available is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "ski_lessons_available",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ski lessons help, but slope variety still matters most to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the lodging type is cabins and lodge",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "lodging_type",
+          "public_value": "cabins and lodge"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort with high snowfall and varied intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cabins are cozy but less convenient for quick slope access.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the slope variety is beginner to intermediate",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "slope_variety",
+          "public_value": "beginner to intermediate"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The slope variety stops at intermediate, which limits options for more advanced runs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the ski lessons available is yes",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "ski_lessons_available",
+          "public_value": "yes"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ski lessons are available, which supports skill improvement, but slope difficulty is still my priority.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the average january snowfall is 40 inches",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "average_january_snowfall",
+          "public_value": "40 inches"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a resort with on-site lodging and a good range of intermediate to advanced slopes.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "40 inches of snow in January is decent, but lodging convenience matters more for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare slope_variety: beginner to intermediate and intermediate and advanced",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "slope_variety",
+            "public_value": "beginner to intermediate"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "slope_variety",
+            "public_value": "intermediate and advanced"
+          }
+        ],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "One has slopes from beginner to intermediate, the other from intermediate to advanced. The first fits my quiet, steady learning better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the location is Utah",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "location",
+          "public_value": "Utah"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a resort that balances quietness and good ski lessons for intermediate skiing.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Utah’s quiet spots are nice, though snow depth can vary.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Highest snowfall and varied slopes ideal for intermediate skiers.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Higher snowfall and varied slopes suitable for intermediate skiers."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for Alpine Ridge.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Quiet atmosphere with good intermediate slopes and ski lessons.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quieter atmosphere with good options for intermediate skiers and ski lessons."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Pine Valley.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Quiet atmosphere and suitable slopes for intermediate skiers with lessons.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Quieter atmosphere with good options for intermediate skiers and ski lessons."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "Pine Valley is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Wide range of intermediate and advanced slopes plus hotel and condos on site.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers a wide range of intermediate slopes and on-site lodging options."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "Snowridge Resort is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

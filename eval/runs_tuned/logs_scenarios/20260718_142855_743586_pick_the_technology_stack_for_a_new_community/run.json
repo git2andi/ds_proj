@@ -1,0 +1,4383 @@
+{
+  "provenance": {
+    "seed": 242118897,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Pick the technology stack for a new community web platform",
+    "options": [
+      {
+        "id": "A",
+        "name": "MERN Stack (MongoDB, Express, React, Node.js)",
+        "attrs": {
+          "database": "MongoDB",
+          "backend_framework": "Express",
+          "frontend_framework": "React",
+          "runtime": "Node.js",
+          "language": "JavaScript"
+        },
+        "upside": "Offers full JavaScript stack with a large ecosystem and reusable code between client and server.",
+        "concern": "May require additional configuration for complex data relationships and transactions.",
+        "short_name": "MERN Stack",
+        "aliases": [
+          "MERN Stack",
+          "MongoDB Express React"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Django with React Frontend",
+        "attrs": {
+          "database": "PostgreSQL",
+          "backend_framework": "Django",
+          "frontend_framework": "React",
+          "language_backend": "Python",
+          "language_frontend": "JavaScript"
+        },
+        "upside": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend.",
+        "concern": "Requires managing two different languages and frameworks, increasing integration complexity.",
+        "short_name": "Django React",
+        "aliases": [
+          "Django React",
+          "React Frontend"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Ruby on Rails with Hotwire",
+        "attrs": {
+          "database": "PostgreSQL",
+          "backend_framework": "Ruby on Rails",
+          "frontend_framework": "Hotwire",
+          "language": "Ruby",
+          "real_time_support": "Built-in"
+        },
+        "upside": "Includes built-in real-time features and convention-over-configuration for faster development.",
+        "concern": "Smaller developer community compared to JavaScript-based stacks.",
+        "short_name": "Ruby on Rails",
+        "aliases": [
+          "Ruby on Rails",
+          "Rails Hotwire"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Serverless Stack with AWS Lambda and Vue.js",
+        "attrs": {
+          "database": "DynamoDB",
+          "backend_framework": "AWS Lambda",
+          "frontend_framework": "Vue.js",
+          "language_backend": "JavaScript/TypeScript",
+          "hosting": "Serverless"
+        },
+        "upside": "Scales automatically with usage and reduces server management overhead.",
+        "concern": "May introduce complexity in debugging and cold start latency.",
+        "short_name": "Serverless Stack",
+        "aliases": [
+          "Serverless Stack",
+          "AWS Lambda Vue"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A group of seven developers is selecting a technology stack for a new community web platform that must support user profiles, real-time chat, and content sharing. The stack should be maintainable, scalable, and have an active developer community."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Full-stack developer with a passion for rapid prototyping and real-time features.",
+      "private_goal": "Choose a stack that accelerates development with built-in real-time support.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Full JavaScript stack allows code reuse between client and server.",
+          "reason_against": "May require extra work for complex data relationships compared to Rails."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Robust backend with security and admin features complements React frontend well.",
+          "reason_against": "Managing two languages and frameworks adds integration complexity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Built-in real-time support and convention-over-configuration speed up development.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Automatic scaling is attractive for future growth.",
+          "reason_against": "Serverless complexity and cold start latency could slow development."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 4,
+        "directness": 3,
+        "stubbornness": 3
+      },
+      "background": "Backend engineer focused on maintainability and scalable architecture.",
+      "private_goal": "Select a stack that balances scalability with developer community support.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Large ecosystem and JavaScript consistency across stack aid maintainability.",
+          "reason_against": "Complex transactions might be harder to implement."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Django's robustness and PostgreSQL backend are reliable for scaling.",
+          "reason_against": "Mixing Python and JavaScript increases complexity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Rails' built-in real-time features and conventions improve productivity.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Serverless scaling is ideal but debugging challenges concern me.",
+          "reason_against": "Cold start latency and complexity may hurt user experience."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 2,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Frontend-focused developer with experience integrating React with various backends.",
+      "private_goal": "Ensure the frontend-backend integration is smooth and manageable.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Single language stack simplifies frontend-backend interaction.",
+          "reason_against": "MongoDB's handling of complex relations is less ideal."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Django backend with React frontend offers a solid, secure foundation.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Rails with Hotwire offers real-time features but less React familiarity.",
+          "reason_against": "Smaller community and different frontend approach may slow iteration."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Vue.js frontend is appealing but serverless backend adds complexity.",
+          "reason_against": "Debugging and cold starts could disrupt development flow."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 4,
+        "stubbornness": 3
+      },
+      "background": "Cloud engineer experienced in serverless architectures and modern frontend frameworks.",
+      "private_goal": "Leverage serverless benefits to minimize infrastructure management.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 31,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Node.js backend with React frontend is familiar and flexible.",
+          "reason_against": "May require more manual scaling and server management."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Django backend is robust but less cloud-native than serverless.",
+          "reason_against": "Two-language stack adds deployment complexity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Rails offers real-time but less suited for serverless scalability.",
+          "reason_against": "Smaller community and traditional hosting model limit cloud benefits."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Serverless stack scales automatically and reduces operational overhead.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Junior developer interested in modern JavaScript frameworks and cloud technologies.",
+      "private_goal": "Work with a modern, scalable stack that supports quick iteration.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Full JavaScript stack is easy to learn and widely used.",
+          "reason_against": "Complex data handling might be tricky."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Django backend is solid but mixing languages is harder for me.",
+          "reason_against": "Integration complexity could slow progress."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Rails is mature but less trendy and smaller community.",
+          "reason_against": "Less familiar language and frontend tech."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Serverless with Vue.js is modern and scales well without much ops.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 1,
+        "directness": 3,
+        "stubbornness": 1
+      },
+      "background": "Experienced JavaScript developer focused on maintainable and reusable code.",
+      "private_goal": "Maximize code reuse and leverage a large developer ecosystem.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 40,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Full JavaScript stack allows sharing code and has a large ecosystem.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Django backend is robust and secure, with React frontend flexibility.",
+          "reason_against": "Two different languages increase complexity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Built-in real-time is nice but Ruby is less familiar and smaller community.",
+          "reason_against": "Less code reuse with Ruby and Hotwire."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Serverless scaling is good but debugging and cold starts are drawbacks.",
+          "reason_against": "Complexity may slow development."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Tara",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Backend developer with a focus on security and data integrity.",
+      "private_goal": "Ensure the backend is secure, reliable, and supports complex data well.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 33,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "JavaScript stack is flexible and widely supported.",
+          "reason_against": "MongoDB may struggle with complex data relationships."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Django with PostgreSQL offers strong security and data integrity.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Rails has real-time features but smaller community and less security focus.",
+          "reason_against": "Ruby and Hotwire are less familiar."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Serverless scaling is attractive but debugging and latency are concerns.",
+          "reason_against": "Cold starts and complexity reduce reliability."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "B",
+          "language_backend"
+        ],
+        [
+          "D",
+          "database"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "A",
+          "runtime"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "A"
+      ],
+      "acceptance_reasons": {
+        "A": "Large ecosystem and JavaScript consistency across stack aid maintainability."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "language"
+        ],
+        [
+          "A",
+          "runtime"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "A",
+          "backend_framework"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "frontend_framework"
+        ],
+        [
+          "A",
+          "language"
+        ],
+        [
+          "A",
+          "database"
+        ],
+        [
+          "B",
+          "frontend_framework"
+        ],
+        [
+          "D",
+          "backend_framework"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "A",
+          "frontend_framework"
+        ],
+        [
+          "B",
+          "backend_framework"
+        ],
+        [
+          "C",
+          "backend_framework"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "frontend_framework"
+        ],
+        [
+          "C",
+          "frontend_framework"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "backend_framework"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "D",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "frontend_framework"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "D",
+          "hosting"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 5,
+        "B": 4,
+        "C": 2,
+        "D": 3
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Django backend is robust and secure, with React frontend flexibility."
+      },
+      "narrowing_acceptance": "B",
+      "used_point_keys": [
+        [
+          "C",
+          "real_time_support"
+        ],
+        [
+          "A",
+          "database"
+        ],
+        [
+          "D",
+          "database"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "B",
+      "ranks": {
+        "A": 4,
+        "B": 5,
+        "C": 3,
+        "D": 2
+      },
+      "acceptable_options": [
+        "B",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "B",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "frontend_framework"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "backend_framework"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’re here to choose between the listed options for: Pick the technology stack for a new community web platform.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Ruby on Rails with Hotwire has built-in real-time support and its conventions speed up development significantly.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Built-in real-time support and convention-over-configuration speed up development.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes built-in real-time features and convention-over-configuration for faster development."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Django React gives us a solid, secure foundation to build on.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django backend with React frontend offers a solid, secure foundation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Serverless Stack with Vue.js seems modern and scales well without much ops, though.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Serverless with Vue.js is modern and scales well without much ops.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Scales automatically with usage and reduces server management overhead."
+        },
+        "comparison_sources": [],
+        "personal_context": "Work with a modern, scalable stack that supports quick iteration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Full JavaScript stack like MERN Stack lets us share code and tap into a huge ecosystem.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Full JavaScript stack allows sharing code and has a large ecosystem.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers full JavaScript stack with a large ecosystem and reusable code between client and server."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize code reuse and leverage a large developer ecosystem.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Rails Hotwire’s real-time features and strong conventions really boost productivity without extra setup.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rails' built-in real-time features and conventions improve productivity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes built-in real-time features and convention-over-configuration for faster development."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Serverless Stack with AWS Lambda and Vue.js scales automatically and cuts down on operational overhead, which fits our goal to minimize infrastructure management.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Serverless stack scales automatically and reduces operational overhead.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Scales automatically with usage and reduces server management overhead."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Tara",
+      "text": "Django React with PostgreSQL feels more secure and reliable to me.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django with PostgreSQL offers strong security and data integrity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backend is secure, reliable, and supports complex data well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Mixing Python and JavaScript adds overhead in syncing frameworks, which can slow down scaling efforts.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "Mixing Python and JavaScript increases complexity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires managing two different languages and frameworks, increasing integration complexity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "The smaller community and traditional hosting here limit how much we benefit from cloud scalability and serverless efficiencies.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller community and traditional hosting model limit cloud benefits.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Smaller developer community compared to JavaScript-based stacks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Django backend means React frontend syncs cleaner for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare backend_framework: Django and Ruby on Rails",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "backend_framework",
+            "public_value": "Django"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "backend_framework",
+            "public_value": "Ruby on Rails"
+          }
+        ],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tara",
+      "text": "Still feels like Ruby and Hotwire might slow us down with less familiarity.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Ruby and Hotwire are less familiar.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Smaller developer community compared to JavaScript-based stacks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backend is secure, reliable, and supports complex data well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Real-time support is built-in, which reduces integration work.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p7",
+        "reason": "the real time support is Built-in",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "real_time_support",
+          "public_value": "Built-in"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize code reuse and leverage a large developer ecosystem.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Omar, do you think the cold start latency in serverless setups will actually slow our prototyping speed?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Serverless complexity and cold start latency could slow development.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May introduce complexity in debugging and cold start latency."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Cold starts add some debugging hassle, which can slow prototyping more than expected.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is May introduce complexity in debugging and cold start latency.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May introduce complexity in debugging and cold start latency."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "MongoDB’s mature ecosystem fits reuse better than DynamoDB’s newer model.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare database: MongoDB and DynamoDB",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "database",
+            "public_value": "MongoDB"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "database",
+            "public_value": "DynamoDB"
+          }
+        ],
+        "personal_context": "Maximize code reuse and leverage a large developer ecosystem.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Large ecosystem and JavaScript consistency definitely help maintainability, especially when scaling and handing off code.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "Large ecosystem and JavaScript consistency across stack aid maintainability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers full JavaScript stack with a large ecosystem and reusable code between client and server."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "True, the extra setup for complex relationships can slow things down, which might hurt rapid prototyping speed.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "May require extra work for complex data relationships compared to Rails.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require additional configuration for complex data relationships and transactions."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "MongoDB’s flexible schema helps keep frontend-backend sync straightforward.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the database is MongoDB",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "database",
+          "public_value": "MongoDB"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Flexible schema is good, but it can cause hidden bugs if not carefully managed on the backend.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the language is JavaScript",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "language",
+          "public_value": "JavaScript"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "React keeps the frontend flexible but needs clear API contracts.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frontend framework is React",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frontend_framework",
+          "public_value": "React"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Node.js runtime fits well with scalable backend design and has strong community support.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the runtime is Node.js",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "runtime",
+          "public_value": "Node.js"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Express works well here since it keeps the backend simple yet scalable, fitting our priorities.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the backend framework is Express",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "backend_framework",
+          "public_value": "Express"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "React’s great for quick iteration, though sometimes I wish it handled state management more intuitively.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frontend framework is React",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frontend_framework",
+          "public_value": "React"
+        },
+        "comparison_sources": [],
+        "personal_context": "Work with a modern, scalable stack that supports quick iteration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Node.js runtime definitely speeds up development, especially for real-time features I care about.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the runtime is Node.js",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "runtime",
+          "public_value": "Node.js"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Express keeps the backend lightweight and easy to manage, which really helps minimize infrastructure overhead on my end.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the backend framework is Express",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "backend_framework",
+          "public_value": "Express"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Express being lightweight matters, but JavaScript's quirks often complicate integration.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the language is JavaScript",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "language",
+          "public_value": "JavaScript"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "True, Express is lightweight but JavaScript consistency across the MERN Stack eases maintainability with a large ecosystem.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large ecosystem and JavaScript consistency across stack aid maintainability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers full JavaScript stack with a large ecosystem and reusable code between client and server."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Large ecosystem and JavaScript consistency across stack aid maintainability."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "A",
+        "previous_option_id": "C",
+        "movement_reason": "Large ecosystem and JavaScript consistency across stack aid maintainability."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Vue.js offers more reactive UI control compared to Hotwire’s server-driven updates, which fits better when minimizing backend management.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare frontend_framework: Vue.js and Hotwire",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "frontend_framework",
+            "public_value": "Vue.js"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "frontend_framework",
+            "public_value": "Hotwire"
+          }
+        ],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "DynamoDB’s serverless nature speeds up backend scaling, which aligns well with reducing infra overhead.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the database is DynamoDB",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "database",
+          "public_value": "DynamoDB"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tara",
+      "text": "Vue.js works well, though I prefer clearer data flow control.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the frontend framework is Vue.js",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "frontend_framework",
+          "public_value": "Vue.js"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backend is secure, reliable, and supports complex data well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Serverless hosting actually lets us scale fast without managing servers, which I find useful.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the hosting is Serverless",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "hosting",
+          "public_value": "Serverless"
+        },
+        "comparison_sources": [],
+        "personal_context": "Work with a modern, scalable stack that supports quick iteration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Serverless speeds scaling but complicates local testing.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the backend framework is AWS Lambda",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "backend_framework",
+          "public_value": "AWS Lambda"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "React matches our frontend needs better than Vue.js here.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare frontend_framework: React and Vue.js",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "frontend_framework",
+            "public_value": "React"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "frontend_framework",
+            "public_value": "Vue.js"
+          }
+        ],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Two-language stacks increase deployment complexity, which adds overhead I’d rather avoid to keep our infrastructure simple.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "Two-language stack adds deployment complexity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires managing two different languages and frameworks, increasing integration complexity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Tara",
+      "text": "Django keeps backend secure and reliable, though adds some complexity.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the backend framework is Django",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "backend_framework",
+          "public_value": "Django"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backend is secure, reliable, and supports complex data well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 36,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Python backend is solid for security, but I prefer something with built-in real-time features for faster prototyping.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the language backend is Python",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "language_backend",
+          "public_value": "Python"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The leading options remain tied. Let’s use Django React as the bounded tie-break target. Maya, Liam, Omar, Zara, and Eli, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 38,
+      "phase": "NARROWING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "Django React fits well since the backend is robust and secure, and React gives us frontend flexibility.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django backend is robust and secure, with React frontend flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize code reuse and leverage a large developer ecosystem.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Django backend is robust and secure, with React frontend flexibility."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Django backend is robust and secure, with React frontend flexibility."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 39,
+      "phase": "NARROWING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "It feels like juggling two frameworks might slow down our progress more than help.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Integration complexity could slow progress.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires managing two different languages and frameworks, increasing integration complexity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Work with a modern, scalable stack that supports quick iteration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "We’ll move to the final vote now.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Ruby on Rails is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Built-in real-time support and convention-over-configuration speed up development.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes built-in real-time features and convention-over-configuration for faster development."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "I choose Ruby on Rails.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rails' built-in real-time features and conventions improve productivity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes built-in real-time features and convention-over-configuration for faster development."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "I’m voting for Django React.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django backend with React frontend offers a solid, secure foundation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Omar",
+      "text": "Serverless Stack is my final choice.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Serverless stack scales automatically and reduces operational overhead.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Scales automatically with usage and reduces server management overhead."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Serverless Stack is my final choice.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Serverless with Vue.js is modern and scales well without much ops.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Scales automatically with usage and reduces server management overhead."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 46,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Eli",
+      "text": "My final vote is Django React.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django backend is robust and secure, with React frontend flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Django backend is robust and secure, with React frontend flexibility."
+        },
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "B",
+        "previous_option_id": "A",
+        "movement_reason": "Django backend is robust and secure, with React frontend flexibility."
+      },
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 47,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Tara",
+      "text": "I choose Django React.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django with PostgreSQL offers strong security and data integrity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "B",
+      "narrowing_options": [
+        "B"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 48,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final vote remained split, so the decision is unresolved.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:backend_framework": 2,
+    "A:concern": 1,
+    "A:database": 2,
+    "A:frontend_framework": 2,
+    "A:language": 2,
+    "A:runtime": 2,
+    "A:upside": 3,
+    "B:backend_framework": 2,
+    "B:concern": 3,
+    "B:frontend_framework": 1,
+    "B:language_backend": 1,
+    "B:upside": 3,
+    "C:backend_framework": 1,
+    "C:concern": 2,
+    "C:frontend_framework": 1,
+    "C:real_time_support": 1,
+    "C:upside": 2,
+    "D:backend_framework": 1,
+    "D:concern": 2,
+    "D:database": 2,
+    "D:frontend_framework": 3,
+    "D:hosting": 1,
+    "D:upside": 2
+  },
+  "recent_point_keys": [
+    [
+      "B",
+      "upside"
+    ],
+    [
+      "B",
+      "concern"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "C",
+    "p3": "B",
+    "p4": "D",
+    "p5": "D",
+    "p6": "B",
+    "p7": "B"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "B",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "unresolved",
+    "final_option": null,
+    "votes": {
+      "p1": "C",
+      "p2": "C",
+      "p3": "B",
+      "p4": "D",
+      "p5": "D",
+      "p6": "B",
+      "p7": "B"
+    },
+    "reason": "No option reached a majority in the final vote"
+  },
+  "stats": {
+    "llm_calls": 38,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 23632,
+    "output_tokens": 3373,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 3,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 1
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 45,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0816,
+    "avg_words_per_participant_turn": 12.42,
+    "visible_preference_changes": 1,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 23632,
+    "output_tokens": 3373,
+    "llm_calls": 41,
+    "voluntary_turns_by_persona": {
+      "p2": 6,
+      "p4": 4,
+      "p3": 6,
+      "p7": 3,
+      "p6": 3,
+      "p1": 5,
+      "p5": 3
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Built-in real-time support and convention-over-configuration speed up development.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes built-in real-time features and convention-over-configuration for faster development."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Ruby on Rails with Hotwire has built-in real-time support and its conventions speed up development significantly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django backend with React frontend offers a solid, secure foundation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Django React gives us a solid, secure foundation to build on.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Serverless with Vue.js is modern and scales well without much ops.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Scales automatically with usage and reduces server management overhead."
+        },
+        "comparison_sources": [],
+        "personal_context": "Work with a modern, scalable stack that supports quick iteration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Serverless Stack with Vue.js seems modern and scales well without much ops, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Full JavaScript stack allows sharing code and has a large ecosystem.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers full JavaScript stack with a large ecosystem and reusable code between client and server."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize code reuse and leverage a large developer ecosystem.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Full JavaScript stack like MERN Stack lets us share code and tap into a huge ecosystem.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rails' built-in real-time features and conventions improve productivity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes built-in real-time features and convention-over-configuration for faster development."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Rails Hotwire’s real-time features and strong conventions really boost productivity without extra setup.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Serverless stack scales automatically and reduces operational overhead.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Scales automatically with usage and reduces server management overhead."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Serverless Stack with AWS Lambda and Vue.js scales automatically and cuts down on operational overhead, which fits our goal to minimize infrastructure management.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django with PostgreSQL offers strong security and data integrity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backend is secure, reliable, and supports complex data well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Django React with PostgreSQL feels more secure and reliable to me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "Mixing Python and JavaScript increases complexity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires managing two different languages and frameworks, increasing integration complexity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Mixing Python and JavaScript adds overhead in syncing frameworks, which can slow down scaling efforts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Smaller community and traditional hosting model limit cloud benefits.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Smaller developer community compared to JavaScript-based stacks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The smaller community and traditional hosting here limit how much we benefit from cloud scalability and serverless efficiencies.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare backend_framework: Django and Ruby on Rails",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "backend_framework",
+            "public_value": "Django"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "backend_framework",
+            "public_value": "Ruby on Rails"
+          }
+        ],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Django backend means React frontend syncs cleaner for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Ruby and Hotwire are less familiar.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Smaller developer community compared to JavaScript-based stacks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backend is secure, reliable, and supports complex data well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Still feels like Ruby and Hotwire might slow us down with less familiarity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p7",
+        "reason": "the real time support is Built-in",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "real_time_support",
+          "public_value": "Built-in"
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize code reuse and leverage a large developer ecosystem.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Real-time support is built-in, which reduces integration work.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Serverless complexity and cold start latency could slow development.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May introduce complexity in debugging and cold start latency."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Omar, do you think the cold start latency in serverless setups will actually slow our prototyping speed?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is May introduce complexity in debugging and cold start latency.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "May introduce complexity in debugging and cold start latency."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Cold starts add some debugging hassle, which can slow prototyping more than expected.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare database: MongoDB and DynamoDB",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "database",
+            "public_value": "MongoDB"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "database",
+            "public_value": "DynamoDB"
+          }
+        ],
+        "personal_context": "Maximize code reuse and leverage a large developer ecosystem.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "MongoDB’s mature ecosystem fits reuse better than DynamoDB’s newer model.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p6",
+        "reason": "Large ecosystem and JavaScript consistency across stack aid maintainability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers full JavaScript stack with a large ecosystem and reusable code between client and server."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Large ecosystem and JavaScript consistency definitely help maintainability, especially when scaling and handing off code.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "May require extra work for complex data relationships compared to Rails.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "May require additional configuration for complex data relationships and transactions."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "True, the extra setup for complex relationships can slow things down, which might hurt rapid prototyping speed.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the database is MongoDB",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "database",
+          "public_value": "MongoDB"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "MongoDB’s flexible schema helps keep frontend-backend sync straightforward.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the language is JavaScript",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "language",
+          "public_value": "JavaScript"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Flexible schema is good, but it can cause hidden bugs if not carefully managed on the backend.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frontend framework is React",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frontend_framework",
+          "public_value": "React"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "React keeps the frontend flexible but needs clear API contracts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the runtime is Node.js",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "runtime",
+          "public_value": "Node.js"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Node.js runtime fits well with scalable backend design and has strong community support.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p3",
+        "reason": "the backend framework is Express",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "backend_framework",
+          "public_value": "Express"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Express works well here since it keeps the backend simple yet scalable, fitting our priorities.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p2",
+        "reason": "the frontend framework is React",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "frontend_framework",
+          "public_value": "React"
+        },
+        "comparison_sources": [],
+        "personal_context": "Work with a modern, scalable stack that supports quick iteration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "React’s great for quick iteration, though sometimes I wish it handled state management more intuitively.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p5",
+        "reason": "the runtime is Node.js",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "runtime",
+          "public_value": "Node.js"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Node.js runtime definitely speeds up development, especially for real-time features I care about.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the backend framework is Express",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "backend_framework",
+          "public_value": "Express"
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Express keeps the backend lightweight and easy to manage, which really helps minimize infrastructure overhead on my end.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p4",
+        "reason": "the language is JavaScript",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "language",
+          "public_value": "JavaScript"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Express being lightweight matters, but JavaScript's quirks often complicate integration.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Large ecosystem and JavaScript consistency across stack aid maintainability.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Offers full JavaScript stack with a large ecosystem and reusable code between client and server."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a stack that balances scalability with developer community support.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "A",
+          "previous_option_id": "C",
+          "movement_reason": "Large ecosystem and JavaScript consistency across stack aid maintainability."
+        },
+        "vote_option": null
+      },
+      "raw_text": "True, Express is lightweight but JavaScript consistency across the MERN Stack eases maintainability with a large ecosystem.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare frontend_framework: Vue.js and Hotwire",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "frontend_framework",
+            "public_value": "Vue.js"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "frontend_framework",
+            "public_value": "Hotwire"
+          }
+        ],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Vue.js offers more reactive UI control compared to Hotwire’s server-driven updates, which fits better when minimizing backend management.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the database is DynamoDB",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "database",
+          "public_value": "DynamoDB"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "DynamoDB’s serverless nature speeds up backend scaling, which aligns well with reducing infra overhead.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p1",
+        "reason": "the frontend framework is Vue.js",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "frontend_framework",
+          "public_value": "Vue.js"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backend is secure, reliable, and supports complex data well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Vue.js works well, though I prefer clearer data flow control.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p7",
+        "reason": "the hosting is Serverless",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "hosting",
+          "public_value": "Serverless"
+        },
+        "comparison_sources": [],
+        "personal_context": "Work with a modern, scalable stack that supports quick iteration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Serverless hosting actually lets us scale fast without managing servers, which I find useful.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the backend framework is AWS Lambda",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "backend_framework",
+          "public_value": "AWS Lambda"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Serverless speeds scaling but complicates local testing.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare frontend_framework: React and Vue.js",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "frontend_framework",
+            "public_value": "React"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "frontend_framework",
+            "public_value": "Vue.js"
+          }
+        ],
+        "personal_context": "Ensure the frontend-backend integration is smooth and manageable.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "React matches our frontend needs better than Vue.js here.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p3",
+        "reason": "Two-language stack adds deployment complexity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires managing two different languages and frameworks, increasing integration complexity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Leverage serverless benefits to minimize infrastructure management.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two-language stacks increase deployment complexity, which adds overhead I’d rather avoid to keep our infrastructure simple.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p4",
+        "reason": "the backend framework is Django",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "backend_framework",
+          "public_value": "Django"
+        },
+        "comparison_sources": [],
+        "personal_context": "Ensure the backend is secure, reliable, and supports complex data well.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Django keeps backend secure and reliable, though adds some complexity.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the language backend is Python",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "language_backend",
+          "public_value": "Python"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a stack that accelerates development with built-in real-time support.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Python backend is solid for security, but I prefer something with built-in real-time features for faster prototyping.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django backend is robust and secure, with React frontend flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": "Maximize code reuse and leverage a large developer ecosystem.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Django backend is robust and secure, with React frontend flexibility."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Django React fits well since the backend is robust and secure, and React gives us frontend flexibility.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Integration complexity could slow progress.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Requires managing two different languages and frameworks, increasing integration complexity."
+        },
+        "comparison_sources": [],
+        "personal_context": "Work with a modern, scalable stack that supports quick iteration.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It feels like juggling two frameworks might slow down our progress more than help.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Built-in real-time support and convention-over-configuration speed up development.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes built-in real-time features and convention-over-configuration for faster development."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Ruby on Rails is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Rails' built-in real-time features and conventions improve productivity.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Includes built-in real-time features and convention-over-configuration for faster development."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Ruby on Rails.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django backend with React frontend offers a solid, secure foundation.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I’m voting for Django React.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Serverless stack scales automatically and reduces operational overhead.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Scales automatically with usage and reduces server management overhead."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Serverless Stack is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Serverless with Vue.js is modern and scales well without much ops.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Scales automatically with usage and reduces server management overhead."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Serverless Stack is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django backend is robust and secure, with React frontend flexibility.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "B",
+          "previous_option_id": "A",
+          "movement_reason": "Django backend is robust and secure, with React frontend flexibility."
+        },
+        "vote_option": "B"
+      },
+      "raw_text": "My final vote is Django React.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Django with PostgreSQL offers strong security and data integrity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Provides a robust backend with built-in admin and security features alongside a flexible React frontend."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "B"
+      },
+      "raw_text": "I choose Django React.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

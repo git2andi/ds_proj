@@ -1,0 +1,4263 @@
+{
+  "provenance": {
+    "seed": 242118926,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Choose a data labeling strategy for a computer vision study",
+    "options": [
+      {
+        "id": "A",
+        "name": "In-house Expert Labeling",
+        "attrs": {
+          "cost": "high",
+          "time_per_1000_images": "5 days",
+          "expertise_required": "high",
+          "quality_consistency": "high",
+          "scalability": "medium"
+        },
+        "upside": "Ensures high-quality and consistent labels with domain experts directly involved.",
+        "concern": "Requires significant time and resource commitment from skilled staff.",
+        "short_name": "In-house Expert",
+        "aliases": [
+          "In-house Expert",
+          "Expert Labeling"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Crowdsourced Labeling Platform",
+        "attrs": {
+          "cost": "medium",
+          "time_per_1000_images": "2 days",
+          "expertise_required": "low",
+          "quality_consistency": "variable",
+          "scalability": "high"
+        },
+        "upside": "Faster labeling with flexible workforce and moderate cost.",
+        "concern": "Label quality may vary, requiring additional validation steps.",
+        "short_name": "Crowdsourced Labeling",
+        "aliases": [
+          "Crowdsourced Labeling",
+          "Labeling Platform"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Automated Pre-labeling with Human Verification",
+        "attrs": {
+          "cost": "medium",
+          "time_per_1000_images": "3 days",
+          "expertise_required": "medium",
+          "quality_consistency": "medium",
+          "scalability": "high"
+        },
+        "upside": "Reduces human effort by combining automation and manual checks.",
+        "concern": "Initial automated labels may introduce errors needing correction.",
+        "short_name": "Automated Pre-labeling",
+        "aliases": [
+          "Automated Pre-labeling",
+          "Human Verification"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Outsourced Professional Labeling Service",
+        "attrs": {
+          "cost": "high",
+          "time_per_1000_images": "4 days",
+          "expertise_required": "low",
+          "quality_consistency": "high",
+          "scalability": "medium"
+        },
+        "upside": "Delivers consistent, expert-level labeling without internal resource strain.",
+        "concern": "Higher cost and less direct control over labeling process.",
+        "short_name": "Outsourced Professional",
+        "aliases": [
+          "Outsourced Professional",
+          "Professional Labeling"
+        ]
+      }
+    ],
+    "shared_context": [
+      "A group of six researchers must select a data labeling strategy for a computer vision study requiring high accuracy and consistency. The options vary in cost, time, and required expertise, and all must support labeling at least 10,000 images."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 3,
+        "directness": 4,
+        "stubbornness": 2
+      },
+      "background": "Maya is a data scientist focused on scalable machine learning pipelines.",
+      "private_goal": "Wants a cost-effective and fast solution to meet project deadlines.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 34,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "High quality and consistency from experts is valuable.",
+          "reason_against": "Too costly and time-consuming for current budget and timeline."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Offers fast labeling at moderate cost and high scalability.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Balances automation with human checks, reducing effort and cost.",
+          "reason_against": "Quality is only medium and errors may need correction."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Provides consistent expert labeling without internal resource drain.",
+          "reason_against": "High cost and less direct control over the process."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 3,
+        "stubbornness": 4
+      },
+      "background": "Liam is a senior computer vision researcher emphasizing accuracy.",
+      "private_goal": "Seeks the highest label quality to ensure model reliability.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 42,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Ensures high-quality, consistent labels from domain experts.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Faster and moderately priced.",
+          "reason_against": "Variable quality risks model performance."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Combines automation and manual verification for decent quality.",
+          "reason_against": "Quality and consistency are only medium."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Delivers consistent, expert-level labeling externally.",
+          "reason_against": "Higher cost and less control than in-house."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Nina specializes in integrating AI-assisted tools into workflows.",
+      "private_goal": "Wants to leverage automation to reduce manual workload.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "High quality and consistency from experts.",
+          "reason_against": "High cost and slow turnaround."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Fast and scalable with moderate cost.",
+          "reason_against": "Quality inconsistency requires extra validation."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Reduces human effort by combining automation and verification.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Consistent expert labeling without internal strain.",
+          "reason_against": "Costly and less direct control."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 4
+      },
+      "background": "Eli is a project manager overseeing large-scale labeling projects.",
+      "private_goal": "Prefers reliable, expert labeling with minimal internal disruption.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 50,
+      "speech_style": "measured, practical wording",
+      "style_tendencies": [
+        "measured, practical wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "High quality and consistency with expert involvement.",
+          "reason_against": "Internal resource demands and slower speed."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 2,
+          "reason_for": "Fast and cost-effective.",
+          "reason_against": "Variable quality and requires validation overhead."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 3,
+          "reason_for": "Good balance of automation and manual checks.",
+          "reason_against": "Medium quality and some error correction needed."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Expert-level consistent labeling outsourced, reducing internal load.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Zara",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 2,
+        "directness": 1,
+        "stubbornness": 1
+      },
+      "background": "Zara is a junior researcher focused on rapid prototyping.",
+      "private_goal": "Needs a fast, affordable labeling approach to iterate quickly.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 26,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 2,
+          "reason_for": "High-quality labels from experts.",
+          "reason_against": "Too slow and expensive for rapid iteration."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "Fast, scalable, and moderately priced.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Automation reduces manual effort and speeds process.",
+          "reason_against": "Quality is only medium and errors may occur."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Consistent expert labeling without internal resource use.",
+          "reason_against": "Higher cost and slower than crowdsourcing."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 3
+      },
+      "background": "Omar is a machine learning engineer with a focus on quality control.",
+      "private_goal": "Wants a balanced approach ensuring quality without excessive cost.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "High quality and consistency from experts.",
+          "reason_against": "High cost and time requirements."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "Fast and scalable with moderate cost.",
+          "reason_against": "Variable quality requires validation."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Combines automation and human verification to balance quality and cost.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 3,
+          "reason_for": "Consistent expert labeling without internal strain.",
+          "reason_against": "Costly and less direct control."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Balances automation with human checks, reducing effort and cost."
+      },
+      "narrowing_acceptance": "C",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "D",
+          "cost"
+        ],
+        [
+          "B",
+          "cost"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "expertise_required"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "B",
+          "time_per_1000_images"
+        ],
+        [
+          "C",
+          "quality_consistency"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "A",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "A",
+      "ranks": {
+        "A": 5,
+        "B": 2,
+        "C": 3,
+        "D": 4
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "A",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "A",
+          "concern"
+        ],
+        [
+          "C",
+          "expertise_required"
+        ],
+        [
+          "B",
+          "quality_consistency"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Fast and scalable with moderate cost."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "expertise_required"
+        ],
+        [
+          "C",
+          "expertise_required"
+        ],
+        [
+          "D",
+          "time_per_1000_images"
+        ],
+        [
+          "C",
+          "time_per_1000_images"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 4,
+        "B": 2,
+        "C": 3,
+        "D": 5
+      },
+      "acceptable_options": [
+        "A",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 2,
+        "B": 5,
+        "C": 4,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Automation reduces manual effort and speeds process."
+      },
+      "narrowing_acceptance": "C",
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "D",
+          "cost"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "B",
+          "cost"
+        ],
+        [
+          "C",
+          "cost"
+        ],
+        [
+          "A",
+          "cost"
+        ],
+        [
+          "B",
+          "time_per_1000_images"
+        ],
+        [
+          "B",
+          "quality_consistency"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 7,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 5,
+        "D": 3
+      },
+      "acceptable_options": [
+        "C",
+        "B"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "Fast and scalable with moderate cost."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "C",
+          "scalability"
+        ],
+        [
+          "B",
+          "scalability"
+        ],
+        [
+          "C",
+          "time_per_1000_images"
+        ],
+        [
+          "C",
+          "quality_consistency"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 5,
+      "openings": 1,
+      "visible_switches": 0
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s work through the options for: Choose a data labeling strategy for a computer vision study.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "In-house Expert Labeling ensures consistent, high-quality labels from domain experts.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Ensures high-quality, consistent labels from domain experts.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures high-quality and consistent labels with domain experts directly involved."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Automated Pre-labeling with Human Verification seems like a good middle ground, combining automation and manual checks to balance quality and cost.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines automation and human verification to balance quality and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Crowdsourced Labeling feels fast and scalable, with moderate cost.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Fast, scalable, and moderately priced.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Faster labeling with flexible workforce and moderate cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Crowdsourced Labeling offers fast labeling with moderate cost and good scalability.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Offers fast labeling at moderate cost and high scalability.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Faster labeling with flexible workforce and moderate cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Automated Pre-labeling cuts human effort by mixing automation with verification.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reduces human effort by combining automation and verification.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Outsourced Professional labeling offers expert-level consistency and reduces internal load, which is crucial for maintaining project quality without disrupting our teams.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Expert-level consistent labeling outsourced, reducing internal load.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Delivers consistent, expert-level labeling without internal resource strain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prefers reliable, expert labeling with minimal internal disruption.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 7,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Variable quality risks model performance, so extra validation is needed.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Variable quality risks model performance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Label quality may vary, requiring additional validation steps."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Liam’s point stands, but Crowdsourced Labeling scales fast with moderate cost.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Fast and scalable with moderate cost.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Faster labeling with flexible workforce and moderate cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Fast and scalable with moderate cost."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Fast and scalable with moderate cost."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Both scale well, but mixing automation with human checks leans better toward balanced quality without extra cost.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare scalability: high and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "scalability",
+            "public_value": "high"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "scalability",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "The expertise needed is medium, which fits well with reducing manual checks.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the expertise required is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "expertise_required",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Medium consistency means extra verification slows us down and raises costs.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the quality consistency is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "quality_consistency",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Automated Pre-labeling with Human Verification cuts effort and cost, so I can accept it now.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balances automation with human checks, reducing effort and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Balances automation with human checks, reducing effort and cost."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Balances automation with human checks, reducing effort and cost."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Quality and consistency are only medium, so errors still impact reliability.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Quality and consistency are only medium.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Initial automated labels may introduce errors needing correction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Medium consistency means we should watch for error patterns carefully, or costs might creep up unexpectedly.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the quality consistency is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "quality_consistency",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Both scale high, but the automated pre-labeling with human checks fits my balance priority better since it can cut some manual effort.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare scalability: high and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "scalability",
+            "public_value": "high"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "scalability",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Eli, do you think higher cost and less control with D justify its quality gains?",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Higher cost and less control than in-house.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and less direct control over labeling process."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Higher cost and less control outweigh the quality gains for our scale and disruption tolerance.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Higher cost and less direct control over labeling process.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and less direct control over labeling process."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prefers reliable, expert labeling with minimal internal disruption.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Medium cost fits our deadline and budget better than the higher cost of professional labeling.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: medium and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "cost",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "The expertise required is low, which means less training time.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expertise required is low",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expertise_required",
+          "public_value": "low"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Does relying on skilled staff for labeling fit within our current resource limits?",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Too costly and time-consuming for current budget and timeline.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires significant time and resource commitment from skilled staff."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "It demands too much time from skilled staff to be feasible.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Requires significant time and resource commitment from skilled staff.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires significant time and resource commitment from skilled staff."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "High-quality, consistent labeling requires expert involvement; sacrificing that risks project integrity beyond acceptable limits.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "High quality and consistency with expert involvement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures high-quality and consistent labels with domain experts directly involved."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prefers reliable, expert labeling with minimal internal disruption.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "The labeling platform costs medium, expert labeling is high—medium fits my fast, low-cost need better.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: medium and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cost",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "The quality consistency is variable, which could risk model reliability.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the quality consistency is variable",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "quality_consistency",
+          "public_value": "variable"
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Quality dips, but since expertise required is low, I can manage quick fixes myself.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the expertise required is low",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expertise_required",
+          "public_value": "low"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Two days per 1000 images feels a bit slow for my quick cycles.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the time per 1000 images is 2 days",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "time_per_1000_images",
+          "public_value": "2 days"
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Variable quality means more time fixing, which slows me down.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the quality consistency is variable",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "quality_consistency",
+          "public_value": "variable"
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "Automated pre-labeling takes 3 days per 1000 images, faster than 4 days with outsourcing. That speed fits my priority better.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare time_per_1000_images: 3 days and 4 days",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "time_per_1000_images",
+            "public_value": "3 days"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "time_per_1000_images",
+            "public_value": "4 days"
+          }
+        ],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Medium expertise still risks inconsistent labels and affects accuracy.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the expertise required is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "expertise_required",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I see how Option B’s crowdsourced labeling could work here—fast and scalable with moderate cost, which helps balance quality and budget.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Fast and scalable with moderate cost.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Faster labeling with flexible workforce and moderate cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Fast and scalable with moderate cost."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "C",
+        "movement_reason": "Fast and scalable with moderate cost."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Two days per 1000 images is okay, but it still feels tight for our deadlines.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the time per 1000 images is 2 days",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "time_per_1000_images",
+          "public_value": "2 days"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Medium cost feels more manageable than high for quick turns.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: medium and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "cost",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Automation with Human Verification might reduce manual work and speed us up.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Automation reduces manual effort and speeds process.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Automation reduces manual effort and speeds process."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Automation reduces manual effort and speeds process."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Three days per 1000 images isn’t bad, but we should watch that it doesn’t slow down other parts of the pipeline too much.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the time per 1000 images is 3 days",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "time_per_1000_images",
+          "public_value": "3 days"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "That cost might be okay, but faster labeling would help me more.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cost is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cost",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 36,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The leading options remain tied. Let’s use Automated Pre-labeling as the bounded tie-break target. Maya, Liam, Eli, and Zara, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Automated Pre-labeling with Human Verification cuts effort and cost by mixing automation and checks.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balances automation with human checks, reducing effort and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Balances automation with human checks, reducing effort and cost."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Balances automation with human checks, reducing effort and cost."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 38,
+      "phase": "NARROWING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "Automated Pre-labeling with Human Verification could work since it speeds things up and lowers manual effort, which fits my need to iterate fast.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Automation reduces manual effort and speeds process.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Automation reduces manual effort and speeds process."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Automation reduces manual effort and speeds process."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s confirm the final choices.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I choose Automated Pre-labeling.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balances automation with human checks, reducing effort and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Balances automation with human checks, reducing effort and cost."
+        },
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Balances automation with human checks, reducing effort and cost."
+      },
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "My final vote is In-house Expert.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Ensures high-quality, consistent labels from domain experts.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures high-quality and consistent labels with domain experts directly involved."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "A",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Nina",
+      "text": "My final vote is Automated Pre-labeling.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reduces human effort by combining automation and verification.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I’m voting for Outsourced Professional.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Expert-level consistent labeling outsourced, reducing internal load.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Delivers consistent, expert-level labeling without internal resource strain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Zara",
+      "text": "I choose Automated Pre-labeling.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Automation reduces manual effort and speeds process.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Automation reduces manual effort and speeds process."
+        },
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "B",
+        "movement_reason": "Automation reduces manual effort and speeds process."
+      },
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Automated Pre-labeling is my final choice.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines automation and human verification to balance quality and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "C"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 46,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The majority chose Automated Pre-labeling.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "A",
+      "concern"
+    ],
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:concern": 2,
+    "A:cost": 1,
+    "A:upside": 2,
+    "B:concern": 1,
+    "B:cost": 3,
+    "B:expertise_required": 2,
+    "B:quality_consistency": 2,
+    "B:scalability": 2,
+    "B:time_per_1000_images": 2,
+    "B:upside": 4,
+    "C:concern": 1,
+    "C:cost": 1,
+    "C:expertise_required": 2,
+    "C:quality_consistency": 2,
+    "C:scalability": 2,
+    "C:time_per_1000_images": 2,
+    "C:upside": 6,
+    "D:concern": 2,
+    "D:cost": 2,
+    "D:time_per_1000_images": 1,
+    "D:upside": 1
+  },
+  "recent_point_keys": [
+    [
+      "C",
+      "upside"
+    ],
+    [
+      "C",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "A",
+    "p3": "C",
+    "p4": "D",
+    "p5": "C",
+    "p6": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "A",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "C",
+    "votes": {
+      "p1": "C",
+      "p2": "A",
+      "p3": "C",
+      "p4": "D",
+      "p5": "C",
+      "p6": "C"
+    },
+    "reason": "4 of 6 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 37,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 22771,
+    "output_tokens": 2937,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 6,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 6,
+    "participant_turns": 43,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0851,
+    "avg_words_per_participant_turn": 12.84,
+    "visible_preference_changes": 2,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 22771,
+    "output_tokens": 2937,
+    "llm_calls": 40,
+    "voluntary_turns_by_persona": {
+      "p2": 6,
+      "p3": 4,
+      "p6": 5,
+      "p1": 7,
+      "p4": 1,
+      "p5": 7
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Ensures high-quality, consistent labels from domain experts.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures high-quality and consistent labels with domain experts directly involved."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "In-house Expert Labeling ensures consistent, high-quality labels from domain experts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines automation and human verification to balance quality and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Automated Pre-labeling with Human Verification seems like a good middle ground, combining automation and manual checks to balance quality and cost.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Fast, scalable, and moderately priced.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Faster labeling with flexible workforce and moderate cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Crowdsourced Labeling feels fast and scalable, with moderate cost.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Offers fast labeling at moderate cost and high scalability.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Faster labeling with flexible workforce and moderate cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Crowdsourced Labeling offers fast labeling with moderate cost and good scalability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reduces human effort by combining automation and verification.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Automated Pre-labeling cuts human effort by mixing automation with verification.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Expert-level consistent labeling outsourced, reducing internal load.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Delivers consistent, expert-level labeling without internal resource strain."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prefers reliable, expert labeling with minimal internal disruption.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Outsourced Professional labeling offers expert-level consistency and reduces internal load, which is crucial for maintaining project quality without disrupting our teams.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Variable quality risks model performance.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Label quality may vary, requiring additional validation steps."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Variable quality risks model performance, so extra validation is needed.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Fast and scalable with moderate cost.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Faster labeling with flexible workforce and moderate cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Fast and scalable with moderate cost."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Liam’s point stands, but Crowdsourced Labeling scales fast with moderate cost.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare scalability: high and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "scalability",
+            "public_value": "high"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "scalability",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both scale well, but mixing automation with human checks leans better toward balanced quality without extra cost.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the expertise required is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "expertise_required",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The expertise needed is medium, which fits well with reducing manual checks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the quality consistency is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "quality_consistency",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Medium consistency means extra verification slows us down and raises costs.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balances automation with human checks, reducing effort and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Balances automation with human checks, reducing effort and cost."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Automated Pre-labeling with Human Verification cuts effort and cost, so I can accept it now.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p1",
+        "reason": "Quality and consistency are only medium.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Initial automated labels may introduce errors needing correction."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Quality and consistency are only medium, so errors still impact reliability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the quality consistency is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "quality_consistency",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Medium consistency means we should watch for error patterns carefully, or costs might creep up unexpectedly.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare scalability: high and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "scalability",
+            "public_value": "high"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "scalability",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Both scale high, but the automated pre-labeling with human checks fits my balance priority better since it can cut some manual effort.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "Higher cost and less control than in-house.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and less direct control over labeling process."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Eli, do you think higher cost and less control with D justify its quality gains?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "answer",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p2",
+        "reason": "the concern is Higher cost and less direct control over labeling process.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Higher cost and less direct control over labeling process."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prefers reliable, expert labeling with minimal internal disruption.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Higher cost and less control outweigh the quality gains for our scale and disruption tolerance.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: medium and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "cost",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Medium cost fits our deadline and budget better than the higher cost of professional labeling.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the expertise required is low",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expertise_required",
+          "public_value": "low"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The expertise required is low, which means less training time.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Too costly and time-consuming for current budget and timeline.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires significant time and resource commitment from skilled staff."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does relying on skilled staff for labeling fit within our current resource limits?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": "p1",
+        "reason": "the concern is Requires significant time and resource commitment from skilled staff.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "concern",
+          "public_value": "Requires significant time and resource commitment from skilled staff."
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "It demands too much time from skilled staff to be feasible.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "react",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "High quality and consistency with expert involvement.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures high-quality and consistent labels with domain experts directly involved."
+        },
+        "comparison_sources": [],
+        "personal_context": "Prefers reliable, expert labeling with minimal internal disruption.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "High-quality, consistent labeling requires expert involvement; sacrificing that risks project integrity beyond acceptable limits.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: medium and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "A",
+            "attribute_name": "cost",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The labeling platform costs medium, expert labeling is high—medium fits my fast, low-cost need better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the quality consistency is variable",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "quality_consistency",
+          "public_value": "variable"
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The quality consistency is variable, which could risk model reliability.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the expertise required is low",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "expertise_required",
+          "public_value": "low"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Quality dips, but since expertise required is low, I can manage quick fixes myself.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the time per 1000 images is 2 days",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "time_per_1000_images",
+          "public_value": "2 days"
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two days per 1000 images feels a bit slow for my quick cycles.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p1",
+        "reason": "the quality consistency is variable",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "quality_consistency",
+          "public_value": "variable"
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Variable quality means more time fixing, which slows me down.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare time_per_1000_images: 3 days and 4 days",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "time_per_1000_images",
+            "public_value": "3 days"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "time_per_1000_images",
+            "public_value": "4 days"
+          }
+        ],
+        "personal_context": "Wants to leverage automation to reduce manual workload.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Automated pre-labeling takes 3 days per 1000 images, faster than 4 days with outsourcing. That speed fits my priority better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p3",
+        "reason": "the expertise required is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "expertise_required",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Seeks the highest label quality to ensure model reliability.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Medium expertise still risks inconsistent labels and affects accuracy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Fast and scalable with moderate cost.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Faster labeling with flexible workforce and moderate cost."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "C",
+          "movement_reason": "Fast and scalable with moderate cost."
+        },
+        "vote_option": null
+      },
+      "raw_text": "I see how Option B’s crowdsourced labeling could work here—fast and scalable with moderate cost, which helps balance quality and budget.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the time per 1000 images is 2 days",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "time_per_1000_images",
+          "public_value": "2 days"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Two days per 1000 images is okay, but it still feels tight for our deadlines.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare cost: medium and high",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "cost",
+            "public_value": "medium"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "cost",
+            "public_value": "high"
+          }
+        ],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Medium cost feels more manageable than high for quick turns.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Automation reduces manual effort and speeds process.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Automation reduces manual effort and speeds process."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Automation with Human Verification might reduce manual work and speed us up.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p5",
+        "reason": "the time per 1000 images is 3 days",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "time_per_1000_images",
+          "public_value": "3 days"
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a balanced approach ensuring quality without excessive cost.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Three days per 1000 images isn’t bad, but we should watch that it doesn’t slow down other parts of the pipeline too much.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p6",
+        "reason": "the cost is medium",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "cost",
+          "public_value": "medium"
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That cost might be okay, but faster labeling would help me more.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balances automation with human checks, reducing effort and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Wants a cost-effective and fast solution to meet project deadlines.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Balances automation with human checks, reducing effort and cost."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Automated Pre-labeling with Human Verification cuts effort and cost by mixing automation and checks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Automation reduces manual effort and speeds process.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": "Needs a fast, affordable labeling approach to iterate quickly.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Automation reduces manual effort and speeds process."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Automated Pre-labeling with Human Verification could work since it speeds things up and lowers manual effort, which fits my need to iterate fast.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Balances automation with human checks, reducing effort and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Balances automation with human checks, reducing effort and cost."
+        },
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Automated Pre-labeling.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Ensures high-quality, consistent labels from domain experts.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Ensures high-quality and consistent labels with domain experts directly involved."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "A"
+      },
+      "raw_text": "My final vote is In-house Expert.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Reduces human effort by combining automation and verification.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "My final vote is Automated Pre-labeling.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Expert-level consistent labeling outsourced, reducing internal load.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Delivers consistent, expert-level labeling without internal resource strain."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for Outsourced Professional.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Automation reduces manual effort and speeds process.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "B",
+          "movement_reason": "Automation reduces manual effort and speeds process."
+        },
+        "vote_option": "C"
+      },
+      "raw_text": "I choose Automated Pre-labeling.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Combines automation and human verification to balance quality and cost.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Reduces human effort by combining automation and manual checks."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Automated Pre-labeling is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}

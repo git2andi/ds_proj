@@ -1,0 +1,4429 @@
+{
+  "provenance": {
+    "seed": 242118831,
+    "dialogue_provider": "gpt",
+    "dialogue_model": "gpt-4.1-mini",
+    "sampling": {
+      "setup": {
+        "temperature": 0.35,
+        "top_k": 45,
+        "top_p": 0.9,
+        "max_output_tokens": 0
+      },
+      "dialogue": {
+        "temperature": 0.82,
+        "top_k": 60,
+        "top_p": 0.94,
+        "max_output_tokens": 180
+      },
+      "repair": {
+        "temperature": 0.2,
+        "top_k": 25,
+        "top_p": 0.8,
+        "max_output_tokens": 120
+      }
+    },
+    "config_sha256": "80c04291b9d5a9cfcbb098dbbcd89e69ca36e2a4b1c14a4e109716e0dc03252e",
+    "git_commit": "392b7ed7b4cf5eb82f1324bda4f80b49a7e9b5eb",
+    "python_version": "3.13.7",
+    "scenario_mode": "auto",
+    "participant_mode": "auto",
+    "action_trace_enabled": true
+  },
+  "scenario": {
+    "topic": "Agree on the campsite for the fishing weekend",
+    "options": [
+      {
+        "id": "A",
+        "name": "Lakeside Pines Campground",
+        "attrs": {
+          "distance_miles": "15",
+          "fishing_access": "lake shore",
+          "amenities": "fire pits, picnic tables, restrooms",
+          "max_tents": "10"
+        },
+        "upside": "Close to the lake with ample fishing spots and established fire pits.",
+        "concern": "Limited parking space may require carpooling.",
+        "short_name": "Lakeside Pines",
+        "aliases": [
+          "Lakeside Pines",
+          "Pines Campground"
+        ]
+      },
+      {
+        "id": "B",
+        "name": "Riverbend Forest Site",
+        "attrs": {
+          "distance_miles": "25",
+          "fishing_access": "river bank",
+          "amenities": "restrooms, hiking trails, picnic shelters",
+          "max_tents": "8"
+        },
+        "upside": "Access to river fishing and nearby hiking trails for additional activities.",
+        "concern": "Smaller tent capacity might require splitting into multiple groups.",
+        "short_name": "Riverbend Forest",
+        "aliases": [
+          "Riverbend Forest",
+          "Forest Site"
+        ]
+      },
+      {
+        "id": "C",
+        "name": "Sunny Meadow Camp",
+        "attrs": {
+          "distance_miles": "10",
+          "fishing_access": "pond",
+          "amenities": "picnic tables, playground, restrooms",
+          "max_tents": "12"
+        },
+        "upside": "Shortest travel distance and family-friendly features like a playground.",
+        "concern": "Fishing limited to a small pond with fewer fish variety.",
+        "short_name": "Sunny Meadow",
+        "aliases": [
+          "Sunny Meadow",
+          "Meadow Camp"
+        ]
+      },
+      {
+        "id": "D",
+        "name": "Highland Creek Campsite",
+        "attrs": {
+          "distance_miles": "30",
+          "fishing_access": "creek",
+          "amenities": "fire pits, restrooms, boat launch",
+          "max_tents": "9"
+        },
+        "upside": "Includes a boat launch for creek fishing and campfire facilities.",
+        "concern": "Farthest site requiring longer travel time.",
+        "short_name": "Highland Creek",
+        "aliases": [
+          "Highland Creek",
+          "Creek Campsite"
+        ]
+      }
+    ],
+    "shared_context": [
+      "Seven friends are choosing a campsite for their upcoming fishing weekend. Each site offers fishing access and basic amenities but varies in distance, facilities, and nearby activities."
+    ],
+    "setup_notes": [
+      "generated_option_aliases",
+      "generated_participant_names"
+    ]
+  },
+  "personas": [
+    {
+      "id": "p1",
+      "name": "Maya",
+      "sim_params": {
+        "engagement": 3,
+        "verbosity": 3,
+        "directness": 1,
+        "stubbornness": 4
+      },
+      "background": "Maya is an avid fisher who enjoys family-friendly outings and easy access to amenities.",
+      "private_goal": "Find a campsite with the shortest travel and kid-friendly features.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 29,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Close to the lake with ample fishing spots and good amenities.",
+          "reason_against": "Limited parking could be inconvenient."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Offers hiking trails and river fishing for variety.",
+          "reason_against": "Farther away and smaller tent capacity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Shortest distance and family-friendly playground make it ideal.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Boat launch and campfire facilities are nice extras.",
+          "reason_against": "Farthest site requiring longer travel time."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p2",
+      "name": "Liam",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 2,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Liam values directness and efficiency, preferring sites with good fishing and facilities.",
+      "private_goal": "Choose the best fishing spot even if it means longer travel.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 35,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Close to the lake with good fishing access.",
+          "reason_against": "Limited parking and smaller tent capacity."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "River fishing and hiking trails offer good activities.",
+          "reason_against": "Smaller tent capacity might split the group."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Shortest travel distance.",
+          "reason_against": "Fishing limited to a small pond with fewer fish variety."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Boat launch for creek fishing and campfire facilities are great.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p3",
+      "name": "Zoe",
+      "sim_params": {
+        "engagement": 1,
+        "verbosity": 1,
+        "directness": 1,
+        "stubbornness": 3
+      },
+      "background": "Zoe prefers quiet, low-key trips with minimal fuss and close proximity.",
+      "private_goal": "Minimize travel and enjoy easy fishing access.",
+      "preferred_options": [
+        "C"
+      ],
+      "age": 24,
+      "speech_style": "casual, contemporary wording",
+      "style_tendencies": [
+        "casual, contemporary wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 4,
+          "reason_for": "Close to the lake with good fishing and amenities.",
+          "reason_against": "Parking might be tight."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Nice river fishing and trails.",
+          "reason_against": "Farther away and smaller capacity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 5,
+          "reason_for": "Shortest distance and simple amenities suit my style.",
+          "reason_against": ""
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Boat launch is a plus.",
+          "reason_against": "Too far and requires more travel time."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p4",
+      "name": "Eli",
+      "sim_params": {
+        "engagement": 2,
+        "verbosity": 4,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Eli enjoys detailed planning and values good fishing facilities and extra activities.",
+      "private_goal": "Pick a site with strong fishing options and enough space for everyone.",
+      "preferred_options": [
+        "D"
+      ],
+      "age": 40,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Close to lake and good amenities.",
+          "reason_against": "Parking limitations and tent capacity might be an issue."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 4,
+          "reason_for": "River fishing and hiking trails add value.",
+          "reason_against": "Smaller tent capacity could split the group."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Shortest travel distance.",
+          "reason_against": "Limited fishing variety and smaller pond."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 5,
+          "reason_for": "Boat launch and campfire facilities are perfect for fishing and group activities.",
+          "reason_against": ""
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p5",
+      "name": "Nina",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 5,
+        "directness": 5,
+        "stubbornness": 2
+      },
+      "background": "Nina is highly engaged and values a balance of fishing and outdoor activities like hiking.",
+      "private_goal": "Find a site with good fishing and additional recreational options.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 32,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "adds a little explanation",
+        "states judgments plainly"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Good fishing spots and amenities.",
+          "reason_against": "Limited parking and closer options lack hiking."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "River fishing plus hiking trails and picnic shelters offer variety.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Close and family-friendly.",
+          "reason_against": "Fishing limited to a small pond."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Boat launch and campfire facilities are nice extras.",
+          "reason_against": "Farther away."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p6",
+      "name": "Omar",
+      "sim_params": {
+        "engagement": 4,
+        "verbosity": 1,
+        "directness": 2,
+        "stubbornness": 4
+      },
+      "background": "Omar prefers straightforward choices with good fishing and some outdoor activities nearby.",
+      "private_goal": "Select a site that balances fishing quality and group size capacity.",
+      "preferred_options": [
+        "B"
+      ],
+      "age": 38,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 3,
+          "reason_for": "Close to lake with good fishing access.",
+          "reason_against": "Limited parking and tent capacity."
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 5,
+          "reason_for": "River fishing and hiking trails provide good options.",
+          "reason_against": ""
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 2,
+          "reason_for": "Shortest travel distance.",
+          "reason_against": "Limited fishing variety."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 4,
+          "reason_for": "Boat launch and campfire facilities are valuable.",
+          "reason_against": "Longer travel time."
+        }
+      },
+      "hard_blocker": false
+    },
+    {
+      "id": "p7",
+      "name": "Ivy",
+      "sim_params": {
+        "engagement": 5,
+        "verbosity": 2,
+        "directness": 2,
+        "stubbornness": 1
+      },
+      "background": "Ivy is highly engaged and values convenience and social aspects of camping.",
+      "private_goal": "Choose a campsite close to water with good group amenities.",
+      "preferred_options": [
+        "A"
+      ],
+      "age": 27,
+      "speech_style": "plain, conversational wording",
+      "style_tendencies": [
+        "plain, conversational wording",
+        "uses short statements",
+        "softens disagreement"
+      ],
+      "rejection": null,
+      "rejection_reason": "",
+      "option_stances": {
+        "A": {
+          "option_id": "A",
+          "rank": 5,
+          "reason_for": "Close to lake with ample fishing and established fire pits for socializing.",
+          "reason_against": ""
+        },
+        "B": {
+          "option_id": "B",
+          "rank": 3,
+          "reason_for": "Offers river fishing and hiking trails.",
+          "reason_against": "Farther away and smaller tent capacity."
+        },
+        "C": {
+          "option_id": "C",
+          "rank": 4,
+          "reason_for": "Shortest travel and family-friendly features.",
+          "reason_against": "Fishing limited to a small pond."
+        },
+        "D": {
+          "option_id": "D",
+          "rank": 2,
+          "reason_for": "Boat launch and campfire facilities are nice.",
+          "reason_against": "Longest travel distance."
+        }
+      },
+      "hard_blocker": false
+    }
+  ],
+  "runtime": {
+    "p1": {
+      "persona_id": "p1",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "distance_miles"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "D",
+          "amenities"
+        ],
+        [
+          "D",
+          "distance_miles"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 2,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p2": {
+      "persona_id": "p2",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "B"
+      ],
+      "acceptance_reasons": {
+        "B": "River fishing and hiking trails offer good activities."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "C",
+          "distance_miles"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 3,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p3": {
+      "persona_id": "p3",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 4,
+        "B": 3,
+        "C": 5,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 1,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p4": {
+      "persona_id": "p4",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 4,
+        "C": 2,
+        "D": 5
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [],
+      "acceptance_reasons": {},
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "amenities"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "amenities"
+        ],
+        [
+          "B",
+          "fishing_access"
+        ],
+        [
+          "B",
+          "distance_miles"
+        ],
+        [
+          "C",
+          "fishing_access"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 4,
+      "openings": 1,
+      "visible_switches": 0
+    },
+    "p5": {
+      "persona_id": "p5",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Boat launch and campfire facilities are nice extras."
+      },
+      "narrowing_acceptance": "D",
+      "used_point_keys": [
+        [
+          "B",
+          "max_tents"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "amenities"
+        ],
+        [
+          "C",
+          "concern"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "max_tents"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "C",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p6": {
+      "persona_id": "p6",
+      "preferred_option": "D",
+      "ranks": {
+        "A": 3,
+        "B": 5,
+        "C": 2,
+        "D": 4
+      },
+      "acceptable_options": [
+        "B",
+        "D"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "D",
+      "public_acceptances": [
+        "D"
+      ],
+      "acceptance_reasons": {
+        "D": "Boat launch and campfire facilities are valuable."
+      },
+      "narrowing_acceptance": "D",
+      "used_point_keys": [
+        [
+          "B",
+          "max_tents"
+        ],
+        [
+          "B",
+          "upside"
+        ],
+        [
+          "D",
+          "upside"
+        ],
+        [
+          "B",
+          "distance_miles"
+        ],
+        [
+          "C",
+          "fishing_access"
+        ],
+        [
+          "D",
+          "max_tents"
+        ],
+        [
+          "C",
+          "max_tents"
+        ]
+      ],
+      "opened_thread_keys": [],
+      "voluntary_turns": 6,
+      "openings": 1,
+      "visible_switches": 1
+    },
+    "p7": {
+      "persona_id": "p7",
+      "preferred_option": "C",
+      "ranks": {
+        "A": 5,
+        "B": 3,
+        "C": 4,
+        "D": 2
+      },
+      "acceptable_options": [
+        "C",
+        "A"
+      ],
+      "hard_rejected_options": [],
+      "public_preference": "C",
+      "public_acceptances": [
+        "C"
+      ],
+      "acceptance_reasons": {
+        "C": "Shortest travel and family-friendly features."
+      },
+      "narrowing_acceptance": null,
+      "used_point_keys": [
+        [
+          "D",
+          "fishing_access"
+        ],
+        [
+          "D",
+          "distance_miles"
+        ],
+        [
+          "A",
+          "upside"
+        ],
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "A",
+          "max_tents"
+        ],
+        [
+          "B",
+          "amenities"
+        ],
+        [
+          "B",
+          "fishing_access"
+        ],
+        [
+          "C",
+          "amenities"
+        ],
+        [
+          "B",
+          "concern"
+        ],
+        [
+          "C",
+          "upside"
+        ],
+        [
+          "C",
+          "max_tents"
+        ]
+      ],
+      "opened_thread_keys": [
+        [
+          "D",
+          "concern"
+        ],
+        [
+          "B",
+          "concern"
+        ]
+      ],
+      "voluntary_turns": 8,
+      "openings": 1,
+      "visible_switches": 1
+    }
+  },
+  "phase_history": [
+    "OPENING",
+    "DISCUSSION",
+    "NARROWING",
+    "VOTING",
+    "CLOSED"
+  ],
+  "turns": [
+    {
+      "index": 0,
+      "phase": "OPENING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Our decision is: Agree on the campsite for the fishing weekend.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 1,
+      "phase": "OPENING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Riverbend Forest has good river fishing and trails.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "River fishing and hiking trails provide good options.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Access to river fishing and nearby hiking trails for additional activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 2,
+      "phase": "OPENING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Boat launch and campfire facilities at Highland Creek are solid.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch for creek fishing and campfire facilities are great.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the best fishing spot even if it means longer travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 3,
+      "phase": "OPENING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "The boat launch and campfire facilities at Highland Creek seem great for fishing and group activities, which should fit our needs well.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are perfect for fishing and group activities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 4,
+      "phase": "OPENING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Riverbend Forest offers solid river fishing plus hiking trails and picnic shelters, which gives us good variety for the weekend.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "River fishing plus hiking trails and picnic shelters offer variety.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Access to river fishing and nearby hiking trails for additional activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 5,
+      "phase": "OPENING",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Close to the lake with good fishing and fire pits at Lakeside Pines.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Close to lake with ample fishing and established fire pits for socializing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Close to the lake with ample fishing spots and established fire pits."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 6,
+      "phase": "OPENING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Sunny Meadow seems best since it has the shortest drive and a playground for kids.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest distance and family-friendly playground make it ideal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a campsite with the shortest travel and kid-friendly features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 7,
+      "phase": "OPENING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Shortest distance and simple amenities suit my style, so Sunny Meadow works for me.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest distance and simple amenities suit my style.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and enjoy easy fishing access.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 8,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The small pond there really limits fishing options, which makes it less appealing for me despite the convenience.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fishing limited to a small pond.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Fishing limited to a small pond with fewer fish variety."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 9,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "The max tents at Lakeside Pines is 10, Sunny Meadow has 12, so the meadow fits bigger groups a bit better.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare max_tents: 10 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "max_tents",
+            "public_value": "10"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "max_tents",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 10,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Small pond means fewer fish and less variety. Not worth it.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fishing limited to a small pond with fewer fish variety.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Fishing limited to a small pond with fewer fish variety."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the best fishing spot even if it means longer travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 11,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "A small pond might limit variety, but having enough space for everyone to spread out is also a big plus for me.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the fishing access is pond",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "fishing_access",
+          "public_value": "pond"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 12,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Sunny Meadow’s shorter travel and playground feel better for families like ours.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest travel and family-friendly features.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Shortest travel and family-friendly features."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "C",
+        "previous_option_id": "A",
+        "movement_reason": "Shortest travel and family-friendly features."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 13,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "10 miles is a bit far, but better fishing justifies it for me.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p7",
+        "reason": "the distance miles is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "distance_miles",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the best fishing spot even if it means longer travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 14,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Fishing’s from a pond, so fewer spots to spread out.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the fishing access is pond",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "fishing_access",
+          "public_value": "pond"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 15,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "That spot’s nice but the longer drive makes me hesitate.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Longest travel distance.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Farthest site requiring longer travel time."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_concern",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 16,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "I get why the longer 30 miles feels off—10 miles feels easier for quick family trips.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare distance_miles: 10 and 30",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "distance_miles",
+            "public_value": "10"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "distance_miles",
+            "public_value": "30"
+          }
+        ],
+        "personal_context": "Find a campsite with the shortest travel and kid-friendly features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 17,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Boat launch and campfire at Highland Creek make it worth considering.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are valuable.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are valuable."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Boat launch and campfire facilities are valuable."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 18,
+      "phase": "DISCUSSION",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Boat launch sounds good, but that drive feels like extra hassle.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Too far and requires more travel time.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Farthest site requiring longer travel time."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and enjoy easy fishing access.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 19,
+      "phase": "DISCUSSION",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Fire pits and restrooms definitely help, but I worry the boat launch won’t get much use with little kids.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the amenities is fire pits, restrooms, boat launch",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "amenities",
+          "public_value": "fire pits, restrooms, boat launch"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a campsite with the shortest travel and kid-friendly features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 16
+    },
+    {
+      "index": 20,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "The forest spot fits eight tents, the meadow allows twelve. Twelve fits better if we want space.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare max_tents: 8 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "max_tents",
+            "public_value": "8"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "max_tents",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 21,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Restrooms and picnic shelters matter, but the hiking trails really tip it for me—makes downtime more enjoyable without losing focus on fishing.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the amenities is restrooms, hiking trails, picnic shelters",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "amenities",
+          "public_value": "restrooms, hiking trails, picnic shelters"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 22,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "25 miles isn’t too far, though it adds some travel time that cuts into fishing and setup.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the distance miles is 25",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "distance_miles",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 23,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Does anyone think splitting up would affect the vibe too much?",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Farther away and smaller tent capacity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Smaller tent capacity might require splitting into multiple groups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": "opened_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 24,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Splitting up feels unavoidable with smaller tent capacity, but it might break the group energy.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the concern is Smaller tent capacity might require splitting into multiple groups.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Smaller tent capacity might require splitting into multiple groups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "answered_question",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 18
+    },
+    {
+      "index": 25,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "Restrooms are in both spots, but only Highland Creek has a boat launch and fire pits, which suits fishing and group space better.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare amenities: fire pits, restrooms, boat launch and restrooms, hiking trails, picnic shelters",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "amenities",
+            "public_value": "fire pits, restrooms, boat launch"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "amenities",
+            "public_value": "restrooms, hiking trails, picnic shelters"
+          }
+        ],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": "thread_follow_up",
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 26,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Max tents is 9 there, which should hold us well.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the max tents is 9",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "max_tents",
+          "public_value": "9"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 27,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "30 miles is a bit far for quick water breaks, though.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the distance miles is 30",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "distance_miles",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 28,
+      "phase": "DISCUSSION",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Riverbend Forest offers river fishing and hiking trails, worth considering.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "River fishing and hiking trails offer good activities.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Access to river fishing and nearby hiking trails for additional activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the best fishing spot even if it means longer travel.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "River fishing and hiking trails offer good activities."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "B",
+        "previous_option_id": "D",
+        "movement_reason": "River fishing and hiking trails offer good activities."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 29,
+      "phase": "DISCUSSION",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "River access along the riverbank is good, though a boat launch would make fishing more flexible for all.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the fishing access is river bank",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "fishing_access",
+          "public_value": "river bank"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 22
+    },
+    {
+      "index": 30,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "Having 9 max tents at Highland Creek gives us more flexibility for group size, which fits my priority better than 8 at Riverbend.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare max_tents: 8 and 9",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "max_tents",
+            "public_value": "8"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "max_tents",
+            "public_value": "9"
+          }
+        ],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 31,
+      "phase": "DISCUSSION",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "25 miles is doable, though a bit farther for quick breaks.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the distance miles is 25",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "distance_miles",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 32,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Riverbank fishing is nice, but a bit narrow for all of us.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the fishing access is river bank",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "fishing_access",
+          "public_value": "river bank"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 33,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Picnic tables and playground sound great for hanging out, but hiking trails and picnic shelters fit my idea of group fun better.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare amenities: picnic tables, playground, restrooms and restrooms, hiking trails, picnic shelters",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "amenities",
+            "public_value": "picnic tables, playground, restrooms"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "amenities",
+            "public_value": "restrooms, hiking trails, picnic shelters"
+          }
+        ],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 34,
+      "phase": "DISCUSSION",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "The boat launch and campfire facilities at Highland Creek make it a better fit for mixing fishing with other outdoor activities.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are nice extras.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are nice extras."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Boat launch and campfire facilities are nice extras."
+      },
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 35,
+      "phase": "DISCUSSION",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "Fishing’s good with the creek access, but I’d still want spots closer to shore for easier group hangouts.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the fishing access is creek",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "fishing_access",
+          "public_value": "creek"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 12
+    },
+    {
+      "index": 36,
+      "phase": "NARROWING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Highland Creek has the strongest public support so far, but the group is still divided. Maya, Zoe, Nina, Omar, and Ivy, could it meet your main requirements?",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 37,
+      "phase": "NARROWING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "Highland Creek’s boat launch and campfire could work well for fishing and hanging out.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are valuable.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are valuable."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Boat launch and campfire facilities are valuable."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 8
+    },
+    {
+      "index": 38,
+      "phase": "NARROWING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "That boat launch at Highland Creek really opens up fishing options, and campfires add a great way to unwind after hiking.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are nice extras.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are nice extras."
+        },
+        "vote_option": null
+      },
+      "moderator": false,
+      "mandatory": false,
+      "voluntary": true,
+      "liveness_forced": false,
+      "priority": 2,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "make_acceptable",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Boat launch and campfire facilities are nice extras."
+      },
+      "vote_option": null,
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 27
+    },
+    {
+      "index": 39,
+      "phase": "VOTING",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "Let’s record everyone’s final vote.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    },
+    {
+      "index": 40,
+      "phase": "VOTING",
+      "speaker_id": "p1",
+      "speaker_name": "Maya",
+      "text": "Sunny Meadow is my final choice.",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest distance and family-friendly playground make it ideal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 41,
+      "phase": "VOTING",
+      "speaker_id": "p2",
+      "speaker_name": "Liam",
+      "text": "Highland Creek is my final choice.",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch for creek fishing and campfire facilities are great.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 42,
+      "phase": "VOTING",
+      "speaker_id": "p3",
+      "speaker_name": "Zoe",
+      "text": "Sunny Meadow is my final choice.",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest distance and simple amenities suit my style.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 43,
+      "phase": "VOTING",
+      "speaker_id": "p4",
+      "speaker_name": "Eli",
+      "text": "I’m voting for Highland Creek.",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are perfect for fishing and group activities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 44,
+      "phase": "VOTING",
+      "speaker_id": "p5",
+      "speaker_name": "Nina",
+      "text": "My final vote is Highland Creek.",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are nice extras.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are nice extras."
+        },
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Boat launch and campfire facilities are nice extras."
+      },
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 45,
+      "phase": "VOTING",
+      "speaker_id": "p6",
+      "speaker_name": "Omar",
+      "text": "I’m voting for Highland Creek.",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are valuable.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are valuable."
+        },
+        "vote_option": "D"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": {
+        "kind": "switch_preferred",
+        "option_id": "D",
+        "previous_option_id": "B",
+        "movement_reason": "Boat launch and campfire facilities are valuable."
+      },
+      "vote_option": "D",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 46,
+      "phase": "VOTING",
+      "speaker_id": "p7",
+      "speaker_name": "Ivy",
+      "text": "I’m voting for Sunny Meadow.",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest travel and family-friendly features.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "moderator": false,
+      "mandatory": true,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 3,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": "C",
+      "narrowing_options": [
+        "D"
+      ],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 10
+    },
+    {
+      "index": 47,
+      "phase": "CLOSED",
+      "speaker_id": "moderator",
+      "speaker_name": "Moderator",
+      "text": "The final result is a majority for Highland Creek.",
+      "action": null,
+      "moderator": true,
+      "mandatory": false,
+      "voluntary": false,
+      "liveness_forced": false,
+      "priority": 1,
+      "repair_count": 0,
+      "thread_event": null,
+      "stance_update": null,
+      "vote_option": null,
+      "narrowing_options": [],
+      "prompt_tokens": 0,
+      "output_tokens": 0,
+      "intended_word_max": 0
+    }
+  ],
+  "active_thread": null,
+  "closed_thread_keys": [
+    [
+      "B",
+      "concern"
+    ],
+    [
+      "C",
+      "concern"
+    ],
+    [
+      "D",
+      "concern"
+    ]
+  ],
+  "public_point_counts": {
+    "A:max_tents": 1,
+    "A:upside": 1,
+    "B:amenities": 3,
+    "B:concern": 2,
+    "B:distance_miles": 2,
+    "B:fishing_access": 2,
+    "B:max_tents": 2,
+    "B:upside": 3,
+    "C:amenities": 1,
+    "C:concern": 2,
+    "C:distance_miles": 2,
+    "C:fishing_access": 2,
+    "C:max_tents": 2,
+    "C:upside": 3,
+    "D:amenities": 2,
+    "D:concern": 2,
+    "D:distance_miles": 2,
+    "D:fishing_access": 1,
+    "D:max_tents": 2,
+    "D:upside": 6
+  },
+  "recent_point_keys": [
+    [
+      "D",
+      "upside"
+    ],
+    [
+      "D",
+      "upside"
+    ]
+  ],
+  "votes": {
+    "p1": "C",
+    "p2": "D",
+    "p3": "C",
+    "p4": "D",
+    "p5": "D",
+    "p6": "D",
+    "p7": "C"
+  },
+  "vote_records": {
+    "1": {
+      "p1": {
+        "participant_id": "p1",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p2": {
+        "participant_id": "p2",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p3": {
+        "participant_id": "p3",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      },
+      "p4": {
+        "participant_id": "p4",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p5": {
+        "participant_id": "p5",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p6": {
+        "participant_id": "p6",
+        "round": 1,
+        "status": "valid",
+        "option_id": "D",
+        "attempts": 0,
+        "errors": []
+      },
+      "p7": {
+        "participant_id": "p7",
+        "round": 1,
+        "status": "valid",
+        "option_id": "C",
+        "attempts": 0,
+        "errors": []
+      }
+    }
+  },
+  "outcome": {
+    "status": "majority",
+    "final_option": "D",
+    "votes": {
+      "p1": "C",
+      "p2": "D",
+      "p3": "C",
+      "p4": "D",
+      "p5": "D",
+      "p6": "D",
+      "p7": "C"
+    },
+    "reason": "4 of 7 participants selected the option"
+  },
+  "stats": {
+    "llm_calls": 37,
+    "setup_llm_calls": 3,
+    "repair_calls": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "liveness_forced_turns": 0,
+    "input_tokens": 22881,
+    "output_tokens": 3246,
+    "moderator_turns": 4,
+    "voluntary_turns": 30,
+    "visible_movements": 6,
+    "response_failures": 0,
+    "compromise_attempts": 1,
+    "compromise_acceptances": 0
+  },
+  "metrics": {
+    "participant_count": 7,
+    "participant_turns": 44,
+    "voluntary_turns": 30,
+    "moderator_turns": 4,
+    "moderator_ratio": 0.0833,
+    "avg_words_per_participant_turn": 13.89,
+    "visible_preference_changes": 3,
+    "repair_turns": 0,
+    "dropped_turns": 0,
+    "fallback_turns": 0,
+    "response_failures": 0,
+    "protocol_errors": 0,
+    "vote_outcome_consistent": true,
+    "input_tokens": 22881,
+    "output_tokens": 3246,
+    "llm_calls": 40,
+    "voluntary_turns_by_persona": {
+      "p5": 6,
+      "p7": 8,
+      "p2": 3,
+      "p4": 4,
+      "p6": 6,
+      "p1": 2,
+      "p3": 1
+    }
+  },
+  "generation_attempts": [
+    {
+      "speaker_id": "p6",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "River fishing and hiking trails provide good options.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Access to river fishing and nearby hiking trails for additional activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Riverbend Forest has good river fishing and trails.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch for creek fishing and campfire facilities are great.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the best fishing spot even if it means longer travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Boat launch and campfire facilities at Highland Creek are solid.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are perfect for fishing and group activities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The boat launch and campfire facilities at Highland Creek seem great for fishing and group activities, which should fit our needs well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "River fishing plus hiking trails and picnic shelters offer variety.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Access to river fishing and nearby hiking trails for additional activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Riverbend Forest offers solid river fishing plus hiking trails and picnic shelters, which gives us good variety for the weekend.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "A"
+        ],
+        "addressee_id": null,
+        "reason": "Close to lake with ample fishing and established fire pits for socializing.",
+        "reason_source": {
+          "option_id": "A",
+          "attribute_name": "upside",
+          "public_value": "Close to the lake with ample fishing spots and established fire pits."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Close to the lake with good fishing and fire pits at Lakeside Pines.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest distance and family-friendly playground make it ideal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a campsite with the shortest travel and kid-friendly features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Sunny Meadow seems best since it has the shortest drive and a playground for kids.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "OPENING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "opening",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest distance and simple amenities suit my style.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and enjoy easy fishing access.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Shortest distance and simple amenities suit my style, so Sunny Meadow works for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fishing limited to a small pond.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Fishing limited to a small pond with fewer fish variety."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The small pond there really limits fishing options, which makes it less appealing for me despite the convenience.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "A",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare max_tents: 10 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "A",
+            "attribute_name": "max_tents",
+            "public_value": "10"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "max_tents",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The max tents at Lakeside Pines is 10, Sunny Meadow has 12, so the meadow fits bigger groups a bit better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Fishing limited to a small pond with fewer fish variety.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "concern",
+          "public_value": "Fishing limited to a small pond with fewer fish variety."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the best fishing spot even if it means longer travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Small pond means fewer fish and less variety. Not worth it.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the fishing access is pond",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "fishing_access",
+          "public_value": "pond"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "A small pond might limit variety, but having enough space for everyone to spread out is also a big plus for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest travel and family-friendly features.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "C",
+          "previous_option_id": "A",
+          "movement_reason": "Shortest travel and family-friendly features."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Sunny Meadow’s shorter travel and playground feel better for families like ours.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p7",
+        "reason": "the distance miles is 10",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "distance_miles",
+          "public_value": "10"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the best fishing spot even if it means longer travel.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "10 miles is a bit far, but better fishing justifies it for me.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": "p2",
+        "reason": "the fishing access is pond",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "fishing_access",
+          "public_value": "pond"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fishing’s from a pond, so fewer spots to spread out.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Longest travel distance.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Farthest site requiring longer travel time."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "That spot’s nice but the longer drive makes me hesitate.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare distance_miles: 10 and 30",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "distance_miles",
+            "public_value": "10"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "distance_miles",
+            "public_value": "30"
+          }
+        ],
+        "personal_context": "Find a campsite with the shortest travel and kid-friendly features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "I get why the longer 30 miles feels off—10 miles feels easier for quick family trips.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are valuable.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are valuable."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Boat launch and campfire at Highland Creek make it worth considering.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "object",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Too far and requires more travel time.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "concern",
+          "public_value": "Farthest site requiring longer travel time."
+        },
+        "comparison_sources": [],
+        "personal_context": "Minimize travel and enjoy easy fishing access.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Boat launch sounds good, but that drive feels like extra hassle.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p3",
+        "reason": "the amenities is fire pits, restrooms, boat launch",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "amenities",
+          "public_value": "fire pits, restrooms, boat launch"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a campsite with the shortest travel and kid-friendly features.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fire pits and restrooms definitely help, but I worry the boat launch won’t get much use with little kids.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "compare max_tents: 8 and 12",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "max_tents",
+            "public_value": "8"
+          },
+          {
+            "option_id": "C",
+            "attribute_name": "max_tents",
+            "public_value": "12"
+          }
+        ],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "The forest spot fits eight tents, the meadow allows twelve. Twelve fits better if we want space.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the amenities is restrooms, hiking trails, picnic shelters",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "amenities",
+          "public_value": "restrooms, hiking trails, picnic shelters"
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Restrooms and picnic shelters matter, but the hiking trails really tip it for me—makes downtime more enjoyable without losing focus on fishing.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the distance miles is 25",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "distance_miles",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "25 miles isn’t too far, though it adds some travel time that cuts into fishing and setup.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "ask",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "Farther away and smaller tent capacity.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Smaller tent capacity might require splitting into multiple groups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Does anyone think splitting up would affect the vibe too much?",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "answer",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p7",
+        "reason": "the concern is Smaller tent capacity might require splitting into multiple groups.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "concern",
+          "public_value": "Smaller tent capacity might require splitting into multiple groups."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Splitting up feels unavoidable with smaller tent capacity, but it might break the group energy.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "compare",
+        "option_focus": [
+          "D",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare amenities: fire pits, restrooms, boat launch and restrooms, hiking trails, picnic shelters",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "D",
+            "attribute_name": "amenities",
+            "public_value": "fire pits, restrooms, boat launch"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "amenities",
+            "public_value": "restrooms, hiking trails, picnic shelters"
+          }
+        ],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Restrooms are in both spots, but only Highland Creek has a boat launch and fire pits, which suits fishing and group space better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p4",
+        "reason": "the max tents is 9",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "max_tents",
+          "public_value": "9"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Max tents is 9 there, which should hold us well.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p6",
+        "reason": "the distance miles is 30",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "distance_miles",
+          "public_value": "30"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "30 miles is a bit far for quick water breaks, though.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "River fishing and hiking trails offer good activities.",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "upside",
+          "public_value": "Access to river fishing and nearby hiking trails for additional activities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose the best fishing spot even if it means longer travel.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "B",
+          "previous_option_id": "D",
+          "movement_reason": "River fishing and hiking trails offer good activities."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Riverbend Forest offers river fishing and hiking trails, worth considering.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p2",
+        "reason": "the fishing access is river bank",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "fishing_access",
+          "public_value": "river bank"
+        },
+        "comparison_sources": [],
+        "personal_context": "Pick a site with strong fishing options and enough space for everyone.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "River access along the riverbank is good, though a boat launch would make fishing more flexible for all.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "B",
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "compare max_tents: 8 and 9",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "B",
+            "attribute_name": "max_tents",
+            "public_value": "8"
+          },
+          {
+            "option_id": "D",
+            "attribute_name": "max_tents",
+            "public_value": "9"
+          }
+        ],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Having 9 max tents at Highland Creek gives us more flexibility for group size, which fits my priority better than 8 at Riverbend.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p5",
+        "reason": "the distance miles is 25",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "distance_miles",
+          "public_value": "25"
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "25 miles is doable, though a bit farther for quick breaks.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "B"
+        ],
+        "addressee_id": "p6",
+        "reason": "the fishing access is river bank",
+        "reason_source": {
+          "option_id": "B",
+          "attribute_name": "fishing_access",
+          "public_value": "river bank"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Riverbank fishing is nice, but a bit narrow for all of us.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "compare",
+        "option_focus": [
+          "C",
+          "B"
+        ],
+        "addressee_id": null,
+        "reason": "compare amenities: picnic tables, playground, restrooms and restrooms, hiking trails, picnic shelters",
+        "reason_source": null,
+        "comparison_sources": [
+          {
+            "option_id": "C",
+            "attribute_name": "amenities",
+            "public_value": "picnic tables, playground, restrooms"
+          },
+          {
+            "option_id": "B",
+            "attribute_name": "amenities",
+            "public_value": "restrooms, hiking trails, picnic shelters"
+          }
+        ],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Picnic tables and playground sound great for hanging out, but hiking trails and picnic shelters fit my idea of group fun better.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are nice extras.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are nice extras."
+        },
+        "vote_option": null
+      },
+      "raw_text": "The boat launch and campfire facilities at Highland Creek make it a better fit for mixing fishing with other outdoor activities.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "DISCUSSION",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 1,
+        "act": "react",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": "p5",
+        "reason": "the fishing access is creek",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "fishing_access",
+          "public_value": "creek"
+        },
+        "comparison_sources": [],
+        "personal_context": "Choose a campsite close to water with good group amenities.",
+        "stance_update": null,
+        "vote_option": null
+      },
+      "raw_text": "Fishing’s good with the creek access, but I’d still want spots closer to shore for easier group hangouts.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are valuable.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Select a site that balances fishing quality and group size capacity.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are valuable."
+        },
+        "vote_option": null
+      },
+      "raw_text": "Highland Creek’s boat launch and campfire could work well for fishing and hanging out.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "NARROWING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 2,
+        "act": "accept",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are nice extras.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": "Find a site with good fishing and additional recreational options.",
+        "stance_update": {
+          "kind": "make_acceptable",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are nice extras."
+        },
+        "vote_option": null
+      },
+      "raw_text": "That boat launch at Highland Creek really opens up fishing options, and campfires add a great way to unwind after hiking.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "accepted",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p1",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p1",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest distance and family-friendly playground make it ideal.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Sunny Meadow is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p2",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p2",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch for creek fishing and campfire facilities are great.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "Highland Creek is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p3",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p3",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest distance and simple amenities suit my style.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "Sunny Meadow is my final choice.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p4",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p4",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are perfect for fishing and group activities.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for Highland Creek.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p5",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p5",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are nice extras.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are nice extras."
+        },
+        "vote_option": "D"
+      },
+      "raw_text": "My final vote is Highland Creek.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p6",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p6",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "D"
+        ],
+        "addressee_id": null,
+        "reason": "Boat launch and campfire facilities are valuable.",
+        "reason_source": {
+          "option_id": "D",
+          "attribute_name": "upside",
+          "public_value": "Includes a boat launch for creek fishing and campfire facilities."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": {
+          "kind": "switch_preferred",
+          "option_id": "D",
+          "previous_option_id": "B",
+          "movement_reason": "Boat launch and campfire facilities are valuable."
+        },
+        "vote_option": "D"
+      },
+      "raw_text": "I’m voting for Highland Creek.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    },
+    {
+      "speaker_id": "p7",
+      "phase": "VOTING",
+      "action": {
+        "speaker_id": "p7",
+        "wants_to_speak": true,
+        "priority": 3,
+        "act": "vote",
+        "option_focus": [
+          "C"
+        ],
+        "addressee_id": null,
+        "reason": "Shortest travel and family-friendly features.",
+        "reason_source": {
+          "option_id": "C",
+          "attribute_name": "upside",
+          "public_value": "Shortest travel distance and family-friendly features like a playground."
+        },
+        "comparison_sources": [],
+        "personal_context": null,
+        "stance_update": null,
+        "vote_option": "C"
+      },
+      "raw_text": "I’m voting for Sunny Meadow.",
+      "validation_errors": [],
+      "repair_text": null,
+      "repair_errors": [],
+      "final_status": "deterministic",
+      "fallback_text": null
+    }
+  ],
+  "validation_failures": {},
+  "protocol_errors": [],
+  "quality_flags": [],
+  "needs_review": false
+}
